@@ -30,11 +30,14 @@ ramdisk.dmg: jbinit launchd jbloader jb.dylib
 	mkdir -p ramdisk
 	mkdir -p ramdisk/{jbin,fs/{gen,orig}}
 	mkdir -p ramdisk/{Applications,bin,cores,dev,Developer,Library,private,sbin,System,usr/lib}
+	mkdir -p ramdisk/{.ba,.mb}
 	cp -a binpack ramdisk
 	ln -s private/etc ramdisk/etc
 	ln -s private/var ramdisk/var
 	ln -s private/var/tmp ramdisk/tmp
 	touch ramdisk/.file
+	chmod 000 ramdisk/.file
+	chmod 700 ramdisk/{.ba,.mb}
 	cp launchd ramdisk/sbin/launchd
 	mkdir -p ramdisk/usr/lib
 	cp jbinit ramdisk/usr/lib/dyld
