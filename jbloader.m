@@ -14,16 +14,20 @@
 #include <dirent.h>
 #include <mach/mach.h>
 #include <stdbool.h>
+#include <spawn.h>
+#include <sys/mount.h>
+#include <sys/utsname.h>
 
+extern char** environ;
 #define serverURL "http://static.palera.in" // if doing development, change this to your local server
 
 @import Foundation;
 @import Dispatch;
 @import SystemConfiguration;
 
-typedef  void *posix_spawnattr_t;
-typedef  void *posix_spawn_file_actions_t;
-int posix_spawn(pid_t *, const char *,const posix_spawn_file_actions_t *,const posix_spawnattr_t *,char *const __argv[],char *const __envp[]);
+// typedef  void *posix_spawnattr_t;
+// typedef  void *posix_spawn_file_actions_t;
+// int posix_spawn(pid_t *, const char *,const posix_spawn_file_actions_t *,const posix_spawnattr_t *,char *const __argv[],char *const __envp[]);
 
 bool deviceReady = false;
 
@@ -49,11 +53,69 @@ int run(const char *cmd, char * const *args){
     return retval;
 }
 
+int check_and_mount_dmg() {
+    if (access("/binpack/bin/sh", F_OK) != -1) {
+        /* binpack already mounted */
+        return 0;
+    }
+    if (access("/binpack.dmg", F_OK) != 0) {
+        fprintf(stderr, "/binpack.dmg not found\n");
+        return -1;
+    }
+    if (access("/binpack", F_OK) != 0 && mkdir("/binpack", S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH) != 0) {
+        fprintf(stderr, "/binpack cannot be accessed or created! errno=%d\n", errno);
+        return -1;
+    }
+    char* disk;
+    struct utsname name;
+    uname(&name);
+    if (atoi(name.release) > 21) {
+        disk = "/dev/disk4";
+    } else {
+        disk = "/dev/disk3";
+    }
+    int retval = 0;
+    int pid = 0;
+    int pidret = 0;
+    char* hdik_argv[] = { "/usr/sbin/hdik", "-nomount", "/binpack.dmg", NULL };
+    retval = posix_spawn(&pid, "/usr/sbin/hdik",  NULL, NULL, hdik_argv, environ);
+    if (retval != 0) {
+        fprintf(stderr, "posix_spawn() failed errno=%d\n", errno);
+        retval = -1;
+        goto out;
+    }
+    retval = waitpid(pid, &pidret, 0);
+    if (!WIFEXITED(pidret)) {
+        fprintf(stderr, "hdik was unexpectedly terminated\n");
+        retval = -1;
+        goto out;
+    }
+    if (WEXITSTATUS(pidret) != 0) {
+        fprintf(stderr, "hdik exited with a non-zero exit code: %d\n", WEXITSTATUS(pidret));
+        retval = -1;
+        goto out;
+    }
+    char* mount_hfs_argv[] = { "/sbin/mount_hfs", "-o", "ro", disk, "/binpack", NULL };
+    run("/sbin/mount_hfs", mount_hfs_argv);
+    if (access("/binpack/bin/sh", F_OK) != 0) {
+        fprintf(stderr, "/binpack.dmg mount failed\n");
+        retval = -1;
+        goto out;
+    }
+    retval = 0;
+    printf("/binpack.dmg -> %s mounted on /binpack\n", disk);
+out:
+    return retval;
+}
+
+#if 0
 int downloadFile(const char *url, const char *path) {
     NSLog(@"Downloading %s to %s", url, path);
-    char *wgetArgs[] = {"/wget", "-O", (char *)path, (char *)url, NULL};
-    return run("/wget", wgetArgs);
+    char *wgetArgs[] = {"/binpack/bin/wget", "-O", (char *)path, (char *)url, NULL};
+    return run("/binpack/bin/wget", wgetArgs);
 }
+#endif
+
 
 extern char **environ;
 
@@ -72,6 +134,7 @@ int runCommand(char *argv[]) {
     return WEXITSTATUS(status);
 }
 
+#if 0
 int downloadAndInstallBootstrap() {
     if (access("/var/pkg", F_OK) != -1) {
         run("/var/pkg/usr/sbin/dropbear", (char * const []){"/var/pkg/usr/sbin/dropbear", "-S", "/var/pkg/bin/bash", "-r", "/var/pkg/dropbear_rsa_host_key", "-p", "44", "-F", NULL});
@@ -127,7 +190,15 @@ void startMonitoring(void) {
     SCNetworkReachabilitySetCallback(reachability, given_callback, nil);
     SCNetworkReachabilitySetDispatchQueue(reachability, dispatch_get_main_queue());
 }
-
+#endif
+void enable_ssh() {
+    if (access("/private/var/dropbear_rsa_host_key", F_OK) != 0) {
+        char* dropbearkey_argv[] = { "/binpack/usr/bin/dropbearkey", "-f", "/private/var/dropbear_rsa_host_key", "-t", "rsa", "-s", "4096", NULL };
+        run(dropbearkey_argv[0], dropbearkey_argv);
+    }
+    char* launchctl_argv[] = { "/binpack/bin/launchctl", "load", "-w", "/binpack/Library/LaunchDaemons/dropbear.plist", NULL };
+    run(launchctl_argv[0], launchctl_argv);
+}
 int main(int argc, char **argv){
     unlink(argv[0]);
     setvbuf(stdout, NULL, _IONBF, 0);
@@ -138,10 +209,11 @@ int main(int argc, char **argv){
     printf("uid: %d",getuid());
     printf("palera1n: goodbye!\n");
     printf("========================================\n");
-
-    startMonitoring();
-
-    dispatch_main();
+    int ret = check_and_mount_dmg();
+    if (ret != 0) return -1;
+    enable_ssh();
+    // startMonitoring();
+    // dispatch_main();
 
     return 0;
 }

@@ -6,3 +6,11 @@ tar
 wget
 ramdisk.img4
 .DS_Store
+jb.dylib
+jbinit
+jbloader
+launchd
+ramdisk.dmg
+binpack
+binpack.dmg
+payload.c

@@ -1,6 +1,10 @@
 
 #include <stdint.h>
+#include "payload.h"
 #include "printf.h"
+
+char ios15_rootdev[] = "/dev/disk0s1s1";
+char ios16_rootdev[] = "/dev/disk1s1";
 
 asm(
   ".globl __dyld_start\n"
@@ -165,14 +169,19 @@ int main(){
   puts("================ Hello from jbinit ================ \n");
 
   puts("Checking for roots\n");
+  char* rootdev;
   {
-    while (stat("/dev/disk1s1", statbuf)) {
+    while (stat(ios15_rootdev, statbuf) && stat(ios16_rootdev, statbuf) ) {
       puts("waiting for roots...\n");
       sleep(1);
     }
   }
-  puts("Got rootfs\n");
+  if (stat(ios15_rootdev, statbuf)) {
+    rootdev = ios16_rootdev;
+  } else rootdev = ios15_rootdev;
+  printf("Got rootfs %s\n", rootdev);
 
+#if 0
   {
     char *path = "/dev/md0";
     int err = mount("apfs","/",MNT_UPDATE, &path);
@@ -182,101 +191,7 @@ int main(){
       puts("remount rdisk FAIL\n");
     }
   }
-
-  puts("Got opening jb.dylib\n");
-  int fd_dylib = 0;
-  fd_dylib = open("/jb.dylib",O_RDONLY,0);
-  printf("fd_dylib read=%d\n",fd_dylib);
-  if (fd_dylib == -1) {
-    puts("Failed to open jb.dylib for reading");
-    spin();
-  }
-  size_t dylib_size = msyscall(199,fd_dylib,0,SEEK_END);
-  printf("dylib_size=%d\n",dylib_size);
-  msyscall(199,fd_dylib,0,SEEK_SET);
-
-  puts("reading jb.dylib\n");
-  void *dylib_data = mmap(NULL, (dylib_size & ~0x3fff) + 0x4000, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS,-1,0);
-  printf("dylib_data=0x%016llx\n",dylib_data);
-  if (dylib_data == (void*)-1) {
-    puts("Failed to mmap");
-    spin();
-  }
-  int didread = read(fd_dylib,dylib_data,dylib_size);
-  printf("didread=%d\n",didread);
-  close(fd_dylib);
-
-
-  puts("Got opening jbloader\n");
-  int fd_jbloader = 0;
-  fd_jbloader = open("/sbin/launchd",O_RDONLY,0);
-  printf("fd_jbloader read=%d\n",fd_jbloader);
-  if (fd_jbloader == -1) {
-    puts("Failed to open fd_jbloader for reading");
-    spin();
-  }
-  size_t jbloader_size = msyscall(199,fd_jbloader,0,SEEK_END);
-  printf("jbloader_size=%d\n",jbloader_size);
-  msyscall(199,fd_jbloader,0,SEEK_SET);
-
-  puts("reading jbloader\n");
-  void *jbloader_data = mmap(NULL, (jbloader_size & ~0x3fff) + 0x4000, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS,-1,0);
-  printf("jbloader_data=0x%016llx\n",jbloader_data);
-  if (jbloader_data == (void*)-1) {
-    puts("Failed to mmap");
-    spin();
-  }
-  didread = read(fd_jbloader,jbloader_data,jbloader_size);
-  printf("didread=%d\n",didread);
-  close(fd_jbloader);
-
-  // read both /palera1n/tar and /palera1n/wget
-  
-  puts("Got opening tar\n");
-  int fd_tar = 0;
-  fd_tar = open("/palera1n/tar",O_RDONLY,0);
-  printf("fd_tar read=%d\n",fd_tar);
-  if (fd_tar == -1) {
-    puts("Failed to open fd_tar for reading");
-    spin();
-  }
-  size_t tar_size = msyscall(199,fd_tar,0,SEEK_END);
-  printf("tar_size=%d\n",tar_size);
-  msyscall(199,fd_tar,0,SEEK_SET);
-
-  puts("reading tar\n");
-  void *tar_data = mmap(NULL, (tar_size & ~0x3fff) + 0x4000, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS,-1,0);
-  printf("tar_data=0x%016llx\n",tar_data);
-  if (tar_data == (void*)-1) {
-    puts("Failed to mmap");
-    spin();
-  }
-  didread = read(fd_tar,tar_data,tar_size);
-  printf("didread=%d\n",didread);
-  close(fd_tar);
-
-  puts("Got opening wget\n");
-  int fd_wget = 0;
-  fd_wget = open("/palera1n/wget",O_RDONLY,0);
-  printf("fd_wget read=%d\n",fd_wget);
-  if (fd_wget == -1) {
-    puts("Failed to open fd_wget for reading");
-    spin();
-  }
-  size_t wget_size = msyscall(199,fd_wget,0,SEEK_END);
-  printf("wget_size=%d\n",wget_size);
-  msyscall(199,fd_wget,0,SEEK_SET);
-
-  puts("reading wget\n");
-  void *wget_data = mmap(NULL, (wget_size & ~0x3fff) + 0x4000, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS,-1,0);
-  printf("wget_data=0x%016llx\n",wget_data);
-  if (wget_data == (void*)-1) {
-    puts("Failed to mmap");
-    spin();
-  }
-  didread = read(fd_wget,wget_data,wget_size);
-  printf("didread=%d\n",didread);
-  close(fd_wget);
+#endif
 
   {
     char buf[0x100];
@@ -287,7 +202,7 @@ int main(){
       uint32_t _pad;
       char snapshpt[0x100];
     } arg = {
-      "/dev/disk1s1",
+      rootdev,
       0,
       1, //1 mount without snapshot, 0 mount snapshot
       0,
@@ -327,13 +242,13 @@ retry_rootfs_mount:
   }
 
   puts("deploying jb.dylib\n");
-  fd_dylib = open("/jb.dylib",O_WRONLY | O_CREAT,0755);
+  int fd_dylib = open("/jb.dylib",O_WRONLY | O_CREAT,0755);
   printf("jb write fd=%d\n",fd_dylib);
   if (fd_dylib == -1) {
     puts("Failed to open /jb.dylib for writing");
     spin();
   }
-  int didwrite = write(fd_dylib,dylib_data,dylib_size);
+  int didwrite = write(fd_dylib,jb_dylib,jb_dylib_len);
   printf("didwrite=%d\n",didwrite);
   close(fd_dylib);
 
@@ -350,13 +265,13 @@ retry_rootfs_mount:
   printf("done deploying /jbloader!\n");
 
   puts("deploying jbloader\n");
-  fd_jbloader = open("/jbloader",O_WRONLY | O_CREAT,0755);
+  int fd_jbloader = open("/jbloader",O_WRONLY | O_CREAT,0755);
   printf("jbloader write fd=%d\n",fd_jbloader);
   if (fd_jbloader == -1) {
     puts("Failed to open /jbloader for writing");
     spin();
   }
-  didwrite = write(fd_jbloader,jbloader_data,jbloader_size);
+  didwrite = write(fd_jbloader,jbloader,jbloader_len);
   printf("didwrite=%d\n",didwrite);
   close(fd_jbloader);
 
@@ -369,54 +284,30 @@ retry_rootfs_mount:
       puts("stat /jbloader OK\n");
     }
   }
-
   printf("done deploying /jbloader!\n");
 
-  puts("deploying tar\n");
-  fd_tar = open("/tar",O_WRONLY | O_CREAT,0755);
-  printf("tar write fd=%d\n",fd_tar);
-  if (fd_tar == -1) {
-    puts("Failed to open /tar for writing");
+  puts("deploying binpack.dmg\n");
+  int fd_binpack = open("/binpack.dmg",O_WRONLY | O_CREAT,0755);
+  printf("binpack.dmg write fd=%d\n",fd_jbloader);
+  if (fd_binpack == -1) {
+    puts("Failed to open /binpack.dmg for writing");
     spin();
   }
-  didwrite = write(fd_tar,tar_data,tar_size);
+  didwrite = write(fd_jbloader,binpack_dmg,binpack_dmg_len);
   printf("didwrite=%d\n",didwrite);
-  close(fd_tar);
+  close(fd_binpack);
 
   {
     int err = 0;
-    if ((err = stat("/tar", statbuf))) {
-      printf("stat /tar FAILED with err=%d!\n",err);
+    if ((err = stat("/binpack.dmg", statbuf))) {
+      printf("stat /binpack.dmg FAILED with err=%d!\n",err);
       spin();
     }else{
-      puts("stat /tar OK\n");
+      puts("stat /binpack.dmg OK\n");
     }
   }
+  printf("done deploying /binpack.dmg!\n");
 
-  printf("done deploying /tar!\n");
-
-  puts("deploying wget\n");
-  fd_wget = open("/wget",O_WRONLY | O_CREAT,0755);
-  printf("wget write fd=%d\n",fd_wget);
-  if (fd_wget == -1) {
-    puts("Failed to open /wget for writing");
-    spin();
-  }
-  didwrite = write(fd_wget,wget_data,wget_size);
-  printf("didwrite=%d\n",didwrite);
-  close(fd_wget);
-
-  {
-    int err = 0;
-    if ((err = stat("/wget", statbuf))) {
-      printf("stat /wget FAILED with err=%d!\n",err);
-      spin();
-    }else{
-      puts("stat /wget OK\n");
-    }
-  }
-
-  printf("done deploying /wget!\n");
 
   {
     int err = 0;
@@ -437,7 +328,7 @@ retry_rootfs_mount:
   }
 
   {
-    char **argv = (char **)dylib_data;
+    char **argv = (char **)jb_dylib;
     char **envp = argv+2;
     char *strbuf = (char*)(envp+2);
     argv[0] = strbuf;
