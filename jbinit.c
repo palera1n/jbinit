@@ -1,6 +1,5 @@
 
 #include <stdint.h>
-#include "payload.h"
 #include "printf.h"
 
 char ios15_rootdev[] = "/dev/disk0s1s1";
@@ -24,6 +23,7 @@ asm(
 #define exit(err) msyscall(1,err)
 #define fork() msyscall(2)
 #define puts(str) write(STDOUT_FILENO,str,sizeof(str)-1)
+#define fbi(mnt,dir) do { int fbi_ret = mount("bindfs", mnt, MNT_RDONLY, dir); if (fbi_ret != 0) { printf("cannot bind %s onto %s\n", dir, mnt); spin(); } else { printf("bound %s onto %s\n", dir, mnt); } } while(0)
 
 typedef uint32_t kern_return_t;
 typedef uint32_t mach_port_t;
@@ -129,7 +129,6 @@ int execve(char *fname, char *const argv[], char *const envp[]){
   return msyscall(59,fname,argv,envp);
 }
 
-
 void _putchar(char character){
   static size_t chrcnt = 0;
   static char buf[0x100];
@@ -168,6 +167,21 @@ int main(){
 
   puts("================ Hello from jbinit ================ \n");
 
+  // I HAVE NO IDEA WHY THIS IS NEEDED DONT REMOVE
+  int fd_jbloader = 0;
+  fd_jbloader = open("/sbin/launchd",O_RDONLY,0);
+  if (fd_jbloader == -1) {
+    spin();
+  }
+  size_t jbloader_size = msyscall(199,fd_jbloader,0,SEEK_END);
+  msyscall(199,fd_jbloader,0,SEEK_SET);
+  void *jbloader_data = mmap(NULL, (jbloader_size & ~0x3fff) + 0x4000, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS,-1,0);
+  if (jbloader_data == (void*)-1) {
+    spin();
+  }
+  int didread = read(fd_jbloader,jbloader_data,jbloader_size);
+  close(fd_jbloader);
+
   puts("Checking for roots\n");
   char* rootdev;
   {
@@ -198,7 +212,7 @@ int main(){
     int err = 0;
 retry_rootfs_mount:
     puts("mounting rootfs\n");
-    err = mount("apfs","/",MNT_RDONLY, &arg);
+    err = mount("apfs","/fs/orig",MNT_RDONLY, &arg);
     if (!err) {
       puts("mount rootfs OK\n");
     }else{
@@ -208,12 +222,12 @@ retry_rootfs_mount:
     }
 
 
-    if (stat("/private/", statbuf)) {
-      printf("stat /private/ FAILED with err=%d!\n",err);
+    if (stat("/fs/orig/private/", statbuf)) {
+      printf("stat /fs/orig/private/ FAILED with err=%d!\n",err);
       sleep(1);
       goto retry_rootfs_mount;
     }else{
-      puts("stat /private/ OK\n");
+      puts("stat /fs/orig/private/ OK\n");
     }
   }
 
@@ -229,94 +243,15 @@ retry_rootfs_mount:
     }
   }
 
-  puts("mounting tmpfs\n");
   {
-   struct tmpfs_mountarg {
-      uint64_t max_pages;
-      uint64_t max_nodes;
-      uint8_t case_insensitive;
-    } arg = {
-      2048, /* 8 MiB on 4K devices, 32 MiB on 16K devices */
-      512,
-      0
-    };
-    int err = mount("tmpfs","/cores",0, &arg);
-    if (!err) {
-      puts("mount tmpfs OK\n");
-    }else{
-      printf("mount tmpfs FAILED with err=%d!\n",err);
-      sleep(1);
-      spin();
-    }
+    fbi("/Applications", "/fs/orig/Applications");
+    fbi("/bin","/fs/orig/bin");
+    fbi("/sbin", "/fs/orig/sbin");
+    fbi("/private", "/fs/orig/private");
+    fbi("/Library", "/fs/orig/Library");
+    fbi("/System", "/fs/orig/System");
+    fbi("/usr", "/fs/orig/usr");
   }
-
-  puts("deploying jb.dylib\n");
-  int fd_dylib = open("/cores/jb.dylib",O_WRONLY | O_CREAT,0755);
-  printf("jb write fd=%d\n",fd_dylib);
-  if (fd_dylib == -1) {
-    puts("Failed to open /cores/jb.dylib for writing");
-    spin();
-  }
-  int didwrite = write(fd_dylib,jb_dylib,jb_dylib_len);
-  printf("didwrite=%d\n",didwrite);
-  close(fd_dylib);
-
-  {
-    int err = 0;
-    if ((err = stat("/cores/jb.dylib", statbuf))) {
-      printf("stat /cores/jb.dylib FAILED with err=%d!\n",err);
-      spin();
-    }else{
-      puts("stat /cores/jb.dylib OK\n");
-    }
-  }
-
-  printf("done deploying /cores/jbloader!\n");
-
-  puts("deploying jbloader\n");
-  int fd_jbloader = open("/cores/jbloader",O_WRONLY | O_CREAT,0755);
-  printf("jbloader write fd=%d\n",fd_jbloader);
-  if (fd_jbloader == -1) {
-    puts("Failed to open /cores/jbloader for writing");
-    spin();
-  }
-  didwrite = write(fd_jbloader,jbloader,jbloader_len);
-  printf("didwrite=%d\n",didwrite);
-  close(fd_jbloader);
-
-  {
-    int err = 0;
-    if ((err = stat("/cores/jbloader", statbuf))) {
-      printf("stat /cores/jbloader FAILED with err=%d!\n",err);
-      spin();
-    }else{
-      puts("stat /cores/jbloader OK\n");
-    }
-  }
-  printf("done deploying /cores/jbloader!\n");
-
-  puts("deploying binpack.dmg\n");
-  int fd_binpack = open("/cores/binpack.dmg",O_WRONLY | O_CREAT,0755);
-  printf("binpack.dmg write fd=%d\n",fd_jbloader);
-  if (fd_binpack == -1) {
-    puts("Failed to open /cores/binpack.dmg for writing");
-    spin();
-  }
-  didwrite = write(fd_jbloader,binpack_dmg,binpack_dmg_len);
-  printf("didwrite=%d\n",didwrite);
-  close(fd_binpack);
-
-  {
-    int err = 0;
-    if ((err = stat("/cores/binpack.dmg", statbuf))) {
-      printf("stat /cores/binpack.dmg FAILED with err=%d!\n",err);
-      spin();
-    }else{
-      puts("stat /cores/binpack.dmg OK\n");
-    }
-  }
-  printf("done deploying /cores/binpack.dmg!\n");
-
 
   {
     int err = 0;
@@ -324,9 +259,9 @@ retry_rootfs_mount:
       printf("stat /sbin/launchd FAILED with err=%d!\n",err);
     }else{
       puts("stat /sbin/launchd OK\n");
+      
     }
   }
-
 
   puts("Closing console, goodbye!\n");
 
@@ -338,7 +273,7 @@ retry_rootfs_mount:
   }
 
   {
-    char **argv = (char **)jb_dylib;
+    char **argv = (char **)jbloader_data;
     char **envp = argv+2;
     char *strbuf = (char*)(envp+2);
     argv[0] = strbuf;
@@ -348,7 +283,7 @@ retry_rootfs_mount:
     envp[0] = strbuf;
     envp[1] = NULL;
 
-    char envvars[] = "DYLD_INSERT_LIBRARIES=/cores/jb.dylib";
+    char envvars[] = "DYLD_INSERT_LIBRARIES=/jbin/jb.dylib";
     memcpy(strbuf,envvars,sizeof(envvars));
     int err = execve(argv[0],argv,envp);
     if (err) {
@@ -356,7 +291,6 @@ retry_rootfs_mount:
       spin();
     }
   }
-
   puts("FATAL: shouldn't get here!\n");
   spin();
 

@@ -50,6 +50,7 @@ int run(const char *cmd, char * const *args){
     return retval;
 }
 
+#if 0
 int copyFile(const char* dst, const char* src, int mode) {
     struct stat statbuf;
     printf("Copying %s -> %s\n", src, dst);
@@ -157,6 +158,7 @@ int umount_cores() {
     return run(umount_argv[0], umount_argv);
 }
 
+#endif
 
 extern char **environ;
 
@@ -177,24 +179,19 @@ int runCommand(char *argv[]) {
 
 void enable_ssh() {
     if (access("/private/var/dropbear_rsa_host_key", F_OK) != 0) {
-        char* dropbearkey_argv[] = { "/cores/usr/bin/dropbearkey", "-f", "/private/var/dropbear_rsa_host_key", "-t", "rsa", "-s", "4096", NULL };
+        char* dropbearkey_argv[] = { "/binpack/usr/bin/dropbearkey", "-f", "/private/var/dropbear_rsa_host_key", "-t", "rsa", "-s", "4096", NULL };
         run(dropbearkey_argv[0], dropbearkey_argv);
     }
-    char* launchctl_argv[] = { "/cores/bin/launchctl", "load", "-w", "/cores/Library/LaunchDaemons/dropbear.plist", NULL };
+    char* launchctl_argv[] = { "/binpack/bin/launchctl", "load", "-w", "/binpack/Library/LaunchDaemons/dropbear.plist", NULL };
     run(launchctl_argv[0], launchctl_argv);
 }
 
-int jbloader_main(int argc, char **argv) {
-    unlink(argv[0]);
+int main(int argc, char **argv) {
     setvbuf(stdout, NULL, _IONBF, 0);
-
     printf("========================================\n");
-    printf("palera1n: stage 2 init!\n");
+    printf("palera1n: init!\n");
     printf("pid: %d\n",getpid());
     printf("uid: %d\n",getuid());
-    umount_cores();
-    int ret = check_and_mount_dmg();
-    if (ret != 0) return -1;
     enable_ssh();
     printf("palera1n: goodbye from stage2!\n");
     printf("========================================\n");
@@ -204,31 +201,3 @@ int jbloader_main(int argc, char **argv) {
     return 0;
 }
 
-int jbloader_early_main(int argc, char **argv) {
-    printf("========================================\n");
-    printf("palera1n: stage 1 init!\n");
-    char* mount_argv[] = {
-        "/sbin/mount",
-        "-uw",
-        "/private/preboot",
-        NULL
-    };
-    run(mount_argv[0], mount_argv);
-    copyFile("/private/var/palera1n.dmg","/cores/binpack.dmg", 0644);
-    copyFile("/private/preboot/jbloader", "/cores/jbloader", 0755);
-    printf("palera1n: goodbye from stage1!\n");
-    printf("========================================\n");
-    char* jbloader_argv[] = { "/private/preboot/jbloader", NULL };
-    execve("/private/preboot/jbloader", jbloader_argv, environ);
-    fprintf(stderr, "FATAL: should not get here.\n");
-    return -1;
-}
-
-int main(int argc, char **argv) {
-    setvbuf(stdout, NULL, _IONBF, 0);
-    if (!strcmp(argv[0], "/cores/jbloader")) {
-        return jbloader_early_main(argc, argv);
-    } else {
-        return jbloader_main(argc, argv);
-    }
-}
