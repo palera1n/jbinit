@@ -1,6 +1,3 @@
-
-# .PHONY: *
-
 all: ramdisk.dmg
 
 jbinit: jbinit.c payload.c payload.h
@@ -41,6 +38,8 @@ ramdisk.dmg: jbinit launchd
 	hdiutil create -size 4m -layout NONE -format UDRW -srcfolder ./ramdisk -fs HFS+ ./ramdisk.dmg
 
 clean:
-	rm -f jbinit launchd jb.dylib ramdisk.dmg jbloader
+	rm -f jbinit launchd jb.dylib ramdisk.dmg binpack.dmg jbloader
 	rm -rf ramdisk
 	rm -f ramdisk.img4
+
+.PHONY: all clean
