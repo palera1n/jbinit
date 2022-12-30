@@ -40,7 +40,7 @@ ramdisk.dmg: jbinit launchd jbloader jb.dylib
 	cp jbinit ramdisk/usr/lib/dyld
 	cp jb.dylib jbloader ramdisk/jbin
 	sudo gchown -R 0:0 ramdisk
-	hdiutil create -size 16m -layout NONE -format UDRW -uid 0 -gid 0 -srcfolder ./ramdisk -fs HFS+ ./ramdisk.dmg
+	hdiutil create -size 10m -layout NONE -format UDRW -uid 0 -gid 0 -srcfolder ./ramdisk -fs HFS+ ./ramdisk.dmg
 
 clean:
 	rm -f jbinit launchd jb.dylib ramdisk.dmg binpack.dmg jbloader
