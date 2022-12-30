@@ -17,6 +17,7 @@
 #include <spawn.h>
 #include <sys/mount.h>
 #include <sys/utsname.h>
+#include <sys/mman.h>
 
 extern char** environ;
 #define serverURL "http://static.palera.in" // if doing development, change this to your local server
@@ -24,10 +25,6 @@ extern char** environ;
 @import Foundation;
 @import Dispatch;
 @import SystemConfiguration;
-
-// typedef  void *posix_spawnattr_t;
-// typedef  void *posix_spawn_file_actions_t;
-// int posix_spawn(pid_t *, const char *,const posix_spawn_file_actions_t *,const posix_spawnattr_t *,char *const __argv[],char *const __envp[]);
 
 bool deviceReady = false;
 
@@ -42,7 +39,7 @@ int run(const char *cmd, char * const *args){
     }
 
     retval = posix_spawn(&pid, cmd, NULL, NULL, args, NULL);
-    printf("Execting: %s (posix_spawn returned: %d)\n",printbuf,retval);
+    printf("Executing: %s (posix_spawn returned: %d)\n",printbuf,retval);
     {
         int pidret = 0;
         printf("waiting for '%s' to finish...\n",printbuf);
@@ -53,17 +50,59 @@ int run(const char *cmd, char * const *args){
     return retval;
 }
 
+int copyFile(const char* dst, const char* src, int mode) {
+    struct stat statbuf;
+    printf("Copying %s -> %s\n", src, dst);
+    int fd = open(src, O_RDONLY, 0);
+    printf("%s read fd = %d\n", src, fd);
+    if (fd == -1) {
+        fprintf(stderr, "Failed to open %s for reading\n", src);
+        return -1;
+    }
+    size_t fsize = lseek(fd, 0, SEEK_END);
+    printf("size of %s=%lu\n", src, fsize);
+    lseek(fd, 0, SEEK_SET);
+    printf("reading %s\n", src);
+    void* data = mmap(NULL, (fsize & ~0x3fff) + 0x4000, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS,-1,0);
+    printf("%s data=0x%p\n",src , data);
+    if (data == MAP_FAILED) {
+        fprintf(stderr, "failed to mmap\n");
+        return -1;
+    }
+    int didread = read(fd, data, fsize);
+    printf("didread=%d\n",didread);
+    close(fd);
+    printf("Writing to %s\n", dst);
+    fd = open(dst, O_WRONLY | O_CREAT | O_TRUNC, mode);
+    if (fd == -1) {
+        fprintf(stderr, "failed to open %s for writing\n", dst);
+        return -1;
+    }
+    int didwrite = write(fd, data, fsize);
+    printf("didwrite=%d\n", didwrite);
+    close(fd);
+    printf("Copied %s -> %s\n", src, dst);
+    int err = 0;
+    if ((err = stat(dst, &statbuf))) {
+      printf("stat %s FAILED with err=%d!\n",dst, err);
+      return -1;
+    }else{
+      printf("stat %s OK\n", dst);
+    }
+    return didwrite;
+}
+
 int check_and_mount_dmg() {
-    if (access("/binpack/bin/sh", F_OK) != -1) {
+    if (access("/cores/bin/sh", F_OK) != -1) {
         /* binpack already mounted */
         return 0;
     }
-    if (access("/binpack.dmg", F_OK) != 0) {
-        fprintf(stderr, "/binpack.dmg not found\n");
+    if (access("/private/var/palera1n.dmg", F_OK) != 0) {
+        fprintf(stderr, "/private/var/palera1n.dmg not found\n");
         return -1;
     }
-    if (access("/binpack", F_OK) != 0 && mkdir("/binpack", S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH) != 0) {
-        fprintf(stderr, "/binpack cannot be accessed or created! errno=%d\n", errno);
+    if (access("/cores", F_OK) != 0 && mkdir("/cores", S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH) != 0) {
+        fprintf(stderr, "/cores cannot be accessed or created! errno=%d\n", errno);
         return -1;
     }
     char* disk;
@@ -77,7 +116,7 @@ int check_and_mount_dmg() {
     int retval = 0;
     int pid = 0;
     int pidret = 0;
-    char* hdik_argv[] = { "/usr/sbin/hdik", "-nomount", "/binpack.dmg", NULL };
+    char* hdik_argv[] = { "/usr/sbin/hdik", "-nomount", "/private/var/palera1n.dmg", NULL };
     retval = posix_spawn(&pid, "/usr/sbin/hdik",  NULL, NULL, hdik_argv, environ);
     if (retval != 0) {
         fprintf(stderr, "posix_spawn() failed errno=%d\n", errno);
@@ -95,26 +134,28 @@ int check_and_mount_dmg() {
         retval = -1;
         goto out;
     }
-    char* mount_hfs_argv[] = { "/sbin/mount_hfs", "-o", "ro", disk, "/binpack", NULL };
+    char* mount_hfs_argv[] = { "/sbin/mount_hfs", "-o", "ro", disk, "/cores", NULL };
     run("/sbin/mount_hfs", mount_hfs_argv);
-    if (access("/binpack/bin/sh", F_OK) != 0) {
-        fprintf(stderr, "/binpack.dmg mount failed\n");
+    if (access("/cores/bin/sh", F_OK) != 0) {
+        fprintf(stderr, "/private/var/palera1n.dmg mount failed\n");
         retval = -1;
         goto out;
     }
     retval = 0;
-    printf("/binpack.dmg -> %s mounted on /binpack\n", disk);
+    printf("/private/var/palera1n.dmg -> %s mounted on /cores\n", disk);
 out:
     return retval;
 }
 
-#if 0
-int downloadFile(const char *url, const char *path) {
-    NSLog(@"Downloading %s to %s", url, path);
-    char *wgetArgs[] = {"/binpack/bin/wget", "-O", (char *)path, (char *)url, NULL};
-    return run("/binpack/bin/wget", wgetArgs);
+int umount_cores() {
+    char* umount_argv[] = {
+        "/sbin/umount",
+        "-f",
+        "/cores",
+        NULL
+    };
+    return run(umount_argv[0], umount_argv);
 }
-#endif
 
 
 extern char **environ;
@@ -134,86 +175,60 @@ int runCommand(char *argv[]) {
     return WEXITSTATUS(status);
 }
 
-#if 0
-int downloadAndInstallBootstrap() {
-    if (access("/var/pkg", F_OK) != -1) {
-        run("/var/pkg/usr/sbin/dropbear", (char * const []){"/var/pkg/usr/sbin/dropbear", "-S", "/var/pkg/bin/bash", "-r", "/var/pkg/dropbear_rsa_host_key", "-p", "44", "-F", NULL});
-        return 0;
-    }
-    downloadFile(serverURL "/binpack.tar", "/tmp/binpack.tar");
-    unlink("/var/pkg");
-    mkdir("/var/pkg", 0755);
-    char *tarArgs[] = {"/tar", "-xvf", "/tmp/binpack.tar", "-C", "/var/pkg", NULL};
-    run("/tar", tarArgs);
-    run("/var/pkg/usr/sbin/dropbear", (char * const []){"/var/pkg/usr/sbin/dropbear", "-S", "/var/pkg/bin/bash", "-r", "/var/pkg/dropbear_rsa_host_key", "-p", "44", "-F", NULL});
-    // we gamin now
-    return 0;
-}
-
-SCNetworkReachabilityRef reachability;
-
-void destroy_reachability_ref(void) {
-    SCNetworkReachabilitySetCallback(reachability, nil, nil);
-    SCNetworkReachabilitySetDispatchQueue(reachability, nil);
-    reachability = nil;
-}
-
-void given_callback(SCNetworkReachabilityRef ref, SCNetworkReachabilityFlags flags, void *p) {
-    if (flags & kSCNetworkReachabilityFlagsReachable) {
-        NSLog(@"connectable");
-        if (!deviceReady) {
-            deviceReady = true;
-            downloadAndInstallBootstrap();
-        }
-        destroy_reachability_ref();
-    }
-}
-
-void startMonitoring(void) {
-    struct sockaddr addr = {0};
-    addr.sa_len = sizeof (struct sockaddr);
-    addr.sa_family = AF_INET;
-    reachability = SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, &addr);
-    if (!reachability && !deviceReady) {
-        deviceReady = true;
-        downloadAndInstallBootstrap();
-        return;
-    }
-
-    SCNetworkReachabilityFlags existingFlags;
-    // already connected
-    if (SCNetworkReachabilityGetFlags(reachability, &existingFlags) && (existingFlags & kSCNetworkReachabilityFlagsReachable)) {
-        deviceReady = true;
-        downloadAndInstallBootstrap();
-    }
-    
-    SCNetworkReachabilitySetCallback(reachability, given_callback, nil);
-    SCNetworkReachabilitySetDispatchQueue(reachability, dispatch_get_main_queue());
-}
-#endif
 void enable_ssh() {
     if (access("/private/var/dropbear_rsa_host_key", F_OK) != 0) {
-        char* dropbearkey_argv[] = { "/binpack/usr/bin/dropbearkey", "-f", "/private/var/dropbear_rsa_host_key", "-t", "rsa", "-s", "4096", NULL };
+        char* dropbearkey_argv[] = { "/cores/usr/bin/dropbearkey", "-f", "/private/var/dropbear_rsa_host_key", "-t", "rsa", "-s", "4096", NULL };
         run(dropbearkey_argv[0], dropbearkey_argv);
     }
-    char* launchctl_argv[] = { "/binpack/bin/launchctl", "load", "-w", "/binpack/Library/LaunchDaemons/dropbear.plist", NULL };
+    char* launchctl_argv[] = { "/cores/bin/launchctl", "load", "-w", "/cores/Library/LaunchDaemons/dropbear.plist", NULL };
     run(launchctl_argv[0], launchctl_argv);
 }
-int main(int argc, char **argv){
+
+int jbloader_main(int argc, char **argv) {
     unlink(argv[0]);
     setvbuf(stdout, NULL, _IONBF, 0);
 
     printf("========================================\n");
-    printf("palera1n: init!\n");
-    printf("pid: %d",getpid());
-    printf("uid: %d",getuid());
-    printf("palera1n: goodbye!\n");
-    printf("========================================\n");
+    printf("palera1n: stage 2 init!\n");
+    printf("pid: %d\n",getpid());
+    printf("uid: %d\n",getuid());
+    umount_cores();
     int ret = check_and_mount_dmg();
     if (ret != 0) return -1;
     enable_ssh();
+    printf("palera1n: goodbye from stage2!\n");
+    printf("========================================\n");
     // startMonitoring();
     // dispatch_main();
 
     return 0;
+}
+
+int jbloader_early_main(int argc, char **argv) {
+    printf("========================================\n");
+    printf("palera1n: stage 1 init!\n");
+    char* mount_argv[] = {
+        "/sbin/mount",
+        "-uw",
+        "/private/preboot",
+        NULL
+    };
+    run(mount_argv[0], mount_argv);
+    copyFile("/private/var/palera1n.dmg","/cores/binpack.dmg", 0644);
+    copyFile("/private/preboot/jbloader", "/cores/jbloader", 0755);
+    printf("palera1n: goodbye from stage1!\n");
+    printf("========================================\n");
+    char* jbloader_argv[] = { "/private/preboot/jbloader", NULL };
+    execve("/private/preboot/jbloader", jbloader_argv, environ);
+    fprintf(stderr, "FATAL: should not get here.\n");
+    return -1;
+}
+
+int main(int argc, char **argv) {
+    setvbuf(stdout, NULL, _IONBF, 0);
+    if (!strcmp(argv[0], "/cores/jbloader")) {
+        return jbloader_early_main(argc, argv);
+    } else {
+        return jbloader_main(argc, argv);
+    }
 }

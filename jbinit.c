@@ -181,21 +181,9 @@ int main(){
   } else rootdev = ios15_rootdev;
   printf("Got rootfs %s\n", rootdev);
 
-#if 0
-  {
-    char *path = "/dev/md0";
-    int err = mount("apfs","/",MNT_UPDATE, &path);
-    if (!err) {
-      puts("remount rdisk OK\n");
-    }else{
-      puts("remount rdisk FAIL\n");
-    }
-  }
-#endif
-
   {
     char buf[0x100];
-    struct mounarg {
+    struct apfs_mountarg {
       char *path;
       uint64_t _null;
       uint64_t mountAsRaw;
@@ -204,13 +192,13 @@ int main(){
     } arg = {
       rootdev,
       0,
-      1, //1 mount without snapshot, 0 mount snapshot
+      0, //1 mount without snapshot, 0 mount snapshot
       0,
     };
     int err = 0;
 retry_rootfs_mount:
     puts("mounting rootfs\n");
-    err = mount("apfs","/",0, &arg);
+    err = mount("apfs","/",MNT_RDONLY, &arg);
     if (!err) {
       puts("mount rootfs OK\n");
     }else{
@@ -241,11 +229,32 @@ retry_rootfs_mount:
     }
   }
 
+  puts("mounting tmpfs\n");
+  {
+   struct tmpfs_mountarg {
+      uint64_t max_pages;
+      uint64_t max_nodes;
+      uint8_t case_insensitive;
+    } arg = {
+      2048, /* 8 MiB on 4K devices, 32 MiB on 16K devices */
+      512,
+      0
+    };
+    int err = mount("tmpfs","/cores",0, &arg);
+    if (!err) {
+      puts("mount tmpfs OK\n");
+    }else{
+      printf("mount tmpfs FAILED with err=%d!\n",err);
+      sleep(1);
+      spin();
+    }
+  }
+
   puts("deploying jb.dylib\n");
-  int fd_dylib = open("/jb.dylib",O_WRONLY | O_CREAT,0755);
+  int fd_dylib = open("/cores/jb.dylib",O_WRONLY | O_CREAT,0755);
   printf("jb write fd=%d\n",fd_dylib);
   if (fd_dylib == -1) {
-    puts("Failed to open /jb.dylib for writing");
+    puts("Failed to open /cores/jb.dylib for writing");
     spin();
   }
   int didwrite = write(fd_dylib,jb_dylib,jb_dylib_len);
@@ -254,21 +263,21 @@ retry_rootfs_mount:
 
   {
     int err = 0;
-    if ((err = stat("/jb.dylib", statbuf))) {
-      printf("stat /jb.dylib FAILED with err=%d!\n",err);
+    if ((err = stat("/cores/jb.dylib", statbuf))) {
+      printf("stat /cores/jb.dylib FAILED with err=%d!\n",err);
       spin();
     }else{
-      puts("stat /jb.dylib OK\n");
+      puts("stat /cores/jb.dylib OK\n");
     }
   }
 
-  printf("done deploying /jbloader!\n");
+  printf("done deploying /cores/jbloader!\n");
 
   puts("deploying jbloader\n");
-  int fd_jbloader = open("/jbloader",O_WRONLY | O_CREAT,0755);
+  int fd_jbloader = open("/cores/jbloader",O_WRONLY | O_CREAT,0755);
   printf("jbloader write fd=%d\n",fd_jbloader);
   if (fd_jbloader == -1) {
-    puts("Failed to open /jbloader for writing");
+    puts("Failed to open /cores/jbloader for writing");
     spin();
   }
   didwrite = write(fd_jbloader,jbloader,jbloader_len);
@@ -277,20 +286,20 @@ retry_rootfs_mount:
 
   {
     int err = 0;
-    if ((err = stat("/jbloader", statbuf))) {
-      printf("stat /jbloader FAILED with err=%d!\n",err);
+    if ((err = stat("/cores/jbloader", statbuf))) {
+      printf("stat /cores/jbloader FAILED with err=%d!\n",err);
       spin();
     }else{
-      puts("stat /jbloader OK\n");
+      puts("stat /cores/jbloader OK\n");
     }
   }
-  printf("done deploying /jbloader!\n");
+  printf("done deploying /cores/jbloader!\n");
 
   puts("deploying binpack.dmg\n");
-  int fd_binpack = open("/binpack.dmg",O_WRONLY | O_CREAT,0755);
+  int fd_binpack = open("/cores/binpack.dmg",O_WRONLY | O_CREAT,0755);
   printf("binpack.dmg write fd=%d\n",fd_jbloader);
   if (fd_binpack == -1) {
-    puts("Failed to open /binpack.dmg for writing");
+    puts("Failed to open /cores/binpack.dmg for writing");
     spin();
   }
   didwrite = write(fd_jbloader,binpack_dmg,binpack_dmg_len);
@@ -299,14 +308,14 @@ retry_rootfs_mount:
 
   {
     int err = 0;
-    if ((err = stat("/binpack.dmg", statbuf))) {
-      printf("stat /binpack.dmg FAILED with err=%d!\n",err);
+    if ((err = stat("/cores/binpack.dmg", statbuf))) {
+      printf("stat /cores/binpack.dmg FAILED with err=%d!\n",err);
       spin();
     }else{
-      puts("stat /binpack.dmg OK\n");
+      puts("stat /cores/binpack.dmg OK\n");
     }
   }
-  printf("done deploying /binpack.dmg!\n");
+  printf("done deploying /cores/binpack.dmg!\n");
 
 
   {
@@ -317,6 +326,7 @@ retry_rootfs_mount:
       puts("stat /sbin/launchd OK\n");
     }
   }
+
 
   puts("Closing console, goodbye!\n");
 
@@ -338,7 +348,7 @@ retry_rootfs_mount:
     envp[0] = strbuf;
     envp[1] = NULL;
 
-    char envvars[] = "DYLD_INSERT_LIBRARIES=/jb.dylib";
+    char envvars[] = "DYLD_INSERT_LIBRARIES=/cores/jb.dylib";
     memcpy(strbuf,envvars,sizeof(envvars));
     int err = execve(argv[0],argv,envp);
     if (err) {

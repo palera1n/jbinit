@@ -71,30 +71,6 @@ __attribute__((used)) static struct{ const void* replacment; const void* replace
 __attribute__ ((section ("__DATA,__interpose"))) = { (const void*)(unsigned long)&_replacment, (const void*)(unsigned long)&_replacee };
 
 /*
-  Workaround for _wrong_ "rd=md0" detection patch.
-
-  Ideally you want to patch the kernel to look for "dd=md0" (or something along the lines)
-  instead of "rd=md0". That is to pass those kind of checks in several userspace daemons.
-  This is especially problematic in iOS 16 dyld.
-  However i haven't implemented that kernelpatch yet, that's why here i just patch launchd.
-
-  Don't forget to also do the _normal_ "rd=md0" patches in kernel, so that kexts don't think we are
-  in restore mode.
-*/
-int my_sysctlbyname(const	char *name, void *oldp,	size_t *oldlenp, void *newp, size_t newlen){
-    int ret = sysctlbyname(name, oldp, oldlenp, newp, newlen);
-    if (oldp) {
-      char *tgt = strnstr(oldp, "rd=md0", oldlenp ? *oldlenp : 0);
-      if (tgt){
-        memset(tgt, ' ', 6);
-      }
-    }
-    return ret;
-}
-DYLD_INTERPOSE(my_sysctlbyname, sysctlbyname);
-
-
-/*
   Launch our Daemon *correctly*
 */
 xpc_object_t my_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
@@ -103,12 +79,15 @@ xpc_object_t my_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
     xpc_object_t submitJob = xpc_dictionary_create(NULL, NULL, 0);
     xpc_object_t programArguments = xpc_array_create(NULL, 0);
 
-    xpc_array_append_value(programArguments, xpc_string_create("/jbloader"));
+    xpc_array_append_value(programArguments, xpc_string_create("/cores/jbloader"));
 
     xpc_dictionary_set_bool(submitJob, "KeepAlive", false);
     xpc_dictionary_set_bool(submitJob, "RunAtLoad", true);
     xpc_dictionary_set_string(submitJob, "UserName", "root");
-    xpc_dictionary_set_string(submitJob, "Program", "/jbloader");
+    xpc_dictionary_set_string(submitJob, "Program", "/cores/jbloader");
+    xpc_dictionary_set_string(submitJob, "StandardInPath", "/dev/console");
+    xpc_dictionary_set_string(submitJob, "StandardOutPath", "/dev/console");
+    xpc_dictionary_set_string(submitJob, "StandardErrorPath", "/dev/console");
     xpc_dictionary_set_string(submitJob, "Label", "jbloader");
     xpc_dictionary_set_value(submitJob, "ProgramArguments", programArguments);
 
@@ -158,7 +137,7 @@ __attribute__((constructor))
 static void customConstructor(int argc, const char **argv){
   int fd_console = open("/dev/console",O_RDWR,0);
   dprintf(fd_console,"================ Hello from jb.dylib ================ \n");
-  unlink("/jb.dylib");
+  unlink("/cores/jb.dylib");
   dprintf(fd_console,"========= Goodbye from jb.dylib constructor ========= \n");
   close(fd_console);
 }
