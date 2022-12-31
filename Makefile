@@ -3,22 +3,31 @@ SHELL := /usr/bin/env bash
 all: ramdisk.dmg
 
 jbinit: jbinit.c
-	xcrun -sdk iphoneos clang -Os -e__dyld_start -Wl,-dylinker -Wl,-dylinker_install_name,/usr/lib/dyld -nostdlib -static -Wl,-fatal_warnings -Wl,-dead_strip -Wl,-Z --target=arm64-apple-ios12.0 -std=gnu17 -flto -ffreestanding -U__nonnull -nostdlibinc -fno-stack-protector jbinit.c printf.c -o jbinit
+	xcrun -sdk iphoneos clang -Os -e__dyld_start -Wl,-dylinker -Wl,-dylinker_install_name,/usr/lib/dyld -nostdlib -static -Wl,-fatal_warnings -Wl,-dead_strip -Wl,-Z --target=arm64-apple-ios12.0 -std=gnu17 -flto -ffreestanding -U__nonnull -nostdlibinc -fno-stack-protector -Wall -Wextra jbinit.c printf.c -o jbinit
 	mv jbinit com.apple.dyld
 	ldid -S com.apple.dyld
 	mv com.apple.dyld jbinit
 
 jbloader: jbloader.c ent.xml
-	xcrun -sdk iphoneos clang -arch arm64 -Os jbloader.c -o jbloader # -fmodules -fobjc-arc
+	xcrun -sdk iphoneos clang -arch arm64 -Os jbloader.c -o jbloader -pthread -Wall -Wextra -funsigned-char -Wno-unused-parameter -DPOGO_DMG_PATH=\"/private/var/palera1n.dmg\" -DPOGO_CHECKSUM=\"$(shell shasum -a 512 Pogo.dmg | cut -d' ' -f1)\" -DPOGO_SIZE=$(shell stat -f%z Pogo.dmg)L
 	ldid -Sent.xml jbloader
 
 jb.dylib: jb.c
-	xcrun -sdk iphoneos clang -arch arm64 -Os -shared jb.c -o jb.dylib
+	xcrun -sdk iphoneos clang -arch arm64 -Os -Wall -Wextra -Wno-unused-parameter -shared jb.c -o jb.dylib
 	ldid -S jb.dylib
 
 binpack.dmg: binpack
 	rm -f ./binpack.dmg
-	hdiutil create -size 8m -layout NONE -format UDZO -srcfolder ./binpack -fs HFS+ ./binpack.dmg
+	sudo mkdir -p binpack/Applications
+	hdiutil create -size 8m -layout NONE -format ULFO -srcfolder ./binpack -fs HFS+ ./binpack.dmg
+
+Pogo.dmg: Pogo.ipa
+	rm -rf Payload
+	unzip Pogo.ipa
+	hdiutil create -size 128m -layout NONE -format ULFO -uid 0 -gid 0 -srcfolder ./Payload -fs HFS+ Pogo.dmg
+
+upload-pogo: Pogo.dmg
+	cat Pogo.dmg | inetcat 7777
 
 ramdisk.dmg: jbinit jbloader jb.dylib binpack.dmg
 	rm -f ramdisk.dmg

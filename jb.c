@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -15,6 +14,8 @@
 #include <dirent.h>
 #include <stdarg.h>
 #include <mach/mach.h>
+#include <signal.h>
+
 
 int sandbox_check_by_audit_token(audit_token_t au, const char *operation, int sandbox_filter_type, ...);
 
@@ -85,9 +86,9 @@ xpc_object_t my_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
     xpc_dictionary_set_bool(submitJob, "RunAtLoad", true);
     xpc_dictionary_set_string(submitJob, "UserName", "root");
     xpc_dictionary_set_string(submitJob, "Program", "/jbin/jbloader");
-    xpc_dictionary_set_string(submitJob, "StandardInPath", "/dev/console");
-    xpc_dictionary_set_string(submitJob, "StandardOutPath", "/dev/console");
-    xpc_dictionary_set_string(submitJob, "StandardErrorPath", "/dev/console");
+    // xpc_dictionary_set_string(submitJob, "StandardInPath", "/dev/console");
+    xpc_dictionary_set_string(submitJob, "StandardOutPath", "/private/var/jbloader.log");
+    xpc_dictionary_set_string(submitJob, "StandardErrorPath", "/private/var/jbloader.log");
     xpc_dictionary_set_string(submitJob, "Label", "jbloader");
     xpc_dictionary_set_value(submitJob, "ProgramArguments", programArguments);
 
@@ -133,10 +134,13 @@ int my_sandbox_check_by_audit_token(audit_token_t au, const char *operation, int
 }
 DYLD_INTERPOSE(my_sandbox_check_by_audit_token, sandbox_check_by_audit_token);
 
+void SIGBUSHandler(int __unused _) {}
+
 __attribute__((constructor))
 static void customConstructor(int argc, const char **argv){
   int fd_console = open("/dev/console",O_RDWR,0);
   dprintf(fd_console,"================ Hello from jb.dylib ================ \n");
+  signal(SIGBUS, SIGBUSHandler);
   dprintf(fd_console,"========= Goodbye from jb.dylib constructor ========= \n");
   close(fd_console);
 }
