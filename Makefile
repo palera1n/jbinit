@@ -19,7 +19,7 @@ jb.dylib: jb.c
 binpack.dmg: binpack
 	rm -f ./binpack.dmg
 	sudo mkdir -p binpack/Applications
-	hdiutil create -size 8m -layout NONE -format ULFO -srcfolder ./binpack -fs HFS+ ./binpack.dmg
+	hdiutil create -size 8m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -fs HFS+ ./binpack.dmg
 
 Pogo.dmg: Pogo.ipa
 	rm -rf Payload
