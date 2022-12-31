@@ -202,7 +202,7 @@ int main(){
       uint64_t _null;
       uint64_t mountAsRaw;
       uint32_t _pad;
-      char snapshpt[0x100];
+      char snapshot[0x100];
     } arg = {
       rootdev,
       0,

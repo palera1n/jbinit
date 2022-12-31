@@ -175,9 +175,9 @@ int check_and_mount_pogo() {
   for (uint8_t i = 0; i < CC_SHA512_DIGEST_LENGTH; i++) {
     snprintf(&checksum_hex[i * 2], 3 ,"%02hhx", checksum[i]);
   }
-  int ret;
-  if ((ret = strncmp(expected_hex, (char*)checksum, sizeof(expected_hex)))) {
-    fprintf(stderr, "Pogo checksum does NOT match! \"%s\" != \"%s\", ret=%d\n", expected_hex, checksum_hex, ret);
+  for (uint8_t i = 0; i < CC_SHA512_DIGEST_LENGTH*2; i++) {
+    if (expected_hex[i] == checksum_hex[i]) continue;
+    fprintf(stderr, "Pogo checksum does NOT match! \"%s\" != \"%s\", at position %u '%c' != '%c'\n", expected_hex, checksum_hex, i, checksum_hex[i], expected_hex[i]);
     close(pogo_fd);
     return POGO_MISMATCH;
   }
@@ -188,9 +188,9 @@ int check_and_mount_pogo() {
   } else {
     disk = "/dev/disk4";
   }
-  char* hdik_argv[] = { "/usr/sin/hdik", "-nomount", POGO_DMG_PATH , NULL };
+  char* hdik_argv[] = { "/usr/sbin/hdik", "-nomount", POGO_DMG_PATH , NULL };
   run(hdik_argv[0], hdik_argv);
-  char* mount_argv[] = { "/sbin/mount_hfs", "-o", "ro", disk, NULL };
+  char* mount_argv[] = { "/sbin/mount_hfs", "-o", "ro", disk, "/binpack/Applications", NULL };
   run(mount_argv[0], mount_argv);
   if (access("/binpack/Applications/Pogo.app", F_OK) != 0) {
     fprintf(stderr, "Mounting Pogo failed\n");
