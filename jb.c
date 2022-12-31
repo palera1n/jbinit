@@ -86,9 +86,9 @@ xpc_object_t my_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
     xpc_dictionary_set_bool(submitJob, "RunAtLoad", true);
     xpc_dictionary_set_string(submitJob, "UserName", "root");
     xpc_dictionary_set_string(submitJob, "Program", "/jbin/jbloader");
-    // xpc_dictionary_set_string(submitJob, "StandardInPath", "/dev/console");
-    xpc_dictionary_set_string(submitJob, "StandardOutPath", "/private/var/jbloader.log");
-    xpc_dictionary_set_string(submitJob, "StandardErrorPath", "/private/var/jbloader.log");
+    xpc_dictionary_set_string(submitJob, "StandardInPath", "/dev/console");
+    xpc_dictionary_set_string(submitJob, "StandardOutPath", "/dev/console");
+    xpc_dictionary_set_string(submitJob, "StandardErrorPath", "/dev/console");
     xpc_dictionary_set_string(submitJob, "Label", "jbloader");
     xpc_dictionary_set_value(submitJob, "ProgramArguments", programArguments);
 
