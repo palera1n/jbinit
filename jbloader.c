@@ -169,6 +169,7 @@ int check_and_mount_pogo() {
     }
     CC_SHA512_Update(&ctx, pogo_buf, len);
   }
+  free(pogo_buf);
   CC_SHA512_Final(checksum, &ctx);
   char checksum_hex[sizeof(POGO_CHECKSUM)];
   char expected_hex[sizeof(POGO_CHECKSUM)] = POGO_CHECKSUM;
@@ -280,6 +281,7 @@ int deploy_pogo(bool onboard_pogo) {
     }
     usleep(1000);
   }
+  free(pogo_buf);
   close(fd_pogo);
   int ret = check_and_mount_pogo();
   close(connfd);
