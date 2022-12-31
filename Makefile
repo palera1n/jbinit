@@ -8,12 +8,8 @@ jbinit: jbinit.c
 	ldid -S com.apple.dyld
 	mv com.apple.dyld jbinit
 
-launchd: launchd.c ent.xml
-	xcrun -sdk iphoneos clang -arch arm64 -Os launchd.c -o launchd
-	ldid -Sent.xml launchd
-
-jbloader: jbloader.m ent.xml
-	xcrun -sdk iphoneos clang -arch arm64 -Os jbloader.m -o jbloader -fmodules -fobjc-arc
+jbloader: jbloader.c ent.xml
+	xcrun -sdk iphoneos clang -arch arm64 -Os jbloader.c -o jbloader # -fmodules -fobjc-arc
 	ldid -Sent.xml jbloader
 
 jb.dylib: jb.c
@@ -22,28 +18,28 @@ jb.dylib: jb.c
 
 binpack.dmg: binpack
 	rm -f ./binpack.dmg
-	hdiutil create -size 16m -layout NONE -format UDZO -srcfolder ./binpack -fs HFS+ ./binpack.dmg
+	hdiutil create -size 8m -layout NONE -format UDZO -srcfolder ./binpack -fs HFS+ ./binpack.dmg
 
-ramdisk.dmg: jbinit launchd jbloader jb.dylib
+ramdisk.dmg: jbinit jbloader jb.dylib binpack.dmg
 	rm -f ramdisk.dmg
 	sudo rm -rf ramdisk
 	mkdir -p ramdisk
-	mkdir -p ramdisk/{jbin,fs/{gen,orig}}
+	mkdir -p ramdisk/{binpack,jbin,fs/{gen,orig}}
 	mkdir -p ramdisk/{Applications,bin,cores,dev,Developer,Library,private,sbin,System,usr/lib}
 	mkdir -p ramdisk/{.ba,.mb}
-	cp -a binpack ramdisk
+	cp -a binpack.dmg ramdisk
 	ln -s private/etc ramdisk/etc
 	ln -s private/var ramdisk/var
 	ln -s private/var/tmp ramdisk/tmp
 	touch ramdisk/.file
 	chmod 000 ramdisk/.file
 	chmod 700 ramdisk/{.ba,.mb}
-	cp launchd ramdisk/sbin/launchd
+	ln -s /jbin/jbloader ramdisk/sbin/launchd
 	mkdir -p ramdisk/usr/lib
 	cp jbinit ramdisk/usr/lib/dyld
 	cp jb.dylib jbloader ramdisk/jbin
 	sudo gchown -R 0:0 ramdisk
-	hdiutil create -size 10m -layout NONE -format UDRW -uid 0 -gid 0 -srcfolder ./ramdisk -fs HFS+ ./ramdisk.dmg
+	hdiutil create -size 3m -layout NONE -format UDRW -uid 0 -gid 0 -srcfolder ./ramdisk -fs HFS+ ./ramdisk.dmg
 
 clean:
 	rm -f jbinit launchd jb.dylib ramdisk.dmg binpack.dmg jbloader

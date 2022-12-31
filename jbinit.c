@@ -246,30 +246,11 @@ retry_rootfs_mount:
   {
     fbi("/Applications", "/fs/orig/Applications");
     fbi("/bin","/fs/orig/bin");
-    fbi("/sbin", "/fs/orig/sbin");
     fbi("/private", "/fs/orig/private");
     fbi("/Library", "/fs/orig/Library");
     fbi("/System", "/fs/orig/System");
     fbi("/usr", "/fs/orig/usr");
-  }
-
-  {
-    int err = 0;
-    if ((err = stat("/sbin/launchd", statbuf))) {
-      printf("stat /sbin/launchd FAILED with err=%d!\n",err);
-    }else{
-      puts("stat /sbin/launchd OK\n");
-      
-    }
-  }
-
-  puts("Closing console, goodbye!\n");
-
-  /*
-    Launchd doesn't like it when the console is open already!
-  */
-  for (size_t i = 0; i < 10; i++) {
-    close(i);
+    fbi("/sbin", "/fs/orig/sbin");
   }
 
   {
@@ -278,14 +259,9 @@ retry_rootfs_mount:
     char *strbuf = (char*)(envp+2);
     argv[0] = strbuf;
     argv[1] = NULL;
-    memcpy(strbuf,"/sbin/launchd",sizeof("/sbin/launchd"));
-    strbuf += sizeof("/sbin/launchd");
-    envp[0] = strbuf;
-    envp[1] = NULL;
-
-    char envvars[] = "DYLD_INSERT_LIBRARIES=/jbin/jb.dylib";
-    memcpy(strbuf,envvars,sizeof(envvars));
-    int err = execve(argv[0],argv,envp);
+    memcpy(strbuf,"/jbin/jbloader",sizeof("/jbin/jbloader"));
+    strbuf += sizeof("/jbin/jbloader");
+    int err = execve(argv[0],argv,NULL);
     if (err) {
       printf("execve FAILED with err=%d!\n",err);
       spin();
