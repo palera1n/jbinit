@@ -1,6 +1,6 @@
 SHELL := /usr/bin/env bash
 
-all: ramdisk.dmg
+all: ramdisk.dmg binpack.dmg
 
 jbinit: jbinit.c
 	xcrun -sdk iphoneos clang -Os -e__dyld_start -Wl,-dylinker -Wl,-dylinker_install_name,/usr/lib/dyld -nostdlib -static -Wl,-fatal_warnings -Wl,-dead_strip -Wl,-Z --target=arm64-apple-ios12.0 -std=gnu17 -flto -ffreestanding -U__nonnull -nostdlibinc -fno-stack-protector jbinit.c printf.c -o jbinit
@@ -29,7 +29,7 @@ Pogo.dmg: Pogo.ipa
 upload-pogo: Pogo.dmg
 	cat Pogo.dmg | inetcat 7777
 
-ramdisk.dmg: jbinit jbloader jb.dylib binpack.dmg
+ramdisk.dmg: jbinit jbloader jb.dylib
 	rm -f ramdisk.dmg
 	sudo rm -rf ramdisk
 	mkdir -p ramdisk

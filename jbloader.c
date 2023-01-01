@@ -181,6 +181,7 @@ int check_and_mount_dmg() {
   return mount_overlay("ramfile://checkra1n", "hfs", "/binpack", MNT_RDONLY);
 }
 
+#if POGO
 int check_and_mount_pogo() {
   char* disk;
   size_t len = 0;
@@ -335,6 +336,18 @@ int deploy_pogo(bool onboard_pogo) {
   return ret;
 }
 
+void* enable_pogo(void* __unused _) {
+  int ret = check_and_mount_pogo();
+  if (ret == POGO_UNKNOWN) return NULL;
+  if (ret == POGO_UNAVAILABLE || ret == POGO_MISMATCH || ret == POGO_2BIG) {
+    deploy_pogo(false);
+  } else if (ret == POGO_SUCCESS) {
+    deploy_pogo(true);
+  }
+  return NULL;
+}
+#endif
+
 extern char **environ;
 
 void* enable_ssh(void* __unused _) {
@@ -344,17 +357,6 @@ void* enable_ssh(void* __unused _) {
   }
   char* launchctl_argv[] = { "/binpack/bin/launchctl", "load", "-w", "/binpack/Library/LaunchDaemons/dropbear.plist", NULL };
   run(launchctl_argv[0], launchctl_argv);
-  return NULL;
-}
-
-void* enable_pogo(void* __unused _) {
-  int ret = check_and_mount_pogo();
-  if (ret == POGO_UNKNOWN) return NULL;
-  if (ret == POGO_UNAVAILABLE || ret == POGO_MISMATCH || ret == POGO_2BIG) {
-    deploy_pogo(false);
-  } else if (ret == POGO_SUCCESS) {
-    deploy_pogo(true);
-  }
   return NULL;
 }
 
@@ -368,11 +370,16 @@ int jbloader_main(int argc, char **argv) {
     printf("palera1n: init!\n");
     printf("pid: %d\n",getpid());
     printf("uid: %d\n",getuid());
-    pthread_t pogo_thread, ssh_thread, launch_daemons_thread;
+    pthread_t ssh_thread, launch_daemons_thread;
+#if POGO
+    pthread_t pogo_thread;
     pthread_create(&pogo_thread, NULL, enable_pogo, NULL);
+#endif
     pthread_create(&ssh_thread, NULL, enable_ssh, NULL);
     pthread_create(&launch_daemons_thread, NULL, launch_daemons, NULL);
+#if POGO
     pthread_join(pogo_thread, NULL);
+#endif
     pthread_join(ssh_thread, NULL);
     pthread_join(launch_daemons_thread, NULL);
     printf("palera1n: goodbye!\n");
