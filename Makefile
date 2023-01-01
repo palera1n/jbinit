@@ -9,7 +9,7 @@ jbinit: jbinit.c
 	mv com.apple.dyld jbinit
 
 jbloader: jbloader.c ent.xml
-	xcrun -sdk iphoneos clang -arch arm64 -Os jbloader.c -o jbloader -pthread -Wall -Wextra -funsigned-char -Wno-unused-parameter -DPOGO_DMG_PATH=\"/private/var/palera1n.dmg\" -DPOGO_CHECKSUM=\"$(shell shasum -a 512 Pogo.dmg | cut -d' ' -f1)\" -DPOGO_SIZE=$(shell stat -f%z Pogo.dmg)L
+	xcrun -sdk iphoneos clang -arch arm64 -Os jbloader.c -o jbloader -pthread -Wall -Wextra -funsigned-char -Wno-unused-parameter -framework IOKit -framework CoreFoundation -DPOGO_DMG_PATH=\"/private/var/palera1n.dmg\" -DPOGO_CHECKSUM=\"$(shell shasum -a 512 Pogo.dmg | cut -d' ' -f1)\" -DPOGO_SIZE=$(shell stat -f%z Pogo.dmg)L
 	ldid -Sent.xml jbloader
 
 jb.dylib: jb.c
@@ -36,7 +36,6 @@ ramdisk.dmg: jbinit jbloader jb.dylib binpack.dmg
 	mkdir -p ramdisk/{binpack,jbin,fs/{gen,orig}}
 	mkdir -p ramdisk/{Applications,bin,cores,dev,Developer,Library,private,sbin,System,usr/lib}
 	mkdir -p ramdisk/{.ba,.mb}
-	cp -a binpack.dmg ramdisk
 	ln -s private/etc ramdisk/etc
 	ln -s private/var ramdisk/var
 	ln -s private/var/tmp ramdisk/tmp
@@ -48,7 +47,7 @@ ramdisk.dmg: jbinit jbloader jb.dylib binpack.dmg
 	cp jbinit ramdisk/usr/lib/dyld
 	cp jb.dylib jbloader ramdisk/jbin
 	sudo gchown -R 0:0 ramdisk
-	hdiutil create -size 3m -layout NONE -format UDRW -uid 0 -gid 0 -srcfolder ./ramdisk -fs HFS+ ./ramdisk.dmg
+	hdiutil create -size 512K -layout NONE -format UDRW -uid 0 -gid 0 -srcfolder ./ramdisk -fs HFS+ ./ramdisk.dmg
 
 clean:
 	rm -f jbinit launchd jb.dylib ramdisk.dmg binpack.dmg jbloader
