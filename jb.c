@@ -14,6 +14,7 @@
 #include <dirent.h>
 #include <stdarg.h>
 #include <mach/mach.h>
+#include <mach-o/dyld.h>
 #include <signal.h>
 
 
@@ -133,6 +134,19 @@ int my_sandbox_check_by_audit_token(audit_token_t au, const char *operation, int
     return sandbox_check_by_audit_token(au, operation, sandbox_filter_type, name, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
 }
 DYLD_INTERPOSE(my_sandbox_check_by_audit_token, sandbox_check_by_audit_token);
+
+int _my__NSGetExecutablePath(char* buf, uint32_t* bufsize) {
+  if (getpid() != 1) return _NSGetExecutablePath(buf, bufsize);
+  else if (*bufsize > sizeof("/jbin/jbloader")) {
+    strncpy(buf, "/jbin/jbloader", (size_t)(*bufsize));
+    return 0;
+  } else {
+    *bufsize = sizeof("/jbin/jbloader");
+    return -1;
+  }
+  return 0;
+}
+DYLD_INTERPOSE(_my__NSGetExecutablePath, _NSGetExecutablePath);
 
 void SIGBUSHandler(int __unused _) {}
 
