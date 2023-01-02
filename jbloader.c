@@ -16,12 +16,43 @@
 #include <stdbool.h>
 #include <spawn.h>
 #include <sys/mount.h>
+#include <fcntl.h>
 #include <sys/utsname.h>
 #include <sys/mman.h>
 #include <CommonCrypto/CommonDigest.h>
 #include <pthread.h>
+#include <dlfcn.h>
 #include <IOKit/IOKitLib.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include "kerninfo.h"
+
+#ifndef RAMDISK
+#define RAMDISK "/dev/rmd0"
+#endif
+
+#define PRINTF_BINARY_PATTERN_INT8 "%c%c%c%c%c%c%c%c"
+#define PRINTF_BYTE_TO_BINARY_INT8(i)    \
+    (((i) & 0x80ll) ? '1' : '0'), \
+    (((i) & 0x40ll) ? '1' : '0'), \
+    (((i) & 0x20ll) ? '1' : '0'), \
+    (((i) & 0x10ll) ? '1' : '0'), \
+    (((i) & 0x08ll) ? '1' : '0'), \
+    (((i) & 0x04ll) ? '1' : '0'), \
+    (((i) & 0x02ll) ? '1' : '0'), \
+    (((i) & 0x01ll) ? '1' : '0')
+
+#define PRINTF_BINARY_PATTERN_INT16 \
+    PRINTF_BINARY_PATTERN_INT8              PRINTF_BINARY_PATTERN_INT8
+#define PRINTF_BYTE_TO_BINARY_INT16(i) \
+    PRINTF_BYTE_TO_BINARY_INT8((i) >> 8),   PRINTF_BYTE_TO_BINARY_INT8(i)
+#define PRINTF_BINARY_PATTERN_INT32 \
+    PRINTF_BINARY_PATTERN_INT16             PRINTF_BINARY_PATTERN_INT16
+#define PRINTF_BYTE_TO_BINARY_INT32(i) \
+    PRINTF_BYTE_TO_BINARY_INT16((i) >> 16), PRINTF_BYTE_TO_BINARY_INT16(i)
+#define PRINTF_BINARY_PATTERN_INT64    \
+    PRINTF_BINARY_PATTERN_INT32             PRINTF_BINARY_PATTERN_INT32
+#define PRINTF_BYTE_TO_BINARY_INT64(i) \
+    PRINTF_BYTE_TO_BINARY_INT32((i) >> 32), PRINTF_BYTE_TO_BINARY_INT32(i)
 
 extern char** environ;
 #define serverURL "http://static.palera.in" // if doing development, change this to your local server
@@ -81,9 +112,44 @@ int run_async(const char *cmd, char * const *args) {
     snprintf(printbuf+csize,sizeof(printbuf)-csize, "%s ",*a);
   }
   retval = posix_spawn(&pid, cmd, NULL, NULL, args, NULL);
-  printf("Asynchronous execution: %s (posix_spawn returned: %d)\n",cmd,retval);
+  printf("Asynchronous execution: %s (posix_spawn returned: %d)\n",printbuf,retval);
   return retval;
 }
+
+int get_boot_manifest_hash(char hash[97]) {
+	const UInt8 *bytes;
+	CFIndex length;
+	io_registry_entry_t chosen = IORegistryEntryFromPath(0, "IODeviceTree:/chosen");
+	assert(chosen);
+	CFDataRef manifestHash = (CFDataRef)IORegistryEntryCreateCFProperty(chosen, CFSTR("boot-manifest-hash"), kCFAllocatorDefault, 0);
+	if (manifestHash == NULL || CFGetTypeID(manifestHash) != CFDataGetTypeID()) {
+		return 1;
+	}
+	length = CFDataGetLength(manifestHash);
+	bytes = CFDataGetBytePtr(manifestHash);
+	CFRelease(manifestHash);
+	for (int i = 0; i < length; i++) {
+		snprintf(&hash[i * 2], 3, "%02X", bytes[i]);
+	}
+	return 0;
+}
+
+int get_kerninfo(struct kerninfo* info, char* rd) {
+	uint32_t ramdisk_size_actual;
+	errno = 0;
+	int fd = open(rd, O_RDONLY);
+	if (fd == -1) return errno;
+	read(fd, &ramdisk_size_actual, 4);
+	lseek(fd, (long)(ramdisk_size_actual), SEEK_SET);
+	if (errno != 0) return errno;
+  	ssize_t didread = read(fd, info, sizeof(struct kerninfo));
+	if ((unsigned long)didread != sizeof(struct kerninfo) || info->size != (uint64_t)sizeof(struct kerninfo)) {
+		return EINVAL;
+	}
+	close(fd);
+	return 0;
+}
+
 
 int mount_overlay(const char* device, const char* fstype, const char* mnt, const int mntopts) {
 	CFDictionaryKeyCallBacks key_callback = kCFTypeDictionaryKeyCallBacks;
@@ -181,172 +247,6 @@ int check_and_mount_dmg() {
   return mount_overlay("ramfile://checkra1n", "hfs", "/binpack", MNT_RDONLY);
 }
 
-#if POGO
-int check_and_mount_pogo() {
-  char* disk;
-  size_t len = 0;
-  size_t total_len = 0;
-  char* pogo_buf = malloc(1048576);
-  if (pogo_buf == NULL) {
-    fprintf(stderr, "cannot allocate memory\n");
-    return POGO_UNKNOWN;
-  }
-  unsigned char checksum[CC_SHA512_DIGEST_LENGTH];
-  struct utsname name;
-  CC_SHA512_CTX ctx;
-  CC_SHA512_Init(&ctx);
-  printf("Checking Pogo\n");
-  if (access("/binpack/Applications/Pogo.app", F_OK) != -1) {
-    printf("Pogo already mounted\n");
-    return POGO_SUCCESS;
-  }
-  if (access(POGO_DMG_PATH, F_OK) != 0) {
-    printf("Pogo not available yet\n");
-    return POGO_UNAVAILABLE;
-  }
-  int pogo_fd = open(POGO_DMG_PATH, O_RDONLY);
-  if (pogo_fd == -1) {
-    fprintf(stderr, "failed to open Pogo\n");
-    return POGO_UNKNOWN;
-  }
-  while ((len = read(pogo_fd, pogo_buf, 1048576)) > 0) {
-    total_len += len;
-    if (total_len > POGO_SIZE) {
-      fprintf(stderr, "Pogo too large\n");
-      return POGO_2BIG;
-    }
-    CC_SHA512_Update(&ctx, pogo_buf, len);
-  }
-  free(pogo_buf);
-  CC_SHA512_Final(checksum, &ctx);
-  char checksum_hex[sizeof(POGO_CHECKSUM)];
-  char expected_hex[sizeof(POGO_CHECKSUM)] = POGO_CHECKSUM;
-  for (uint8_t i = 0; i < CC_SHA512_DIGEST_LENGTH; i++) {
-    snprintf(&checksum_hex[i * 2], 3 ,"%02hhx", checksum[i]);
-  }
-  for (uint8_t i = 0; i < CC_SHA512_DIGEST_LENGTH*2; i++) {
-    if (expected_hex[i] == checksum_hex[i]) continue;
-    fprintf(stderr, "Pogo checksum does NOT match! \"%s\" != \"%s\", at position %u '%c' != '%c'\n", expected_hex, checksum_hex, i, checksum_hex[i], expected_hex[i]);
-    close(pogo_fd);
-    return POGO_MISMATCH;
-  }
-  close(pogo_fd);
-  uname(&name);
-  if (atoi(name.release) > 21) {
-    disk = "/dev/disk5";
-  } else {
-    disk = "/dev/disk4";
-  }
-  char* hdik_argv[] = { "/usr/sbin/hdik", "-nomount", POGO_DMG_PATH , NULL };
-  run(hdik_argv[0], hdik_argv);
-  char* mount_argv[] = { "/sbin/mount_hfs", "-o", "ro", disk, "/binpack/Applications", NULL };
-  run(mount_argv[0], mount_argv);
-  if (access("/binpack/Applications/Pogo.app", F_OK) != 0) {
-    fprintf(stderr, "Mounting Pogo failed\n");
-    return POGO_UNKNOWN;
-  }
-  printf("%s mounted on /binpack/Applications\n", POGO_DMG_PATH);
-  char* uicache_argv[] = { "/binpack/usr/bin/uicache", "-p", "/binpack/Applications/Pogo.app", NULL };
-  run(uicache_argv[0], uicache_argv);
-  return POGO_SUCCESS;
-}
-
-int deploy_pogo(bool onboard_pogo) {
-  int err = 0;
-  int serverfd = 0;
-  ssize_t total_len = 0;
-  uint16_t zero_counter = 0;
-  errno = 0;
-  struct sockaddr_in servaddr = {
-      .sin_family = AF_INET,
-      .sin_addr.s_addr = htonl(INADDR_ANY),
-      .sin_port = htons(7777)
-  };
-  if (!((serverfd = socket(AF_INET, SOCK_STREAM, 0))>0)){
-    printf("Failed to creat server socket\n");
-    return POGO_UNKNOWN;
-  }
-  printf("[deployFiles] Socket ok\n");
-
-  if ((err = bind(serverfd, (struct sockaddr*)&servaddr, sizeof(servaddr)))){
-    printf("Failed to bind socket with error=%d errno=%d (%s)\n",err,errno,strerror(errno));
-    return POGO_UNKNOWN;
-  }
-  printf("[deployFiles] Bind ok\n");
-
-  if ((err = listen(serverfd, 100))){
-    printf("Failed to listen on socket with error=%d errno=%d (%s)\n",err,errno,strerror(errno));
-    return POGO_UNKNOWN;
-  }
-  printf("[deployFiles] Listen ok\n");
-  int connfd = 0;
-  struct sockaddr_in client = {};
-  ssize_t len = 0;
-  if (!((connfd = accept(serverfd, (struct sockaddr*)&client, (socklen_t*)&len))>0)){
-    printf("Failed to accept client\n");
-    return POGO_UNKNOWN;
-  }
-  printf("[deployFiles] Accepted client connection for Pogo!\n");
-  // dup2(connfd, STDOUT_FILENO);
-  // dup2(connfd, STDERR_FILENO);
-  if (onboard_pogo == true) {
-    printf("Pogo already uploaded\n");
-    close(connfd);
-    return POGO_SUCCESS;
-  }
-  int fd_pogo = -1;
-  if ((fd_pogo = open(POGO_DMG_PATH, O_CREAT | O_WRONLY | O_TRUNC, 0644)) == -1) {
-    printf("failed to open '%s'\n",POGO_DMG_PATH);
-    close(connfd);
-    return POGO_UNKNOWN;
-  }
-  char* pogo_buf = malloc(1048576);
-  if (pogo_buf == NULL) {
-    fprintf(stderr, "cannot allocate memory\n");
-    return POGO_UNKNOWN;
-  }
-  while (zero_counter < UINT16_MAX && total_len < POGO_SIZE) {
-    len = read(connfd, pogo_buf, 1048576);
-    if (len == 0 || len < 0) {
-      if (len < 0) printf("cannot read Pogo, errno=%d (%s)\n", errno, strerror(errno));
-      zero_counter += 1;
-      usleep(1000);
-      continue;
-    }
-    else zero_counter = 0;
-    total_len += len;
-    printf("total_len = %ld, target size = %ld\n", total_len, POGO_SIZE);
-    if (total_len > POGO_SIZE) {
-      fprintf(stderr, "Pogo too big, total_len = %lu, POGO_SIZE=%lu\n", total_len, POGO_SIZE);
-      close(connfd);
-      return POGO_2BIG;
-    }
-    ssize_t wrote = write(fd_pogo, pogo_buf, (size_t)len);
-    printf("wrote %ld/%ld bytes\n", wrote, len);
-    if (wrote == -1) {
-      printf("cannot write pogo, errno=%d (%s)\n", errno, strerror(errno));
-      return POGO_UNKNOWN;
-    }
-    usleep(1000);
-  }
-  free(pogo_buf);
-  close(fd_pogo);
-  int ret = check_and_mount_pogo();
-  close(connfd);
-  return ret;
-}
-
-void* enable_pogo(void* __unused _) {
-  int ret = check_and_mount_pogo();
-  if (ret == POGO_UNKNOWN) return NULL;
-  if (ret == POGO_UNAVAILABLE || ret == POGO_MISMATCH || ret == POGO_2BIG) {
-    deploy_pogo(false);
-  } else if (ret == POGO_SUCCESS) {
-    deploy_pogo(true);
-  }
-  return NULL;
-}
-#endif
 
 extern char **environ;
 
@@ -360,8 +260,144 @@ void* enable_ssh(void* __unused _) {
   return NULL;
 }
 
-void* launch_daemons(void* __unused _) {
+int jailbreak_obliterator() {
+  printf("Obliterating jailbraek\n");
+  char hash[97];
+  char prebootPath[150] = "/private/preboot/";
+  int ret = get_boot_manifest_hash(hash);
+  if (ret != 0) {
+    fprintf(stderr, "cannot get boot manifest hash\n");
+    return ret;
+  }
+  if (access("/var/jb/Applications", F_OK) == 0) {
+    DIR *d = NULL;
+    struct dirent *dir = NULL;
+    if (!(d = opendir("/var/jb/Applications"))) {
+      fprintf(stderr, "Failed to open dir with err=%d (%s)\n",errno,strerror(errno));
+      return -1;
+    }
+    char *pp = NULL;
+    asprintf(&pp,"/var/jb/Applications/%s",dir->d_name);
+    {
+      char *args[] = {
+      "/binpack/usr/bin/uicache",
+      "-u",
+      pp,
+      NULL
+      };
+      run(args[0],args);
+    }
+    free(pp);
+    closedir(d);
+  }
+  printf("Apps now unregistered\n");
+  strncat(prebootPath, hash, 150 - 97);
+  strncat(prebootPath, "/procursus", 150 - 97 - sizeof("/private/preboot/"));
+  char* rm_argv[] = {
+    "/binpack/bin/rm",
+    "-rf",
+    "/var/jb",
+    prebootPath,
+    "/var/lib",
+    "/var/cache",
+    NULL
+  };
+  run(rm_argv[0], rm_argv);
+  printf("Jailbreak obliterated\n");
+  return 0;
+}
+
+int uicache_apps() {
+  if (access("/var/jb/usr/bin/uicache", F_OK) == 0) {
+    char* uicache_argv[] = {
+      "/var/jb/usr/bin/uicache",
+      "-a",
+      NULL
+    };
+    run_async(uicache_argv[0], uicache_argv);
+    return 0;
+  } else return 0;
+}
+
+int load_etc_rc_d() {
+  if (access("/var/jb/etc/rc.d", F_OK) != 0) return 0;
+  DIR *d = NULL;
+  struct dirent *dir = NULL;
+  if (!(d = opendir("/var/jb/etc/rc.d"))) {
+    fprintf(stderr, "Failed to open dir with err=%d (%s)\n",errno,strerror(errno));
+    return -1;
+  }
+  char *pp = NULL;
+  asprintf(&pp,"/var/jb/etc/rc.d/%s",dir->d_name);
+  {
+    char *args[] = {
+      pp,
+      NULL
+    };
+    run_async(args[0],args);
+  }
+  free(pp);
+  closedir(d);
+  return 0;
+}
+
+int loadDaemons() {
+  if (access("/var/jb/Library/LaunchDaemons", F_OK) != 0) return 0;
+  {
+    char *args[] = {
+      "/var/jb/bin/launchctl",
+      "load",
+      "/var/jb/Library/LaunchDaemons",
+      NULL
+    };
+    run_async(args[0],args);
+  }
+  return 0;
+}
+struct kerninfo info;
+
+void safemode_alert(CFNotificationCenterRef center, void *observer,
+	CFStringRef name, const void *object, CFDictionaryRef userInfo) {
+  int ret;
+  CFMutableDictionaryRef dict = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+  CFDictionarySetValue(dict, kCFUserNotificationAlertHeaderKey, CFSTR("Entered Safe Mode"));
+  if (checkrain_option_enabled(checkrain_option_failure, info.flags)) {
+    CFDictionarySetValue(dict, kCFUserNotificationAlertMessageKey, CFSTR("jbloader entered safe mode due to an error"));
+  } else {
+    CFDictionarySetValue(dict, kCFUserNotificationAlertMessageKey, CFSTR("jbloader entered safe mode due to an user request"));
+  }
+  CFUserNotificationCreate(kCFAllocatorDefault, 0, 0, &ret, dict);
+  if (ret != 0) {
+    fprintf(stderr, "CFUserNotificationCreate() returned %d %s\n", ret, mach_error_string(ret));
+  }
+  printf("Safe mode notification alert sent\n");
+  return;
+}
+
+void* prep_jb(void* __unused _) {
+  assert(info.size == sizeof(struct kerninfo));
+  if (checkrain_option_enabled(checkrain_option_force_revert, info.flags)) {
+    jailbreak_obliterator();
+    return NULL;
+  }
+  if (checkrain_option_enabled(checkrain_option_safemode, info.flags)) {
+    printf("Safe mode is enabled\n");
+  } else {
+    load_etc_rc_d();
+    loadDaemons();
+  }
+  uicache_apps();
   return NULL;
+}
+
+int remount() {
+  char* args[] = {
+    "/sbin/mount",
+    "-uw",
+    "/private/preboot",
+    NULL
+  };
+  return run(args[0], args);
 }
 
 int jbloader_main(int argc, char **argv) {
@@ -370,22 +406,32 @@ int jbloader_main(int argc, char **argv) {
     printf("palera1n: init!\n");
     printf("pid: %d\n",getpid());
     printf("uid: %d\n",getuid());
-    pthread_t ssh_thread, launch_daemons_thread;
-#if POGO
-    pthread_t pogo_thread;
-    pthread_create(&pogo_thread, NULL, enable_pogo, NULL);
-#endif
+    int ret = get_kerninfo(&info, RAMDISK);
+    if (ret != 0) {
+      fprintf(stderr, "cannot get kerninfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
+      return 1;
+    }
+    remount();
+    pthread_t ssh_thread, prep_jb_thread;
     pthread_create(&ssh_thread, NULL, enable_ssh, NULL);
-    pthread_create(&launch_daemons_thread, NULL, launch_daemons, NULL);
-#if POGO
-    pthread_join(pogo_thread, NULL);
-#endif
+    pthread_create(&prep_jb_thread, NULL, prep_jb, NULL);
     pthread_join(ssh_thread, NULL);
-    pthread_join(launch_daemons_thread, NULL);
+    pthread_join(prep_jb_thread, NULL);
+    if (checkrain_option_enabled(checkrain_option_safemode, info.flags)) {
+      CFNotificationCenterAddObserver(
+		  CFNotificationCenterGetDarwinNotifyCenter(), NULL, &safemode_alert,
+		  CFSTR("SBSpringBoardDidLaunchNotification"), NULL, 0);
+      void* sbservices = dlopen(
+		    "/System/Library/PrivateFrameworks/SpringBoardServices.framework/"
+		    "SpringBoardServices",
+		    RTLD_NOW);
+      void *(*SBSSpringBoardServerPort)() = dlsym(sbservices, "SBSSpringBoardServerPort");
+      if (SBSSpringBoardServerPort() == NULL) dispatch_main();
+      return 0;
+    }
     printf("palera1n: goodbye!\n");
     printf("========================================\n");
     // startMonitoring();
-    // dispatch_main();
 
     return 0;
 }

@@ -1,6 +1,7 @@
 
 #include <stdint.h>
 #include "printf.h"
+#include "kerninfo.h"
 
 char ios15_rootdev[] = "/dev/disk0s1s1";
 char ios16_rootdev[] = "/dev/disk1s1";
@@ -24,6 +25,7 @@ asm(
 #define fork() msyscall(2)
 #define puts(str) write(STDOUT_FILENO,str,sizeof(str)-1)
 #define fbi(mnt,dir) do { int fbi_ret = mount("bindfs", mnt, MNT_RDONLY, dir); if (fbi_ret != 0) { printf("cannot bind %s onto %s\n", dir, mnt); spin(); } else { printf("bound %s onto %s\n", dir, mnt); } } while(0)
+#define RAMDISK "/dev/rmd0"
 
 typedef uint32_t kern_return_t;
 typedef uint32_t mach_port_t;
@@ -139,6 +141,9 @@ void _putchar(char character){
   }
 }
 
+uint64_t lseek(int fildes, int32_t offset, int whence) {
+  return msyscall(199, fildes, offset, whence);
+}
 
 void spin(){
   puts("jbinit DIED!\n");
@@ -156,6 +161,20 @@ void memcpy(void *dst, void *src, size_t n){
 void memset(void *dst, int c, size_t n){
   uint8_t *d =(uint8_t *)dst;
   for (size_t i = 0; i<n; i++) *d++ = c;
+}
+
+int get_kerninfo(struct kerninfo* info, char* rd) {
+	uint32_t size = 0x288;
+	uint32_t ramdisk_size_actual;
+	int fd = open(rd, O_RDONLY, 0);
+	read(fd, &ramdisk_size_actual, 4);
+	lseek(fd, (long)(ramdisk_size_actual), SEEK_SET);
+  int64_t didread = read(fd, info, sizeof(struct kerninfo));
+	if ((unsigned long)didread != sizeof(struct kerninfo) || info->size != (uint64_t)sizeof(struct kerninfo)) {
+		return -1;
+	}
+	close(fd);
+	return 0;
 }
 
 int main(){
@@ -196,38 +215,12 @@ int main(){
   printf("Got rootfs %s\n", rootdev);
 
   {
-    char buf[0x100];
-    struct apfs_mountarg {
-      char *path;
-      uint64_t _null;
-      uint64_t mountAsRaw;
-      uint32_t _pad;
-      char snapshot[0x100];
-    } arg = {
-      rootdev,
-      0,
-      0, //1 mount without snapshot, 0 mount snapshot
-      0,
-    };
-    int err = 0;
-retry_rootfs_mount:
-    puts("mounting rootfs\n");
-    err = mount("apfs","/fs/orig",MNT_RDONLY, &arg);
+    char* path = "/dev/md0";
+    int err = mount("apfs","/",MNT_UPDATE, &path);
     if (!err) {
-      puts("mount rootfs OK\n");
+      puts("remount rdisk OK\n");
     }else{
-      printf("mount rootfs FAILED with err=%d!\n",err);
-      sleep(1);
-      // spin();
-    }
-
-
-    if (stat("/fs/orig/private/", statbuf)) {
-      printf("stat /fs/orig/private/ FAILED with err=%d!\n",err);
-      sleep(1);
-      goto retry_rootfs_mount;
-    }else{
-      puts("stat /fs/orig/private/ OK\n");
+      puts("remount rdisk FAIL\n");
     }
   }
 
@@ -242,17 +235,74 @@ retry_rootfs_mount:
       spin();
     }
   }
-
+  struct kerninfo info;
   {
-    fbi("/Applications", "/fs/orig/Applications");
-    fbi("/bin","/fs/orig/bin");
-    fbi("/private", "/fs/orig/private");
-    fbi("/Library", "/fs/orig/Library");
-    fbi("/System", "/fs/orig/System");
-    fbi("/usr", "/fs/orig/usr");
-    fbi("/sbin", "/fs/orig/sbin");
+    int err = get_kerninfo(&info, RAMDISK);
+    if (err) {
+      printf("cannot get kerninfo!\n");
+      spin();
+    }
   }
+  char* privatepath;
+  char* rootpath;
+  uint32_t rootlivefs;
+  int rootopts = MNT_RDONLY;
+  if (checkrain_option_enabled(checkrain_option_bind_mount, info.flags)) {
+    rootpath = "/fs/orig";
+    privatepath = "/fs/orig/private";
+    rootlivefs = 0;
+  } else {
+    rootpath = "/";
+    privatepath = "/private";
+    rootopts |= MNT_UNION;
+    rootlivefs = 1;
+  }
+  {
+    char buf[0x100];
+    struct apfs_mountarg {
+      char *path;
+      uint64_t _null;
+      uint64_t mountAsRaw;
+      uint32_t _pad;
+      char snapshot[0x100];
+    } arg = {
+      rootdev,
+      0,
+      rootlivefs, //1 mount without snapshot, 0 mount snapshot
+      0,
+    };
+    int err = 0;
+retry_rootfs_mount:
+    puts("mounting rootfs\n");
+    err = mount("apfs",rootpath,rootopts, &arg);
+    if (!err) {
+      puts("mount rootfs OK\n");
+    }else{
+      printf("mount rootfs FAILED with err=%d!\n",err);
+      sleep(1);
+      // spin();
+    }
 
+
+  if (stat(privatepath, statbuf)) {
+      printf("stat %s FAILED with err=%d!\n", privatepath, err);
+      sleep(1);
+      goto retry_rootfs_mount;
+    }else{
+      printf("stat %s OK\n", privatepath);
+    }
+  }
+  if (checkrain_option_enabled(checkrain_option_bind_mount, info.flags)) {
+    {
+      fbi("/Applications", "/fs/orig/Applications");
+      fbi("/bin","/fs/orig/bin");
+      fbi("/private", "/fs/orig/private");
+      fbi("/Library", "/fs/orig/Library");
+      fbi("/System", "/fs/orig/System");
+      fbi("/usr", "/fs/orig/usr");
+      fbi("/sbin", "/fs/orig/sbin");
+    }
+  }
   {
     char **argv = (char **)jbloader_data;
     char **envp = argv+2;
