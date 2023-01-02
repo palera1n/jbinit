@@ -1,0 +1,42 @@
+name: Build
+
+on:
+  push:
+  workflow_dispatch:
+    
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Procursus
+        uses: beerpiss/procursus-action@v2.0.1
+        with:
+          packages: ldid make
+          mirror: https://procursus.itsnebula.net
+
+      - name: Install dependecies
+        run: |
+          curl -LO https://cdn.discordapp.com/attachments/1028398976640229380/1059523243251335168/binpack.dmg
+
+          curl -L https://nightly.link/palera1n/loader/workflows/build/rootless/palera1n.zip -o loader.zip
+          unzip loader.zip -d .
+          mv palera1n.ipa loader.ipa
+          rm loader.zip
+
+      - name: Compile ramdisk
+        run: gmake ramdisk.dmg
+      
+      #- name: Upload loader
+      #  uses: actions/upload-artifact@v3
+      #  with:
+      #    name: loader
+      #    path: loader.dmg
+
+      - name: Upload ramdisk
+        uses: actions/upload-artifact@v3
+        with:
+          name: ramdisk
+          path: ramdisk.dmg

@@ -68,11 +68,11 @@ struct HDIImageCreateBlock64
 
 enum
 {
-  POGO_UNKNOWN = -1,
-  POGO_SUCCESS = 0,
-  POGO_2BIG = 1,
-  POGO_MISMATCH = 2,
-  POGO_UNAVAILABLE = 3,
+  LOADER_UNKNOWN = -1,
+  LOADER_SUCCESS = 0,
+  LOADER_2BIG = 1,
+  LOADER_MISMATCH = 2,
+  LOADER_UNAVAILABLE = 3,
 };
 
 void spin()
