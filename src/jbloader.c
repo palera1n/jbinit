@@ -350,23 +350,36 @@ int uicache_apps()
 {
   if (access("/var/jb/usr/bin/uicache", F_OK) == 0)
   {
-    char *uicache_argv[] = {
-        "/var/jb/usr/bin/uicache",
-        "-a",
-        NULL};
-    run_async(uicache_argv[0], uicache_argv);
-    return 0;
+    if (checkrain_option_enabled(checkrain_option_safemode, info.flags))
+    {
+      char *uicache_argv[] = {
+          "/var/jb/usr/bin/uicache",
+          "-af",
+          NULL};
+      run(uicache_argv[0], uicache_argv);
+      return 0;
+    }
+    else
+    {
+      char *uicache_argv[] = {
+          "/var/jb/usr/bin/uicache",
+          "-a",
+          NULL};
+      run_async(uicache_argv[0], uicache_argv);
+      return 0;
+    };
   }
   else if (checkrain_option_enabled(checkrain_option_safemode, info.flags))
   {
     char *uicache_argv[] = {
-        "/var/jb/usr/bin/uicache",
+        "/binpack/usr/bin/uicache",
         "-af",
         NULL};
     run(uicache_argv[0], uicache_argv);
     return 0;
-  };
-  return 0;
+  }
+  else
+    return 0;
 }
 
 int load_etc_rc_d()
