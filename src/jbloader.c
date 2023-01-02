@@ -65,6 +65,7 @@ struct HDIImageCreateBlock64
   uint32_t props_size;
   char padding[0xf8 - 16];
 };
+struct kerninfo info;
 
 enum
 {
@@ -336,6 +337,11 @@ int jailbreak_obliterator()
       "/var/cache",
       NULL};
   run(rm_argv[0], rm_argv);
+  char *uicache_argv[] = {
+      "/binpack/usr/bin/uicache",
+      "-af",
+      NULL};
+  run(uicache_argv[0], uicache_argv);
   printf("Jailbreak obliterated\n");
   return 0;
 }
@@ -351,8 +357,16 @@ int uicache_apps()
     run_async(uicache_argv[0], uicache_argv);
     return 0;
   }
-  else
+  else if (checkrain_option_enabled(checkrain_option_safemode, info.flags))
+  {
+    char *uicache_argv[] = {
+        "/var/jb/usr/bin/uicache",
+        "-af",
+        NULL};
+    run(uicache_argv[0], uicache_argv);
     return 0;
+  };
+  return 0;
 }
 
 int load_etc_rc_d()
@@ -393,7 +407,6 @@ int loadDaemons()
   }
   return 0;
 }
-struct kerninfo info;
 
 void safemode_alert(CFNotificationCenterRef center, void *observer,
                     CFStringRef name, const void *object, CFDictionaryRef userInfo)
@@ -532,14 +545,19 @@ int launchd_main(int argc, char **argv)
   char *newenv = malloc(200);
   assert(newenv != NULL);
   char *env = getenv("DYLD_INSERT_LIBRARIES");
-  if (env == NULL) {
+  if (env == NULL)
+  {
     strncpy(newenv, "DYLD_INSERT_LIBRARIES=/jbin/jb.dylib", 200);
-  } else if (strstr(env, "/jbin/jb.dylib") == NULL) {
+  }
+  else if (strstr(env, "/jbin/jb.dylib") == NULL)
+  {
     printf("Existing env: %s\n", env);
     newenv = realloc(newenv, strlen(env) + 200);
     assert(newenv != NULL);
     snprintf(newenv, strlen(env) + 200, "DYLD_INSERT_LIBRARIES=%s:/jbin/jb.dylib", env);
-  } else {
+  }
+  else
+  {
     newenv = realloc(newenv, 200 + strlen(env));
     assert(newenv != NULL);
     snprintf(newenv, strlen(env) + 200, "DYLD_INSERT_LIBRARIES=%s", env);
@@ -549,7 +567,8 @@ int launchd_main(int argc, char **argv)
   /*
     Launchd doesn't like it when the console is open already!
   */
-  for (size_t i = 0; i < 10; i++) {
+  for (size_t i = 0; i < 10; i++)
+  {
     close(i);
   }
 
@@ -564,9 +583,12 @@ int launchd_main(int argc, char **argv)
       "XPC_USERSPACE_REBOOTED=1",
       NULL};
   int ret;
-  if (getenv("XPC_USERSPACE_REBOOTED") != NULL) {
+  if (getenv("XPC_USERSPACE_REBOOTED") != NULL)
+  {
     ret = execve(launchd_argv[0], launchd_argv, launchd_envp2);
-  } else {
+  }
+  else
+  {
     ret = execve(launchd_argv[0], launchd_argv, launchd_envp);
   }
 
