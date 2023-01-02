@@ -21,14 +21,6 @@ binpack.dmg: binpack
 	sudo mkdir -p binpack/Applications
 	hdiutil create -size 8m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -fs HFS+ ./binpack.dmg
 
-Pogo.dmg: Pogo.ipa
-	rm -rf Payload
-	unzip Pogo.ipa
-	hdiutil create -size 128m -layout NONE -format ULFO -uid 0 -gid 0 -srcfolder ./Payload -fs HFS+ Pogo.dmg
-
-upload-pogo: Pogo.dmg
-	cat Pogo.dmg | inetcat 7777
-
 ramdisk.dmg: jbinit jbloader jb.dylib
 	rm -f ramdisk.dmg
 	sudo rm -rf ramdisk
