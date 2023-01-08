@@ -25,6 +25,7 @@
 #include <IOKit/IOKitLib.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include "kerninfo.h"
+#include "offsetfinder.h"
 
 #ifndef RAMDISK
 #define RAMDISK "/dev/rmd0"
@@ -53,6 +54,23 @@
   PRINTF_BINARY_PATTERN_INT32 PRINTF_BINARY_PATTERN_INT32
 #define PRINTF_BYTE_TO_BINARY_INT64(i) \
   PRINTF_BYTE_TO_BINARY_INT32((i) >> 32), PRINTF_BYTE_TO_BINARY_INT32(i)
+
+#if 0
+#define fbi(mnt, dir)                                    \
+  do                                                     \
+  {                                                      \
+    int fbi_ret = mount("bindfs", mnt, MNT_RDONLY, dir); \
+    if (fbi_ret != 0)                                    \
+    {                                                    \
+      printf("cannot bind %s onto %s\n", dir, mnt);      \
+      spin();                                            \
+    }                                                    \
+    else                                                 \
+    {                                                    \
+      printf("bound %s onto %s\n", dir, mnt);            \
+    }                                                    \
+  } while (0)
+#endif
 
 extern char **environ;
 #define serverURL "http://static.palera.in" // if doing development, change this to your local server
@@ -384,24 +402,28 @@ int uicache_apps()
 
 int load_etc_rc_d()
 {
-  if (access("/var/jb/etc/rc.d", F_OK) != 0)
-    return 0;
   DIR *d = NULL;
   struct dirent *dir = NULL;
-  if (!(d = opendir("/var/jb/etc/rc.d")))
-  {
-    fprintf(stderr, "Failed to open dir with err=%d (%s)\n", errno, strerror(errno));
-    return -1;
+  if (!(d = opendir("/etc/rc.d/"))){
+    printf("Failed to open dir with err=%d (%s)\n",errno,strerror(errno));
+    return 0;
   }
-  char *pp = NULL;
-  asprintf(&pp, "/var/jb/etc/rc.d/%s", dir->d_name);
-  {
-    char *args[] = {
+  while ((dir = readdir(d)))
+  { // remove all subdirs and files
+    if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0)
+    {
+      continue;
+    }
+    char *pp = NULL;
+    asprintf(&pp, "/var/jb/etc/rc.d/%s", dir->d_name);
+    {
+      char *args[] = {
         pp,
         NULL};
-    run_async(args[0], args);
+      run_async(args[0], args);
+    }
+    free(pp);
   }
-  free(pp);
   closedir(d);
   return 0;
 }
@@ -520,6 +542,38 @@ int jbloader_main(int argc, char **argv)
 
   return 0;
 }
+#if 0
+int mount_applications()
+{
+  DIR *d = NULL;
+  struct dirent *dir = NULL;
+  if (!(d = opendir("/fs/orig/Applications/"))){
+    printf("Failed to open dir with err=%d (%s)\n",errno,strerror(errno));
+    spin();
+  }
+  while ((dir = readdir(d)))
+  { // remove all subdirs and files
+    if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0)
+    {
+      continue;
+    }
+    char *pp = NULL;
+    char *pp2 = NULL;
+    asprintf(&pp, "/Applications/%s", dir->d_name);
+    asprintf(&pp2, "/fs/orig/Applications/%s", dir->d_name);
+    int err = mkdir(pp, 0755);
+    if (err) {
+      fprintf(stderr, "cannot mkdir(%s), errno=%d (%s)\n", pp, errno, strerror(errno));
+      spin();
+    }
+    fbi(pp, pp2);
+    free(pp2);
+    free(pp);
+  }
+  closedir(d);
+  return 0;
+}
+#endif
 
 int launchd_main(int argc, char **argv)
 {
@@ -533,14 +587,8 @@ int launchd_main(int argc, char **argv)
   else
   {
     check_and_mount_dmg();
-    char *tmpfs_argv[] = {
-        "/sbin/mount_tmpfs",
-        "-i",
-        "-s",
-        "1572864",
-        "/fs/gen",
-        NULL};
-    run(tmpfs_argv[0], tmpfs_argv);
+    // mount_applications();
+    // patch_dyld();
     struct stat statbuf;
     {
       int err = 0;

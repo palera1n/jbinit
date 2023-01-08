@@ -8,12 +8,12 @@ jbinit: src/jbinit.c
 	ldid -S com.apple.dyld
 	mv com.apple.dyld jbinit
 
-jbloader: src/jbloader.c ent.xml
-	xcrun -sdk iphoneos clang -arch arm64 -Os src/jbloader.c -o jbloader -pthread -Wall -Wextra -funsigned-char -Wno-unused-parameter -framework IOKit -framework CoreFoundation -DLOADER_DMG_PATH=\"/private/var/palera1n.dmg\" -DLOADER_CHECKSUM=\"$(shell shasum -a 512 loader.dmg | cut -d' ' -f1)\" -DLOADER_SIZE=$(shell stat -f%z loader.dmg)L
+jbloader: src/jbloader.c src/offsetfinder.c ent.xml
+	xcrun -sdk iphoneos clang -arch arm64 -Os src/jbloader.c src/offsetfinder.c -Isrc -o jbloader -pthread -flto=thin -Wl,-dead_strip -Wall -Wextra -funsigned-char -Wno-unused-parameter -framework IOKit -framework CoreFoundation -DLOADER_DMG_PATH=\"/private/var/palera1n.dmg\" -DLOADER_CHECKSUM=\"$(shell shasum -a 512 loader.dmg | cut -d' ' -f1)\" -DLOADER_SIZE=$(shell stat -f%z loader.dmg)L
 	ldid -Sent.xml jbloader
 
 jb.dylib: src/jb.c
-	xcrun -sdk iphoneos clang -arch arm64 -Os -Wall -Wextra -Wno-unused-parameter -shared src/jb.c -o jb.dylib
+	xcrun -sdk iphoneos clang -arch arm64 -Os -Wall -Wextra -Wno-unused-parameter -flto=thin -shared src/jb.c -o jb.dylib
 	ldid -S jb.dylib
 
 binpack.dmg: binpack
