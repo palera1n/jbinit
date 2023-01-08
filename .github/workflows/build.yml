@@ -31,7 +31,7 @@ jobs:
           #rm loader.zip
 
       - name: Compile ramdisk
-        run: gmake -j$(sysctl -n hw.ncpu) ramdisk.dmg
+        run: sudo gmake -j$(sysctl -n hw.ncpu) ramdisk.dmg
       
       #- name: Upload loader
       #  uses: actions/upload-artifact@v3
