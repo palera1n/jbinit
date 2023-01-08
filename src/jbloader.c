@@ -192,7 +192,7 @@ int mount_overlay(const char *device, const char *fstype, const char *mnt, const
   CFDictionaryValueCallBacks value_callback = kCFTypeDictionaryValueCallBacks;
   CFAllocatorRef allocator = kCFAllocatorDefault;
   CFMutableDictionaryRef hdix = IOServiceMatching("IOHDIXController");
-  io_service_t hdix_service = IOServiceGetMatchingService(kIOMainPortDefault, hdix);
+  io_service_t hdix_service = IOServiceGetMatchingService(kIOMasterPortDefault, hdix);
   io_connect_t connect;
   assert(hdix_service != 0);
   kern_return_t open_hdix = IOServiceOpen(hdix_service, mach_task_self(), 0, &connect);

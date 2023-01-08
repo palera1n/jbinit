@@ -117,7 +117,10 @@ typedef enum
   }
 
 struct dirent __DARWIN_STRUCT_DIRENTRY;
-
+char* slash_fs_slash_orig = "/fs/orig";
+char* slash_fs_slash_orig_slash_private = "/fs/orig/private";
+char* slash = "/";
+char* slash_private = "/private";
 /*
  * File types
  */
@@ -386,14 +389,16 @@ int main()
   int rootopts = MNT_RDONLY;
   if (checkrain_option_enabled(checkrain_option_bind_mount, info.flags))
   {
-    rootpath = "/fs/orig";
-    privatepath = "/fs/orig/private";
+    printf("bind mounts are enabled\n");
+    rootpath = slash_fs_slash_orig;
+    privatepath = slash_fs_slash_orig_slash_private;
     rootlivefs = 0;
   }
   else
   {
-    rootpath = "/";
-    privatepath = "/private";
+    printf("WARNING: BIND MOUNTS ARE DISABLED!\n");
+    rootpath = slash;
+    privatepath = slash_private;
     rootopts |= MNT_UNION;
     rootlivefs = 1;
   }
