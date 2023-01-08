@@ -117,10 +117,10 @@ typedef enum
   }
 
 struct dirent __DARWIN_STRUCT_DIRENTRY;
-char* slash_fs_slash_orig = "/fs/orig";
-char* slash_fs_slash_orig_slash_private = "/fs/orig/private";
-char* slash = "/";
-char* slash_private = "/private";
+char slash_fs_slash_orig[] = "/fs/orig";
+char slash_fs_slash_orig_slash_private[] = "/fs/orig/private";
+char slash[] = "/";
+char slash_private[] = "/private";
 /*
  * File types
  */
