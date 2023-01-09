@@ -313,14 +313,17 @@ int jailbreak_obliterator()
   printf("Obliterating jailbraek\n");
   char hash[97];
   char prebootPath[150] = "/private/preboot/";
+  memset(hash, '\0', sizeof(hash));
   int ret = get_boot_manifest_hash(hash);
   if (ret != 0)
   {
     fprintf(stderr, "cannot get boot manifest hash\n");
     return ret;
   }
+  printf("boot manifest hash: %s\n", hash);
   if (access("/var/jb/Applications", F_OK) == 0)
   {
+    printf("unregistering applications\n");
     DIR *d = NULL;
     struct dirent *dir = NULL;
     if (!(d = opendir("/var/jb/Applications")))
@@ -328,22 +331,33 @@ int jailbreak_obliterator()
       fprintf(stderr, "Failed to open dir with err=%d (%s)\n", errno, strerror(errno));
       return -1;
     }
-    char *pp = NULL;
-    asprintf(&pp, "/var/jb/Applications/%s", dir->d_name);
-    {
-      char *args[] = {
-          "/binpack/usr/bin/uicache",
-          "-u",
-          pp,
-          NULL};
-      run(args[0], args);
+    while ((dir = readdir(d)))
+    { // remove all subdirs and files
+      if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0)
+      {
+        continue;
+      }
+      char *pp = NULL;
+      asprintf(&pp, "/var/jb/Applications/%s", dir->d_name);
+      {
+        char *args[] = {
+            "/binpack/usr/bin/uicache",
+            "-u",
+            pp,
+            NULL};
+        run(args[0], args);
+      }
+      free(pp);
     }
-    free(pp);
     closedir(d);
   }
+
   printf("Apps now unregistered\n");
-  strncat(prebootPath, hash, 150 - 97);
+  strncat(prebootPath, hash, 150 - sizeof("/procursus") - sizeof("/private/preboot"));
   strncat(prebootPath, "/procursus", 150 - 97 - sizeof("/private/preboot/"));
+  printf("prebootPath: %s\n", prebootPath);
+  printf("%lu\n", strlen(hash));
+  printf("%lu\n", strlen("/private/preboot/") + strlen(hash) + strlen("/procursus"));
   // yeah we don't want rm -rf /private/preboot
   assert(strlen(prebootPath) == strlen("/private/preboot/") + strlen(hash) + strlen("/procursus"));
   char *rm_argv[] = {
@@ -404,8 +418,9 @@ int load_etc_rc_d()
 {
   DIR *d = NULL;
   struct dirent *dir = NULL;
-  if (!(d = opendir("/etc/rc.d/"))){
-    printf("Failed to open dir with err=%d (%s)\n",errno,strerror(errno));
+  if (!(d = opendir("/etc/rc.d/")))
+  {
+    printf("Failed to open dir with err=%d (%s)\n", errno, strerror(errno));
     return 0;
   }
   while ((dir = readdir(d)))
@@ -418,8 +433,8 @@ int load_etc_rc_d()
     asprintf(&pp, "/var/jb/etc/rc.d/%s", dir->d_name);
     {
       char *args[] = {
-        pp,
-        NULL};
+          pp,
+          NULL};
       run_async(args[0], args);
     }
     free(pp);
@@ -519,10 +534,13 @@ int jbloader_main(int argc, char **argv)
   pthread_t ssh_thread, prep_jb_launch_thread, prep_jb_ui_thread;
   pthread_create(&ssh_thread, NULL, enable_ssh, NULL);
   pthread_create(&prep_jb_launch_thread, NULL, prep_jb_launch, NULL);
-  pthread_create(&prep_jb_ui_thread, NULL, prep_jb_ui, NULL);
+  if (!checkrain_option_enabled(checkrain_option_force_revert, info.flags))
+  {
+    pthread_create(&prep_jb_ui_thread, NULL, prep_jb_ui, NULL);
+    pthread_join(prep_jb_ui_thread, NULL);
+  }
   pthread_join(ssh_thread, NULL);
   pthread_join(prep_jb_launch_thread, NULL);
-  pthread_join(prep_jb_ui_thread, NULL);
   if (checkrain_option_enabled(checkrain_option_safemode, info.flags))
   {
     CFNotificationCenterAddObserver(
