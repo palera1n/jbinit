@@ -148,5 +148,7 @@
     <true/>
     <key>com.apple.rootless.volume.Preboot</key>
     <true/>
+    <key>com.apple.private.bindfs-allow</key>
+    <true/>
 </dict>
 </plist>
