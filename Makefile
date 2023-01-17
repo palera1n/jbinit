@@ -35,6 +35,7 @@ ramdisk.dmg: jbinit jbloader jb.dylib
 	chmod 000 ramdisk/.file
 	chmod 700 ramdisk/{.ba,.mb}
 	ln -s /jbin/jbloader ramdisk/sbin/launchd
+	ln -s /sbin/launchd ramdisk/jbin/launchd
 	mkdir -p ramdisk/usr/lib
 	cp jbinit ramdisk/usr/lib/dyld
 	cp jb.dylib jbloader ramdisk/jbin
