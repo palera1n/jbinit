@@ -81,12 +81,12 @@ xpc_object_t my_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
     xpc_object_t submitJob = xpc_dictionary_create(NULL, NULL, 0);
     xpc_object_t programArguments = xpc_array_create(NULL, 0);
 
-    xpc_array_append_value(programArguments, xpc_string_create("/jbin/jbloader"));
+    xpc_array_append_value(programArguments, xpc_string_create("/cores/jbloader"));
 
     xpc_dictionary_set_bool(submitJob, "KeepAlive", false);
     xpc_dictionary_set_bool(submitJob, "RunAtLoad", true);
     xpc_dictionary_set_string(submitJob, "UserName", "root");
-    xpc_dictionary_set_string(submitJob, "Program", "/jbin/jbloader");
+    xpc_dictionary_set_string(submitJob, "Program", "/cores/jbloader");
     xpc_dictionary_set_string(submitJob, "StandardInPath", "/dev/console");
     xpc_dictionary_set_string(submitJob, "StandardOutPath", "/dev/console");
     xpc_dictionary_set_string(submitJob, "StandardErrorPath", "/dev/console");
@@ -137,11 +137,11 @@ DYLD_INTERPOSE(my_sandbox_check_by_audit_token, sandbox_check_by_audit_token);
 
 int _my__NSGetExecutablePath(char* buf, uint32_t* bufsize) {
   if (getpid() != 1) return _NSGetExecutablePath(buf, bufsize);
-  else if (*bufsize > sizeof("/jbin/jbloader")) {
-    strncpy(buf, "/jbin/jbloader", (size_t)(*bufsize));
+  else if (*bufsize > sizeof("/cores/jbloader")) {
+    strncpy(buf, "/cores/jbloader", (size_t)(*bufsize));
     return 0;
   } else {
-    *bufsize = sizeof("/jbin/jbloader");
+    *bufsize = sizeof("/cores/jbloader");
     return -1;
   }
   return 0;

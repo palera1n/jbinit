@@ -650,13 +650,9 @@ int launchd_main(int argc, char **argv)
       NULL};
   char *launchd_envp[] = {
       newenv,
-      "DYLD_PRINT_LIBRARIES=1",
-      "DYLD_PRINT_ENV=1",
       NULL};
   char *launchd_envp2[] = {
       newenv,
-      "DYLD_PRINT_LIBRARIES=1",
-      "DYLD_PRINT_ENV=1",
       "XPC_USERSPACE_REBOOTED=1",
       NULL};
   int ret;

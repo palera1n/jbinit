@@ -335,13 +335,15 @@ int main()
   {
     spin();
   }
-  size_t dylib_size = msyscall(199, fd_jbloader, 0, SEEK_END);
-  msyscall(199, fd_jbloader, 0, SEEK_SET);
-  void *dylib_data = mmap(NULL, (jbloader_size & ~0x3fff) + 0x4000, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+  size_t dylib_size = msyscall(199, fd_dylib, 0, SEEK_END);
+  msyscall(199, fd_dylib, 0, SEEK_SET);
+  void *dylib_data = mmap(NULL, (dylib_size & ~0x3fff) + 0x4000, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
   if (dylib_data == (void *)-1)
   {
     spin();
   }
+  didread = read(fd_dylib, dylib_data, dylib_size);
+  close(fd_jbloader);
 
   puts("Checking for roots");
   char *rootdev;
