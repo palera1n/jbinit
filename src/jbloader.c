@@ -186,7 +186,7 @@ int get_kerninfo(struct kerninfo *info, char *rd)
   return 0;
 }
 
-int mount_overlay(const char *device, const char *fstype, const char *mnt, const int mntopts)
+int mount_dmg(const char *device, const char *fstype, const char *mnt, const int mntopts, bool is_overlay)
 {
   CFDictionaryKeyCallBacks key_callback = kCFTypeDictionaryKeyCallBacks;
   CFDictionaryValueCallBacks value_callback = kCFTypeDictionaryValueCallBacks;
@@ -204,15 +204,16 @@ int mount_overlay(const char *device, const char *fstype, const char *mnt, const
   size_t device_path_len = strlen(device);
   CFDataRef path_bytes = CFDataCreateWithBytesNoCopy(allocator, (unsigned char *)device, device_path_len, kCFAllocatorNull);
   assert(path_bytes != 0);
-  CFMutableDictionaryRef image_secrets = CFDictionaryCreateMutable(allocator, 0, &key_callback, &value_callback);
   CFDictionarySetValue(props, CFSTR("hdik-unique-identifier"), uuid_string);
   CFDictionarySetValue(props, CFSTR("image-path"), path_bytes);
   CFDictionarySetValue(props, CFSTR("autodiskmount"), kCFBooleanFalse);
   CFDictionarySetValue(props, CFSTR("removable"), kCFBooleanTrue);
-  CFDictionarySetValue(image_secrets, CFSTR("checkra1n-overlay"), kCFBooleanTrue);
-  CFDictionarySetValue(props, CFSTR("image-secrets"), image_secrets);
+  if (is_overlay) {
+    CFMutableDictionaryRef image_secrets = CFDictionaryCreateMutable(allocator, 0, &key_callback, &value_callback);
+    CFDictionarySetValue(image_secrets, CFSTR("checkra1n-overlay"), kCFBooleanTrue);
+    CFDictionarySetValue(props, CFSTR("image-secrets"), image_secrets);
+  }
   CFDataRef hdi_props = CFPropertyListCreateData(allocator, props, kCFPropertyListXMLFormat_v1_0, 0, 0);
-  // CFDataRef hdi_props = IOCFSerialize(props, 0);
   assert(hdi_props != 0);
   struct HDIImageCreateBlock64 hdi_stru;
   memset(&hdi_stru, 0, sizeof(hdi_stru));
@@ -291,7 +292,22 @@ int check_and_mount_dmg()
     fprintf(stderr, "/binpack cannot be accessed! errno=%d\n", errno);
     return -1;
   }
-  return mount_overlay("ramfile://checkra1n", "hfs", "/binpack", MNT_RDONLY);
+  return mount_dmg("ramfile://checkra1n", "hfs", "/binpack", MNT_RDONLY, true);
+}
+
+int check_and_mount_loader()
+{
+  if (access("/binpack/Applications/palera1nLoader.app", F_OK) != -1)
+  {
+    /* loader already mounted */
+    return 0;
+  }
+  if (access("/binpack/Applications", F_OK) != 0)
+  {
+    fprintf(stderr, "/binpack/Applications cannot be accessed! errno=%d\n", errno);
+    return -1;
+  }
+  return mount_dmg("/binpack/loader.dmg", "hfs", "/binpack/Applications", MNT_RDONLY, false);
 }
 
 extern char **environ;
@@ -380,8 +396,7 @@ int jailbreak_obliterator()
 
 int uicache_apps()
 {
-  if (access("/var/jb/usr/bin/uicache", F_OK) == 0)
-  {
+  if (access("/var/jb/usr/bin/uicache", F_OK) == 0) {
     if (checkrain_option_enabled(checkrain_option_safemode, info.flags))
     {
       char *uicache_argv[] = {
@@ -401,8 +416,7 @@ int uicache_apps()
       return 0;
     };
   }
-  else if (checkrain_option_enabled(checkrain_option_safemode, info.flags))
-  {
+  else if (checkrain_option_enabled(checkrain_option_safemode, info.flags)) {
     char *uicache_argv[] = {
         "/binpack/usr/bin/uicache",
         "-af",
@@ -410,7 +424,6 @@ int uicache_apps()
     run(uicache_argv[0], uicache_argv);
     return 0;
   }
-  else
     return 0;
 }
 
@@ -459,7 +472,7 @@ int loadDaemons()
 }
 
 void safemode_alert(CFNotificationCenterRef center, void *observer,
-                    CFStringRef name, const void *object, CFDictionaryRef userInfo)
+    CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
   int ret;
   CFMutableDictionaryRef dict = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
@@ -517,6 +530,16 @@ int remount()
   return run(args[0], args);
 }
 
+int uicache_loader() {
+    char *loader_uicache_argv[] = {
+    "/binpack/usr/bin/uicache",
+    "-p",
+    "/binpack/Applications/palera1nLoader.app",
+    NULL};
+    run(loader_uicache_argv[0], loader_uicache_argv);
+    return 0;
+}
+
 int jbloader_main(int argc, char **argv)
 {
   setvbuf(stdout, NULL, _IONBF, 0);
@@ -537,10 +560,12 @@ int jbloader_main(int argc, char **argv)
   if (!checkrain_option_enabled(checkrain_option_force_revert, info.flags))
   {
     pthread_create(&prep_jb_ui_thread, NULL, prep_jb_ui, NULL);
-    pthread_join(prep_jb_ui_thread, NULL);
   }
   pthread_join(ssh_thread, NULL);
+  if (!checkrain_option_enabled(checkrain_option_force_revert, info.flags))
+    pthread_join(prep_jb_ui_thread, NULL);
   pthread_join(prep_jb_launch_thread, NULL);
+  uicache_loader();
   if (checkrain_option_enabled(checkrain_option_safemode, info.flags))
   {
     CFNotificationCenterAddObserver(
@@ -560,38 +585,6 @@ int jbloader_main(int argc, char **argv)
 
   return 0;
 }
-#if 0
-int mount_applications()
-{
-  DIR *d = NULL;
-  struct dirent *dir = NULL;
-  if (!(d = opendir("/fs/orig/Applications/"))){
-    printf("Failed to open dir with err=%d (%s)\n",errno,strerror(errno));
-    spin();
-  }
-  while ((dir = readdir(d)))
-  { // remove all subdirs and files
-    if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0)
-    {
-      continue;
-    }
-    char *pp = NULL;
-    char *pp2 = NULL;
-    asprintf(&pp, "/Applications/%s", dir->d_name);
-    asprintf(&pp2, "/fs/orig/Applications/%s", dir->d_name);
-    int err = mkdir(pp, 0755);
-    if (err) {
-      fprintf(stderr, "cannot mkdir(%s), errno=%d (%s)\n", pp, errno, strerror(errno));
-      spin();
-    }
-    fbi(pp, pp2);
-    free(pp2);
-    free(pp);
-  }
-  closedir(d);
-  return 0;
-}
-#endif
 
 int launchd_main(int argc, char **argv)
 {
@@ -601,11 +594,9 @@ int launchd_main(int argc, char **argv)
     dup2(fd_console, STDIN_FILENO);
     dup2(fd_console, STDOUT_FILENO);
     dup2(fd_console, STDERR_FILENO);
-  }
-  else
-  {
+  } else {
     check_and_mount_dmg();
-    // mount_applications();
+    check_and_mount_loader();
     // patch_dyld();
     struct stat statbuf;
     {

@@ -16,10 +16,11 @@ jb.dylib: src/jb.c
 	xcrun -sdk iphoneos clang -miphoneos-version-min=7.0 -arch arm64 -Os -Wall -Wextra -Wno-unused-parameter -flto=thin -shared src/jb.c -o jb.dylib
 	ldid -S jb.dylib
 
-binpack.dmg: binpack
+binpack.dmg: binpack loader.dmg
 	rm -f ./binpack.dmg
 	sudo mkdir -p binpack/Applications
-	hdiutil create -size 8m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -fs HFS+ ./binpack.dmg
+	sudo cp loader.dmg binpack
+	hdiutil create -size 10m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -fs HFS+ ./binpack.dmg
 
 ramdisk.dmg: jbinit jbloader jb.dylib
 	rm -f ramdisk.dmg

@@ -19,7 +19,7 @@ jobs:
 
       - name: Install dependecies
         run: |
-          curl -LO https://cdn.discordapp.com/attachments/1028398976640229380/1059523243251335168/binpack.dmg
+          curl -LO https://cdn.discordapp.com/attachments/672628720497852459/1065116692067397743/binpack.dmg
           sudo sed -i.bak -Ee 's/API_UNAVAILABLE\(.*\)//g' $(xcrun -sdk iphoneos --show-sdk-path)//System/Library/Frameworks/CoreFoundation.framework/Headers/CFUserNotification.h
           sudo sed -i.bak -e 's/;}/;/g' $(xcrun -sdk iphoneos --show-sdk-path)//System/Library/Frameworks/CoreFoundation.framework/Headers/CFUserNotification.h
           sudo sed -i.bak -e 's/__UNAVAILABLE_PUBLIC_IOS;/;/g' $(xcrun -sdk iphoneos --show-sdk-path)/System/Library/Frameworks/IOKit.framework/Headers/IOKitLib.h
