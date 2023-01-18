@@ -282,32 +282,32 @@ int mount_dmg(const char *device, const char *fstype, const char *mnt, const int
 
 int check_and_mount_dmg()
 {
-  if (access("/binpack/bin/sh", F_OK) != -1)
+  if (access("/cores/binpack/bin/sh", F_OK) != -1)
   {
     /* binpack already mounted */
     return 0;
   }
-  if (access("/binpack", F_OK) != 0)
+  if (access("/cores/binpack", F_OK) != 0)
   {
-    fprintf(stderr, "/binpack cannot be accessed! errno=%d\n", errno);
+    fprintf(stderr, "/cores/binpack cannot be accessed! errno=%d\n", errno);
     return -1;
   }
-  return mount_dmg("ramfile://checkra1n", "hfs", "/binpack", MNT_RDONLY, true);
+  return mount_dmg("ramfile://checkra1n", "hfs", "/cores/binpack", MNT_RDONLY, true);
 }
 
 int check_and_mount_loader()
 {
-  if (access("/binpack/Applications/palera1nLoader.app", F_OK) != -1)
+  if (access("/cores/binpack/Applications/palera1nLoader.app", F_OK) != -1)
   {
     /* loader already mounted */
     return 0;
   }
-  if (access("/binpack/Applications", F_OK) != 0)
+  if (access("/cores/binpack/Applications", F_OK) != 0)
   {
-    fprintf(stderr, "/binpack/Applications cannot be accessed! errno=%d\n", errno);
+    fprintf(stderr, "/cores/binpack/Applications cannot be accessed! errno=%d\n", errno);
     return -1;
   }
-  return mount_dmg("/binpack/loader.dmg", "hfs", "/binpack/Applications", MNT_RDONLY, false);
+  return mount_dmg("/cores/binpack/loader.dmg", "hfs", "/cores/binpack/Applications", MNT_RDONLY, false);
 }
 
 extern char **environ;
@@ -316,10 +316,10 @@ void *enable_ssh(void *__unused _)
 {
   if (access("/private/var/dropbear_rsa_host_key", F_OK) != 0)
   {
-    char *dropbearkey_argv[] = {"/binpack/usr/bin/dropbearkey", "-f", "/private/var/dropbear_rsa_host_key", "-t", "rsa", "-s", "4096", NULL};
+    char *dropbearkey_argv[] = {"/cores/binpack/usr/bin/dropbearkey", "-f", "/private/var/dropbear_rsa_host_key", "-t", "rsa", "-s", "4096", NULL};
     run(dropbearkey_argv[0], dropbearkey_argv);
   }
-  char *launchctl_argv[] = {"/binpack/bin/launchctl", "load", "-w", "/binpack/Library/LaunchDaemons/dropbear.plist", NULL};
+  char *launchctl_argv[] = {"/cores/binpack/bin/launchctl", "load", "-w", "/cores/binpack/Library/LaunchDaemons/dropbear.plist", NULL};
   run(launchctl_argv[0], launchctl_argv);
   return NULL;
 }
@@ -357,7 +357,7 @@ int jailbreak_obliterator()
       asprintf(&pp, "/var/jb/Applications/%s", dir->d_name);
       {
         char *args[] = {
-            "/binpack/usr/bin/uicache",
+            "/cores/binpack/usr/bin/uicache",
             "-u",
             pp,
             NULL};
@@ -377,7 +377,7 @@ int jailbreak_obliterator()
   // yeah we don't want rm -rf /private/preboot
   assert(strlen(prebootPath) == strlen("/private/preboot/") + strlen(hash) + strlen("/procursus"));
   char *rm_argv[] = {
-      "/binpack/bin/rm",
+      "/cores/binpack/bin/rm",
       "-rf",
       "/var/jb",
       prebootPath,
@@ -386,7 +386,7 @@ int jailbreak_obliterator()
       NULL};
   run(rm_argv[0], rm_argv);
   char *uicache_argv[] = {
-      "/binpack/usr/bin/uicache",
+      "/cores/binpack/usr/bin/uicache",
       "-af",
       NULL};
   run(uicache_argv[0], uicache_argv);
@@ -418,7 +418,7 @@ int uicache_apps()
   }
   else if (checkrain_option_enabled(checkrain_option_safemode, info.flags)) {
     char *uicache_argv[] = {
-        "/binpack/usr/bin/uicache",
+        "/cores/binpack/usr/bin/uicache",
         "-af",
         NULL};
     run(uicache_argv[0], uicache_argv);
@@ -532,9 +532,9 @@ int remount()
 
 int uicache_loader() {
     char *loader_uicache_argv[] = {
-    "/binpack/usr/bin/uicache",
+    "/cores/binpack/usr/bin/uicache",
     "-p",
-    "/binpack/Applications/palera1nLoader.app",
+    "/cores/binpack/Applications/palera1nLoader.app",
     NULL};
     run(loader_uicache_argv[0], loader_uicache_argv);
     return 0;
@@ -595,6 +595,9 @@ int launchd_main(int argc, char **argv)
     dup2(fd_console, STDOUT_FILENO);
     dup2(fd_console, STDERR_FILENO);
   } else {
+    if (mount("devfs", "/dev", 0, "devfs")) {
+      printf("cannot mount devfs: %d (%s)\n", errno, strerror(errno));
+    }
     check_and_mount_dmg();
     check_and_mount_loader();
     // patch_dyld();
@@ -617,14 +620,14 @@ int launchd_main(int argc, char **argv)
   char *env = getenv("DYLD_INSERT_LIBRARIES");
   if (env == NULL)
   {
-    strncpy(newenv, "DYLD_INSERT_LIBRARIES=/jbin/jb.dylib", 200);
+    strncpy(newenv, "DYLD_INSERT_LIBRARIES=/cores/jb.dylib", 200);
   }
-  else if (strstr(env, "/jbin/jb.dylib") == NULL)
+  else if (strstr(env, "/cores/jb.dylib") == NULL)
   {
     printf("Existing env: %s\n", env);
     newenv = realloc(newenv, strlen(env) + 200);
     assert(newenv != NULL);
-    snprintf(newenv, strlen(env) + 200, "DYLD_INSERT_LIBRARIES=%s:/jbin/jb.dylib", env);
+    snprintf(newenv, strlen(env) + 200, "DYLD_INSERT_LIBRARIES=%s:/cores/jb.dylib", env);
   }
   else
   {
@@ -647,9 +650,13 @@ int launchd_main(int argc, char **argv)
       NULL};
   char *launchd_envp[] = {
       newenv,
+      "DYLD_PRINT_LIBRARIES=1",
+      "DYLD_PRINT_ENV=1",
       NULL};
   char *launchd_envp2[] = {
       newenv,
+      "DYLD_PRINT_LIBRARIES=1",
+      "DYLD_PRINT_ENV=1",
       "XPC_USERSPACE_REBOOTED=1",
       NULL};
   int ret;

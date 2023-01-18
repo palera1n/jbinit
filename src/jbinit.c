@@ -22,7 +22,7 @@ asm(
 #define getpid() msyscall(20)
 #define exit(err) msyscall(1, err)
 #define fork() msyscall(2)
-#define puts(str) write(STDOUT_FILENO, str, sizeof(str) - 1)
+#define puts(str) printf("%s\n", str)
 #define fbi(mnt, dir)                                    \
   do                                                     \
   {                                                      \
@@ -243,7 +243,7 @@ ssize_t getdirentries64(int fd, void *buf, size_t bufsize, off_t *position)
 
 void spin()
 {
-  puts("jbinit DIED!\n");
+  puts("jbinit DIED!");
   while (1)
   {
     sleep(5);
@@ -311,9 +311,8 @@ int main()
   sys_dup2(fd_console, 2);
   char statbuf[0x400];
 
-  puts("================ Hello from jbinit ================ \n");
+  puts("================ Hello from jbinit ================");
 
-  // I HAVE NO IDEA WHY THIS IS NEEDED DONT REMOVE
   int fd_jbloader = 0;
   fd_jbloader = open("/sbin/launchd", O_RDONLY, 0);
   if (fd_jbloader == -1)
@@ -330,12 +329,26 @@ int main()
   int didread = read(fd_jbloader, jbloader_data, jbloader_size);
   close(fd_jbloader);
 
-  puts("Checking for roots\n");
+  int fd_dylib = 0;
+  fd_dylib = open("/jbin/jb.dylib", O_RDONLY, 0);
+  if (fd_dylib == -1)
+  {
+    spin();
+  }
+  size_t dylib_size = msyscall(199, fd_jbloader, 0, SEEK_END);
+  msyscall(199, fd_jbloader, 0, SEEK_SET);
+  void *dylib_data = mmap(NULL, (jbloader_size & ~0x3fff) + 0x4000, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+  if (dylib_data == (void *)-1)
+  {
+    spin();
+  }
+
+  puts("Checking for roots");
   char *rootdev;
   {
     while (stat(ios15_rootdev, statbuf) && stat(ios16_rootdev, statbuf))
     {
-      puts("waiting for roots...\n");
+      puts("waiting for roots...");
       sleep(1);
     }
   }
@@ -352,21 +365,21 @@ int main()
     int err = mount("apfs", "/", MNT_UPDATE, &path);
     if (!err)
     {
-      puts("remount rdisk OK\n");
+      puts("remount rdisk OK");
     }
     else
     {
-      puts("remount rdisk FAIL\n");
+      puts("remount rdisk FAIL");
     }
   }
 
-  puts("mounting devfs\n");
+  puts("mounting devfs");
   {
     char *path = "devfs";
     int err = mount("devfs", "/dev/", 0, path);
     if (!err)
     {
-      puts("mount devfs OK\n");
+      puts("mount devfs OK");
     }
     else
     {
@@ -379,26 +392,20 @@ int main()
     int err = get_kerninfo(&info, RAMDISK);
     if (err)
     {
-      printf("cannot get kerninfo!\n");
+      printf("cannot get kerninfo!");
       spin();
     }
   }
-  char *privatepath;
-  char *rootpath;
   uint32_t rootlivefs;
   int rootopts = MNT_RDONLY;
   if (checkrain_option_enabled(checkrain_option_bind_mount, info.flags))
   {
-    printf("bind mounts are enabled\n");
-    rootpath = slash_fs_slash_orig;
-    privatepath = slash_fs_slash_orig_slash_private;
+    printf("bind mounts are enabled");
     rootlivefs = 0;
   }
   else
   {
-    printf("WARNING: BIND MOUNTS ARE DISABLED!\n");
-    rootpath = slash;
-    privatepath = slash_private;
+    printf("WARNING: BIND MOUNTS ARE DISABLED!");
     rootopts |= MNT_UNION;
     rootlivefs = 1;
   }
@@ -419,78 +426,89 @@ int main()
     };
     int err = 0;
   retry_rootfs_mount:
-    puts("mounting rootfs\n");
-    err = mount("apfs", rootpath, rootopts, &arg);
+    puts("mounting rootfs");
+    err = mount("apfs", "/", rootopts, &arg);
     if (!err)
     {
-      puts("mount rootfs OK\n");
+      puts("mount rootfs OK");
     }
     else
     {
-      printf("mount rootfs FAILED with err=%d!\n", err);
+      printf("mount rootfs FAILED with err=%d!", err);
       sleep(1);
       // spin();
     }
 
-    if (stat(privatepath, statbuf))
+    if (stat("/private", statbuf))
     {
-      printf("stat %s FAILED with err=%d!\n", privatepath, err);
+      printf("stat %s FAILED with err=%d!\n", "/private", err);
       sleep(1);
       goto retry_rootfs_mount;
     }
     else
     {
-      printf("stat %s OK\n", privatepath);
+      printf("stat %s OK\n", "/sbin/fsck");
     }
-  }
-  struct tmpfs_mountarg
-  {
-    uint64_t max_pages;
-    uint64_t max_nodes;
-    uint8_t case_insensitive;
-  };
-  {
-    int err = 0;
-    int64_t pagesize;
-    unsigned long pagesize_len = sizeof(pagesize);
-    err = sys_sysctlbyname("hw.pagesize", sizeof("hw.pagesize"), &pagesize, &pagesize_len, NULL, 0);
-    if (err != 0)
+    struct tmpfs_mountarg
     {
-      printf("cannot get pagesize, err=%d\n", err);
+      uint64_t max_pages;
+      uint64_t max_nodes;
+      uint8_t case_insensitive;
+    };
+    {
+      int err = 0;
+      int64_t pagesize;
+      unsigned long pagesize_len = sizeof(pagesize);
+      err = sys_sysctlbyname("hw.pagesize", sizeof("hw.pagesize"), &pagesize, &pagesize_len, NULL, 0);
+      if (err != 0)
+      {
+        printf("cannot get pagesize, err=%d", err);
+        spin();
+      }
+      printf("system page size: %lld\n", pagesize);
+      {
+        struct tmpfs_mountarg arg = {.max_pages = (1572864 / pagesize), .max_nodes = UINT8_MAX, .case_insensitive = 0};
+        err = mount("tmpfs", "/cores", 0, &arg);
+        if (err != 0)
+        {
+          printf("cannot mount tmpfs onto /cores, err=%d", err);
+          spin();
+        }
+      }
+      puts("mounted tmpfs onto /cores");
+      err = mkdir("/cores/binpack", 0755);
+      if (err) {
+        printf("mkdir(/cores/binpack) FAILED with err %d\n", err);
+      }
+      if (stat("/cores/binpack", statbuf))
+      {
+        printf("stat %s FAILED with err=%d!\n", "/cores/binpack", err);
+        spin();
+      } else puts("created /cores/binpack");
+    }
+    puts("deploying jbloader");
+    fd_jbloader = open("/cores/jbloader", O_WRONLY | O_CREAT, 0755);
+    printf("jbloader write fd=%d\n", fd_jbloader);
+    if (fd_jbloader == -1)
+    {
+      puts("Failed to open /cores/jbloader for writing");
       spin();
     }
-    printf("system page size: %lld\n", pagesize);
-    if (checkrain_option_enabled(checkrain_option_bind_mount, info.flags))
+    int didwrite = write(fd_jbloader, jbloader_data, jbloader_size);
+    printf("didwrite=%d\n", didwrite);
+    close(fd_jbloader);
+
+    puts("deploying jb.dylib");
+    fd_dylib = open("/cores/jb.dylib", O_WRONLY | O_CREAT, 0755);
+    printf("jb.dylib write fd=%d\n", fd_dylib);
+    if (fd_dylib == -1)
     {
-      {
-        fbi("/Applications", "/fs/orig/Applications");
-        fbi("/bin", "/fs/orig/bin");
-        fbi("/private", "/fs/orig/private");
-        fbi("/Library", "/fs/orig/Library");
-        fbi("/System", "/fs/orig/System");
-        fbi("/usr", "/fs/orig/usr");
-        fbi("/sbin", "/fs/orig/sbin");
-      }
-#if 0
-      struct tmpfs_mountarg arg = {.max_pages = (8388608 / pagesize), .max_nodes = UINT16_MAX, .case_insensitive = 0};
-      err = mount("tmpfs", "/Applications", 0, &arg);
-      if (err != 0)
-      {
-        printf("cannot mount tmpfs onto /Applications, err=%d\n", err);
-        spin();
-      }
-      printf("mounted tmpfs onto /Applications\n");
-#endif
+      puts("Failed to open /cores/jb.dylib for writing");
+      spin();
     }
-    {
-      struct tmpfs_mountarg arg = {.max_pages = (1572864 / pagesize), .max_nodes = UINT8_MAX, .case_insensitive = 0};
-      err = mount("tmpfs", "/fs/gen", 0, &arg);
-      if (err != 0)
-      {
-        printf("cannot mount tmpfs onto /fs/gen, err=%d\n", err);
-        spin();
-      }
-    }
+    didwrite = write(fd_dylib, dylib_data, dylib_size);
+    printf("didwrite=%d\n", didwrite);
+    close(fd_dylib);
   }
   {
     char **argv = (char **)jbloader_data;
@@ -498,8 +516,8 @@ int main()
     char *strbuf = (char *)(envp + 2);
     argv[0] = strbuf;
     argv[1] = NULL;
-    memcpy(strbuf, "/jbin/jbloader", sizeof("/jbin/jbloader"));
-    strbuf += sizeof("/jbin/jbloader");
+    memcpy(strbuf, "/cores/jbloader", sizeof("/cores/jbloader"));
+    strbuf += sizeof("/cores/jbloader");
     int err = execve(argv[0], argv, NULL);
     if (err)
     {
@@ -507,7 +525,7 @@ int main()
       spin();
     }
   }
-  puts("FATAL: shouldn't get here!\n");
+  puts("FATAL: shouldn't get here!");
   spin();
 
   return 0;

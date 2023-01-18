@@ -13,7 +13,7 @@ jbloader: src/jbloader.c src/offsetfinder.c ent.xml
 	ldid -Sent.xml jbloader
 
 jb.dylib: src/jb.c
-	xcrun -sdk iphoneos clang -miphoneos-version-min=7.0 -arch arm64 -Os -Wall -Wextra -Wno-unused-parameter -flto=thin -shared src/jb.c -o jb.dylib
+	xcrun -sdk iphoneos clang -miphoneos-version-min=7.0 -arch arm64 -O0 -Wall -Wextra -Wno-unused-parameter -shared src/jb.c -o jb.dylib
 	ldid -S jb.dylib
 
 binpack.dmg: binpack loader.dmg
