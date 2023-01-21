@@ -13,13 +13,14 @@ jbloader: src/jbloader.c src/offsetfinder.c ent.xml
 	ldid -Sent.xml jbloader
 
 jb.dylib: src/jb.c
-	xcrun -sdk iphoneos clang -miphoneos-version-min=7.0 -arch arm64 -O0 -Wall -Wextra -Wno-unused-parameter -shared src/jb.c -o jb.dylib
+	xcrun -sdk iphoneos clang -miphoneos-version-min=7.0 -arch arm64 -Os -Wall -Wextra -Wno-unused-parameter -shared src/jb.c -o jb.dylib
 	ldid -S jb.dylib
 
 binpack.dmg: binpack loader.dmg
 	rm -f ./binpack.dmg
 	sudo mkdir -p binpack/Applications
 	sudo cp loader.dmg binpack
+	sudo chown -R 0:0 binpack
 	hdiutil create -size 10m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -fs HFS+ ./binpack.dmg
 
 ramdisk.dmg: jbinit jbloader jb.dylib
@@ -43,9 +44,15 @@ ramdisk.dmg: jbinit jbloader jb.dylib
 	sudo gchown -R 0:0 ramdisk
 	hdiutil create -size 512K -layout NONE -format UDRW -uid 0 -gid 0 -srcfolder ./ramdisk -fs HFS+ ./ramdisk.dmg
 
+loader.dmg: palera1n.ipa
+	rm -rf loader.dmg Payload
+	unzip palera1n.ipa
+	hdiutil create -size 10m -layout NONE -format ULFO -uid 0 -gid 0 -volname palera1nLoader -srcfolder ./Payload -fs HFS+ ./loader.dmg
+	rm -rf Payload
+
 clean:
 	rm -f jbinit launchd jb.dylib ramdisk.dmg binpack.dmg jbloader
 	sudo rm -rf ramdisk
 	rm -f ramdisk.img4
 
-.PHONY: all clean
+.PHONY: all clean binpack.dmg
