@@ -688,10 +688,6 @@ int launchd_main(int argc, char **argv)
   }
   else
   {
-    if (mount("devfs", "/dev", 0, "devfs"))
-    {
-      printf("cannot mount devfs: %d (%s)\n", errno, strerror(errno));
-    }
     check_and_mount_dmg();
     check_and_mount_loader();
     // patch_dyld();

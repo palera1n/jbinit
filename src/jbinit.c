@@ -184,7 +184,8 @@ int mount(char *type, char *path, int flags, void *data)
   return msyscall(167, type, path, flags, data);
 }
 
-int unmount(char* path, int flags) {
+int unmount(char *path, int flags)
+{
   return msyscall(159, path, flags);
 }
 
@@ -285,20 +286,24 @@ int get_kerninfo(struct kerninfo *info, char *rd)
   return 0;
 }
 
-int get_paleinfo(struct paleinfo* info, char* rd) {
+int get_paleinfo(struct paleinfo *info, char *rd)
+{
   uint32_t ramdisk_size_actual;
   int fd = open(rd, O_RDONLY, 0);
   read(fd, &ramdisk_size_actual, 4);
   lseek(fd, (long)(ramdisk_size_actual) + 0x1000L, SEEK_SET);
   int64_t didread = read(fd, info, sizeof(struct paleinfo));
-  if ((unsigned long)didread != sizeof(struct paleinfo)) {
+  if ((unsigned long)didread != sizeof(struct paleinfo))
+  {
     return -1;
   }
-  if (info->magic != PALEINFO_MAGIC) {
+  if (info->magic != PALEINFO_MAGIC)
+  {
     printf("Detected corrupted paleinfo!\n");
     return -1;
   }
-  if (info->version != 1) {
+  if (info->version != 1)
+  {
     printf("Unsupported paleinfo %u (expected 1)\n", info->version);
     return -1;
   }
@@ -433,16 +438,19 @@ int main()
     rootlivefs = 1;
   }
   char dev_rootdev[0x20] = "/dev/";
-  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful)) {
+  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
+  {
     strcat(dev_rootdev, pinfo.rootdev);
     rootdev = dev_rootdev;
     rootlivefs = 1;
-  } else {
+  }
+  else
+  {
     // rootopts |= MNT_RDONLY;
   }
   {
     char *path = dev_rootdev;
-    int err = mount("apfs", "/", MNT_UPDATE | MNT_RDONLY , &path);
+    int err = mount("apfs", "/", MNT_UPDATE | MNT_RDONLY, &path);
     if (!err)
     {
       puts("remount rdisk OK");
@@ -492,6 +500,21 @@ int main()
     {
       printf("stat %s OK\n", "/sbin/fsck");
     }
+
+    puts("mounting devfs again");
+    {
+      char *path = "devfs";
+      int err = mount("devfs", "/dev/", 0, path);
+      if (!err)
+      {
+        puts("mount devfs again OK");
+      }
+      else
+      {
+        printf("mount devfs again FAILED with err=%d!\n", err);
+        spin();
+      }
+    }
     struct tmpfs_mountarg
     {
       uint64_t max_pages;
@@ -520,14 +543,17 @@ int main()
       }
       puts("mounted tmpfs onto /cores");
       err = mkdir("/cores/binpack", 0755);
-      if (err) {
+      if (err)
+      {
         printf("mkdir(/cores/binpack) FAILED with err %d\n", err);
       }
       if (stat("/cores/binpack", statbuf))
       {
         printf("stat %s FAILED with err=%d!\n", "/cores/binpack", err);
         spin();
-      } else puts("created /cores/binpack");
+      }
+      else
+        puts("created /cores/binpack");
     }
     puts("deploying jbloader");
     fd_jbloader = open("/cores/jbloader", O_WRONLY | O_CREAT, 0755);
