@@ -55,23 +55,6 @@
 #define PRINTF_BYTE_TO_BINARY_INT64(i) \
   PRINTF_BYTE_TO_BINARY_INT32((i) >> 32), PRINTF_BYTE_TO_BINARY_INT32(i)
 
-#if 0
-#define fbi(mnt, dir)                                    \
-  do                                                     \
-  {                                                      \
-    int fbi_ret = mount("bindfs", mnt, MNT_RDONLY, dir); \
-    if (fbi_ret != 0)                                    \
-    {                                                    \
-      printf("cannot bind %s onto %s\n", dir, mnt);      \
-      spin();                                            \
-    }                                                    \
-    else                                                 \
-    {                                                    \
-      printf("bound %s onto %s\n", dir, mnt);            \
-    }                                                    \
-  } while (0)
-#endif
-
 extern char **environ;
 #define serverURL "http://static.palera.in" // if doing development, change this to your local server
 #define HDI_MAGIC 0xbeeffeed
@@ -84,15 +67,7 @@ struct HDIImageCreateBlock64
   char padding[0xf8 - 16];
 };
 struct kerninfo info;
-
-enum
-{
-  LOADER_UNKNOWN = -1,
-  LOADER_SUCCESS = 0,
-  LOADER_2BIG = 1,
-  LOADER_MISMATCH = 2,
-  LOADER_UNAVAILABLE = 3,
-};
+struct paleinfo pinfo;
 
 void spin()
 {
@@ -186,6 +161,31 @@ int get_kerninfo(struct kerninfo *info, char *rd)
   return 0;
 }
 
+int get_paleinfo(struct paleinfo *info, char *rd)
+{
+  uint32_t ramdisk_size_actual;
+  int fd = open(rd, O_RDONLY, 0);
+  read(fd, &ramdisk_size_actual, 4);
+  lseek(fd, (long)(ramdisk_size_actual) + 0x1000L, SEEK_SET);
+  int64_t didread = read(fd, info, sizeof(struct paleinfo));
+  if ((unsigned long)didread != sizeof(struct paleinfo))
+  {
+    return -1;
+  }
+  if (info->magic != PALEINFO_MAGIC)
+  {
+    printf("Detected corrupted paleinfo!\n");
+    return -1;
+  }
+  if (info->version != 1)
+  {
+    printf("Unsupported paleinfo %u (expected 1)\n", info->version);
+    return -1;
+  }
+  close(fd);
+  return 0;
+}
+
 int mount_dmg(const char *device, const char *fstype, const char *mnt, const int mntopts, bool is_overlay)
 {
   CFDictionaryKeyCallBacks key_callback = kCFTypeDictionaryKeyCallBacks;
@@ -208,7 +208,8 @@ int mount_dmg(const char *device, const char *fstype, const char *mnt, const int
   CFDictionarySetValue(props, CFSTR("image-path"), path_bytes);
   CFDictionarySetValue(props, CFSTR("autodiskmount"), kCFBooleanFalse);
   CFDictionarySetValue(props, CFSTR("removable"), kCFBooleanTrue);
-  if (is_overlay) {
+  if (is_overlay)
+  {
     CFMutableDictionaryRef image_secrets = CFDictionaryCreateMutable(allocator, 0, &key_callback, &value_callback);
     CFDictionarySetValue(image_secrets, CFSTR("checkra1n-overlay"), kCFBooleanTrue);
     CFDictionarySetValue(props, CFSTR("image-secrets"), image_secrets);
@@ -326,112 +327,128 @@ void *enable_ssh(void *__unused _)
 
 int jailbreak_obliterator()
 {
-  printf("Obliterating jailbraek\n");
-  char hash[97];
-  char prebootPath[150] = "/private/preboot/";
-  memset(hash, '\0', sizeof(hash));
-  int ret = get_boot_manifest_hash(hash);
-  if (ret != 0)
+  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
   {
-    fprintf(stderr, "cannot get boot manifest hash\n");
-    return ret;
+    return 0;
   }
-  printf("boot manifest hash: %s\n", hash);
-  if (access("/var/jb/Applications", F_OK) == 0)
+  else
   {
-    printf("unregistering applications\n");
-    DIR *d = NULL;
-    struct dirent *dir = NULL;
-    if (!(d = opendir("/var/jb/Applications")))
+    printf("Obliterating jailbraek\n");
+    char hash[97];
+    char prebootPath[150] = "/private/preboot/";
+    memset(hash, '\0', sizeof(hash));
+    int ret = get_boot_manifest_hash(hash);
+    if (ret != 0)
     {
-      fprintf(stderr, "Failed to open dir with err=%d (%s)\n", errno, strerror(errno));
-      return -1;
+      fprintf(stderr, "cannot get boot manifest hash\n");
+      return ret;
     }
-    while ((dir = readdir(d)))
-    { // remove all subdirs and files
-      if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0)
+    printf("boot manifest hash: %s\n", hash);
+    if (access("/var/jb/Applications", F_OK) == 0)
+    {
+      printf("unregistering applications\n");
+      DIR *d = NULL;
+      struct dirent *dir = NULL;
+      if (!(d = opendir("/var/jb/Applications")))
       {
-        continue;
+        fprintf(stderr, "Failed to open dir with err=%d (%s)\n", errno, strerror(errno));
+        return -1;
       }
-      char *pp = NULL;
-      asprintf(&pp, "/var/jb/Applications/%s", dir->d_name);
-      {
-        char *args[] = {
-            "/cores/binpack/usr/bin/uicache",
-            "-u",
-            pp,
-            NULL};
-        run(args[0], args);
+      while ((dir = readdir(d)))
+      { // remove all subdirs and files
+        if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0)
+        {
+          continue;
+        }
+        char *pp = NULL;
+        asprintf(&pp, "/var/jb/Applications/%s", dir->d_name);
+        {
+          char *args[] = {
+              "/cores/binpack/usr/bin/uicache",
+              "-u",
+              pp,
+              NULL};
+          run(args[0], args);
+        }
+        free(pp);
       }
-      free(pp);
+      closedir(d);
     }
-    closedir(d);
-  }
 
-  printf("Apps now unregistered\n");
-  strncat(prebootPath, hash, 150 - sizeof("/procursus") - sizeof("/private/preboot"));
-  strncat(prebootPath, "/procursus", 150 - 97 - sizeof("/private/preboot/"));
-  printf("prebootPath: %s\n", prebootPath);
-  printf("%lu\n", strlen(hash));
-  printf("%lu\n", strlen("/private/preboot/") + strlen(hash) + strlen("/procursus"));
-  // yeah we don't want rm -rf /private/preboot
-  assert(strlen(prebootPath) == strlen("/private/preboot/") + strlen(hash) + strlen("/procursus"));
-  char *rm_argv[] = {
-      "/cores/binpack/bin/rm",
-      "-rf",
-      "/var/jb",
-      prebootPath,
-      "/var/lib",
-      "/var/cache",
-      NULL};
-  run(rm_argv[0], rm_argv);
-  char *uicache_argv[] = {
-      "/cores/binpack/usr/bin/uicache",
-      "-af",
-      NULL};
-  run(uicache_argv[0], uicache_argv);
-  printf("Jailbreak obliterated\n");
-  return 0;
-}
-
-int uicache_apps()
-{
-  if (access("/var/jb/usr/bin/uicache", F_OK) == 0) {
-    if (checkrain_option_enabled(checkrain_option_safemode, info.flags))
-    {
-      char *uicache_argv[] = {
-          "/var/jb/usr/bin/uicache",
-          "-af",
-          NULL};
-      run(uicache_argv[0], uicache_argv);
-      return 0;
-    }
-    else
-    {
-      char *uicache_argv[] = {
-          "/var/jb/usr/bin/uicache",
-          "-a",
-          NULL};
-      run_async(uicache_argv[0], uicache_argv);
-      return 0;
-    };
-  }
-  else if (checkrain_option_enabled(checkrain_option_safemode, info.flags)) {
+    printf("Apps now unregistered\n");
+    strncat(prebootPath, hash, 150 - sizeof("/procursus") - sizeof("/private/preboot"));
+    strncat(prebootPath, "/procursus", 150 - 97 - sizeof("/private/preboot/"));
+    printf("prebootPath: %s\n", prebootPath);
+    printf("%lu\n", strlen(hash));
+    printf("%lu\n", strlen("/private/preboot/") + strlen(hash) + strlen("/procursus"));
+    // yeah we don't want rm -rf /private/preboot
+    assert(strlen(prebootPath) == strlen("/private/preboot/") + strlen(hash) + strlen("/procursus"));
+    char *rm_argv[] = {
+        "/cores/binpack/bin/rm",
+        "-rf",
+        "/var/jb",
+        prebootPath,
+        "/var/lib",
+        "/var/cache",
+        NULL};
+    run(rm_argv[0], rm_argv);
     char *uicache_argv[] = {
         "/cores/binpack/usr/bin/uicache",
         "-af",
         NULL};
     run(uicache_argv[0], uicache_argv);
+    printf("Jailbreak obliterated\n");
+  }
+  return 0;
+}
+
+int uicache_apps()
+{
+  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
+  {
+    if (access("/usr/bin/uicache", F_OK) == 0)
+    {
+      {
+        char *uicache_argv[] = {
+            "/usr/bin/uicache",
+            "-a",
+            NULL};
+        run_async(uicache_argv[0], uicache_argv);
+        return 0;
+      };
+    }
     return 0;
   }
+  else
+  {
+    if (access("/var/jb/usr/bin/uicache", F_OK) == 0)
+    {
+      {
+        char *uicache_argv[] = {
+            "/var/jb/usr/bin/uicache",
+            "-a",
+            NULL};
+        run_async(uicache_argv[0], uicache_argv);
+        return 0;
+      };
+    }
     return 0;
+  }
 }
 
 int load_etc_rc_d()
 {
   DIR *d = NULL;
   struct dirent *dir = NULL;
-  if (!(d = opendir("/etc/rc.d/")))
+  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
+  {
+    d = opendir("/etc/rc.d/");
+  }
+  else
+  {
+    d = opendir("/var/jb/etc/rc.d/");
+  }
+  if (!d)
   {
     printf("Failed to open dir with err=%d (%s)\n", errno, strerror(errno));
     return 0;
@@ -443,7 +460,14 @@ int load_etc_rc_d()
       continue;
     }
     char *pp = NULL;
-    asprintf(&pp, "/var/jb/etc/rc.d/%s", dir->d_name);
+    if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
+    {
+      asprintf(&pp, "/etc/rc.d/%s", dir->d_name);
+    }
+    else
+    {
+      asprintf(&pp, "/var/jb/etc/rc.d/%s", dir->d_name);
+    }
     {
       char *args[] = {
           pp,
@@ -458,21 +482,37 @@ int load_etc_rc_d()
 
 int loadDaemons()
 {
-  if (access("/var/jb/Library/LaunchDaemons", F_OK) != 0)
-    return 0;
+  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
   {
-    char *args[] = {
-        "/var/jb/bin/launchctl",
-        "load",
-        "/var/jb/Library/LaunchDaemons",
-        NULL};
-    run_async(args[0], args);
+    if (access("/Library/LaunchDaemons", F_OK) != 0)
+      return 0;
+    {
+      char *args[] = {
+          "/bin/launchctl",
+          "load",
+          "/Library/LaunchDaemons",
+          NULL};
+      run_async(args[0], args);
+    }
+  }
+  else
+  {
+    if (access("/var/jb/Library/LaunchDaemons", F_OK) != 0)
+      return 0;
+    {
+      char *args[] = {
+          "/var/jb/bin/launchctl",
+          "load",
+          "/var/jb/Library/LaunchDaemons",
+          NULL};
+      run_async(args[0], args);
+    }
   }
   return 0;
 }
 
 void safemode_alert(CFNotificationCenterRef center, void *observer,
-    CFStringRef name, const void *object, CFDictionaryRef userInfo)
+                    CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
   int ret;
   CFMutableDictionaryRef dict = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
@@ -522,6 +562,15 @@ void *prep_jb_ui(void *__unused _)
 
 int remount()
 {
+  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
+  {
+    char *args[] = {
+        "/sbin/mount",
+        "-uw",
+        "/",
+        NULL};
+    run(args[0], args);
+  }
   char *args[] = {
       "/sbin/mount",
       "-uw",
@@ -530,14 +579,37 @@ int remount()
   return run(args[0], args);
 }
 
-int uicache_loader() {
+int uicache_loader()
+{
+  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
+  {
     char *loader_uicache_argv[] = {
-    "/cores/binpack/usr/bin/uicache",
-    "-p",
-    "/cores/binpack/Applications/palera1nLoader.app",
-    NULL};
+        "/cores/binpack/usr/bin/uicache",
+        "-p",
+        "/jbin/loader.app",
+        NULL};
     run(loader_uicache_argv[0], loader_uicache_argv);
+  }
+  else
+  {
+    char *loader_uicache_argv[] = {
+        "/cores/binpack/usr/bin/uicache",
+        "-p",
+        "/cores/binpack/Applications/palera1nLoader.app",
+        NULL};
+    run(loader_uicache_argv[0], loader_uicache_argv);
+  }
+  return 0;
+}
+
+int sbreload()
+{
+  if (access("/usr/bin/sbreload", F_OK) != 0)
     return 0;
+  char *args[] = {
+      "/usr/bin/sbreload",
+      NULL};
+  return run(args[0], args);
 }
 
 int jbloader_main(int argc, char **argv)
@@ -551,6 +623,12 @@ int jbloader_main(int argc, char **argv)
   if (ret != 0)
   {
     fprintf(stderr, "cannot get kerninfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
+    return 1;
+  }
+  ret = get_paleinfo(&pinfo, RAMDISK);
+  if (ret != 0)
+  {
+    fprintf(stderr, "cannot get paleinfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
     return 1;
   }
   remount();
@@ -579,6 +657,10 @@ int jbloader_main(int argc, char **argv)
     if (SBSSpringBoardServerPort() == NULL)
       dispatch_main();
   }
+  else
+  {
+    sbreload();
+  }
   printf("palera1n: goodbye!\n");
   printf("========================================\n");
   // startMonitoring();
@@ -594,8 +676,11 @@ int launchd_main(int argc, char **argv)
     dup2(fd_console, STDIN_FILENO);
     dup2(fd_console, STDOUT_FILENO);
     dup2(fd_console, STDERR_FILENO);
-  } else {
-    if (mount("devfs", "/dev", 0, "devfs")) {
+  }
+  else
+  {
+    if (mount("devfs", "/dev", 0, "devfs"))
+    {
       printf("cannot mount devfs: %d (%s)\n", errno, strerror(errno));
     }
     check_and_mount_dmg();

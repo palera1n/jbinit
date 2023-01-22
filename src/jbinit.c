@@ -184,6 +184,10 @@ int mount(char *type, char *path, int flags, void *data)
   return msyscall(167, type, path, flags, data);
 }
 
+int unmount(char* path, int flags) {
+  return msyscall(159, path, flags);
+}
+
 void *mmap(void *addr, size_t length, int prot, int flags, int fd, uint64_t offset)
 {
   return (void *)msyscall(197, addr, length, prot, flags, fd, offset);
@@ -267,7 +271,7 @@ void memset(void *dst, int c, size_t n)
 
 int get_kerninfo(struct kerninfo *info, char *rd)
 {
-  uint32_t size = 0x288;
+  uint32_t size = sizeof(struct kerninfo);
   uint32_t ramdisk_size_actual;
   int fd = open(rd, O_RDONLY, 0);
   read(fd, &ramdisk_size_actual, 4);
@@ -275,6 +279,27 @@ int get_kerninfo(struct kerninfo *info, char *rd)
   int64_t didread = read(fd, info, sizeof(struct kerninfo));
   if ((unsigned long)didread != sizeof(struct kerninfo) || info->size != (uint64_t)sizeof(struct kerninfo))
   {
+    return -1;
+  }
+  close(fd);
+  return 0;
+}
+
+int get_paleinfo(struct paleinfo* info, char* rd) {
+  uint32_t ramdisk_size_actual;
+  int fd = open(rd, O_RDONLY, 0);
+  read(fd, &ramdisk_size_actual, 4);
+  lseek(fd, (long)(ramdisk_size_actual) + 0x1000L, SEEK_SET);
+  int64_t didread = read(fd, info, sizeof(struct paleinfo));
+  if ((unsigned long)didread != sizeof(struct paleinfo)) {
+    return -1;
+  }
+  if (info->magic != PALEINFO_MAGIC) {
+    printf("Detected corrupted paleinfo!\n");
+    return -1;
+  }
+  if (info->version != 1) {
+    printf("Unsupported paleinfo %u (expected 1)\n", info->version);
     return -1;
   }
   close(fd);
@@ -362,19 +387,6 @@ int main()
     rootdev = ios15_rootdev;
   printf("Got rootfs %s\n", rootdev);
 
-  {
-    char *path = "/dev/md0";
-    int err = mount("apfs", "/", MNT_UPDATE, &path);
-    if (!err)
-    {
-      puts("remount rdisk OK");
-    }
-    else
-    {
-      puts("remount rdisk FAIL");
-    }
-  }
-
   puts("mounting devfs");
   {
     char *path = "devfs";
@@ -398,11 +410,20 @@ int main()
       spin();
     }
   }
+  struct paleinfo pinfo;
+  {
+    int err = get_paleinfo(&pinfo, RAMDISK);
+    if (err)
+    {
+      printf("cannot get paleinfo!");
+      spin();
+    }
+  }
   uint32_t rootlivefs;
   int rootopts = MNT_RDONLY;
   if (checkrain_option_enabled(checkrain_option_bind_mount, info.flags))
   {
-    printf("bind mounts are enabled");
+    printf("bind mounts are enabled\n");
     rootlivefs = 0;
   }
   else
@@ -410,6 +431,26 @@ int main()
     printf("WARNING: BIND MOUNTS ARE DISABLED!");
     rootopts |= MNT_UNION;
     rootlivefs = 1;
+  }
+  char dev_rootdev[0x20] = "/dev/";
+  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful)) {
+    strcat(dev_rootdev, pinfo.rootdev);
+    rootdev = dev_rootdev;
+    rootlivefs = 1;
+  } else {
+    // rootopts |= MNT_RDONLY;
+  }
+  {
+    char *path = dev_rootdev;
+    int err = mount("apfs", "/", MNT_UPDATE | MNT_RDONLY , &path);
+    if (!err)
+    {
+      puts("remount rdisk OK");
+    }
+    else
+    {
+      puts("remount rdisk FAIL");
+    }
   }
   {
     char buf[0x100];
@@ -436,14 +477,14 @@ int main()
     }
     else
     {
-      printf("mount rootfs FAILED with err=%d!", err);
+      printf("mount rootfs %s FAILED with err=%d!\n", rootdev, err);
       sleep(1);
       // spin();
     }
 
-    if (stat("/private", statbuf))
+    if (stat("/sbin/fsck", statbuf))
     {
-      printf("stat %s FAILED with err=%d!\n", "/private", err);
+      printf("stat %s FAILED with err=%d!\n", "/sbin/fsck", err);
       sleep(1);
       goto retry_rootfs_mount;
     }
