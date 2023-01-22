@@ -18,6 +18,7 @@ jb.dylib: src/jb.c
 
 binpack.dmg: binpack loader.dmg
 	rm -f ./binpack.dmg
+	sudo rm -rf binpack/usr/share
 	sudo mkdir -p binpack/Applications
 	sudo cp loader.dmg binpack
 	sudo chown -R 0:0 binpack
