@@ -57,14 +57,13 @@
 
 extern char **environ;
 #define serverURL "http://static.palera.in" // if doing development, change this to your local server
-#define HDI_MAGIC 0xbeeffeed
+#define HDI_MAGIC 0x1beeffeed
 struct HDIImageCreateBlock64
 {
-  uint32_t magic;
-  uint32_t one;
-  char *props;
-  uint32_t props_size;
-  char padding[0xf8 - 16];
+  uint64_t magic;
+  const void *props;
+  uint64_t props_size;
+  char padding[0x100 - 24];
 };
 struct kerninfo info;
 struct paleinfo pinfo;
@@ -219,7 +218,6 @@ int mount_dmg(const char *device, const char *fstype, const char *mnt, const int
   struct HDIImageCreateBlock64 hdi_stru;
   memset(&hdi_stru, 0, sizeof(hdi_stru));
   hdi_stru.magic = HDI_MAGIC;
-  hdi_stru.one = 1;
   hdi_stru.props = (char *)CFDataGetBytePtr(hdi_props);
   hdi_stru.props_size = CFDataGetLength(hdi_props);
   volatile unsigned long four_L = 4L;
@@ -275,7 +273,7 @@ int mount_dmg(const char *device, const char *fstype, const char *mnt, const int
   }
   if ((not_mount_ret & 1) == 0)
   {
-    fprintf(stderr, "successfully attached, but mounted failed (potentially due to entry not found): %d (%s)\n", errno, strerror(errno));
+    fprintf(stderr, "successfully attached, but mounting failed (potentially due to entry not found): %d (%s)\n", errno, strerror(errno));
     return 1;
   }
   return 0;
@@ -604,20 +602,23 @@ int uicache_loader()
 
 int sbreload()
 {
-  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful)) {
-  if (access("/usr/bin/sbreload", F_OK) != 0)
-    return 0;
-  char *args[] = {
-      "/usr/bin/sbreload",
-      NULL};
-  return run(args[0], args);
-  } else {
-  if (access("/var/jb/usr/bin/sbreload", F_OK) != 0)
-    return 0;
-  char *args[] = {
-      "/var/jb/usr/bin/sbreload",
-      NULL};
-  return run(args[0], args);
+  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
+  {
+    if (access("/usr/bin/sbreload", F_OK) != 0)
+      return 0;
+    char *args[] = {
+        "/usr/bin/sbreload",
+        NULL};
+    return run(args[0], args);
+  }
+  else
+  {
+    if (access("/var/jb/usr/bin/sbreload", F_OK) != 0)
+      return 0;
+    char *args[] = {
+        "/var/jb/usr/bin/sbreload",
+        NULL};
+    return run(args[0], args);
   }
 }
 
@@ -679,32 +680,38 @@ int jbloader_main(int argc, char **argv)
 
 int launchd_main(int argc, char **argv)
 {
-  if (getenv("XPC_USERSPACE_REBOOTED") != NULL)
+  int fd_console = open("/dev/console", O_RDWR);
+  if (fd_console == -1) return -1; // crash
+  dup2(fd_console, STDIN_FILENO);
+  dup2(fd_console, STDOUT_FILENO);
+  dup2(fd_console, STDERR_FILENO);
+  // puts("mounting devfs again-again");
+  int mount_ret = 0; // = mount("devfs", "/dev/", 0, "devfs");
+  /*if (mount_ret)
+    spin();*/
+  puts("mounting overlay");
+  mount_ret = check_and_mount_dmg();
+  if (mount_ret)
+    spin();
+  puts("mounting loader");
+  mount_ret = check_and_mount_loader();
+  if (mount_ret)
+    spin();
+  // patch_dyld();
+  struct stat statbuf;
   {
-    int fd_console = open("/dev/console", O_RDWR);
-    dup2(fd_console, STDIN_FILENO);
-    dup2(fd_console, STDOUT_FILENO);
-    dup2(fd_console, STDERR_FILENO);
-  }
-  else
-  {
-    check_and_mount_dmg();
-    check_and_mount_loader();
-    // patch_dyld();
-    struct stat statbuf;
+    int err = 0;
+    if ((err = stat("/sbin/launchd", &statbuf)))
     {
-      int err = 0;
-      if ((err = stat("/sbin/launchd", &statbuf)))
-      {
-        printf("stat /sbin/launchd FAILED with err=%d!\n", err);
-        spin();
-      }
-      else
-      {
-        puts("stat /sbin/launchd OK");
-      }
+      printf("stat /sbin/launchd FAILED with err=%d!\n", err);
+      spin();
+    }
+    else
+    {
+      puts("stat /sbin/launchd OK");
     }
   }
+
   char *newenv = malloc(200);
   assert(newenv != NULL);
   char *env = getenv("DYLD_INSERT_LIBRARIES");

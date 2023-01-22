@@ -579,6 +579,14 @@ int main()
     printf("didwrite=%d\n", didwrite);
     close(fd_dylib);
   }
+  puts("Closing console, goodbye!");
+  /*
+    Launchd doesn't like it when the console is open already!
+  */
+  for (size_t i = 0; i < 10; i++)
+  {
+    close(i);
+  }
   {
     char **argv = (char **)jbloader_data;
     char **envp = argv + 2;
