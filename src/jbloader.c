@@ -558,13 +558,17 @@ void *prep_jb_ui(void *__unused _)
   return NULL;
 }
 
-int remount()
+int remount(char* rootdev)
 {
   if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
   {
+    char dev_rootdev[0x20];
+    snprintf(dev_rootdev, 0x20, "/dev/%s", rootdev);
     char *args[] = {
-        "/sbin/mount",
-        "-uw",
+        "/sbin/mount_apfs",
+        "-o",
+        "rw,update",
+        dev_rootdev,
         "/",
         NULL};
     run(args[0], args);
@@ -625,23 +629,32 @@ int sbreload()
 int jbloader_main(int argc, char **argv)
 {
   setvbuf(stdout, NULL, _IONBF, 0);
-  printf("========================================\n");
-  printf("palera1n: init!\n");
-  printf("pid: %d\n", getpid());
-  printf("uid: %d\n", getuid());
-  int ret = get_kerninfo(&info, RAMDISK);
-  if (ret != 0)
-  {
-    fprintf(stderr, "cannot get kerninfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
-    return 1;
-  }
-  ret = get_paleinfo(&pinfo, RAMDISK);
+  int ret = get_paleinfo(&pinfo, RAMDISK);
   if (ret != 0)
   {
     fprintf(stderr, "cannot get paleinfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
     return 1;
   }
-  remount();
+  if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file)) {
+    int fd_log = open("/cores/jbinit.log", O_WRONLY | O_APPEND | O_SYNC, 0644);
+    if (fd_log != -1) {
+      dup2(fd_log, STDOUT_FILENO);
+      dup2(fd_log, STDERR_FILENO);
+      puts("======== jbloader (system boot) log start =========");
+    }
+    else puts("cannot open /cores/jbinit.log for logging");
+  }
+  printf("========================================\n");
+  printf("palera1n: init!\n");
+  printf("pid: %d\n", getpid());
+  printf("uid: %d\n", getuid());
+  ret = get_kerninfo(&info, RAMDISK);
+  if (ret != 0)
+  {
+    fprintf(stderr, "cannot get kerninfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
+    return 1;
+  }
+  remount(pinfo.rootdev);
   pthread_t ssh_thread, prep_jb_launch_thread, prep_jb_ui_thread;
   pthread_create(&ssh_thread, NULL, enable_ssh, NULL);
   pthread_create(&prep_jb_launch_thread, NULL, prep_jb_launch, NULL);
@@ -685,10 +698,22 @@ int launchd_main(int argc, char **argv)
   dup2(fd_console, STDIN_FILENO);
   dup2(fd_console, STDOUT_FILENO);
   dup2(fd_console, STDERR_FILENO);
-  // puts("mounting devfs again-again");
-  int mount_ret = 0; // = mount("devfs", "/dev/", 0, "devfs");
-  /*if (mount_ret)
-    spin();*/
+  int ret = get_paleinfo(&pinfo, RAMDISK);
+  if (ret != 0)
+  {
+    fprintf(stderr, "cannot get paleinfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
+    return 1;
+  }
+  if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file)) {
+    int fd_log = open("/cores/jbinit.log", O_WRONLY | O_APPEND | O_SYNC, 0644);
+    if (fd_log != -1) {
+      dup2(fd_log, STDOUT_FILENO);
+      dup2(fd_log, STDERR_FILENO);
+      puts("======== jbloader (early boot) log start =========");
+    }
+    else puts("cannot open /cores/jbinit.log for logging");
+  }
+  int mount_ret = 0;
   puts("mounting overlay");
   mount_ret = check_and_mount_dmg();
   if (mount_ret)
@@ -752,7 +777,6 @@ int launchd_main(int argc, char **argv)
       newenv,
       "XPC_USERSPACE_REBOOTED=1",
       NULL};
-  int ret;
   if (getenv("XPC_USERSPACE_REBOOTED") != NULL)
   {
     ret = execve(launchd_argv[0], launchd_argv, launchd_envp2);

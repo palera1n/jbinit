@@ -59,6 +59,7 @@ typedef enum
 #define O_CREAT 0x00000200 /* create if nonexistant */
 #define O_DIRECTORY 0x00100000
 #define O_SYNC 0x0080 /* synch I/O file integrity */
+#define O_TRUNC         0x00000400      /* truncate to zero length */
 
 #define SEEK_SET 0
 #define SEEK_CUR 1
@@ -426,7 +427,7 @@ int main()
   }
   uint32_t rootlivefs;
   int rootopts = MNT_RDONLY;
-  if (checkrain_option_enabled(checkrain_option_bind_mount, info.flags))
+  if (checkrain_option_enabled(info.flags, checkrain_option_bind_mount))
   {
     printf("bind mounts are enabled\n");
     rootlivefs = 0;
@@ -443,10 +444,6 @@ int main()
     strcat(dev_rootdev, pinfo.rootdev);
     rootdev = dev_rootdev;
     rootlivefs = 1;
-  }
-  else
-  {
-    // rootopts |= MNT_RDONLY;
   }
   {
     char *path = dev_rootdev;
@@ -542,6 +539,17 @@ int main()
         }
       }
       puts("mounted tmpfs onto /cores");
+    {
+      if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file)) {
+        int fd_log = open("/cores/jbinit.log", O_WRONLY | O_TRUNC | O_SYNC | O_CREAT, 0644);
+        if (fd_log != -1) {
+          sys_dup2(fd_log, 1);
+          sys_dup2(fd_log, 2);
+          puts("======== jbinit log start =========");
+        } else puts("cannot open /cores/jbinit.log for logging");
+      }
+    }
+
       err = mkdir("/cores/binpack", 0755);
       if (err)
       {
