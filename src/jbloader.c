@@ -449,6 +449,8 @@ int load_etc_rc_d()
   if (!d)
   {
     printf("Failed to open dir with err=%d (%s)\n", errno, strerror(errno));
+    if (access("/cores/should_userspace_reboot", F_OK) == 0)
+      rmdir("/cores/should_userspace_reboot");
     return 0;
   }
   while ((dir = readdir(d)))
@@ -475,7 +477,20 @@ int load_etc_rc_d()
     free(pp);
   }
   closedir(d);
-  return 0;
+  if (access("/cores/should_userspace_reboot", F_OK) != 0) return 0;
+  if (rmdir("/cores/should_userspace_reboot")) {
+    printf("cannot rmdir /cores/should_userspace_reboot: %d (%s)\n", errno, strerror(errno));
+    return -1;
+  }
+  char* userspace_reboot_args[] = {
+    "/cores/binpack/bin/launchctl",
+    "reboot",
+    "userspace",
+    NULL
+  };
+  run(userspace_reboot_args[0], userspace_reboot_args);
+  exit(0);
+  return -1;
 }
 
 int loadDaemons()
@@ -658,6 +673,7 @@ int jbloader_main(int argc, char **argv)
   pthread_t ssh_thread, prep_jb_launch_thread, prep_jb_ui_thread;
   pthread_create(&ssh_thread, NULL, enable_ssh, NULL);
   pthread_create(&prep_jb_launch_thread, NULL, prep_jb_launch, NULL);
+  pthread_join(prep_jb_launch_thread, NULL);
   if (!checkrain_option_enabled(checkrain_option_force_revert, info.flags))
   {
     pthread_create(&prep_jb_ui_thread, NULL, prep_jb_ui, NULL);
@@ -665,7 +681,6 @@ int jbloader_main(int argc, char **argv)
   pthread_join(ssh_thread, NULL);
   if (!checkrain_option_enabled(checkrain_option_force_revert, info.flags))
     pthread_join(prep_jb_ui_thread, NULL);
-  pthread_join(prep_jb_launch_thread, NULL);
   uicache_loader();
   if (checkrain_option_enabled(checkrain_option_safemode, info.flags))
   {
@@ -682,7 +697,7 @@ int jbloader_main(int argc, char **argv)
   }
   else
   {
-    sbreload();
+    // sbreload();
   }
   printf("palera1n: goodbye!\n");
   printf("========================================\n");
@@ -709,26 +724,29 @@ int launchd_main(int argc, char **argv)
     if (fd_log != -1) {
       dup2(fd_log, STDOUT_FILENO);
       dup2(fd_log, STDERR_FILENO);
-      puts("======== jbloader (early boot) log start =========");
+      fputs("======== jbloader (early boot) log start =========", stderr);
     }
-    else puts("cannot open /cores/jbinit.log for logging");
+    else fputs("cannot open /cores/jbinit.log for logging", stderr);
   }
-  int mount_ret = 0;
-  puts("mounting overlay");
-  mount_ret = check_and_mount_dmg();
-  if (mount_ret)
-    spin();
-  puts("mounting loader");
-  mount_ret = check_and_mount_loader();
-  if (mount_ret)
-    spin();
+  if (getenv("XPC_USERSPACE_REBOOTED") == NULL) {
+    int mount_ret = 0;
+    puts("mounting overlay");
+    mount_ret = check_and_mount_dmg();
+    if (mount_ret)
+      spin();
+    puts("mounting loader");
+    mount_ret = check_and_mount_loader();
+    if (mount_ret)
+      spin();
+  }
+
   // patch_dyld();
   struct stat statbuf;
   {
     int err = 0;
     if ((err = stat("/sbin/launchd", &statbuf)))
     {
-      printf("stat /sbin/launchd FAILED with err=%d!\n", err);
+      fprintf(stderr, "stat /sbin/launchd FAILED with err=%d!\n", err);
       spin();
     }
     else

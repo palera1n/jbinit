@@ -1,5 +1,13 @@
-
 #include <stdint.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <iso646.h>
+#include <float.h>
+#include <stdalign.h>
+#include <stdnoreturn.h>
+
 #include "printf.h"
 #include "kerninfo.h"
 
@@ -58,8 +66,8 @@ typedef enum
 #define O_RDWR 2
 #define O_CREAT 0x00000200 /* create if nonexistant */
 #define O_DIRECTORY 0x00100000
-#define O_SYNC 0x0080 /* synch I/O file integrity */
-#define O_TRUNC         0x00000400      /* truncate to zero length */
+#define O_SYNC 0x0080      /* synch I/O file integrity */
+#define O_TRUNC 0x00000400 /* truncate to zero length */
 
 #define SEEK_SET 0
 #define SEEK_CUR 1
@@ -245,6 +253,28 @@ int sys_sysctlbyname(const char *name, size_t namelen, void *old, size_t *oldlen
 ssize_t getdirentries64(int fd, void *buf, size_t bufsize, off_t *position)
 {
   return msyscall(344, fd, buf, bufsize, position);
+}
+
+void read_directory(int fd, void (*dir_cb)(struct dirent *))
+{
+  off_t pos = 0;
+  char buf[sizeof(struct dirent)];
+  do
+  {
+    pos = getdirentries64(fd, buf, sizeof(buf), &pos);
+    if (pos == 0)
+      break;
+    struct dirent *entry = (struct dirent *)buf;
+    while ((char*)entry < buf + sizeof(buf))
+    {
+      if (entry->d_ino == 0)
+        break;
+      if (entry->d_type == DT_UNKNOWN || entry->d_reclen <= 0 || entry->d_seekoff != 0)
+        break;
+      dir_cb(entry);
+      entry = (struct dirent *)((char *)entry + entry->d_reclen);
+    }
+  } while (pos);
 }
 
 void spin()
@@ -539,16 +569,20 @@ int main()
         }
       }
       puts("mounted tmpfs onto /cores");
-    {
-      if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file)) {
-        int fd_log = open("/cores/jbinit.log", O_WRONLY | O_TRUNC | O_SYNC | O_CREAT, 0644);
-        if (fd_log != -1) {
-          sys_dup2(fd_log, 1);
-          sys_dup2(fd_log, 2);
-          puts("======== jbinit log start =========");
-        } else puts("cannot open /cores/jbinit.log for logging");
+      {
+        if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
+        {
+          int fd_log = open("/cores/jbinit.log", O_WRONLY | O_TRUNC | O_SYNC | O_CREAT, 0644);
+          if (fd_log != -1)
+          {
+            sys_dup2(fd_log, 1);
+            sys_dup2(fd_log, 2);
+            puts("======== jbinit log start =========");
+          }
+          else
+            puts("cannot open /cores/jbinit.log for logging");
+        }
       }
-    }
 
       err = mkdir("/cores/binpack", 0755);
       if (err)
@@ -562,6 +596,12 @@ int main()
       }
       else
         puts("created /cores/binpack");
+    }
+    puts("creating /cores/should_userspace_reboot");
+    int indicator_ret = mkdir("/cores/should_userspace_reboot", 0755);
+    if (indicator_ret) {
+      printf("cannot mkdir /cores/should_userspace_reboot, err=%d\n", indicator_ret);
+      spin();
     }
     puts("deploying jbloader");
     fd_jbloader = open("/cores/jbloader", O_WRONLY | O_CREAT, 0755);
