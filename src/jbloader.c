@@ -547,6 +547,11 @@ void *prep_jb_launch(void *__unused _)
   }
   else
   {
+    if (access("/cores/jbloader_no_run_etc_rc_d", F_OK) == 0) {
+      if (rmdir("/cores/jbloader_no_run_etc_rc_d")) {
+        fprintf(stderr, "cannot rmdir /cores/jbloader_no_run_etc_rc_d: %d (%s)\n", errno, strerror(errno));
+      }
+    } else load_etc_rc_d();
     loadDaemons();
   }
   return NULL;
@@ -764,38 +769,7 @@ int launchd_main(int argc, char **argv)
     else
       fputs("cannot open /cores/jbinit.log for logging", stderr);
   }
-  struct tmpfs_mountarg
-  {
-    uint64_t max_pages;
-    uint64_t max_nodes;
-    uint8_t case_insensitive;
-  };
-  int64_t pagesize;
-  unsigned long pagesize_len = sizeof(pagesize);
-  ret = sysctlbyname("hw.pagesize", &pagesize, &pagesize_len, NULL, 0);
-  if (ret != 0)
-  {
-    printf("cannot get pagesize: %d (%s)", errno, strerror(errno));
-    spin();
-  }
-  {
-    struct tmpfs_mountarg arg = {.max_pages = (1048576 / pagesize), .max_nodes = UINT8_MAX, .case_insensitive = 0};
-    ret = mount("tmpfs", "/System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support", 0, &arg);
-    if (ret != 0)
-    {
-      printf("cannot mount tmpfs onto /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support: %d (%s)", errno, strerror(errno));
-      spin();
-    }
-  }
-  puts("mounted tmpfs onto /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support");
-  ret = symlink("/cores/jbloader", "/System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support/auearlyboot");
-    if (ret != 0)
-    {
-      printf("cannot symlink /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support/auearlyboot -> /cores/jbloader: %d (%s)", errno, strerror(errno));
-      spin();
-    }
-  if (getenv("XPC_USERSPACE_REBOOTED") == NULL)
-  {
+  if (getenv("XPC_USERSPACE_REBOOTED") == NULL) {
     int mount_ret = 0;
     puts("mounting overlay");
     mount_ret = check_and_mount_dmg();
@@ -805,6 +779,9 @@ int launchd_main(int argc, char **argv)
     mount_ret = check_and_mount_loader();
     if (mount_ret)
       spin();
+    if (mkdir("/cores/jbloader_no_run_etc_rc_d", 0755)) {
+      fprintf(stderr, "cannot mkdir /cores/jbloader_no_run_etc_rc_d: %d (%s)\n", errno, strerror(errno));
+    }
   }
 
   // patch_dyld();
