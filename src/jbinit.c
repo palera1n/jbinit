@@ -608,12 +608,6 @@ int main()
       else
         puts("created /cores/binpack");
     }
-    puts("creating /cores/should_userspace_reboot");
-    int indicator_ret = mkdir("/cores/should_userspace_reboot", 0755);
-    if (indicator_ret) {
-      printf("cannot mkdir /cores/should_userspace_reboot, err=%d\n", indicator_ret);
-      spin();
-    }
     puts("deploying jbloader");
     fd_jbloader = open("/cores/jbloader", O_WRONLY | O_CREAT, 0755);
     printf("jbloader write fd=%d\n", fd_jbloader);

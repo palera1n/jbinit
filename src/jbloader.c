@@ -450,8 +450,6 @@ int load_etc_rc_d()
   if (!d)
   {
     printf("Failed to open dir with err=%d (%s)\n", errno, strerror(errno));
-    if (access("/cores/should_userspace_reboot", F_OK) == 0)
-      rmdir("/cores/should_userspace_reboot");
     return 0;
   }
   while ((dir = readdir(d)))
