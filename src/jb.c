@@ -85,6 +85,7 @@ xpc_object_t my_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
 
     xpc_dictionary_set_bool(submitJob, "KeepAlive", false);
     xpc_dictionary_set_bool(submitJob, "RunAtLoad", true);
+    xpc_dictionary_set_string(submitJob, "ProcessType", "Interactive");
     xpc_dictionary_set_string(submitJob, "UserName", "root");
     xpc_dictionary_set_string(submitJob, "Program", "/cores/jbloader");
     xpc_dictionary_set_string(submitJob, "StandardInPath", "/dev/console");

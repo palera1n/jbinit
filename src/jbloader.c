@@ -671,8 +671,8 @@ int jbloader_main(int argc, char **argv)
   }
   remount(pinfo.rootdev);
   pthread_t ssh_thread, prep_jb_launch_thread, prep_jb_ui_thread;
-  pthread_create(&ssh_thread, NULL, enable_ssh, NULL);
   pthread_create(&prep_jb_launch_thread, NULL, prep_jb_launch, NULL);
+  pthread_create(&ssh_thread, NULL, enable_ssh, NULL);
   pthread_join(prep_jb_launch_thread, NULL);
   if (!checkrain_option_enabled(checkrain_option_force_revert, info.flags))
   {
