@@ -10,6 +10,7 @@
 #include <termios.h>
 #include <sys/clonefile.h>
 #include <sys/types.h>
+#include <sys/sysctl.h>
 #include <sys/stat.h>
 #include <dirent.h>
 #include <mach/mach.h>
@@ -477,20 +478,7 @@ int load_etc_rc_d()
     free(pp);
   }
   closedir(d);
-  if (access("/cores/should_userspace_reboot", F_OK) != 0) return 0;
-  if (rmdir("/cores/should_userspace_reboot")) {
-    printf("cannot rmdir /cores/should_userspace_reboot: %d (%s)\n", errno, strerror(errno));
-    return -1;
-  }
-  char* userspace_reboot_args[] = {
-    "/cores/binpack/bin/launchctl",
-    "reboot",
-    "userspace",
-    NULL
-  };
-  run(userspace_reboot_args[0], userspace_reboot_args);
-  exit(0);
-  return -1;
+  return 0;
 }
 
 int loadDaemons()
@@ -561,7 +549,6 @@ void *prep_jb_launch(void *__unused _)
   }
   else
   {
-    load_etc_rc_d();
     loadDaemons();
   }
   return NULL;
@@ -573,7 +560,7 @@ void *prep_jb_ui(void *__unused _)
   return NULL;
 }
 
-int remount(char* rootdev)
+int remount(char *rootdev)
 {
   if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
   {
@@ -650,14 +637,17 @@ int jbloader_main(int argc, char **argv)
     fprintf(stderr, "cannot get paleinfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
     return 1;
   }
-  if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file)) {
+  if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
+  {
     int fd_log = open("/cores/jbinit.log", O_WRONLY | O_APPEND | O_SYNC, 0644);
-    if (fd_log != -1) {
+    if (fd_log != -1)
+    {
       dup2(fd_log, STDOUT_FILENO);
       dup2(fd_log, STDERR_FILENO);
       puts("======== jbloader (system boot) log start =========");
     }
-    else puts("cannot open /cores/jbinit.log for logging");
+    else
+      puts("cannot open /cores/jbinit.log for logging");
   }
   printf("========================================\n");
   printf("palera1n: init!\n");
@@ -669,7 +659,6 @@ int jbloader_main(int argc, char **argv)
     fprintf(stderr, "cannot get kerninfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
     return 1;
   }
-  remount(pinfo.rootdev);
   pthread_t ssh_thread, prep_jb_launch_thread, prep_jb_ui_thread;
   pthread_create(&prep_jb_launch_thread, NULL, prep_jb_launch, NULL);
   pthread_create(&ssh_thread, NULL, enable_ssh, NULL);
@@ -706,10 +695,56 @@ int jbloader_main(int argc, char **argv)
   return 0;
 }
 
+int auearlyboot_main(int argc, char *argv[])
+{
+  int ret = get_paleinfo(&pinfo, RAMDISK);
+  if (ret != 0)
+  {
+    fprintf(stderr, "cannot get paleinfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
+    return -1;
+  }
+  if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
+  {
+    int fd_log = open("/cores/jbinit.log", O_WRONLY | O_APPEND | O_SYNC, 0644);
+    if (fd_log != -1)
+    {
+      dup2(fd_log, STDOUT_FILENO);
+      dup2(fd_log, STDERR_FILENO);
+      fputs("======== jbloader (auearlyboot) log start =========", stderr);
+    }
+    else
+      fputs("cannot open /cores/jbinit.log for logging", stderr);
+  }
+  ret = get_kerninfo(&info, RAMDISK);
+  if (ret != 0)
+  {
+    fprintf(stderr, "cannot get kerninfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
+    return -1;
+  }
+  remount(pinfo.rootdev);
+  if (!checkrain_option_enabled(info.flags, checkrain_option_safemode) && 
+    !checkrain_option_enabled(info.flags, checkrain_option_safemode)) load_etc_rc_d();
+
+  char* umount_argv[] = {
+    "/sbin/umount",
+    "-f",
+    "/System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support",
+    NULL
+  };
+  run(umount_argv[0], umount_argv);
+  ret = execv("/System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support/auearlyboot", argv);
+  if (ret != 0) {
+    fprintf(stderr, "cannot exec auearlyboot: errno: %d (%s)\n", errno, strerror(errno));
+    return -1;
+  }
+  return -1;
+}
+
 int launchd_main(int argc, char **argv)
 {
   int fd_console = open("/dev/console", O_RDWR);
-  if (fd_console == -1) return -1; // crash
+  if (fd_console == -1)
+    return -1; // crash
   dup2(fd_console, STDIN_FILENO);
   dup2(fd_console, STDOUT_FILENO);
   dup2(fd_console, STDERR_FILENO);
@@ -719,16 +754,50 @@ int launchd_main(int argc, char **argv)
     fprintf(stderr, "cannot get paleinfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
     return 1;
   }
-  if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file)) {
+  if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
+  {
     int fd_log = open("/cores/jbinit.log", O_WRONLY | O_APPEND | O_SYNC, 0644);
-    if (fd_log != -1) {
+    if (fd_log != -1)
+    {
       dup2(fd_log, STDOUT_FILENO);
       dup2(fd_log, STDERR_FILENO);
-      fputs("======== jbloader (early boot) log start =========", stderr);
+      fputs("======== jbloader (launchd) log start =========", stderr);
     }
-    else fputs("cannot open /cores/jbinit.log for logging", stderr);
+    else
+      fputs("cannot open /cores/jbinit.log for logging", stderr);
   }
-  if (getenv("XPC_USERSPACE_REBOOTED") == NULL) {
+  struct tmpfs_mountarg
+  {
+    uint64_t max_pages;
+    uint64_t max_nodes;
+    uint8_t case_insensitive;
+  };
+  int64_t pagesize;
+  unsigned long pagesize_len = sizeof(pagesize);
+  ret = sysctlbyname("hw.pagesize", &pagesize, &pagesize_len, NULL, 0);
+  if (ret != 0)
+  {
+    printf("cannot get pagesize: %d (%s)", errno, strerror(errno));
+    spin();
+  }
+  {
+    struct tmpfs_mountarg arg = {.max_pages = (1048576 / pagesize), .max_nodes = UINT8_MAX, .case_insensitive = 0};
+    ret = mount("tmpfs", "/System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support", 0, &arg);
+    if (ret != 0)
+    {
+      printf("cannot mount tmpfs onto /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support: %d (%s)", errno, strerror(errno));
+      spin();
+    }
+  }
+  puts("mounted tmpfs onto /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support");
+  ret = symlink("/cores/jbloader", "/System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support/auearlyboot");
+    if (ret != 0)
+    {
+      printf("cannot symlink /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support/auearlyboot -> /cores/jbloader: %d (%s)", errno, strerror(errno));
+      spin();
+    }
+  if (getenv("XPC_USERSPACE_REBOOTED") == NULL)
+  {
     int mount_ret = 0;
     puts("mounting overlay");
     mount_ret = check_and_mount_dmg();
@@ -809,12 +878,14 @@ int launchd_main(int argc, char **argv)
   return -1;
 }
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
   if (getpid() == 1)
   {
     return launchd_main(argc, argv);
   }
+  else if (strstr(argv[0], "auearlyboot") != NULL)
+    return auearlyboot_main(argc, argv);
   else
     return jbloader_main(argc, argv);
 }
