@@ -32,6 +32,8 @@
 #define RAMDISK "/dev/rmd0"
 #endif
 
+bool safemode_spin = true;
+
 #define PRINTF_BINARY_PATTERN_INT8 "%c%c%c%c%c%c%c%c"
 #define PRINTF_BYTE_TO_BINARY_INT8(i) \
   (((i)&0x80ll) ? '1' : '0'),         \
@@ -530,6 +532,7 @@ void safemode_alert(CFNotificationCenterRef center, void *observer,
     fprintf(stderr, "CFUserNotificationCreate() returned %d %s\n", ret, mach_error_string(ret));
   }
   printf("Safe mode notification alert sent\n");
+  safemode_spin = false;
   return;
 }
 
@@ -684,16 +687,21 @@ int jbloader_main(int argc, char **argv)
         "SpringBoardServices",
         RTLD_NOW);
     void *(*SBSSpringBoardServerPort)() = dlsym(sbservices, "SBSSpringBoardServerPort");
-    if (SBSSpringBoardServerPort() == NULL)
+    if (SBSSpringBoardServerPort() == NULL) {
       dispatch_main();
+    }
   }
   else
   {
-    // sbreload();
+    safemode_spin = false;
+  }
+  uint8_t i = 0;
+  while (safemode_spin && i < 180) {
+    i += 3;
+    sleep(3);
   }
   printf("palera1n: goodbye!\n");
   printf("========================================\n");
-  // startMonitoring();
 
   return 0;
 }
