@@ -15,7 +15,6 @@ jobs:
         uses: beerpiss/procursus-action@v2.0.1
         with:
           packages: ldid make
-          mirror: https://procursus.itsnebula.net
 
       - name: Install dependecies
         run: |
