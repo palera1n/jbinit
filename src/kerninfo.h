@@ -37,25 +37,27 @@
 #define checkrain_option_failure            0x80000000
 
 // Host options
-#define checkrain_option_verbose_logging    (1 << 0)
-#define checkrain_option_demote             (1 << 1)
-#define checkrain_option_early_exit         (1 << 2)
-#define checkrain_option_quick_mode         (1 << 3)
-#define checkrain_option_pongo_shell        (1 << 4)
-#define checkrain_option_pongo_full         (1 << 5)
+#define checkrain_option_verbose_logging     (1 << 0)
+#define checkrain_option_demote              (1 << 1)
+#define checkrain_option_early_exit          (1 << 2)
+#define checkrain_option_quick_mode          (1 << 3)
+#define checkrain_option_pongo_shell         (1 << 4)
+#define checkrain_option_pongo_full          (1 << 5)
 
 // KPF options
-#define checkrain_option_verbose_boot       (1 << 0)
+#define checkrain_option_verbose_boot        (1 << 0)
 
 // Global options
-#define checkrain_option_safemode           (1 << 0)
-#define checkrain_option_bind_mount         (1 << 1)
-#define checkrain_option_overlay            (1 << 2)
-#define checkrain_option_force_revert       (1 << 7) /* keep this at 7 */
+#define checkrain_option_safemode            (1 << 0)
+#define checkrain_option_bind_mount          (1 << 1)
+#define checkrain_option_overlay             (1 << 2)
+#define checkrain_option_force_revert        (1 << 7) /* keep this at 7 */
 
 // palera1n option
-#define palerain_option_rootful             (1 << 0)
-#define palerain_option_jbinit_log_to_file  (1 << 1)
+#define palerain_option_rootful              (1 << 0) /* rootful setup */
+#define palerain_option_jbinit_log_to_file   (1 << 1) /* log to /cores/jbinit.log */
+#define palerain_option_setup_rootful        (1 << 2) /* create fakefs */
+#define palerain_option_setup_rootful_forced (1 << 3) /* create fakefs over an existing one */
 
 #define PALEINFO_MAGIC 'PLSH'
 #define PALEINFO_CIGAM 'HSLP'
