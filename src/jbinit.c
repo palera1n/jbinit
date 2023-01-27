@@ -368,6 +368,37 @@ char *strcat(char *dest, char *src)
   return dest;
 }
 
+char *strstr(const char *string, char *substring)
+{
+  register char *a, *b;
+
+  /* First scan quickly through the two strings looking for a
+   * single-character match.  When it's found, then compare the
+   * rest of the substring.
+   */
+
+  b = substring;
+  if (*b == 0) {
+    return (char *)string;
+  }
+  for (; *string != 0; string += 1) {
+    if (*string != *b) {
+      continue;
+    }
+    a = (char *)string;
+    while (1) {
+      if (*b == 0) {
+        return (char *)string;
+      }
+      if (*a++ != *b++) {
+        break;
+      }
+    }
+    b = substring;
+  }
+  return NULL;
+}
+
 int main()
 {
   int fd_console = open("/dev/console", O_RDWR | O_SYNC, 0);
@@ -375,8 +406,18 @@ int main()
   sys_dup2(fd_console, 1);
   sys_dup2(fd_console, 2);
   char statbuf[0x400];
+  char bootargs[0x270]; 
 
   puts("================ Hello from jbinit ================");
+  {
+    unsigned long bootargs_len = sizeof(bootargs);
+    int err = sys_sysctlbyname("kern.bootargs", sizeof("kern.bootargs"), &bootargs, &bootargs_len, NULL, 0);
+    if (err) {
+      printf("cannot get bootargs: %d\n", err);
+      spin();
+    }
+    printf("boot-args = %s\n", bootargs);
+  }
 
   int fd_jbloader = 0;
   fd_jbloader = open("/sbin/launchd", O_RDONLY, 0);
@@ -459,6 +500,35 @@ int main()
       spin();
     }
   }
+  char dev_rootdev[0x20] = "/dev/";
+  bool use_fakefs = false;
+  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful)) {
+    snprintf(dev_rootdev, 0x20, "/dev/%s", pinfo.rootdev);
+    use_fakefs = true;
+  }
+
+  if (checkrain_option_enabled(info.flags, checkrain_option_force_revert)) {
+    use_fakefs = false;
+  }
+
+  if (checkrain_option_enabled(pinfo.flags, palerain_option_setup_rootful)) {
+    use_fakefs = false;
+    if (!checkrain_option_enabled(pinfo.flags, palerain_option_rootful)) {
+      printf("cannot have palerain_option_setup_rootful when palerain_option_rootful is unset\n");
+      spin();
+    }
+    if (strstr(bootargs, "wdt=-1") == NULL) {
+      printf("cannot have palerain_option_setup_rootful without wdt=-1 in boot-args\n");
+      spin();
+    }
+    if (stat(dev_rootdev, statbuf) == 0) {
+      if (!checkrain_option_enabled(pinfo.flags, palerain_option_setup_rootful_forced)) {
+        printf("cannot create fakefs over an existing one without palerain_option_setup_rootful_forced\n");
+        spin();
+      }
+    }
+  }
+
   uint32_t rootlivefs;
   int rootopts = MNT_RDONLY;
   if (checkrain_option_enabled(info.flags, checkrain_option_bind_mount))
@@ -472,15 +542,17 @@ int main()
     rootopts |= MNT_UNION;
     rootlivefs = 1;
   }
-  char dev_rootdev[0x20] = "/dev/";
-  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
+  if (use_fakefs)
   {
-    strcat(dev_rootdev, pinfo.rootdev);
     rootdev = dev_rootdev;
     rootlivefs = 1;
   }
   {
-    char *path = dev_rootdev;
+    char *path = NULL;
+    if (use_fakefs)
+      path = dev_rootdev;
+    else
+      path = "/dev/md0";
     int err = mount("apfs", "/", MNT_UPDATE | MNT_RDONLY, &path);
     if (!err)
     {
@@ -653,6 +725,7 @@ int main()
     printf("didwrite=%d\n", didwrite);
     close(fd_dylib);
   }
+
   puts("Closing console, goodbye!");
   /*
     Launchd doesn't like it when the console is open already!

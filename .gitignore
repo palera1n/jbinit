@@ -19,3 +19,4 @@ loader.ipa
 Payload
 tests/
 palera1n.ipa
+src/create_fakefs_sh.c

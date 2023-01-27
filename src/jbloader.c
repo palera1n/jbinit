@@ -23,6 +23,7 @@
 #include <CommonCrypto/CommonDigest.h>
 #include <pthread.h>
 #include <dlfcn.h>
+#include <sys/wait.h>
 #include <IOKit/IOKitLib.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include "kerninfo.h"
@@ -31,6 +32,13 @@
 #ifndef RAMDISK
 #define RAMDISK "/dev/rmd0"
 #endif
+
+#define fakefs_is_in_use checkrain_option_enabled(pinfo.flags, palerain_option_rootful) && !checkrain_option_enabled(pinfo.flags, checkrain_option_force_revert)
+
+#define RB_AUTOBOOT     0
+#define RB_PANIC    0x800
+#define RB_PANIC_FORCERESET 0x2000
+int reboot_np(int howto, const char *message);
 
 bool safemode_spin = true;
 
@@ -71,14 +79,10 @@ struct HDIImageCreateBlock64
 struct kerninfo info;
 struct paleinfo pinfo;
 
-void spin()
-{
-  puts("jbinit DIED!");
-  while (1)
-  {
-    sleep(5);
-  }
-}
+extern unsigned char src_create_fakefs_sh[];
+extern unsigned int src_create_fakefs_sh_len;
+extern kern_return_t APFSVolumeDelete(const char *dev);
+
 
 int run(const char *cmd, char *const *args)
 {
@@ -93,7 +97,7 @@ int run(const char *cmd, char *const *args)
     snprintf(printbuf + csize, sizeof(printbuf) - csize, "%s ", *a);
   }
 
-  retval = posix_spawn(&pid, cmd, NULL, NULL, args, NULL);
+  retval = posix_spawn(&pid, cmd, NULL, NULL, args, environ);
   printf("Executing: %s (posix_spawn returned: %d)\n", printbuf, retval);
   {
     int pidret = 0;
@@ -103,6 +107,25 @@ int run(const char *cmd, char *const *args)
     return pidret;
   }
   return retval;
+}
+
+void spin()
+{
+  puts("jbinit DIED!");
+  if (access("/cores/binpack/bin/sh", F_OK) == 0) {
+    putenv("PATH=/cores/binpack/usr/bin:/cores/binpack/usr/sbin:/cores/binpack/sbin:/cores/binpack/bin:/usr/bin:/usr/sbin:/bin:/sbin");
+    puts("Welcome to jbinit DIED emergency shell!");
+    char* shell_argv[] = {
+      "/cores/binpack/bin/sh",
+      "-i",
+      NULL
+    };
+    run(shell_argv[0], shell_argv);
+  }
+  while (1)
+  {
+    sleep(5);
+  }
 }
 
 int run_async(const char *cmd, char *const *args)
@@ -328,9 +351,17 @@ void *enable_ssh(void *__unused _)
 
 int jailbreak_obliterator()
 {
+
   if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
   {
-    return 0;
+    char *rm_argv[] = {
+      "/cores/binpack/bin/rm",
+      "-rf",
+      "/var/jb",
+      "/var/lib",
+      "/var/cache",
+    NULL};
+  run(rm_argv[0], rm_argv);
   }
   else
   {
@@ -391,7 +422,15 @@ int jailbreak_obliterator()
         prebootPath,
         "/var/lib",
         "/var/cache",
-        NULL};
+        "/var/LIB",
+        "/var/Liy",
+        "/var/ulb",
+        "/var/bin",
+        "/var/sbin",
+        "/var/ubi",
+        "/var/local",
+        NULL
+      };
     run(rm_argv[0], rm_argv);
     char *uicache_argv[] = {
         "/cores/binpack/usr/bin/uicache",
@@ -518,7 +557,7 @@ void safemode_alert(CFNotificationCenterRef center, void *observer,
   int ret;
   CFMutableDictionaryRef dict = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
   CFDictionarySetValue(dict, kCFUserNotificationAlertHeaderKey, CFSTR("Entered Safe Mode"));
-  if (checkrain_option_enabled(checkrain_option_failure, info.flags))
+  if (checkrain_option_enabled(info.flags, checkrain_option_failure))
   {
     CFDictionarySetValue(dict, kCFUserNotificationAlertMessageKey, CFSTR("jbloader entered safe mode due to an error"));
   }
@@ -539,12 +578,12 @@ void safemode_alert(CFNotificationCenterRef center, void *observer,
 void *prep_jb_launch(void *__unused _)
 {
   assert(info.size == sizeof(struct kerninfo));
-  if (checkrain_option_enabled(checkrain_option_force_revert, info.flags))
+  if (checkrain_option_enabled(info.flags, checkrain_option_force_revert))
   {
     jailbreak_obliterator();
     return NULL;
   }
-  if (checkrain_option_enabled(checkrain_option_safemode, info.flags))
+  if (checkrain_option_enabled(info.flags, checkrain_option_safemode))
   {
     printf("Safe mode is enabled\n");
   }
@@ -568,7 +607,7 @@ void *prep_jb_ui(void *__unused _)
 
 int remount(char *rootdev)
 {
-  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
+  if (fakefs_is_in_use)
   {
     char dev_rootdev[0x20];
     snprintf(dev_rootdev, 0x20, "/dev/%s", rootdev);
@@ -591,7 +630,7 @@ int remount(char *rootdev)
 
 int uicache_loader()
 {
-  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
+  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful) && (access("/jbin/loader.app", F_OK) == 0))
   {
     char *loader_uicache_argv[] = {
         "/cores/binpack/usr/bin/uicache",
@@ -634,15 +673,100 @@ int sbreload()
   }
 }
 
-int jbloader_main(int argc, char **argv)
-{
-  setvbuf(stdout, NULL, _IONBF, 0);
-  int ret = get_paleinfo(&pinfo, RAMDISK);
+int init_info() {
+  int ret = get_kerninfo(&info, RAMDISK);
+  if (ret != 0)
+  {
+    fprintf(stderr, "cannot get kerninfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
+    return -1;
+  }
+  ret = get_paleinfo(&pinfo, RAMDISK);
   if (ret != 0)
   {
     fprintf(stderr, "cannot get paleinfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
-    return 1;
+    return -1;
   }
+  return 0;
+}
+
+int create_remove_fakefs() {
+  if (checkrain_option_enabled(info.flags, checkrain_option_force_revert) && checkrain_option_enabled(pinfo.flags, palerain_option_rootful)) {
+    if (pinfo.rootdev[strlen(pinfo.rootdev) - 1] == '1') {
+      printf("avoiding self destruction by user error\n");
+      return 0;
+    } 
+    kern_return_t delete_ret = APFSVolumeDelete(pinfo.rootdev);
+    if (delete_ret != KERN_SUCCESS) {
+      fprintf(stderr, "cannot delete fakefs %s: %d %s\n", pinfo.rootdev, delete_ret, mach_error_string(delete_ret));
+    } else {
+      printf("deleted %s\n", pinfo.rootdev);
+    }
+  }
+  if (!checkrain_option_enabled(pinfo.flags, palerain_option_setup_rootful)) return 0;
+  char dev_rootdev[0x20];
+  snprintf(dev_rootdev, 0x20, "/dev/%s", pinfo.rootdev);
+  if (access(dev_rootdev, F_OK) == 0) {
+    if (!checkrain_option_enabled(pinfo.flags, palerain_option_setup_rootful_forced)) {
+      // should be unreachable because jbinit checked it
+      assert(0);
+    }
+    kern_return_t delete_ret = APFSVolumeDelete(pinfo.rootdev);
+    if (delete_ret != KERN_SUCCESS) {
+      fprintf(stderr, "cannot delete existing fakefs: %d %s", delete_ret, mach_error_string(delete_ret));
+      spin();
+    } else {
+      printf("deleted %s\n", pinfo.rootdev);
+    }
+  }
+  assert(!mkdir("/cores/fs", 0755));
+  assert(!mkdir("/cores/fs/real", 0755));
+  assert(!mkdir("/cores/fs/fake", 0755));
+  putenv("XPC_SERVICES_UNAVAILABLE=1");
+  int fd_script = open("/cores/create_fakefs.sh", O_WRONLY | O_CREAT , 0);
+  if (fd_script == -1) {
+    fprintf(stderr, "cannot create /cores/create_fakefs.sh: %d (%s)\n", errno, strerror(errno));
+    spin();
+  }
+  chmod("/cores/create_fakefs.sh", 0755);
+  ssize_t didWrite = write(fd_script, src_create_fakefs_sh, src_create_fakefs_sh_len);
+  if (didWrite != src_create_fakefs_sh_len) {
+    fprintf(stderr, "wrote %zd bytes, expected %u bytes\n", didWrite, src_create_fakefs_sh_len);
+    spin();
+  }
+  close(fd_script);
+  char* setup_fakefs_argv[] = {
+    "/cores/binpack/bin/sh",
+    "/cores/create_fakefs.sh",
+    dev_rootdev,
+    NULL
+  };
+  int pidret = run(setup_fakefs_argv[0], setup_fakefs_argv);
+  if (!WIFEXITED(pidret)) {
+    int termsig = 0;
+    if (WIFSIGNALED(pidret)) {
+      termsig = WTERMSIG(pidret);
+      fprintf(stderr, "/cores/create_fakefs.sh exited due to signal %d\n", termsig);
+    } else {
+      fprintf(stderr, "/cores/create_fakefs.sh exited abnormally\n");
+    }
+    spin();
+  }
+  if (WEXITSTATUS(pidret) != 0) {
+    fprintf(stderr, "/cores/create_fakefs.sh exited with code %d\n", WEXITSTATUS(pidret));
+    spin();
+  }
+  puts("Rebooting in 5 seconds");
+  sleep(5);
+  reboot_np(RB_AUTOBOOT, NULL);
+  sleep(5);
+  puts("reboot timed out");
+  spin();
+  return -1;
+}
+
+int jbloader_main(int argc, char **argv)
+{
+  setvbuf(stdout, NULL, _IONBF, 0);
   if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
   {
     int fd_log = open("/cores/jbinit.log", O_WRONLY | O_APPEND | O_SYNC, 0644);
@@ -659,25 +783,20 @@ int jbloader_main(int argc, char **argv)
   printf("palera1n: init!\n");
   printf("pid: %d\n", getpid());
   printf("uid: %d\n", getuid());
-  ret = get_kerninfo(&info, RAMDISK);
-  if (ret != 0)
-  {
-    fprintf(stderr, "cannot get kerninfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
-    return 1;
-  }
   pthread_t ssh_thread, prep_jb_launch_thread, prep_jb_ui_thread;
   pthread_create(&prep_jb_launch_thread, NULL, prep_jb_launch, NULL);
   pthread_create(&ssh_thread, NULL, enable_ssh, NULL);
   pthread_join(prep_jb_launch_thread, NULL);
-  if (!checkrain_option_enabled(checkrain_option_force_revert, info.flags))
+  if (!checkrain_option_enabled(info.flags, checkrain_option_force_revert))
   {
     pthread_create(&prep_jb_ui_thread, NULL, prep_jb_ui, NULL);
   }
   pthread_join(ssh_thread, NULL);
-  if (!checkrain_option_enabled(checkrain_option_force_revert, info.flags))
+  if (!checkrain_option_enabled(info.flags, checkrain_option_force_revert))
     pthread_join(prep_jb_ui_thread, NULL);
+  rmdir("/cores/jbloader_no_run_etc_rc_d");
   uicache_loader();
-  if (checkrain_option_enabled(checkrain_option_safemode, info.flags))
+  if (checkrain_option_enabled(info.flags, checkrain_option_safemode))
   {
     CFNotificationCenterAddObserver(
         CFNotificationCenterGetDarwinNotifyCenter(), NULL, &safemode_alert,
@@ -708,12 +827,7 @@ int jbloader_main(int argc, char **argv)
 
 int auearlyboot_main(int argc, char *argv[])
 {
-  int ret = get_paleinfo(&pinfo, RAMDISK);
-  if (ret != 0)
-  {
-    fprintf(stderr, "cannot get paleinfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
-    return -1;
-  }
+  int ret = 0;
   if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
   {
     int fd_log = open("/cores/jbinit.log", O_WRONLY | O_APPEND | O_SYNC, 0644);
@@ -726,15 +840,10 @@ int auearlyboot_main(int argc, char *argv[])
     else
       fputs("cannot open /cores/jbinit.log for logging", stderr);
   }
-  ret = get_kerninfo(&info, RAMDISK);
-  if (ret != 0)
-  {
-    fprintf(stderr, "cannot get kerninfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
-    return -1;
-  }
   remount(pinfo.rootdev);
   if (!checkrain_option_enabled(info.flags, checkrain_option_safemode) && 
-    !checkrain_option_enabled(info.flags, checkrain_option_safemode)) load_etc_rc_d();
+    !checkrain_option_enabled(info.flags, checkrain_option_force_revert) 
+    ) load_etc_rc_d();
 
   char* umount_argv[] = {
     "/sbin/umount",
@@ -754,17 +863,16 @@ int auearlyboot_main(int argc, char *argv[])
 int launchd_main(int argc, char **argv)
 {
   int fd_console = open("/dev/console", O_RDWR);
-  if (fd_console == -1)
-    return -1; // crash
+  if (fd_console == -1) {
+    char buf[0x100];
+    snprintf(buf, 0x100, "jbloader cannot open /dev/console: %d (%s)", errno, strerror(errno));
+    reboot_np(RB_PANIC, buf); // crash
+    return -1;
+  }
   dup2(fd_console, STDIN_FILENO);
   dup2(fd_console, STDOUT_FILENO);
   dup2(fd_console, STDERR_FILENO);
-  int ret = get_paleinfo(&pinfo, RAMDISK);
-  if (ret != 0)
-  {
-    fprintf(stderr, "cannot get paleinfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
-    return 1;
-  }
+  int ret = 0;
   if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
   {
     int fd_log = open("/cores/jbinit.log", O_WRONLY | O_APPEND | O_SYNC, 0644);
@@ -790,6 +898,7 @@ int launchd_main(int argc, char **argv)
     if (mkdir("/cores/jbloader_no_run_etc_rc_d", 0755)) {
       fprintf(stderr, "cannot mkdir /cores/jbloader_no_run_etc_rc_d: %d (%s)\n", errno, strerror(errno));
     }
+    create_remove_fakefs();
   }
 
   // patch_dyld();
@@ -863,6 +972,8 @@ int launchd_main(int argc, char **argv)
 
 int main(int argc, char *argv[])
 {
+  int ret = 0;
+  if ((ret = init_info())) return ret;
   if (getpid() == 1)
   {
     return launchd_main(argc, argv);
