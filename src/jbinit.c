@@ -631,7 +631,7 @@ int main()
       err = sys_sysctlbyname("hw.pagesize", sizeof("hw.pagesize"), &pagesize, &pagesize_len, NULL, 0);
       if (err != 0)
       {
-        printf("cannot get pagesize, err=%d", err);
+        printf("cannot get pagesize, err=%d\n", err);
         spin();
       }
       printf("system page size: %lld\n", pagesize);
