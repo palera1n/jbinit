@@ -57,6 +57,11 @@ echo "** mounting fakefs $fake_rootdev **";
 
 echo "** copying files to fakefs (may take up to 10 minutes) **";
 cp -a /cores/fs/real/. /cores/fs/fake/
+<@570634232465063967> ported:
+if [ "$real_rootdev" = "/dev/disk1s1" ]; then
+    rm -rf /cores/fs/fake/System/Library/Caches/com.apple.dyld
+    ln -s /System/Cryptexes/OS/System/Library/Caches/com.apple.dyld /cores/fs/fake/System/Library/Caches/
+fi
 
 echo "** syncing filesystems **";
 sync
