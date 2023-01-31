@@ -581,7 +581,7 @@ int main()
     int err = 0;
   retry_rootfs_mount:
     puts("mounting rootfs");
-    err = mount("apfs", "/", rootopts, &arg);
+    err = mount("apfs", "/", rootopts | MNT_RDONLY, &arg);
     if (!err)
     {
       puts("mount rootfs OK");
