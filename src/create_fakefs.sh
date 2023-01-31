@@ -13,7 +13,7 @@ fake_rootdev="$1";
 echo "** palera1n fakefs setup **";
 
 echo "** Executing boot commands **";
-/sbin/fsck -q
+/sbin/fsck -qL
 /sbin/mount -P 1
 /usr/libexec/init_data_protection
 /sbin/mount -P 2
