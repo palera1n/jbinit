@@ -670,23 +670,6 @@ int main()
 
         }
       }
-      {
-        struct tmpfs_mountarg arg = {.max_pages = (1048576 / pagesize), .max_nodes = UINT8_MAX, .case_insensitive = 0};
-        err = mount("tmpfs", "/System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support", 0, &arg);
-        if (err != 0)
-        {
-          printf("cannot mount tmpfs onto /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support: %d", err);
-          spin();
-        }
-        puts("mounted tmpfs onto /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support");
-        err = symlink("/cores/jbloader", "/System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support/auearlyboot");
-        if (err != 0)
-        {
-          printf("cannot symlink /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support/auearlyboot -> /cores/jbloader: %d", err);
-          spin();
-        }
-        puts("Created symlink /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support/auearlyboot -> /cores/jbloader");
-      }
 
       err = mkdir("/cores/binpack", 0755);
       if (err)

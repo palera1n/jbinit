@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <dlfcn.h>
@@ -82,6 +83,10 @@ xpc_object_t my_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
     xpc_object_t programArguments = xpc_array_create(NULL, 0);
 
     xpc_array_append_value(programArguments, xpc_string_create("/cores/jbloader"));
+    if(getenv("XPC_USERSPACE_REBOOTED") != NULL) {
+      xpc_array_append_value(programArguments, xpc_string_create("-u"));
+    }
+    xpc_array_append_value(programArguments, xpc_string_create("-j"));
 
     xpc_dictionary_set_bool(submitJob, "KeepAlive", false);
     xpc_dictionary_set_bool(submitJob, "RunAtLoad", true);
@@ -95,6 +100,18 @@ xpc_object_t my_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
     xpc_dictionary_set_value(submitJob, "ProgramArguments", programArguments);
 
     xpc_dictionary_set_value(retval, "/System/Library/LaunchDaemons/net.tihmstar.jbloader.plist", submitJob);
+  } else if (strcmp(key, "mount-phase-2") == 0) {
+    xpc_object_t programArguments = xpc_array_create(NULL, 0);
+    xpc_array_append_value(programArguments, xpc_string_create("/cores/jbloader"));
+    if(getenv("XPC_USERSPACE_REBOOTED") != NULL) {
+      xpc_array_append_value(programArguments, xpc_string_create("-u"));
+    }
+    xpc_array_append_value(programArguments, xpc_string_create("-m"));
+    xpc_object_t newTask = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_dictionary_set_bool(newTask, "PerformAfterUserspaceReboot", true);
+    xpc_dictionary_set_string(newTask, "Program", "/cores/jbloader");
+    xpc_dictionary_set_value(newTask, "ProgramArguments", programArguments);
+    return newTask;
   }
   return retval;
 }

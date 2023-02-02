@@ -8,7 +8,7 @@ jbinit: src/jbinit.c
 
 jbloader: src/jbloader.c src/offsetfinder.c src/create_fakefs_sh.c ent.xml
 	xcrun -sdk iphoneos clang -miphoneos-version-min=7.0 -arch arm64 -Os src/jbloader.c src/offsetfinder.c src/create_fakefs_sh.c APFS.tbd -Isrc -o jbloader -pthread -flto=thin -Wl,-dead_strip -Wall -Wextra -funsigned-char -Wno-unused-parameter -framework IOKit -framework CoreFoundation -DLOADER_DMG_PATH=\"/private/var/palera1n.dmg\" -DLOADER_CHECKSUM=\"$(shell shasum -a 512 loader.dmg | cut -d' ' -f1)\" -DLOADER_SIZE=$(shell stat -f%z loader.dmg)L
-	ldid -Sent.xml -Icom.apple.auearlyboot jbloader
+	ldid -Sent.xml -Icom.apple.jbloader jbloader
 
 src/create_fakefs_sh.c: src/create_fakefs.sh
 	xxd -iC src/create_fakefs.sh > src/create_fakefs_sh.c

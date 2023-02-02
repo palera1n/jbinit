@@ -41,6 +41,7 @@
 int reboot_np(int howto, const char *message);
 
 bool safemode_spin = true;
+bool userspace_rebooted = false, is_mount = false, is_jbloader = false;
 
 #define PRINTF_BINARY_PATTERN_INT8 "%c%c%c%c%c%c%c%c"
 #define PRINTF_BYTE_TO_BINARY_INT8(i) \
@@ -589,11 +590,6 @@ void *prep_jb_launch(void *__unused _)
   }
   else
   {
-    if (access("/cores/jbloader_no_run_etc_rc_d", F_OK) == 0) {
-      if (rmdir("/cores/jbloader_no_run_etc_rc_d")) {
-        fprintf(stderr, "cannot rmdir /cores/jbloader_no_run_etc_rc_d: %d (%s)\n", errno, strerror(errno));
-      }
-    } else load_etc_rc_d();
     loadDaemons();
   }
   return NULL;
@@ -794,7 +790,6 @@ int jbloader_main(int argc, char **argv)
   pthread_join(ssh_thread, NULL);
   if (!checkrain_option_enabled(info.flags, checkrain_option_force_revert))
     pthread_join(prep_jb_ui_thread, NULL);
-  rmdir("/cores/jbloader_no_run_etc_rc_d");
   uicache_loader();
   if (checkrain_option_enabled(info.flags, checkrain_option_safemode))
   {
@@ -825,9 +820,8 @@ int jbloader_main(int argc, char **argv)
   return 0;
 }
 
-int auearlyboot_main(int argc, char *argv[])
+int mount_main(int argc, char *argv[])
 {
-  int ret = 0;
   if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
   {
     int fd_log = open("/cores/jbinit.log", O_WRONLY | O_APPEND | O_SYNC, 0644);
@@ -835,29 +829,39 @@ int auearlyboot_main(int argc, char *argv[])
     {
       dup2(fd_log, STDOUT_FILENO);
       dup2(fd_log, STDERR_FILENO);
-      fputs("======== jbloader (auearlyboot) log start =========", stderr);
+      fputs("======== jbloader (mount) log start =========", stderr);
     }
     else
       fputs("cannot open /cores/jbinit.log for logging", stderr);
   }
-  remount(pinfo.rootdev);
+  if (!userspace_rebooted) {
+    char* mount_argv[] = {
+      "/sbin/mount",
+      "-P",
+      "2",
+      NULL
+    };
+    int mount_ret = run(mount_argv[0], mount_argv);
+    if (!WIFEXITED(mount_ret)) {
+      int termsig = 0;
+      if (WIFSIGNALED(mount_ret)) {
+        termsig = WTERMSIG(mount_ret);
+        fprintf(stderr, "/sbin/mount -P 2 exited due to signal %d\n", termsig);
+      } else {
+        fprintf(stderr, "/sbin/mount -P 2 exited abnormally\n");
+      }
+      spin();
+    }
+    if (WEXITSTATUS(mount_ret) != 0) {
+      fprintf(stderr, "/sbin/mount -P 2 exited with code %d\n", WEXITSTATUS(mount_ret));
+      spin();
+    }
+    remount(pinfo.rootdev);
+  }
   if (!checkrain_option_enabled(info.flags, checkrain_option_safemode) && 
     !checkrain_option_enabled(info.flags, checkrain_option_force_revert) 
     ) load_etc_rc_d();
-
-  char* umount_argv[] = {
-    "/sbin/umount",
-    "-f",
-    "/System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support",
-    NULL
-  };
-  run(umount_argv[0], umount_argv);
-  ret = execv("/System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support/auearlyboot", argv);
-  if (ret != 0) {
-    fprintf(stderr, "cannot exec auearlyboot: errno: %d (%s)\n", errno, strerror(errno));
-    return -1;
-  }
-  return -1;
+  return 0;
 }
 
 int launchd_main(int argc, char **argv)
@@ -895,9 +899,6 @@ int launchd_main(int argc, char **argv)
     mount_ret = check_and_mount_loader();
     if (mount_ret)
       spin();
-    if (mkdir("/cores/jbloader_no_run_etc_rc_d", 0755)) {
-      fprintf(stderr, "cannot mkdir /cores/jbloader_no_run_etc_rc_d: %d (%s)\n", errno, strerror(errno));
-    }
     create_remove_fakefs();
   }
 
@@ -973,13 +974,34 @@ int launchd_main(int argc, char **argv)
 int main(int argc, char *argv[])
 {
   int ret = 0;
+  int ch = 0;
+  if (getuid() != 0 || geteuid() != 0) goto out;
   if ((ret = init_info())) return ret;
-  if (getpid() == 1)
-  {
+  if (getpid() == 1) {
     return launchd_main(argc, argv);
+  };
+  while ((ch = getopt(argc, argv, "umj")) != -1) {
+    switch(ch) {
+      case 'u':
+        userspace_rebooted = true;
+        break;
+      case 'm':
+        is_mount = true;
+        break;
+      case 'j':
+        is_jbloader = true;
+        break;
+      case '?':
+        goto out;
+        break;
+    }
   }
-  else if (strstr(argv[0], "auearlyboot") != NULL)
-    return auearlyboot_main(argc, argv);
-  else
+  if (is_mount) {
+    return mount_main(argc, argv);
+  } else if (is_jbloader) {
     return jbloader_main(argc, argv);
+  }
+out:
+  puts("this is a palera1n internal utility, do not run");
+  return -1;
 }
