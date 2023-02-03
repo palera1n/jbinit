@@ -23,6 +23,7 @@
 #include <stdbool.h>
 #include <spawn.h>
 #include <sys/mount.h>
+#include <sys/param.h>
 #include <fcntl.h>
 #include <sys/utsname.h>
 #include <sys/mman.h>
