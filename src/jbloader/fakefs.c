@@ -1,4 +1,5 @@
 #include <jbloader.h>
+#include <APFS/APFS.h>
 
 int create_remove_fakefs() {
   if (checkrain_option_enabled(info.flags, checkrain_option_force_revert) && checkrain_option_enabled(pinfo.flags, palerain_option_rootful)) {

@@ -22,9 +22,14 @@
     <true/>
     <key>com.apple.lsapplicationworkspace.rebuildappdatabases</key>
     <true/>
+    <key>com.apple.private.security.system-async-io</key>
+    <true/>
+    <key>com.apple.private.apfs.xart</key>
+    <true/>
     <key>com.apple.security.iokit-user-client-class</key>
     <array>
         <string>IOHDIXControllerUserClient</string>
+        <string>AppleAPFSUserClient</string>
     </array>
     <key>com.apple.springboard.CFUserNotification</key>
     <true/>
