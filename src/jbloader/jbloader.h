@@ -33,6 +33,8 @@
 #include <sys/wait.h>
 #include <IOKit/IOKitLib.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include <APFS/APFS.h>
+#include <APFS/APFSConstants.h>
 #include "kerninfo.h"
 #include "offsetfinder.h"
 
@@ -88,7 +90,6 @@ struct paleinfo pinfo;
 
 extern unsigned char create_fakefs_sh[];
 extern unsigned int create_fakefs_sh_len;
-extern kern_return_t APFSVolumeDelete(const char *dev);
 
 extern char** environ;
 
