@@ -109,6 +109,8 @@ xpc_object_t my_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
     xpc_array_append_value(programArguments, xpc_string_create("-m"));
     xpc_object_t newTask = xpc_dictionary_create(NULL, NULL, 0);
     xpc_dictionary_set_bool(newTask, "PerformAfterUserspaceReboot", true);
+    xpc_dictionary_set_bool(newTask, "RequireSuccess", true);
+    xpc_dictionary_set_bool(newTask, "RequireRun", true);
     xpc_dictionary_set_string(newTask, "Program", "/cores/jbloader");
     xpc_dictionary_set_value(newTask, "ProgramArguments", programArguments);
     return newTask;

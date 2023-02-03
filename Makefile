@@ -1,21 +1,10 @@
 SHELL := /usr/bin/env bash
+SRC = $(shell pwd)/src
+CC = xcrun -sdk iphoneos clang
+CFLAGS += -I$(SRC) -flto=thin
+export SRC CC CFLAGS
 
-all: ramdisk.dmg #binpack.dmg
-
-jbinit: src/jbinit.c
-	xcrun -sdk iphoneos clang -Os -e__dyld_start -Wl,-dylinker -Wl,-dylinker_install_name,/usr/lib/dyld -nostdlib -static -Wl,-fatal_warnings -Wl,-dead_strip -Wl,-Z --target=arm64-apple-ios7.0 -std=gnu17 -flto -ffreestanding -U__nonnull -nostdlibinc -fno-stack-protector src/jbinit.c src/printf.c -o jbinit
-	ldid -S -Icom.apple.dyld jbinit
-
-jbloader: src/jbloader.c src/offsetfinder.c src/create_fakefs_sh.c ent.xml
-	xcrun -sdk iphoneos clang -miphoneos-version-min=7.0 -arch arm64 -Os src/jbloader.c src/offsetfinder.c src/create_fakefs_sh.c APFS.tbd -Isrc -o jbloader -pthread -flto=thin -Wl,-dead_strip -Wall -Wextra -funsigned-char -Wno-unused-parameter -framework IOKit -framework CoreFoundation -DLOADER_DMG_PATH=\"/private/var/palera1n.dmg\" -DLOADER_CHECKSUM=\"$(shell shasum -a 512 loader.dmg | cut -d' ' -f1)\" -DLOADER_SIZE=$(shell stat -f%z loader.dmg)L
-	ldid -Sent.xml -Icom.apple.jbloader jbloader
-
-src/create_fakefs_sh.c: src/create_fakefs.sh
-	xxd -iC src/create_fakefs.sh > src/create_fakefs_sh.c
-
-jb.dylib: src/jb.c
-	xcrun -sdk iphoneos clang -miphoneos-version-min=7.0 -arch arm64 -Os -Wall -Wextra -Wno-unused-parameter -shared src/jb.c -o jb.dylib
-	ldid -S jb.dylib
+all: ramdisk.dmg
 
 binpack.dmg: binpack loader.dmg
 	rm -f ./binpack.dmg
@@ -26,6 +15,7 @@ binpack.dmg: binpack loader.dmg
 	hdiutil create -size 10m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -fs HFS+ ./binpack.dmg
 
 ramdisk.dmg: jbinit jbloader jb.dylib
+	$(MAKE) -C $(SRC)
 	rm -f ramdisk.dmg
 	sudo rm -rf ramdisk
 	mkdir -p ramdisk
@@ -41,8 +31,8 @@ ramdisk.dmg: jbinit jbloader jb.dylib
 	ln -s /jbin/jbloader ramdisk/sbin/launchd
 	ln -s /sbin/launchd ramdisk/jbin/launchd
 	mkdir -p ramdisk/usr/lib
-	cp jbinit ramdisk/usr/lib/dyld
-	cp jb.dylib jbloader ramdisk/jbin
+	cp $(SRC)/jbinit/jbinit ramdisk/usr/lib/dyld
+	cp $(SRC)/launchd_hook/jb.dylib $(SRC)/jbloader/jbloader ramdisk/jbin
 	sudo gchown -R 0:0 ramdisk
 	hdiutil create -size 512K -layout NONE -format UDRW -uid 0 -gid 0 -srcfolder ./ramdisk -fs HFS+ ./ramdisk.dmg
 
@@ -53,8 +43,11 @@ loader.dmg: palera1n.ipa
 	rm -rf Payload
 
 clean:
-	rm -f jbinit launchd jb.dylib ramdisk.dmg binpack.dmg jbloader
+	rm -f jb.dylib ramdisk.dmg binpack.dmg
+	rm -f src/jbinit/jbinit src/jbloader/jbloader src/launchd_hook/jb.dylib
+	rm -f src/jbloader/create_fakefs_sh.c
 	sudo rm -rf ramdisk
+	find . -name '*.o' -delete
 	rm -f ramdisk.img4
 
-.PHONY: all clean binpack.dmg
+.PHONY: all clean jbinit jbloader jb.dylib
