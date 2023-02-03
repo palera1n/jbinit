@@ -119,6 +119,13 @@ xpc_object_t my_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
 }
 DYLD_INTERPOSE(my_xpc_dictionary_get_value, xpc_dictionary_get_value);
 
+bool my_xpc_dictionary_get_bool(xpc_object_t dictionary, const char *key) {
+  if (!strcmp(key, "LogPerformanceStatistics")) return true;
+  else return xpc_dictionary_get_bool(dictionary, key);
+}
+
+DYLD_INTERPOSE(my_xpc_dictionary_get_bool, xpc_dictionary_get_bool);
+
 /*
   Every single process is allowed to lookup bootstrap ports starting with "jb-global-"
   This is inteded to pass tfp0 to sandboxed processes used for debugging kernel stuff with Xcode.
