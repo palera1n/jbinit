@@ -13,5 +13,6 @@ all: jbinit
 
 jbinit: $(OBJECTS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) -o jbinit
+	$(STRIP) jbinit
 	ldid -S -Icom.apple.dyld jbinit
 

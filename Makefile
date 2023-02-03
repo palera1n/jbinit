@@ -1,8 +1,9 @@
 SHELL := /usr/bin/env bash
 SRC = $(shell pwd)/src
 CC = xcrun -sdk iphoneos clang
+STRIP = strip
 CFLAGS += -I$(SRC) -flto=thin
-export SRC CC CFLAGS
+export SRC CC CFLAGS STRIP
 
 all: ramdisk.dmg
 

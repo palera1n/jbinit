@@ -17,6 +17,7 @@ create_fakefs_sh.c: create_fakefs.sh
 
 jbloader: $(OBJECTS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) -o jbloader
+	$(STRIP) jbloader
 	ldid -S$(SRC)/ent.xml -Icom.apple.jbloader jbloader
 
 .PHONY: all
