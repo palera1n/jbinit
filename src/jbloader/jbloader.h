@@ -117,7 +117,11 @@ void *prep_jb_ui(void *__unused _);
 int uicache_loader();
 int remount(char *rootdev);
 
+const char* str_checkrain_flags(checkrain_option_t opt);
+const char* str_palerain_flags(checkrain_option_t opt);
+
 int launchd_main(int argc, char* argv[]);
 int jbloader_main(int argc, char* argv[]);
 int mount_main(int argc, char* argv[]);
+int print_info_main(int argc, char* argv[]);
 #endif

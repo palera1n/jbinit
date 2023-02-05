@@ -2,6 +2,7 @@
 
 bool safemode_spin = true;
 bool userspace_rebooted = false, is_mount = false, is_jbloader = false;
+bool print_info = false;
 
 int init_info() {
   int ret = get_kerninfo(&info, RAMDISK);
@@ -28,7 +29,7 @@ int main(int argc, char *argv[])
   if (getpid() == 1) {
     return launchd_main(argc, argv);
   };
-  while ((ch = getopt(argc, argv, "umj")) != -1) {
+  while ((ch = getopt(argc, argv, "umjl")) != -1) {
     switch(ch) {
       case 'u':
         userspace_rebooted = true;
@@ -39,6 +40,9 @@ int main(int argc, char *argv[])
       case 'j':
         is_jbloader = true;
         break;
+      case 'l':
+        print_info = true;
+        break;
       case '?':
         goto out;
         break;
@@ -48,6 +52,8 @@ int main(int argc, char *argv[])
     return mount_main(argc, argv);
   } else if (is_jbloader) {
     return jbloader_main(argc, argv);
+  } else if (print_info) {
+    return print_info_main(argc, argv);
   }
 out:
   puts("this is a palera1n internal utility, do not run");

@@ -44,3 +44,47 @@ int get_paleinfo(struct paleinfo *info, char *rd)
   close(fd);
   return 0;
 }
+
+const char* str_checkrain_flags(checkrain_option_t opt) {
+  const char* ret = NULL;
+  switch(opt) {
+    case checkrain_option_safemode:
+      ret = "checkrain_option_safemode";
+      break;
+    case checkrain_option_bind_mount:
+      ret = "checkrain_option_bind_mount";
+      break;
+    case checkrain_option_overlay:
+      ret = "checkrain_option_overlay";
+      break;
+    case checkrain_option_force_revert:
+      ret = "checkrain_option_force_revert";
+      break;
+    default:
+      ret = NULL;
+      break;
+  }
+  return ret;
+}
+
+const char* str_palerain_flags(checkrain_option_t opt) {
+  const char* ret = NULL;
+  switch(opt) {
+    case palerain_option_rootful:
+      ret = "palerain_option_rootful";
+      break;
+    case palerain_option_jbinit_log_to_file:
+      ret = "palerain_option_jbinit_log_to_file";
+      break;
+    case palerain_option_setup_rootful:
+      ret = "palerain_option_setup_rootful";
+      break;
+    case palerain_option_setup_rootful_forced:
+      ret = "palerain_option_setup_rootful_forced";
+      break;
+    default:
+      ret = NULL;
+      break;
+  }
+  return ret;
+}
