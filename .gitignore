@@ -12,3 +12,5 @@ ramdisk.dmg
 loader.dmg
 palera1n.ipa
 .DS_Store
+*.dSYM
+*.dSYM.*
