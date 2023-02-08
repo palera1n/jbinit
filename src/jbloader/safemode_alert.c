@@ -20,6 +20,6 @@ void safemode_alert(CFNotificationCenterRef center, void *observer,
     fprintf(stderr, "CFUserNotificationCreate() returned %d %s\n", ret, mach_error_string(ret));
   }
   printf("Safe mode notification alert sent\n");
-  safemode_spin = false;
+  set_safemode_spin(false);
   return;
 }

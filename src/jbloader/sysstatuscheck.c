@@ -44,7 +44,7 @@ int load_etc_rc_d()
   return 0;
 }
 
-int mount_main(int argc, char *argv[])
+int sysstatuscheck_main(int argc, char *argv[])
 {
   if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
   {
@@ -53,37 +53,23 @@ int mount_main(int argc, char *argv[])
     {
       dup2(fd_log, STDOUT_FILENO);
       dup2(fd_log, STDERR_FILENO);
-      fputs("======== jbloader (mount) log start =========", stderr);
+      fputs("======== jbloader (sysstatuscheck) log start =========", stderr);
     }
     else
       fputs("cannot open /cores/jbinit.log for logging", stderr);
   }
   if (!userspace_rebooted) {
-    char* mount_argv[] = {
-      "/sbin/mount",
-      "-P",
-      "2",
-      NULL
-    };
-    int mount_ret = run(mount_argv[0], mount_argv);
-    if (!WIFEXITED(mount_ret)) {
-      int termsig = 0;
-      if (WIFSIGNALED(mount_ret)) {
-        termsig = WTERMSIG(mount_ret);
-        fprintf(stderr, "/sbin/mount -P 2 exited due to signal %d\n", termsig);
-      } else {
-        fprintf(stderr, "/sbin/mount -P 2 exited abnormally\n");
-      }
-      spin();
-    }
-    if (WEXITSTATUS(mount_ret) != 0) {
-      fprintf(stderr, "/sbin/mount -P 2 exited with code %d\n", WEXITSTATUS(mount_ret));
-      spin();
-    }
     remount(pinfo.rootdev);
   }
   if (!checkrain_option_enabled(info.flags, checkrain_option_safemode) && 
     !checkrain_option_enabled(info.flags, checkrain_option_force_revert) 
     ) load_etc_rc_d();
+  char* sysstatuscheck_argv[] = {
+    "/usr/libexec/sysstatuscheck",
+     NULL
+  };
+  execv(sysstatuscheck_argv[0], sysstatuscheck_argv);
+  fprintf(stderr, "execve %s failed: %d (%s)\n", sysstatuscheck_argv[0], errno, strerror(errno));
+  spin();
   return 0;
 }

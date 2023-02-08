@@ -2,6 +2,7 @@
 
 int jbloader_main(int argc, char **argv)
 {
+  pthread_mutex_init(&safemode_mutex, NULL);
   setvbuf(stdout, NULL, _IONBF, 0);
   if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
   {
@@ -47,15 +48,15 @@ int jbloader_main(int argc, char **argv)
   }
   else
   {
-    safemode_spin = false;
+    set_safemode_spin(false);
   }
   uint8_t i = 0;
-  while (safemode_spin && i < 180) {
+  while (get_safemode_spin() && i < 180) {
     i += 3;
     sleep(3);
   }
   printf("palera1n: goodbye!\n");
   printf("========================================\n");
-
+  pthread_mutex_destroy(&safemode_mutex);
   return 0;
 }

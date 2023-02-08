@@ -100,17 +100,16 @@ xpc_object_t my_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
     xpc_dictionary_set_value(submitJob, "ProgramArguments", programArguments);
 
     xpc_dictionary_set_value(retval, "/System/Library/LaunchDaemons/net.tihmstar.jbloader.plist", submitJob);
-  } else if (strcmp(key, "mount-phase-2") == 0) {
+  } else if (strcmp(key, "sysstatuscheck") == 0) {
     xpc_object_t programArguments = xpc_array_create(NULL, 0);
     xpc_array_append_value(programArguments, xpc_string_create("/cores/jbloader"));
     if(getenv("XPC_USERSPACE_REBOOTED") != NULL) {
       xpc_array_append_value(programArguments, xpc_string_create("-u"));
     }
-    xpc_array_append_value(programArguments, xpc_string_create("-m"));
+    xpc_array_append_value(programArguments, xpc_string_create("-s"));
     xpc_object_t newTask = xpc_dictionary_create(NULL, NULL, 0);
     xpc_dictionary_set_bool(newTask, "PerformAfterUserspaceReboot", true);
-    xpc_dictionary_set_bool(newTask, "RequireSuccess", true);
-    xpc_dictionary_set_bool(newTask, "RequireRun", true);
+    xpc_dictionary_set_bool(newTask, "RebootOnSuccess", true);
     xpc_dictionary_set_string(newTask, "Program", "/cores/jbloader");
     xpc_dictionary_set_value(newTask, "ProgramArguments", programArguments);
     return newTask;

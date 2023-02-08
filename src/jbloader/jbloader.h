@@ -49,7 +49,7 @@
 #define RB_PANIC_FORCERESET 0x2000
 int reboot_np(int howto, const char *message);
 
-extern bool safemode_spin, userspace_rebooted, is_mount, is_jbloader;
+extern bool userspace_rebooted, is_sysstatuscheck, is_jbloader;
 
 #define PRINTF_BINARY_PATTERN_INT8 "%c%c%c%c%c%c%c%c"
 #define PRINTF_BYTE_TO_BINARY_INT8(i) \
@@ -87,6 +87,7 @@ struct HDIImageCreateBlock64
 };
 struct kerninfo info;
 struct paleinfo pinfo;
+extern pthread_mutex_t safemode_mutex;
 
 extern unsigned char create_fakefs_sh[];
 extern unsigned int create_fakefs_sh_len;
@@ -116,12 +117,14 @@ int uicache_apps();
 void *prep_jb_ui(void *__unused _);
 int uicache_loader();
 int remount(char *rootdev);
+bool get_safemode_spin();
+bool set_safemode_spin(bool val);
 
 const char* str_checkrain_flags(checkrain_option_t opt);
 const char* str_palerain_flags(checkrain_option_t opt);
 
 int launchd_main(int argc, char* argv[]);
 int jbloader_main(int argc, char* argv[]);
-int mount_main(int argc, char* argv[]);
+int sysstatuscheck_main(int argc, char* argv[]);
 int print_info_main(int argc, char* argv[]);
 #endif

@@ -1,7 +1,6 @@
 #include <jbloader.h>
 
-bool safemode_spin = true;
-bool userspace_rebooted = false, is_mount = false, is_jbloader = false;
+bool userspace_rebooted = false, is_sysstatuscheck = false, is_jbloader = false;
 bool print_info = false;
 
 int init_info() {
@@ -29,13 +28,13 @@ int main(int argc, char *argv[])
   if (getpid() == 1) {
     return launchd_main(argc, argv);
   };
-  while ((ch = getopt(argc, argv, "umjl")) != -1) {
+  while ((ch = getopt(argc, argv, "usjl")) != -1) {
     switch(ch) {
       case 'u':
         userspace_rebooted = true;
         break;
-      case 'm':
-        is_mount = true;
+      case 's':
+        is_sysstatuscheck = true;
         break;
       case 'j':
         is_jbloader = true;
@@ -48,8 +47,8 @@ int main(int argc, char *argv[])
         break;
     }
   }
-  if (is_mount) {
-    return mount_main(argc, argv);
+  if (is_sysstatuscheck) {
+    return sysstatuscheck_main(argc, argv);
   } else if (is_jbloader) {
     return jbloader_main(argc, argv);
   } else if (print_info) {
