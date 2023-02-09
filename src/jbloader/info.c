@@ -82,6 +82,12 @@ const char* str_palerain_flags(checkrain_option_t opt) {
     case palerain_option_setup_rootful_forced:
       ret = "palerain_option_setup_rootful_forced";
       break;
+    case palerain_option_test1:
+      ret = "palerain_option_test1";
+      break;
+    case palerain_option_test2:
+      ret = "palerain_option_test2";
+      break;
     default:
       ret = NULL;
       break;
