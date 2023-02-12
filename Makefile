@@ -13,7 +13,7 @@ binpack.dmg: binpack loader.dmg
 	sudo mkdir -p binpack/Applications
 	sudo cp loader.dmg binpack
 	sudo chown -R 0:0 binpack
-	hdiutil create -size 10m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -fs HFS+ ./binpack.dmg
+	hdiutil create -size 10m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -volname palera1nfs -fs HFS+ ./binpack.dmg
 
 ramdisk.dmg: jbinit jbloader jb.dylib
 	$(MAKE) -C $(SRC)
@@ -35,7 +35,7 @@ ramdisk.dmg: jbinit jbloader jb.dylib
 	cp $(SRC)/jbinit/jbinit ramdisk/usr/lib/dyld
 	cp $(SRC)/launchd_hook/jb.dylib $(SRC)/jbloader/jbloader ramdisk/jbin
 	sudo gchown -R 0:0 ramdisk
-	hdiutil create -size 512K -layout NONE -format UDRW -uid 0 -gid 0 -srcfolder ./ramdisk -fs HFS+ ./ramdisk.dmg
+	hdiutil create -size 512K -layout NONE -format UDRW -uid 0 -gid 0 -srcfolder ./ramdisk -fs HFS+ -volname palera1nrd ./ramdisk.dmg
 
 loader.dmg: palera1n.ipa
 	rm -rf loader.dmg Payload
