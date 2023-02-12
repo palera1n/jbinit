@@ -29,9 +29,6 @@ int create_remove_fakefs() {
       printf("deleted %s\n", pinfo.rootdev);
     }
   }
-  assert(!mkdir("/cores/fs", 0755));
-  assert(!mkdir("/cores/fs/real", 0755));
-  assert(!mkdir("/cores/fs/fake", 0755));
   putenv("XPC_SERVICES_UNAVAILABLE=1");
   int fd_script = open("/cores/create_fakefs.sh", O_WRONLY | O_CREAT , 0);
   if (fd_script == -1) {
@@ -45,10 +42,13 @@ int create_remove_fakefs() {
     spin();
   }
   close(fd_script);
+  char printbuf[2];
+  snprintf(printbuf, 2, "%d", checkrain_option_enabled(pinfo.flags, palerain_option_setup_partial_root));
   char* setup_fakefs_argv[] = {
     "/cores/binpack/bin/sh",
     "/cores/create_fakefs.sh",
     dev_rootdev,
+    printbuf,
     NULL
   };
   int pidret = run(setup_fakefs_argv[0], setup_fakefs_argv);

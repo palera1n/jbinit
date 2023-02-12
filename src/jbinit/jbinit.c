@@ -60,7 +60,7 @@ int main()
   uint64_t rootlivefs;
   int rootopts = MNT_RDONLY;
 
-  select_root(&rootlivefs, &rootopts, rootdev, dev_rootdev, use_fakefs);
+  select_root(&rootlivefs, &rootopts, &rootdev, dev_rootdev, use_fakefs);
   remount_rdisk(use_fakefs, dev_rootdev);
   mountroot(rootdev, rootlivefs, rootopts);
   mount_devfs();
@@ -72,6 +72,8 @@ int main()
   init_cores();
   write_file("/cores/jbloader", jbloader_data, jbloader_size);
   write_file("/cores/jb.dylib", dylib_data, dylib_size);
+
+  prepare_rootfs(dev_rootdev, use_fakefs);
 
   puts("Closing console, goodbye!");
   /*

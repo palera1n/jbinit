@@ -29,7 +29,7 @@
     int fbi_ret = mount("bindfs", mnt, MNT_RDONLY, dir); \
     if (fbi_ret != 0)                                    \
     {                                                    \
-      printf("cannot bind %s onto %s\n", dir, mnt);      \
+      printf("cannot bind %s onto %s, err=%d\n", dir, mnt, fbi_ret); \
       spin();                                            \
     }                                                    \
     else                                                 \
@@ -126,6 +126,8 @@ extern char ios15_rootdev[], ios16_rootdev[];
 
 extern struct kerninfo info;
 extern struct paleinfo pinfo;
+
+extern bool darwin22;
 /*
  * File types
  */
@@ -167,6 +169,7 @@ void memcpy(void *dst, void *src, size_t n);
 char *strstr(const char *string, char *substring);
 char *strcat(char *dest, char *src);
 size_t strlen(const char *str);
+int strcmp(const char *s1, const char *s2);
 /* end libc */
 
 /* info */
@@ -192,6 +195,7 @@ void mount_cores();
 void init_log(const char* dev_rootdev);
 void init_cores();
 void rootwait(char** rootdev_pp);
-void select_root(uint64_t* rootlivefs_p, int* rootopts_p, const char* rootdev, const char* dev_rootdev, bool use_fakefs);
+void select_root(uint64_t* rootlivefs_p, int* rootopts_p, char** rootdev_p, char* dev_rootdev, bool use_fakefs);
+void prepare_rootfs(char* dev_rootdev, bool use_fakefs);
 /* end components */
 #endif

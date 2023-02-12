@@ -12,7 +12,7 @@ void mountroot(char* rootdev, uint64_t rootlivefs, int rootopts) {
     };
     int err = 0;
 retry_rootfs_mount:
-    puts("mounting rootfs");
+    printf("mounting rootfs %s\n", rootdev);
     err = mount("apfs", "/", rootopts | MNT_RDONLY, &arg);
     if (!err) {
       puts("mount rootfs OK");

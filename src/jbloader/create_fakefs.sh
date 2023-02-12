@@ -61,22 +61,15 @@ if [ "$partial" != "1" ]; then
     cp -a /cores/fs/real/* /cores/fs/fake/
     cp -a /cores/fs/real/.mb /cores/fs/real/.file /cores/fs/real/.ba /cores/fs/fake/
     cp -a /cores/fs/real/.fseventsd /cores/fs/fake/ 2> /dev/null || true
-
-    if [ "$real_rootdev" = "/dev/disk1s1" ]; then
-        rm -rf /cores/fs/fake/System/Library/Caches/com.apple.dyld
-        ln -s /System/Cryptexes/OS/System/Library/Caches/com.apple.dyld /cores/fs/fake/System/Library/Caches/
-    fi
 else
     cd /cores/fs/real
     cp -a .ba .file .mb Applications Developer Library bin cores dev private sbin usr etc tmp var /cores/fs/fake
-    cd System/Library
     rm -rf /cores/fs/fake/usr/standalone/update
     mkdir -p /cores/fs/fake/System/Library
     if [ "$real_rootdev" = "/dev/disk1s1" ]; then
-        cp -a Applications Cryptexes /cores/fs/fake/System
+        cp -a /System/Applications /System/Cryptexes /cores/fs/fake/System
     fi
-    cp -a Developer DriverKit /cores/fs/fake/System
-    cd /
+    cp -a /System/Developer /System/DriverKit /cores/fs/fake/System
     for filepath in /cores/fs/real/System/Library/*; do
         if [ -d "$filepath" ]; then
             if [ "$filepath" = "/cores/fs/real/System/Library/Frameworks" ] ||
@@ -90,17 +83,30 @@ else
               [ "$filepath" = "/cores/fs/real/System/Library/OnBoardingBundles" ] ||
               [ "$filepath" = "/cores/fs/real/System/Library/Photos" ] ||
               [ "$filepath" = "/cores/fs/real/System/Library/PreferenceBundles" ] ||
-              [ "$filepath" = "/cores/fs/real/System/Library/PreinstalledAssetsV2" ] ||
-              [ "$filepath" = "/cores/fs/real/System/Library/PrivateFrameworks" ]; then
-                newpath="$(echo "$filepath" | sed 's|/cores/fs/fake|/cores/fs/real|')"
+              [ "$filepath" = "/cores/fs/real/System/Library/PreinstalledAssetsV2" ]; then
+                newpath="$(echo "$filepath" | sed 's|/cores/fs/real|/cores/fs/fake|')"
                 echo "mkdir $newpath"
                 mkdir "$newpath"
+            elif [ "$filepath" = "/cores/fs/real/System/Library/PrivateFrameworks" ] ||
+                [ "$filepath" = "/cores/fs/real/System/Library/Caches" ]; then
+                if [ "$real_rootdev" = "/dev/disk1s1" ]; then
+                    echo "copy $filepath -> /cores/fs/fake/System/Library"
+                    cp -a "$filepath" /cores/fs/fake/System/Library
+                else
+                    newpath="$(echo "$filepath" | sed 's|/cores/fs/real|/cores/fs/fake|')"
+                    echo "mkdir $newpath"
+                    mkdir "$newpath"
+                fi
             else
-                echo "copy $filepath -> /cores/fs/real/System/Library"
-                cp -a "$filepath" /cores/fs/real/System/Library
+                echo "copy $filepath -> /cores/fs/fake/System/Library"
+                cp -a "$filepath" /cores/fs/fake/System/Library
             fi
         fi
     done
+fi
+if [ "$real_rootdev" = "/dev/disk1s1" ]; then
+    rm -rf /cores/fs/fake/System/Library/Caches/com.apple.dyld
+    ln -s /System/Cryptexes/OS/System/Library/Caches/com.apple.dyld /cores/fs/fake/System/Library/Caches/
 fi
 echo "** syncing filesystems **";
 sync

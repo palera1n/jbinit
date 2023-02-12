@@ -15,7 +15,7 @@ void init_log(const char* dev_rootdev) {
     printf("kerninfo flags: 0x%08x\npaleinfo flags: 0x%08x\npaleinfo version: %u\n",info.flags, pinfo.flags, pinfo.version);
     char kver_buf[0x100];
     size_t kver_sz = sizeof(kver_buf);
-    int err = sys_sysctlbyname("kern.version", sizeof("hw.pagesize"), kver_buf, &kver_sz, NULL, 0);
+    int err = sys_sysctlbyname("kern.version", sizeof("kern.version"), kver_buf, &kver_sz, NULL, 0);
     if (err)
         printf("getting kernel version failed: %d\n", err);
     else

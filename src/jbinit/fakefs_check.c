@@ -27,5 +27,8 @@ void pinfo_check(bool* use_fakefs_p, char* bootargs, char* dev_rootdev) {
         spin();
       }
     }
+  } else if (checkrain_option_enabled(pinfo.flags, palerain_option_setup_partial_root)) {
+    printf("cannot have palerain_option_setup_partial_root without palerain_option_setup_rootful\n");
+    spin();
   }
 }

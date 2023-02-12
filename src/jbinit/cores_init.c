@@ -24,18 +24,23 @@ void mount_cores() {
     }
 }
 
-void init_cores() {
+void cores_mkdir(char* path) {
     char statbuf[0x400];
-    int err = mkdir("/cores/binpack", 0755);
-      if (err)
-      {
-        printf("mkdir(/cores/binpack) FAILED with err %d\n", err);
-      }
-      if (stat("/cores/binpack", statbuf))
-      {
-        printf("stat %s FAILED with err=%d!\n", "/cores/binpack", err);
+    int err = mkdir(path, 0755);
+    if (err) {
+        printf("mkdir(%s) FAILED with err %d\n", path, err);
+    }
+    if (stat(path, statbuf)) {
+        printf("stat %s FAILED with err=%d!\n", path, err);
         spin();
-      }
-      else
-        puts("created /cores/binpack");
+    }
+    else
+        printf("created %s\n", path);
+}
+
+void init_cores() {
+  cores_mkdir("/cores/binpack");
+  cores_mkdir("/cores/fs");
+  cores_mkdir("/cores/fs/real");
+  cores_mkdir("/cores/fs/fake");
 }
