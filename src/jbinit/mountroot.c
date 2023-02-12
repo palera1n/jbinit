@@ -1,0 +1,32 @@
+#include <jbinit.h>
+#include <common.h>
+
+void mountroot(char* rootdev, uint64_t rootlivefs, int rootopts) {
+    char statbuf[0x400];
+    char buf[0x100];
+    struct apfs_mountarg arg = {
+        rootdev,
+        0,
+        rootlivefs, // 1 mount without snapshot, 0 mount snapshot
+        0,
+    };
+    int err = 0;
+retry_rootfs_mount:
+    puts("mounting rootfs");
+    err = mount("apfs", "/", rootopts | MNT_RDONLY, &arg);
+    if (!err) {
+      puts("mount rootfs OK");
+    } else {
+      printf("mount rootfs %s FAILED with err=%d!\n", rootdev, err);
+      sleep(1);
+      // spin();
+    }
+
+    if (stat("/sbin/fsck", statbuf)) {
+      printf("stat %s FAILED with err=%d!\n", "/sbin/fsck", err);
+      sleep(1);
+      goto retry_rootfs_mount;
+    } else {
+      printf("stat %s OK\n", "/sbin/fsck");
+    }
+}

@@ -42,3 +42,23 @@ int get_paleinfo(struct paleinfo *info, char *rd)
   close(fd);
   return 0;
 }
+
+void get_info() {
+  {
+    int err = get_kerninfo(&info, RAMDISK);
+    if (err)
+    {
+      printf("cannot get kerninfo!");
+      spin();
+    }
+  }
+
+  {
+    int err = get_paleinfo(&pinfo, RAMDISK);
+    if (err)
+    {
+      printf("cannot get paleinfo!");
+      spin();
+    }
+  }
+}

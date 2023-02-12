@@ -1,6 +1,10 @@
 #ifndef JBINIT_H
 #define JBINIT_H
 
+#if __STDC_HOSTED__ && !defined(__INTELLISENSE__)
+#error "this file is for freestanding use"
+#endif
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <limits.h>
@@ -12,6 +16,7 @@
 #include <stdnoreturn.h>
 
 #include <kerninfo.h>
+#include "printf.h"
 
 #define STDOUT_FILENO 1
 #define getpid() msyscall(20)
@@ -117,6 +122,10 @@ extern char slash_fs_slash_orig[];
 extern char slash_fs_slash_orig_slash_private[];
 extern char slash[];
 extern char slash_private[];
+extern char ios15_rootdev[], ios16_rootdev[];
+
+extern struct kerninfo info;
+extern struct paleinfo pinfo;
 /*
  * File types
  */
@@ -167,6 +176,22 @@ int get_paleinfo(struct paleinfo *info, char *rd);
 
 /* utils */
 void read_directory(int fd, void (*dir_cb)(struct dirent *));
+void* read_file(char* path, size_t* size);
+int write_file(char* path, void* data, size_t size);
 void spin();
 /* end utils */
+
+/* actual components */
+void mount_devfs();
+void get_info();
+void sancheck();
+void pinfo_check(bool* use_fakefs_p, char* bootargs, char* dev_rootdev);
+void remount_rdisk(bool use_fakefs, char* dev_rootdev);
+void mountroot(char* rootdev, uint64_t rootlivefs, int rootopts);
+void mount_cores();
+void init_log(const char* dev_rootdev);
+void init_cores();
+void rootwait(char** rootdev_pp);
+void select_root(uint64_t* rootlivefs_p, int* rootopts_p, const char* rootdev, const char* dev_rootdev, bool use_fakefs);
+/* end components */
 #endif
