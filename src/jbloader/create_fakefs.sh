@@ -60,6 +60,7 @@ echo "** copying files to fakefs (may take up to 10 minutes) **";
 if [ "$partial" != "1" ]; then
     cp -a /cores/fs/real/* /cores/fs/fake/
     cp -a /cores/fs/real/.mb /cores/fs/real/.file /cores/fs/real/.ba /cores/fs/fake/
+    cp -a /cores/fs/real/.fseventsd /cores/fs/fake/ 2> /dev/null || true
 
     if [ "$real_rootdev" = "/dev/disk1s1" ]; then
         rm -rf /cores/fs/fake/System/Library/Caches/com.apple.dyld
