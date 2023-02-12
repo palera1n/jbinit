@@ -18,9 +18,12 @@ void read_directory(int fd, void (*dir_cb)(struct dirent *))
     struct dirent *entry = (struct dirent *)buf;
     while ((char*)entry < buf + sizeof(buf))
     {
-      if (entry->d_ino == 0)
+      if (entry->d_ino == 0 || entry->d_namlen == 0)
         break;
       if (entry->d_type == DT_UNKNOWN || entry->d_reclen <= 0 || entry->d_seekoff != 0)
+        break;
+      // should always be fine, as directory names cannot be empty and must be null terminated
+      if (*(uint16_t*)entry->d_name == 0xffff)
         break;
       dir_cb(entry);
       entry = (struct dirent *)((char *)entry + entry->d_reclen);
