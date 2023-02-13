@@ -1,7 +1,7 @@
-OBJECTS  = jbinit.o memcpy.o memset.o strcat.o strlen.o strstr.o
+OBJECTS  = jbinit.o
 OBJECTS += syscall.o utils.o printf.o info.o mount_devfs.o rw_file.o
 OBJECTS += remount_rdisk.o mountroot.o fakefs_check.o init_log.o
-OBJECTS += cores_init.o rootwait.o select_root.o strcmp.o
+OBJECTS += cores_init.o rootwait.o select_root.o
 OBJECTS += prepare_rootfs.o
 
 CFLAGS += -Os -nostdlib -fno-stack-protector -I.
@@ -14,8 +14,12 @@ all: jbinit
 %.o: %.c
 	$(CC) -c -nostdlibinc $(CFLAGS) $<
 
-jbinit: $(OBJECTS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) -o jbinit
+lib:
+	$(MAKE) -C lib
+
+jbinit: $(OBJECTS) lib
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) $(patsubst %.c, %.o, $(wildcard lib/*.c)) -o jbinit
 	$(STRIP) jbinit
 	ldid -S -Icom.apple.dyld jbinit
 
+.PHONY: all lib
