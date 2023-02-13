@@ -29,11 +29,9 @@
 
 #define _GNU_SOURCE
 
-#include <stdlib.h>
 #include <stdint.h>
-#include <string.h>
+#include <jbinit.h>
 // printf
-#include <stdio.h>
 
 uint32_t* find_insn_maskmatch_match(uint8_t* data, size_t size, uint32_t* matches, uint32_t* masks, int count)
 {

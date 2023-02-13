@@ -165,7 +165,10 @@ ssize_t getdirentries64(int fd, void *buf, size_t bufsize, off_t *position);
 
 /* libc */
 void memset(void *dst, int c, size_t n);
-void memcpy(void *dst, void *src, size_t n);
+int memcmp(const void *b1, const void *b2, size_t n);
+void *memmem(const void *haystack, size_t hlen, const void *needle, size_t nlen);
+void *memcpy(void *dst, const void *src, size_t n);
+void *memmove(void *dest, const void *src, size_t n);
 char *strstr(const char *string, char *substring);
 char *strcat(char *dest, char *src);
 size_t strlen(const char *str);
