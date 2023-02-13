@@ -19,7 +19,7 @@ void prepare_rootfs(char* dev_rootdev, bool use_fakefs) {
         printf("cannot mount %s onto %s, err=%d\n", dev_rootdev, "/cores/fs/real", err);
         spin();
     }
-    fbi("/usr/standalone", "/cores/fs/real/usr/standalone");
+    fbi("/usr/standalone/update", "/cores/fs/real/usr/standalone/update");
     fbi("/System/Library/Frameworks", "/cores/fs/real/System/Library/Frameworks");
     fbi("/System/Library/AccessibilityBundles", "/cores/fs/real/System/Library/AccessibilityBundles");
     fbi("/System/Library/Assistant", "/cores/fs/real/System/Library/Assistant");

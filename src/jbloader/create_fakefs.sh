@@ -65,6 +65,7 @@ else
     cd /cores/fs/real
     cp -a .ba .file .mb Applications Developer Library bin cores dev private sbin usr etc tmp var /cores/fs/fake
     rm -rf /cores/fs/fake/usr/standalone/update
+    mkdir -p /cores/fs/fake/usr/standalone/update
     mkdir -p /cores/fs/fake/System/Library
     if [ "$real_rootdev" = "/dev/disk1s1" ]; then
         cp -a /System/Applications /System/Cryptexes /cores/fs/fake/System
