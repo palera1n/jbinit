@@ -9,8 +9,11 @@ LDFLAGS += $(SRC)/APFS.tbd -framework IOKit -framework CoreFoundation -framework
 
 all: jbloader
 
-%.o: %.c %.m
+%.o: %.c
 	$(CC) -c $(CFLAGS) $<
+
+uicache.o: uicache.m
+	$(CC) -c $(CFLAGS) uicache.m
 
 create_fakefs_sh.c: create_fakefs.sh
 	xxd -iC create_fakefs.sh > create_fakefs_sh.c

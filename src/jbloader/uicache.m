@@ -59,24 +59,11 @@ int uicache_loader()
     char *arg3[] = { "/cores/binpack/usr/sbin/chown", "501:501", "/var/mobile/Library/Preferences/com.apple.springboard.plist", NULL };
     run(arg3[0], arg3);
   }
-
-  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful) && (access("/jbin/loader.app", F_OK) == 0))
-  {
-    char *loader_uicache_argv[] = {
-        "/cores/binpack/usr/bin/uicache",
-        "-p",
-        "/jbin/loader.app",
-        NULL};
-    run(loader_uicache_argv[0], loader_uicache_argv);
-  }
-  else
-  {
-    char *loader_uicache_argv[] = {
-        "/cores/binpack/usr/bin/uicache",
-        "-p",
-        "/cores/binpack/Applications/palera1nLoader.app",
-        NULL};
-    run(loader_uicache_argv[0], loader_uicache_argv);
-  }
+  char *loader_uicache_argv[] = {
+    "/cores/binpack/usr/bin/uicache",
+    "-p",
+    "/cores/binpack/Applications/palera1nLoader.app",
+    NULL};
+  run(loader_uicache_argv[0], loader_uicache_argv);
   return 0;
 }
