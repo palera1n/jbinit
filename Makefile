@@ -14,7 +14,7 @@ all: ramdisk.dmg
 binpack.dmg: binpack loader.dmg
 	rm -f ./binpack.dmg
 	sudo rm -rf binpack/usr/share
-	sudo ln -sf /cores/jbloader binpack/usr/bin/p1ctl
+	sudo ln -sf /cores/jbloader binpack/usr/sbin/p1ctl
 	sudo mkdir -p binpack/Applications
 	sudo cp loader.dmg binpack
 	sudo chown -R 0:0 binpack
