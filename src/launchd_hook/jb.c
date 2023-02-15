@@ -96,10 +96,10 @@ xpc_object_t my_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
     xpc_dictionary_set_string(submitJob, "StandardInPath", "/dev/console");
     xpc_dictionary_set_string(submitJob, "StandardOutPath", "/dev/console");
     xpc_dictionary_set_string(submitJob, "StandardErrorPath", "/dev/console");
-    xpc_dictionary_set_string(submitJob, "Label", "jbloader");
+    xpc_dictionary_set_string(submitJob, "Label", "in.palera.jbloader");
     xpc_dictionary_set_value(submitJob, "ProgramArguments", programArguments);
 
-    xpc_dictionary_set_value(retval, "/System/Library/LaunchDaemons/net.tihmstar.jbloader.plist", submitJob);
+    xpc_dictionary_set_value(retval, "/System/Library/LaunchDaemons/in.palera.jbloader.plist", submitJob);
   } else if (strcmp(key, "sysstatuscheck") == 0) {
     xpc_object_t programArguments = xpc_array_create(NULL, 0);
     xpc_array_append_value(programArguments, xpc_string_create("/cores/jbloader"));

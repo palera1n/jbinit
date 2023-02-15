@@ -47,6 +47,14 @@ int main()
   size_t dylib_size;
   void* dylib_data = read_file("/jbin/jb.dylib", &dylib_size);
 
+#ifdef ASAN
+  size_t asan_size;
+  void* asan_data = read_file("/jbin/libclang_rt.asan_ios_dynamic.dylib", &asan_size);
+
+  size_t ubsan_size;
+  void* ubsan_data = read_file("/jbin/libclang_rt.ubsan_ios_dynamic.dylib", &ubsan_size);
+#endif
+
   char* rootdev;
 
   rootwait(&rootdev);
@@ -72,6 +80,10 @@ int main()
   init_cores();
   write_file("/cores/jbloader", jbloader_data, jbloader_size);
   write_file("/cores/jb.dylib", dylib_data, dylib_size);
+#ifdef ASAN
+  write_file("/cores/libclang_rt.asan_ios_dynamic.dylib", asan_data, asan_size);
+  write_file("/cores/libclang_rt.ubsan_ios_dynamic.dylib", ubsan_data, ubsan_size);
+#endif
 
   prepare_rootfs(dev_rootdev, use_fakefs);
 

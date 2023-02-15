@@ -7,6 +7,10 @@ OBJECTS += sbreload.o spin.o uicache.o sysstatuscheck.o print_info.o
 CFLAGS  += -miphoneos-version-min=7.0 -arch arm64 -Os -I.
 LDFLAGS += $(SRC)/APFS.tbd -framework IOKit -framework CoreFoundation -framework Foundation
 
+ifeq ($(ASAN),1)
+CFLAGS += -fsanitize=address,undefined
+endif
+
 all: jbloader
 
 %.o: %.c
@@ -21,6 +25,9 @@ create_fakefs_sh.c: create_fakefs.sh
 jbloader: $(OBJECTS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) -o jbloader
 	$(STRIP) jbloader
+ifeq ($(ASAN),1)
+	$(I_N_T) -add_rpath /cores jbloader
+endif
 	ldid -S$(SRC)/ent.xml -Icom.apple.jbloader jbloader
 
 .PHONY: all

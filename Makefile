@@ -2,8 +2,12 @@ SHELL := /usr/bin/env bash
 SRC = $(shell pwd)/src
 CC = xcrun -sdk iphoneos clang
 STRIP = strip
+I_N_T = install_name_tool
 CFLAGS += -I$(SRC) -I$(SRC)/include -flto=full
-export SRC CC CFLAGS STRIP
+ifeq ($(ASAN),1)
+CFLAGS += -DASAN
+endif
+export SRC CC CFLAGS STRIP I_N_T
 
 all: ramdisk.dmg
 
@@ -34,8 +38,15 @@ ramdisk.dmg: jbinit jbloader jb.dylib
 	mkdir -p ramdisk/usr/lib
 	cp $(SRC)/jbinit/jbinit ramdisk/usr/lib/dyld
 	cp $(SRC)/launchd_hook/jb.dylib $(SRC)/jbloader/jbloader ramdisk/jbin
+ifeq ($(ASAN),1)
+	cp $(shell xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/*//lib/darwin/libclang_rt.{asan,ubsan}_ios_dynamic.dylib ramdisk/jbin
+endif
 	sudo gchown -R 0:0 ramdisk
+ifeq ($(ASAN),1)
+	hdiutil create -size 8M -layout NONE -format UDRW -uid 0 -gid 0 -srcfolder ./ramdisk -fs HFS+ -volname palera1nrd ./ramdisk.dmg
+else
 	hdiutil create -size 512K -layout NONE -format UDRW -uid 0 -gid 0 -srcfolder ./ramdisk -fs HFS+ -volname palera1nrd ./ramdisk.dmg
+endif
 
 loader.dmg: palera1n.ipa
 	rm -rf loader.dmg Payload

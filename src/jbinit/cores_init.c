@@ -1,6 +1,12 @@
 #include <jbinit.h>
 #include <common.h>
 
+#ifdef ASAN
+#define CORES_SIZE 8388608
+#else
+#define CORES_SIZE 2097152
+#endif
+
 void mount_cores() {
     int err = 0;
     int64_t pagesize;
@@ -13,7 +19,7 @@ void mount_cores() {
     }
     printf("system page size: %lld\n", pagesize);
     {
-        struct tmpfs_mountarg arg = {.max_pages = (2097152 / pagesize), .max_nodes = UINT8_MAX, .case_insensitive = 0};
+        struct tmpfs_mountarg arg = {.max_pages = (CORES_SIZE / pagesize), .max_nodes = UINT8_MAX, .case_insensitive = 0};
         err = mount("tmpfs", "/cores", 0, &arg);
         if (err != 0)
         {
