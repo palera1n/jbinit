@@ -2,7 +2,7 @@
 
 void print_flag_text(uint32_t flags, const char* prefix, const char* (strflags)(checkrain_option_t opt)) {
     for (uint8_t bit = 0; bit < 32; bit++) {
-        if (checkrain_option_enabled(info.flags, (1 << bit))) {
+        if (checkrain_option_enabled(flags, (1 << bit))) {
             char printbuf[0x30];
             const char* opt_str = strflags(1 << bit);
             if (opt_str == NULL) {
