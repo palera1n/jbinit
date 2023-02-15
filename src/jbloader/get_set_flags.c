@@ -22,7 +22,7 @@ int palera1n_flags_main(int argc, char* argv[]) {
     char* endptr;
     uint32_t new_flags = strtoul(argv[1], &endptr, 0);
     if (errno || endptr == argv[1]) {
-        fprintf(stderr, "Invalid number entered: %d (%s)", errno, strerror(errno));
+        fprintf(stderr, "Invalid number entered: %d (%s)\n", errno, strerror(errno));
         return 1;
     }
     pinfo.flags = new_flags;
