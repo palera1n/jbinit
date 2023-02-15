@@ -1,62 +1,56 @@
 #include <jbloader.h>
+#include <libgen.h>
 
-int jbloader_main(int argc, char **argv)
-{
-  pthread_mutex_init(&safemode_mutex, NULL);
-  setvbuf(stdout, NULL, _IONBF, 0);
-  if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
+uint32_t jbloader_flags = 0;
+
+int init_info() {
+  int ret = get_kerninfo(&info, RAMDISK);
+  if (ret != 0)
   {
-    int fd_log = open("/cores/jbinit.log", O_WRONLY | O_APPEND | O_SYNC, 0644);
-    if (fd_log != -1)
-    {
-      dup2(fd_log, STDOUT_FILENO);
-      dup2(fd_log, STDERR_FILENO);
-      puts("======== jbloader (system boot) log start =========");
-    }
-    else
-      puts("cannot open /cores/jbinit.log for logging");
+    fprintf(stderr, "cannot get kerninfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
+    return -1;
   }
-  printf("========================================\n");
-  printf("palera1n: init!\n");
-  printf("pid: %d\n", getpid());
-  printf("uid: %d\n", getuid());
-  pthread_t ssh_thread, prep_jb_launch_thread, prep_jb_ui_thread;
-  pthread_create(&prep_jb_launch_thread, NULL, prep_jb_launch, NULL);
-  pthread_create(&ssh_thread, NULL, enable_ssh, NULL);
-  pthread_join(prep_jb_launch_thread, NULL);
-  if (!checkrain_option_enabled(info.flags, checkrain_option_force_revert))
+  ret = get_paleinfo(&pinfo, RAMDISK);
+  if (ret != 0)
   {
-    pthread_create(&prep_jb_ui_thread, NULL, prep_jb_ui, NULL);
+    fprintf(stderr, "cannot get paleinfo: ret: %d, errno: %d (%s)\n", ret, errno, strerror(errno));
+    return -1;
   }
-  pthread_join(ssh_thread, NULL);
-  if (!checkrain_option_enabled(info.flags, checkrain_option_force_revert))
-    pthread_join(prep_jb_ui_thread, NULL);
-  uicache_loader();
-  if (checkrain_option_enabled(info.flags, checkrain_option_safemode))
-  {
-    CFNotificationCenterAddObserver(
-        CFNotificationCenterGetDarwinNotifyCenter(), NULL, &safemode_alert,
-        CFSTR("SBSpringBoardDidLaunchNotification"), NULL, 0);
-    void *sbservices = dlopen(
-        "/System/Library/PrivateFrameworks/SpringBoardServices.framework/"
-        "SpringBoardServices",
-        RTLD_NOW);
-    void *(*SBSSpringBoardServerPort)() = dlsym(sbservices, "SBSSpringBoardServerPort");
-    if (SBSSpringBoardServerPort() == NULL) {
-      dispatch_main();
-    }
-  }
-  else
-  {
-    set_safemode_spin(false);
-  }
-  uint8_t i = 0;
-  while (get_safemode_spin() && i < 180) {
-    i += 3;
-    sleep(3);
-  }
-  printf("palera1n: goodbye!\n");
-  printf("========================================\n");
-  pthread_mutex_destroy(&safemode_mutex);
   return 0;
+}
+
+int jbloader_main(int argc, char *argv[])
+{
+  int ret = 0;
+  int ch = 0;
+  if (getuid() != 0 || geteuid() != 0) goto out;
+  if ((ret = init_info())) return ret;
+  if (getpid() == 1) {
+    return jbloader_launchd(argc, argv);
+  };
+  
+  while ((ch = getopt(argc, argv, "usj")) != -1) {
+    switch(ch) {
+      case 'u':
+        jbloader_flags |= jbloader_userspace_rebooted;
+        break;
+      case 's':
+        jbloader_flags |= jbloader_is_sysstatuscheck;
+        break;
+      case 'j':
+        jbloader_flags |= jbloader_is_palera1nd;
+        break;
+      case '?':
+        goto out;
+        break;
+    }
+  }
+  if (checkrain_option_enabled(jbloader_flags, jbloader_is_sysstatuscheck)) {
+    return jbloader_sysstatuscheck(argc, argv);
+  } else if (checkrain_option_enabled(jbloader_flags, jbloader_is_palera1nd)) {
+    return jbloader_palera1nd(argc, argv);
+  }
+out:
+  puts("this is a palera1n internal utility, do not run");
+  return -1;
 }

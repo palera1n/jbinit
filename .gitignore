@@ -6,6 +6,11 @@ ramdisk/
 src/jbinit/jbinit
 src/jbloader/jbloader
 src/jbloader/create_fakefs_sh.c
+src/jbloader/framebuffer.c
+src/include/IOMobileFramebuffer/
+dropbear.plist
+mach
+mach.c
 src/launchd_hook/jb.dylib
 binpack.dmg
 ramdisk.dmg

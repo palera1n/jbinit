@@ -44,7 +44,7 @@ int load_etc_rc_d()
   return 0;
 }
 
-int sysstatuscheck_main(int argc, char *argv[])
+int jbloader_sysstatuscheck(int argc, char *argv[])
 {
   if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
   {
@@ -58,7 +58,7 @@ int sysstatuscheck_main(int argc, char *argv[])
     else
       fputs("cannot open /cores/jbinit.log for logging", stderr);
   }
-  if (!userspace_rebooted) {
+  if (!checkrain_option_enabled(jbloader_flags, jbloader_userspace_rebooted)) {
     remount(pinfo.rootdev);
   }
   if (!checkrain_option_enabled(info.flags, checkrain_option_safemode) && 

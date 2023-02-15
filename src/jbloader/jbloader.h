@@ -36,7 +36,6 @@
 #include <APFS/APFS.h>
 #include <APFS/APFSConstants.h>
 #include "kerninfo.h"
-#include "offsetfinder.h"
 
 #ifndef RAMDISK
 #define RAMDISK "/dev/rmd0"
@@ -48,8 +47,6 @@
 #define RB_PANIC    0x800
 #define RB_PANIC_FORCERESET 0x2000
 int reboot_np(int howto, const char *message);
-
-extern bool userspace_rebooted, is_sysstatuscheck, is_jbloader;
 
 #define PRINTF_BINARY_PATTERN_INT8 "%c%c%c%c%c%c%c%c"
 #define PRINTF_BYTE_TO_BINARY_INT8(i) \
@@ -76,7 +73,13 @@ extern bool userspace_rebooted, is_sysstatuscheck, is_jbloader;
   PRINTF_BYTE_TO_BINARY_INT32((i) >> 32), PRINTF_BYTE_TO_BINARY_INT32(i)
 
 extern char **environ;
-#define serverURL "http://static.palera.in" // if doing development, change this to your local server
+
+#define jbloader_userspace_rebooted (1 << 0)
+#define jbloader_is_sysstatuscheck  (1 << 1)
+#define jbloader_is_palera1nd       (1 << 2)
+
+#define p1ctl_print_info            (1 << 0)
+
 #define HDI_MAGIC 0x1beeffeed
 struct HDIImageCreateBlock64
 {
@@ -85,14 +88,16 @@ struct HDIImageCreateBlock64
   uint64_t props_size;
   char padding[0x100 - 24];
 };
-struct kerninfo info;
-struct paleinfo pinfo;
+extern struct kerninfo info;
+extern struct paleinfo pinfo;
 extern pthread_mutex_t safemode_mutex;
 
 extern unsigned char create_fakefs_sh[];
 extern unsigned int create_fakefs_sh_len;
 
 extern char** environ;
+extern uint32_t jbloader_flags;
+extern uint32_t p1ctl_flags;
 
 int run(const char *cmd, char *const *args);
 int run_async(const char *cmd, char *const *args);
@@ -122,9 +127,14 @@ bool set_safemode_spin(bool val);
 
 const char* str_checkrain_flags(checkrain_option_t opt);
 const char* str_palerain_flags(checkrain_option_t opt);
+void print_flag_text(uint32_t flags, const char* prefix, const char* (strflags)(checkrain_option_t opt));
 
-int launchd_main(int argc, char* argv[]);
-int jbloader_main(int argc, char* argv[]);
-int sysstatuscheck_main(int argc, char* argv[]);
-int print_info_main(int argc, char* argv[]);
+int jbloader_launchd(int argc, char* argv[]);
+int jbloader_palera1nd(int argc, char* argv[]);
+int jbloader_sysstatuscheck(int argc, char* argv[]);
+int jbloader_main(int argc, char *argv[]);
+int p1ctl_main(int argc, char *argv[]);
+int print_info(int argc, char *argv[]);
+int palera1n_flags_main(int argc, char* argv[]);
+int checkra1n_flags_main(int argc, char* argv[]);
 #endif

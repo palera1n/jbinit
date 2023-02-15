@@ -30,7 +30,7 @@ int check_and_mount_loader()
   return mount_dmg("/cores/binpack/loader.dmg", "hfs", "/cores/binpack/Applications", MNT_RDONLY, false);
 }
 
-int launchd_main(int argc, char **argv)
+int jbloader_launchd(int argc, char **argv)
 {
   int fd_console = open("/dev/console", O_RDWR);
   if (fd_console == -1) {
