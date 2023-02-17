@@ -22,7 +22,7 @@ retry_rootfs_mount:
       // spin();
     }
 
-    if (stat("/sbin/mount", statbuf)) {
+    if ((err = stat("/sbin/mount", statbuf))) {
       printf("stat %s FAILED with err=%d!\n", "/sbin/mount", err);
       sleep(1);
       goto retry_rootfs_mount;
