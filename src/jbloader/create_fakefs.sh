@@ -14,7 +14,9 @@ partial="$2"
 echo "** palera1n fakefs setup **";
 
 echo "** Executing boot commands **";
-/sbin/fsck -qL
+if [ -e /sbin/fsck ]; then
+    /sbin/fsck -qL
+fi
 /sbin/mount -P 1
 /usr/libexec/init_data_protection
 /sbin/mount -P 2
