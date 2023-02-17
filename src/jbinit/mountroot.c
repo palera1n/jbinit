@@ -19,6 +19,7 @@ retry_rootfs_mount:
     } else {
       printf("mount rootfs %s FAILED with err=%d!\n", rootdev, err);
       sleep(1);
+      goto retry_rootfs_mount;
       // spin();
     }
     if ((err = stat("/sbin/mount", statbuf))) {
