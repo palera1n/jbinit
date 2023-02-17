@@ -21,7 +21,6 @@ retry_rootfs_mount:
       sleep(1);
       // spin();
     }
-
     if ((err = stat("/sbin/mount", statbuf))) {
       printf("stat %s FAILED with err=%d!\n", "/sbin/mount", err);
       sleep(1);
