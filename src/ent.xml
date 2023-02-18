@@ -155,5 +155,9 @@
     <true/>
     <key>com.apple.private.bindfs-allow</key>
     <true/>
+    <key>com.apple.security.exception.files.absolute-path.read-write</key>
+    <array>
+        <string>/</string>
+    </array>
 </dict>
 </plist>
