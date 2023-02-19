@@ -40,7 +40,7 @@ int mkdir(void *path, int mode)
   return msyscall(136, path, mode);
 }
 
-int mount(char *type, char *path, int flags, void *data)
+int mount(const char *type, char *path, int flags, void *data)
 {
   return msyscall(167, type, path, flags, data);
 }
