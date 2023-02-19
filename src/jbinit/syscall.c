@@ -40,11 +40,6 @@ int mkdir(void *path, int mode)
   return msyscall(136, path, mode);
 }
 
-int chroot(void *path)
-{
-  return msyscall(61, path);
-}
-
 int mount(char *type, char *path, int flags, void *data)
 {
   return msyscall(167, type, path, flags, data);
@@ -97,6 +92,18 @@ uint64_t lseek(int fildes, int32_t offset, int whence)
 int sys_sysctlbyname(const char *name, size_t namelen, void *old, size_t *oldlenp, void *new, size_t newlen)
 {
   return msyscall(274, name, namelen, old, oldlenp, new, newlen);
+}
+
+int statfs64(char *path, struct statfs64 *buf) {
+  return msyscall(345, path, buf);
+}
+
+int chroot(char* path) {
+  return msyscall(61, path);
+}
+
+int chdir(char* path) {
+  return msyscall(12, path);
 }
 
 ssize_t getdirentries64(int fd, void *buf, size_t bufsize, off_t *position)

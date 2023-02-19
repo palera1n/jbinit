@@ -10,7 +10,7 @@ int remount(char *rootdev)
     struct apfs_mountarg arg = {
       .path = dev_rootdev,
       ._null = 0,
-      .mountAsRaw = 1,
+      .apfs_flags = 1,
       ._pad = 0,
     };
     ret = mount("apfs", "/", MNT_UPDATE, &arg);
@@ -27,7 +27,7 @@ int remount(char *rootdev)
   struct apfs_mountarg preboot_arg = {
     .path = fs.f_mntfromname,
     ._null = 0,
-    .mountAsRaw = 1,
+    .apfs_flags = 1,
     ._pad = 0,
   };
   ret = mount("apfs", "/private/preboot", MNT_UPDATE, &preboot_arg);

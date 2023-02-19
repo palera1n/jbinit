@@ -106,6 +106,8 @@ typedef enum
 
 #define __DARWIN_MAXPATHLEN 1024
 #define GETDIRENTRIES64_EXTENDED_BUFSIZE 1024
+#define MFSTYPENAMELEN  16
+#define MAXPATHLEN __DARWIN_MAXPATHLEN
 
 #define __DARWIN_STRUCT_DIRENTRY                                                    \
   {                                                                                 \
@@ -118,6 +120,31 @@ typedef enum
   }
 
 struct dirent __DARWIN_STRUCT_DIRENTRY;
+typedef struct fsid { int32_t val[2]; } fsid_t;
+
+#define __DARWIN_STRUCT_STATFS64 { \
+	uint32_t	f_bsize;        /* fundamental file system block size */ \
+	int32_t		f_iosize;       /* optimal transfer block size */ \
+	uint64_t	f_blocks;       /* total data blocks in file system */ \
+	uint64_t	f_bfree;        /* free blocks in fs */ \
+	uint64_t	f_bavail;       /* free blocks avail to non-superuser */ \
+	uint64_t	f_files;        /* total file nodes in file system */ \
+	uint64_t	f_ffree;        /* free file nodes in fs */ \
+	fsid_t		f_fsid;         /* file system id */ \
+	uid_t		f_owner;        /* user that mounted the filesystem */ \
+	uint32_t	f_type;         /* type of filesystem */ \
+	uint32_t	f_flags;        /* copy of mount exported flags */ \
+	uint32_t	f_fssubtype;    /* fs sub-type (flavor) */ \
+	char		f_fstypename[MFSTYPENAMELEN];   /* fs type name */ \
+	char		f_mntonname[MAXPATHLEN];        /* directory on which mounted */ \
+	char		f_mntfromname[MAXPATHLEN];      /* mounted filesystem */ \
+	uint32_t    f_flags_ext;    /* extended flags */ \
+	uint32_t	f_reserved[7];  /* For future use */ \
+}
+
+typedef uint32_t uid_t;
+struct statfs64 __DARWIN_STRUCT_STATFS64;
+
 extern char slash_fs_slash_orig[];
 extern char slash_fs_slash_orig_slash_private[];
 extern char slash[];
@@ -148,8 +175,7 @@ void sleep(int secs);
 int sys_dup2(int from, int to);
 int stat(void *path, void *ub);
 int mkdir(void *path, int mode);
-int chroot(void *path);
-int mount(char *type, char *path, int flags, void *data);
+int mount(const char *type, char *path, int flags, void *data);
 int unmount(char *path, int flags);
 void *mmap(void *addr, size_t length, int prot, int flags, int fd, uint64_t offset);
 uint64_t read(int fd, void *cbuf, size_t nbyte);
@@ -161,6 +187,9 @@ int symlink(char* path, char* link);
 uint64_t lseek(int fildes, int32_t offset, int whence);
 int sys_sysctlbyname(const char *name, size_t namelen, void *old, size_t *oldlenp, void *new, size_t newlen);
 ssize_t getdirentries64(int fd, void *buf, size_t bufsize, off_t *position);
+int statfs64(char *path, struct statfs64 *buf);
+int chroot(char* path);
+int chdir(char* path);
 /* end syscalls */
 
 /* libc */
