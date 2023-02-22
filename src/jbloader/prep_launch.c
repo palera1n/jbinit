@@ -27,8 +27,8 @@ int loadDaemons()
       return 0;
     {
       char *args[] = {
-          "/bin/launchctl",
-          "load",
+          "/cores/binpack/bin/launchctl",
+          "bootstrap", "system",
           "/Library/LaunchDaemons",
           NULL};
       run_async(args[0], args);
@@ -40,8 +40,8 @@ int loadDaemons()
       return 0;
     {
       char *args[] = {
-          "/var/jb/bin/launchctl",
-          "load",
+          "/cores/binpack/bin/launchctl",
+          "bootstrap", "system",
           "/var/jb/Library/LaunchDaemons",
           NULL};
       run_async(args[0], args);
