@@ -18,8 +18,12 @@ struct __NSConstantStringImpl {
 };
 
 extern int __CFConstantStringClassReference[];
-static struct __NSConstantStringImpl springboard_plist __attribute__ ((section ("__DATA, __cfstring"))) = {__CFConstantStringClassReference,0x000007c8,"/var/mobile/Library/Preferences/com.apple.springboard.plist",(long)strlen("/var/mobile/Library/Preferences/com.apple.springboard.plist")};
-static struct __NSConstantStringImpl SBShowNonDefaultSystemApps __attribute__ ((section ("__DATA, __cfstring"))) = {__CFConstantStringClassReference,0x000007c8,"SBShowNonDefaultSystemApps",(long)strlen("SBShowNonDefaultSystemApps")};
+#define NSSTR(name, str) \
+  static struct __NSConstantStringImpl name __attribute__ ((section ("__DATA, __cfstring"))) \
+  = {__CFConstantStringClassReference,0x000007c8,str,(long)(sizeof(str) - 1L)};
+
+NSSTR(springboard_plist, "/var/mobile/Library/Preferences/com.apple.springboard.plist");
+NSSTR(SBShowNonDefaultSystemApps, "SBShowNonDefaultSystemApps");
 
 int uicache_apps()
 {
