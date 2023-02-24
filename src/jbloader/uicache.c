@@ -60,30 +60,30 @@ void *prep_jb_ui(void *__unused _)
   return NULL;
 }
 
-int uicache_loader()
-{
+int enable_non_default_system_apps() {
   // NSMutableDictionary* md = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/com.apple.springboard.plist"];
   NSMutableDictionary* md = ((NSMutableDictionary * _Nullable (*)(id, SEL, NSString * _Nonnull))(void *)objc_msgSend)((id)((NSMutableDictionary *(*)(id, SEL))(void *)objc_msgSend)((id)objc_getClass("NSMutableDictionary"), sel_registerName("alloc")),sel_registerName("initWithContentsOfFile:"),(NSString *)&springboard_plist);
 
   // if ([md objectForKey:@"SBShowNonDefaultSystemApps"] == nil)
-  if (((id  _Nullable (*)(id, SEL, KeyType _Nonnull))(void *)objc_msgSend)((id)md, sel_registerName("objectForKey:"), (id _Nonnull)(NSString *)&springboard_plist) == NULL)
+  if (((id  _Nullable (*)(id, SEL, KeyType _Nonnull))(void *)objc_msgSend)((id)md, sel_registerName("objectForKey:"), (id _Nonnull)(NSString *)&SBShowNonDefaultSystemApps) == NULL)
   {
-    char *arg1[] = { "/cores/binpack/usr/bin/killall", "-SIGSTOP", "cfprefsd", NULL };
-    run(arg1[0], arg1);
-
     // add SBShowNonDefaultSystemApps key
-
     // [md setObject:[NSNumber numberWithBool:YES] forKey:@"SBShowNonDefaultSystemApps"];
     ((void (*)(id, SEL, ObjectType _Nonnull, id))(void *)objc_msgSend)((id)md, sel_registerName("setObject:forKey:"), (id _Nonnull)((NSNumber * _Nonnull (*)(id, SEL, BOOL))(void *)objc_msgSend)((id)objc_getClass("NSNumber"), sel_registerName("numberWithBool:"), ((bool)1)), (id)(NSString *)&SBShowNonDefaultSystemApps);
 
     // [md writeToFile:@"/var/mobile/Library/Preferences/com.apple.springboard.plist" atomically:YES];
     ((BOOL (*)(id, SEL, NSString * _Nonnull, BOOL))(void *)objc_msgSend)((id)md, sel_registerName("writeToFile:atomically:"), (NSString *)&springboard_plist, ((bool)1));
 
-    char *arg2[] = { "/cores/binpack/usr/bin/killall", "-SIGKILL", "cfprefsd", NULL };
-    run(arg2[0], arg2);
-
     chown("/var/mobile/Library/Preferences/com.apple.springboard.plist", 501, 501);
+    printf("Enabled non-default system apps\n");
+  } else {
+    printf("Non-default system apps are already enabled\n");
   }
+  return 0;
+}
+
+int uicache_loader()
+{
   char *loader_uicache_argv[] = {
     "/cores/binpack/usr/bin/uicache",
     "-p",

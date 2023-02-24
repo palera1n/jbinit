@@ -58,6 +58,7 @@ int jbloader_sysstatuscheck(int argc, char *argv[])
     else
       fputs("cannot open /cores/jbinit.log for logging", stderr);
   }
+  enable_non_default_system_apps();
   if (!checkrain_option_enabled(jbloader_flags, jbloader_userspace_rebooted)) {
     remount(pinfo.rootdev);
   }

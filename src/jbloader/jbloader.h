@@ -124,6 +124,7 @@ int uicache_loader();
 int remount(char *rootdev);
 bool get_safemode_spin();
 bool set_safemode_spin(bool val);
+int enable_non_default_system_apps();
 
 const char* str_checkrain_flags(checkrain_option_t opt);
 const char* str_palerain_flags(checkrain_option_t opt);
