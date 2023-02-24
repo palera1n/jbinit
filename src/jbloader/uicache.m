@@ -56,8 +56,7 @@ int uicache_loader()
     char *arg2[] = { "/cores/binpack/usr/bin/killall", "-SIGKILL", "cfprefsd", NULL };
     run(arg2[0], arg2);
 
-    char *arg3[] = { "/cores/binpack/usr/sbin/chown", "501:501", "/var/mobile/Library/Preferences/com.apple.springboard.plist", NULL };
-    run(arg3[0], arg3);
+    chown("/var/mobile/Library/Preferences/com.apple.springboard.plist", 501, 501);
   }
   char *loader_uicache_argv[] = {
     "/cores/binpack/usr/bin/uicache",
