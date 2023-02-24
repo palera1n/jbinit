@@ -1,6 +1,7 @@
 #include <jbloader.h>
 #include <objc/runtime.h>
 #include <objc/message.h>
+#include <stdbool.h>
 #include <CoreFoundation/CoreFoundation.h>
 
 typedef struct objc_object NSMutableDictionary;
@@ -69,10 +70,10 @@ int enable_non_default_system_apps() {
   {
     // add SBShowNonDefaultSystemApps key
     // [md setObject:[NSNumber numberWithBool:YES] forKey:@"SBShowNonDefaultSystemApps"];
-    ((void (*)(id, SEL, ObjectType _Nonnull, id))(void *)objc_msgSend)((id)md, sel_registerName("setObject:forKey:"), (id _Nonnull)((NSNumber * _Nonnull (*)(id, SEL, BOOL))(void *)objc_msgSend)((id)objc_getClass("NSNumber"), sel_registerName("numberWithBool:"), ((bool)1)), (id)(NSString *)&SBShowNonDefaultSystemApps);
+    ((void (*)(id, SEL, ObjectType _Nonnull, id))(void *)objc_msgSend)((id)md, sel_registerName("setObject:forKey:"), (id _Nonnull)((NSNumber * _Nonnull (*)(id, SEL, BOOL))(void *)objc_msgSend)((id)objc_getClass("NSNumber"), sel_registerName("numberWithBool:"), true), (id)(NSString *)&SBShowNonDefaultSystemApps);
 
     // [md writeToFile:@"/var/mobile/Library/Preferences/com.apple.springboard.plist" atomically:YES];
-    ((BOOL (*)(id, SEL, NSString * _Nonnull, BOOL))(void *)objc_msgSend)((id)md, sel_registerName("writeToFile:atomically:"), (NSString *)&springboard_plist, ((bool)1));
+    ((BOOL (*)(id, SEL, NSString * _Nonnull, BOOL))(void *)objc_msgSend)((id)md, sel_registerName("writeToFile:atomically:"), (NSString *)&springboard_plist, true);
 
     chown("/var/mobile/Library/Preferences/com.apple.springboard.plist", 501, 501);
     printf("Enabled non-default system apps\n");
