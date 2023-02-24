@@ -6,7 +6,7 @@ OBJECTS += sbreload.o spin.o uicache.o sysstatuscheck.o print_info.o
 OBJECTS += get_set_flags.o
 
 CFLAGS  += -miphoneos-version-min=7.0 -arch arm64 -Os -I.
-LDFLAGS += $(SRC)/APFS.tbd -framework IOKit -framework CoreFoundation -framework Foundation
+LDFLAGS += $(SRC)/APFS.tbd -framework IOKit -framework CoreFoundation -framework Foundation -lobjc
 
 ifeq ($(ASAN),1)
 CFLAGS += -fsanitize=address,undefined
@@ -16,9 +16,6 @@ all: jbloader
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $<
-
-uicache.o: uicache.m
-	$(CC) -c $(CFLAGS) uicache.m
 
 create_fakefs_sh.c: create_fakefs.sh
 	xxd -iC create_fakefs.sh > create_fakefs_sh.c
