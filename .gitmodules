@@ -1,0 +1,3 @@
+[submodule "src/jbloader/launchctl"]
+	path = src/jbloader/launchctl
+	url = git@github.com:ProcursusTeam/launchctl.git

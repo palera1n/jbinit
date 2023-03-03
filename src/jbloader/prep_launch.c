@@ -1,4 +1,8 @@
 #include <jbloader.h>
+#include <xpc/xpc.h>
+
+extern char** environ;
+char* launchctl_apple[] = { NULL };
 
 void *prep_jb_launch(void *__unused _)
 {
@@ -21,30 +25,24 @@ void *prep_jb_launch(void *__unused _)
 
 int loadDaemons()
 {
+  xpc_object_t msg;
   if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
   {
     if (access("/Library/LaunchDaemons", F_OK) != 0)
       return 0;
-    {
-      char *args[] = {
-          "/cores/binpack/bin/launchctl",
-          "bootstrap", "system",
-          "/Library/LaunchDaemons",
-          NULL};
-      run_async(args[0], args);
-    }
+    puts("loading /Library/LaunchDaemons");
+    char* bootstrap_argv[] = { "bootstrap", "system", "/Library/LaunchDaemons", NULL };
+    bootstrap_cmd(&msg, 3, bootstrap_argv, environ, launchctl_apple);
+
   }
   else
   {
     if (access("/var/jb/Library/LaunchDaemons", F_OK) != 0)
       return 0;
     {
-      char *args[] = {
-          "/cores/binpack/bin/launchctl",
-          "bootstrap", "system",
-          "/var/jb/Library/LaunchDaemons",
-          NULL};
-      run_async(args[0], args);
+      puts("loading /var/jb/Library/LaunchDaemons");
+      char* bootstrap_argv[] = { "bootstrap", "system", "/var/jb/Library/LaunchDaemons", NULL };
+      bootstrap_cmd(&msg, 3, bootstrap_argv, environ, launchctl_apple);
     }
   }
   return 0;

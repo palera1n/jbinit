@@ -35,6 +35,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <APFS/APFS.h>
 #include <APFS/APFSConstants.h>
+#include <xpc/xpc.h>
 #include "kerninfo.h"
 
 #ifndef RAMDISK
@@ -94,11 +95,16 @@ extern pthread_mutex_t safemode_mutex;
 
 extern unsigned char create_fakefs_sh[];
 extern unsigned int create_fakefs_sh_len;
+extern char* launchctl_apple[];
+
+typedef int launchctl_cmd_main(xpc_object_t *msg, int argc, char **argv, char **envp, char **apple);
 
 extern char** environ;
 extern uint32_t jbloader_flags;
 extern uint32_t p1ctl_flags;
 
+launchctl_cmd_main bootstrap_cmd;
+launchctl_cmd_main load_cmd;
 int run(const char *cmd, char *const *args);
 int run_async(const char *cmd, char *const *args);
 void spin();
