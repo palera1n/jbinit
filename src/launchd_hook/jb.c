@@ -174,13 +174,14 @@ int _my__NSGetExecutablePath(char* buf, uint32_t* bufsize) {
 }
 DYLD_INTERPOSE(_my__NSGetExecutablePath, _NSGetExecutablePath);
 
-void SIGBUSHandler(int __unused _) {}
+void DoNothingHandler(int __unused _) {}
 
 __attribute__((constructor))
 static void customConstructor(int argc, const char **argv){
   int fd_console = open("/dev/console",O_RDWR,0);
   dprintf(fd_console,"================ Hello from jb.dylib ================ \n");
-  signal(SIGBUS, SIGBUSHandler);
+  signal(SIGBUS, DoNothingHandler);
+  signal(SIGEMT, DoNothingHandler);
   dprintf(fd_console,"========= Goodbye from jb.dylib constructor ========= \n");
   close(fd_console);
 }
