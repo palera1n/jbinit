@@ -12,6 +12,7 @@ dropbear.plist
 mach
 mach.c
 src/launchd_hook/jb.dylib
+binpack.tar
 binpack.dmg
 ramdisk.dmg
 loader.dmg
