@@ -51,20 +51,4 @@ void patch_platform_check16(void *dyld_buf, size_t dyld_len, uint32_t platform) 
     };
 
     pf_find_maskmatch32(dyld_buf, dyld_len, matches2, masks2, sizeof(matches2) / sizeof(uint32_t), (void *)platform_check_callback16_alt);
-
-    uint32_t matches3[] = {
-        0xf9400260, // ldr x0, [x*, 0x20]
-        0x29400000, // ldp
-        0xb9400000, // ldr x*, [x0, 0x10]
-        0x14000000  // b 
-    };
-
-    uint32_t masks3[] = {
-        0xffc003e0,
-        0xffc00000,
-        0xffc00000,
-        0xfc000000
-    };
-
-    pf_find_maskmatch32(dyld_buf, dyld_len, matches3, masks3, sizeof(matches3) / sizeof(uint32_t), (void *)platform_check_callback16_alt);
 }
