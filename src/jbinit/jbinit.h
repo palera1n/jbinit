@@ -46,6 +46,7 @@ typedef int64_t user_ssize_t;
 typedef int64_t off_t;
 typedef uint64_t user_size_t;
 typedef int64_t ssize_t;
+typedef int FILE;
 typedef enum
 {
   /* the __getdirentries64 returned all entries */
@@ -60,6 +61,8 @@ typedef enum
 #define O_DIRECTORY 0x00100000
 #define O_SYNC 0x0080      /* synch I/O file integrity */
 #define O_TRUNC 0x00000400 /* truncate to zero length */
+#define O_APPEND        0x00000008      /* set append mode */
+#define O_EXCL          0x00000800      /* error if already exists */
 
 #define SEEK_SET 0
 #define SEEK_CUR 1
@@ -70,6 +73,7 @@ typedef enum
 #define PROT_WRITE 0x02 /* [MC2] pages can be written */
 #define PROT_EXEC 0x04  /* [MC2] pages can be executed */
 
+#define MAP_FAILED ((void*)-1)
 #define MAP_FILE 0x0000 /* map from file (default) */
 #define MAP_ANON 0x1000 /* allocated from memory, swap space */
 #define MAP_ANONYMOUS MAP_ANON
@@ -190,6 +194,7 @@ ssize_t getdirentries64(int fd, void *buf, size_t bufsize, off_t *position);
 int statfs64(char *path, struct statfs64 *buf);
 int chroot(char* path);
 int chdir(char* path);
+int munmap(void* addr, size_t len);
 /* end syscalls */
 
 /* libc */
@@ -229,5 +234,6 @@ void init_cores();
 void rootwait(char** rootdev_pp);
 void select_root(uint64_t* rootlivefs_p, int* rootopts_p, char** rootdev_p, char* dev_rootdev, bool use_fakefs);
 void prepare_rootfs(char* dev_rootdev, bool use_fakefs);
+void patch_dyld(void);
 /* end components */
 #endif

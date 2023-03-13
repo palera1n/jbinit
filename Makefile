@@ -26,15 +26,6 @@ ramdisk.dmg: jbinit jbloader jb.dylib
 	sudo rm -rf ramdisk
 	mkdir -p ramdisk
 	mkdir -p ramdisk/{usr/lib,sbin,jbin,dev}
-	#mkdir -p ramdisk/{binpack,jbin,fs/{gen,orig}}
-	#mkdir -p ramdisk/{Applications,bin,cores,dev,Developer,Library,private,sbin,System,usr/lib}
-	#mkdir -p ramdisk/{.ba,.mb}
-	#ln -s private/etc ramdisk/etc
-	#ln -s private/var ramdisk/var
-	#ln -s private/var/tmp ramdisk/tmp
-	#touch ramdisk/.file
-	#chmod 000 ramdisk/.file
-	#chmod 700 ramdisk/{.ba,.mb}
 	ln -s /jbin/jbloader ramdisk/sbin/launchd
 	ln -s /sbin/launchd ramdisk/jbin/launchd
 	mkdir -p ramdisk/usr/lib

@@ -1,7 +1,7 @@
-OBJECTS  = jbinit.o offsetfinder.o prepare_rootfs.o select_root.o
+OBJECTS  = jbinit.o plooshfinder.o prepare_rootfs.o select_root.o
 OBJECTS += syscall.o utils.o printf.o info.o mount_devfs.o rw_file.o
 OBJECTS += remount_rdisk.o mountroot.o fakefs_check.o init_log.o
-OBJECTS += cores_init.o rootwait.o
+OBJECTS += cores_init.o rootwait.o dyld_platform_ios15.o patch_dyld.o
 
 CFLAGS += -Os -nostdlib -fno-stack-protector -I.
 CFLAGS += --target=arm64-apple-ios7.0 -std=gnu17 -ffreestanding -U__nonnull

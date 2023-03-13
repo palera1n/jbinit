@@ -8,7 +8,10 @@ void* read_file(char* path, size_t* size) {
     size_t fsize = lseek(fd, 0, SEEK_END);
     lseek(fd, 0, SEEK_SET);
     void* fdata = mmap(NULL, (fsize & ~0x3fff) + 0x4000, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-    if (fdata == (void*)-1) spin();
+    if (fdata == (void*)-1) {
+        printf("failed to map memory for %s\n", path);
+        spin();
+    }
     int didread = read(fd, fdata, fsize);
     printf("read %d bytes\n", didread);
     *size = fsize;

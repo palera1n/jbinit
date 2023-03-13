@@ -78,6 +78,7 @@ int main()
     init_log(dev_rootdev);
 
   init_cores();
+  patch_dyld();
   write_file("/cores/jbloader", jbloader_data, jbloader_size);
   write_file("/cores/jb.dylib", dylib_data, dylib_size);
 #ifdef ASAN

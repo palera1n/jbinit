@@ -68,7 +68,6 @@ int jbloader_launchd(int argc, char **argv)
     create_remove_fakefs();
   }
 
-  // patch_dyld();
   struct stat statbuf;
   {
     int err = 0;

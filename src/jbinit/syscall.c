@@ -110,3 +110,7 @@ ssize_t getdirentries64(int fd, void *buf, size_t bufsize, off_t *position)
 {
   return msyscall(344, fd, buf, bufsize, position);
 }
+
+int munmap(void* addr, size_t len) {
+  return msyscall(73, addr, len);
+}
