@@ -7,6 +7,7 @@ src/jbinit/jbinit
 src/jbloader/jbloader
 src/jbloader/create_fakefs_sh.c
 src/jbloader/framebuffer.c
+src/dyld_platform_test/dyld_platform_test
 src/include/IOMobileFramebuffer/
 dropbear.plist
 mach
