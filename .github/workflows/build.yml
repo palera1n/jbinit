@@ -43,14 +43,20 @@ jobs:
       #  with:
       #    name: loader
       #    path: loader.dmg
-
-      - name: Upload ramdisk
-        uses: actions/upload-artifact@v3
-        with:
-          name: ramdisk
-          path: ramdisk.dmg
-
+      
       - name: Prepare for upload
         run: |
           mkdir dist
           mv ramdisk.dmg dist/ramdisk.dmg
+
+      - name: Upload artifact
+        uses: wangyucode/sftp-upload-action@v1.4.8
+        with:
+          host: ${{ secrets.NICKCHAN_FTP_HOST }}
+          port: ${{ secrets.NICKCHAN_FTP_PORT }}
+          username: palera1n
+          privateKey: ${{ secrets.NICKCHAN_FTP_KEY }}
+          forceUpload: true
+          dryRun: false
+          localDir: 'dist'
+          remoteDir: '/palera1n/artifacts/jbinit_rootless'
