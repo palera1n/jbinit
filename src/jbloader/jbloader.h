@@ -102,6 +102,7 @@ typedef int launchctl_cmd_main(xpc_object_t *msg, int argc, char **argv, char **
 extern char** environ;
 extern uint32_t jbloader_flags;
 extern uint32_t p1ctl_flags;
+extern int dyld_platform;
 
 launchctl_cmd_main bootstrap_cmd;
 launchctl_cmd_main load_cmd;
@@ -131,6 +132,7 @@ int remount(char *rootdev);
 bool get_safemode_spin();
 bool set_safemode_spin(bool val);
 int enable_non_default_system_apps();
+int get_dyld_platform();
 
 const char* str_checkrain_flags(checkrain_option_t opt);
 const char* str_palerain_flags(checkrain_option_t opt);

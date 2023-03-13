@@ -2,6 +2,7 @@
 #include <libgen.h>
 
 uint32_t jbloader_flags = 0;
+int dyld_platform = -1;
 
 int init_info() {
   int ret = get_kerninfo(&info, RAMDISK);
@@ -25,6 +26,9 @@ int jbloader_main(int argc, char *argv[])
   int ch = 0;
   if (getuid() != 0 || geteuid() != 0) goto out;
   if ((ret = init_info())) return ret;
+  if ((dyld_platform = get_dyld_platform()) == -1) {
+    return -1;
+  }
   if (getpid() == 1) {
     return jbloader_launchd(argc, argv);
   };

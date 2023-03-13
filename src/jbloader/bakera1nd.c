@@ -1,4 +1,5 @@
 #include <jbloader.h>
+#include <mach-o/loader.h>
 
 int jbloader_palera1nd(int argc, char **argv)
 {
@@ -24,15 +25,20 @@ int jbloader_palera1nd(int argc, char **argv)
   pthread_create(&prep_jb_launch_thread, NULL, prep_jb_launch, NULL);
   pthread_create(&ssh_thread, NULL, enable_ssh, NULL);
   pthread_join(prep_jb_launch_thread, NULL);
-  if (!checkrain_option_enabled(info.flags, checkrain_option_force_revert))
+  if (!checkrain_option_enabled(info.flags, checkrain_option_force_revert)
+  && dyld_platform == PLATFORM_IOS)
   {
     pthread_create(&prep_jb_ui_thread, NULL, prep_jb_ui, NULL);
   }
   pthread_join(ssh_thread, NULL);
-  if (!checkrain_option_enabled(info.flags, checkrain_option_force_revert))
+  if (!checkrain_option_enabled(info.flags, checkrain_option_force_revert) && dyld_platform == PLATFORM_IOS)
     pthread_join(prep_jb_ui_thread, NULL);
-  uicache_loader();
-  if (checkrain_option_enabled(info.flags, checkrain_option_safemode))
+  if (dyld_platform == PLATFORM_IOS)
+    uicache_loader();
+  if (
+    checkrain_option_enabled(info.flags, checkrain_option_safemode)
+  && dyld_platform == PLATFORM_IOS
+  )
   {
     void *sbservices = dlopen(
       "/System/Library/PrivateFrameworks/SpringBoardServices.framework/"
@@ -47,7 +53,7 @@ int jbloader_palera1nd(int argc, char **argv)
         dispatch_main();
       }
       } else {
-        printf("sbservices is NULL (expected on non-iOS): %s\n", dlerror());
+        printf("sbservices is NULL: %s\n", dlerror());
         set_safemode_spin(false);
       }
 
