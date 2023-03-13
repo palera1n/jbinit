@@ -13,6 +13,10 @@ int64_t pf_signextend_64(int64_t val, uint8_t bits);
 uint32_t *pf_follow_branch(uint32_t *insn);
 int64_t pf_adrp_offset(uint32_t adrp);
 void *pf_follow_xref(uint32_t *stream);
+
+
+void patch_platform_check_old(void *dyld_buf, size_t dyld_len, uint32_t platform);
 void patch_platform_check15(void *dyld_buf, size_t dyld_len, uint32_t platform);
+void patch_platform_check16(void *dyld_buf, size_t dyld_len, uint32_t platform);
 
 #endif

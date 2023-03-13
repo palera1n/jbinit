@@ -21,7 +21,7 @@ void patch_platform_check15(void *dyld_buf, size_t dyld_len, uint32_t platform) 
         0x29400000, // ldp
         0xf9400000, // ldr x*, [x0, 0x10]
         0x52800001, // mov w1, *
-        0x14000000  // b 
+        0x14000000  // b
     };
 
     uint32_t ios15_masks[] = {
@@ -44,7 +44,7 @@ void patch_platform_check15(void *dyld_buf, size_t dyld_len, uint32_t platform) 
         0xf9400260, // ldr x0, [x*, 0x20]
         0xf9400000, // ldr x*, [x0, 0x10]
         0x52800001, // mov w1, *
-        0x14000000  // b 
+        0x14000000  // b
     };
 
     uint32_t ios15_masks2[] = {
@@ -54,6 +54,11 @@ void patch_platform_check15(void *dyld_buf, size_t dyld_len, uint32_t platform) 
         0xffe0001f,
         0xfc000000
     };
+
+    pf_find_maskmatch32(dyld_buf, dyld_len, ios15_matches2, ios15_masks2, sizeof(ios15_matches2) / sizeof(uint32_t), (void *)platform_check_callback15);
+
+    ios15_matches2[4] = 0xd63f0000; // blr x*
+    ios15_masks2[4] = 0xfffffc1f;
 
     pf_find_maskmatch32(dyld_buf, dyld_len, ios15_matches2, ios15_masks2, sizeof(ios15_matches2) / sizeof(uint32_t), (void *)platform_check_callback15);
 }
