@@ -47,12 +47,17 @@ loader.dmg: palera1n.ipa
 	hdiutil create -size 10m -layout NONE -format ULFO -uid 0 -gid 0 -volname palera1nLoader -srcfolder ./Payload -fs HFS+ ./loader.dmg
 	rm -rf Payload
 
+$(SRC)/dyld_platform_test/dyld_platform_test:
+	$(MAKE) -C $(SRC)/dyld_platform_test
+
+dyld_platform_test: $(SRC)/dyld_platform_test/dyld_platform_test
+
 clean:
 	rm -f jb.dylib ramdisk.dmg binpack.dmg
 	rm -f src/jbinit/jbinit src/jbloader/jbloader src/launchd_hook/jb.dylib
-	rm -f src/jbloader/create_fakefs_sh.c
+	rm -f src/jbloader/create_fakefs_sh.c src/dyld_platform_test/dyld_platform_test
 	sudo rm -rf ramdisk
 	find . -name '*.o' -delete
 	rm -f ramdisk.img4
 
-.PHONY: all clean jbinit jbloader jb.dylib
+.PHONY: all clean jbinit jbloader jb.dylib dyld_platform_test
