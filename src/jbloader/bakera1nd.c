@@ -34,17 +34,23 @@ int jbloader_palera1nd(int argc, char **argv)
   uicache_loader();
   if (checkrain_option_enabled(info.flags, checkrain_option_safemode))
   {
-    CFNotificationCenterAddObserver(
-        CFNotificationCenterGetDarwinNotifyCenter(), NULL, &safemode_alert,
-        CFSTR("SBSpringBoardDidLaunchNotification"), NULL, 0);
     void *sbservices = dlopen(
-        "/System/Library/PrivateFrameworks/SpringBoardServices.framework/"
-        "SpringBoardServices",
-        RTLD_NOW);
-    void *(*SBSSpringBoardServerPort)() = dlsym(sbservices, "SBSSpringBoardServerPort");
-    if (SBSSpringBoardServerPort() == NULL) {
-      dispatch_main();
-    }
+      "/System/Library/PrivateFrameworks/SpringBoardServices.framework/"
+      "SpringBoardServices",
+      RTLD_NOW);
+      if (sbservices != NULL) {
+        CFNotificationCenterAddObserver(
+          CFNotificationCenterGetDarwinNotifyCenter(), NULL, &safemode_alert,
+          CFSTR("SBSpringBoardDidLaunchNotification"), NULL, 0);
+      void *(*SBSSpringBoardServerPort)() = dlsym(sbservices, "SBSSpringBoardServerPort");
+      if (SBSSpringBoardServerPort() == NULL) {
+        dispatch_main();
+      }
+      } else {
+        printf("sbservices is NULL (expected on non-iOS): %s\n", dlerror());
+        set_safemode_spin(false);
+      }
+
   }
   else
   {
