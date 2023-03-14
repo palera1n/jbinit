@@ -6,3 +6,5 @@ you should place the untar'd binpack into the current directory at binpack, binp
 used in palera1n rootless.
 
 thanks to [Serena](https://github.com/SerenaKit) for helping me
+
+`ASAN` builds will exceed launchd memory limits. Do not use under non-development situations.
