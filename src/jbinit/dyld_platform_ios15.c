@@ -3,62 +3,56 @@
 #include <jbinit.h>
 #include <plooshfinder.h>
 
-int _internal_platform = 0;
+int _internal15_platform = 0;
 
-bool platform_check_callback15(uint32_t *stream) {
-    stream[3] = 0x52800001 | (_internal_platform << 5);
+bool platform_check_callback15(struct pf_patch32_t patch, uint32_t *stream) {
+    stream[3] = 0x52800001 | (_internal15_platform << 5);
 
-    printf("%s: Patched platform check (mov: 0x%x)\n", __FUNCTION__, 0x52800001 | (_internal_platform << 5));
+    printf("%s: Patched platform check (mov: 0x%x)\n", __FUNCTION__, 0x52800001 | (_internal15_platform << 5));
 
     return true;
 }
 
 void patch_platform_check15(void *dyld_buf, size_t dyld_len, uint32_t platform) {
-    _internal_platform = platform;
+    _internal15_platform = platform;
 
-    uint32_t ios15_matches[] = {
+    uint32_t matches[] = {
         0xf9400260, // ldr x0, [x*, 0x20]
         0x29400000, // ldp
         0xf9400000, // ldr x*, [x0, 0x10]
-        0x52800001, // mov w1, *
-        0x14000000  // b
+        0x52800001  // mov w1, *
     };
 
-    uint32_t ios15_masks[] = {
+    uint32_t masks[] = {
         0xffc003e0,
         0xffc00000,
         0xffc003e0,
-        0xffe0001f,
-        0xfc000000
+        0xffe0001f
     };
-    pf_find_maskmatch32(dyld_buf, dyld_len, ios15_matches, ios15_masks, sizeof(ios15_matches) / sizeof(uint32_t), (void *)platform_check_callback15);
+    struct pf_patch32_t patch = pf_construct_patch32(matches, masks, sizeof(matches) / sizeof(uint32_t), (void *) platform_check_callback15);
 
-    ios15_matches[4] = 0xd63f0000; // blr x*
-    ios15_masks[4] = 0xfffffc1f;
-
-    pf_find_maskmatch32(dyld_buf, dyld_len, ios15_matches, ios15_masks, sizeof(ios15_matches) / sizeof(uint32_t), (void *)platform_check_callback15);
-
-    // this codegen SUCKS
-    uint32_t ios15_matches2[] = {
+    uint32_t matches2[] = {
         0x1a800000, // csel w*, w*, w*, eq
         0xf9400260, // ldr x0, [x*, 0x20]
         0xf9400000, // ldr x*, [x0, 0x10]
-        0x52800001, // mov w1, *
-        0x14000000  // b
+        0x52800001  // mov w1, *
     };
 
-    uint32_t ios15_masks2[] = {
+    uint32_t masks2[] = {
         0xffe0fc00,
         0xffc003e0,
         0xffc003e0,
-        0xffe0001f,
-        0xfc000000
+        0xffe0001f
     };
 
-    pf_find_maskmatch32(dyld_buf, dyld_len, ios15_matches2, ios15_masks2, sizeof(ios15_matches2) / sizeof(uint32_t), (void *)platform_check_callback15);
+    struct pf_patch32_t patch2 = pf_construct_patch32(matches2, masks2, sizeof(matches2) / sizeof(uint32_t), (void *) platform_check_callback15);
 
-    ios15_matches2[4] = 0xd63f0000; // blr x*
-    ios15_masks2[4] = 0xfffffc1f;
+    struct pf_patch32_t patches[] = {
+        patch,
+        patch2
+    };
 
-    pf_find_maskmatch32(dyld_buf, dyld_len, ios15_matches2, ios15_masks2, sizeof(ios15_matches2) / sizeof(uint32_t), (void *)platform_check_callback15);
+    struct pf_patchset32_t patchset = pf_construct_patchset32(patches, sizeof(patches) / sizeof(struct pf_patch32_t), (void *) pf_find_maskmatch32);
+
+    pf_patchset_emit32(dyld_buf, dyld_len, patchset);
 }

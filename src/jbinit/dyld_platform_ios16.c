@@ -3,9 +3,10 @@
 #include <jbinit.h>
 #include <plooshfinder.h>
 
+
 int _internal16_platform = 0;
 
-bool platform_check_callback16(uint32_t *stream) {
+bool platform_check_callback16(struct pf_patch32_t patch, uint32_t *stream) {
     stream[2] = 0x52800001 | (_internal16_platform << 5);
 
     printf("%s: Patched platform check (mov: 0x%x)\n", __FUNCTION__, 0x52800001 | (_internal16_platform << 5));
@@ -13,7 +14,7 @@ bool platform_check_callback16(uint32_t *stream) {
     return true;
 }
 
-bool platform_check_callback16_alt(uint32_t *stream) {
+bool platform_check_callback16_alt(struct pf_patch32_t patch, uint32_t *stream) {
     stream[1] = 0x52800008 | (_internal16_platform << 5);
 
     printf("%s: Patched platform check (mov: 0x%x)\n", __FUNCTION__, 0x52800008 | (_internal16_platform << 5));
@@ -38,7 +39,7 @@ void patch_platform_check16(void *dyld_buf, size_t dyld_len, uint32_t platform) 
         0xfc000000
     };
 
-    pf_find_maskmatch32(dyld_buf, dyld_len, matches, masks, sizeof(matches) / sizeof(uint32_t), (void *)platform_check_callback16);
+    struct pf_patch32_t patch = pf_construct_patch32(matches, masks, sizeof(matches) / sizeof(uint32_t), (void *) platform_check_callback16);
 
     uint32_t matches2[] = {
         0x52800009, // mov w9, *
@@ -50,5 +51,14 @@ void patch_platform_check16(void *dyld_buf, size_t dyld_len, uint32_t platform) 
         0xfffefd0e
     };
 
-    pf_find_maskmatch32(dyld_buf, dyld_len, matches2, masks2, sizeof(matches2) / sizeof(uint32_t), (void *)platform_check_callback16_alt);
+    struct pf_patch32_t patch2 = pf_construct_patch32(matches2, masks2, sizeof(matches2) / sizeof(uint32_t), (void *) platform_check_callback16_alt);
+
+    struct pf_patch32_t patches[] = {
+        patch,
+        patch2
+    };
+
+    struct pf_patchset32_t patchset = pf_construct_patchset32(patches, sizeof(patches) / sizeof(struct pf_patch32_t), (void *) pf_find_maskmatch32);
+
+    pf_patchset_emit32(dyld_buf, dyld_len, patchset);
 }

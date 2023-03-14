@@ -4,42 +4,104 @@
 #include <plooshfinder.h>
 #include <jbinit.h>
 
-void pf_find_maskmatch32(void *buf, size_t size, uint32_t matches[], uint32_t masks[], uint32_t count, bool (*callback)(void* stream)) {
+
+struct pf_patch32_t pf_construct_patch32(uint32_t matches[], uint32_t masks[], uint32_t count, bool (*callback)(struct pf_patch32_t patch, void *stream)) {
+    struct pf_patch32_t patch;
+
+    // construct the patch
+    patch.matches = matches;
+    patch.masks = masks;
+    patch.count = count;
+    patch.callback = callback;
+
+    return patch;
+}
+
+struct pf_patch64_t pf_construct_patch64(uint64_t matches[], uint64_t masks[], uint32_t count, bool (*callback)(struct pf_patch64_t patch, void *stream)) {
+    struct pf_patch64_t patch;
+
+    // construct the patch
+    patch.matches = matches;
+    patch.masks = masks;
+    patch.count = count;
+    patch.callback = callback;
+
+    return patch;
+}
+
+struct pf_patchset32_t pf_construct_patchset32(struct pf_patch32_t *patches, uint32_t count, void (*handler)(void *buf, size_t size, struct pf_patchset32_t patchset)) {
+    struct pf_patchset32_t patchset;
+
+    patchset.patches = patches;
+    patchset.count = count;
+    patchset.handler = handler;
+
+    return patchset;
+}
+
+struct pf_patchset64_t pf_construct_patchset64(struct pf_patch64_t *patches, uint32_t count, void (*handler)(void *buf, size_t size, struct pf_patchset64_t patchset)) {
+    struct pf_patchset64_t patchset;
+
+    patchset.patches = patches;
+    patchset.count = count;
+    patchset.handler = handler;
+
+    return patchset;
+}
+
+void pf_patchset_emit32(void *buf, size_t size, struct pf_patchset32_t patchset) {
+    patchset.handler(buf, size, patchset);
+}
+
+void pf_patchset_emit64(void *buf, size_t size, struct pf_patchset64_t patchset) {
+    patchset.handler(buf, size, patchset);
+}
+
+
+void pf_find_maskmatch32(void *buf, size_t size, struct pf_patchset32_t patchset) {
     uint32_t *stream = buf;
     uint64_t uint_count = size >> 2;
     uint32_t insn_match_cnt = 0;
     for (uint64_t i = 0; i < uint_count; i++) {
-        insn_match_cnt = 0;
-        for (int x = 0; x < count; x++) {
-            if ((stream[i + x] & masks[x]) == matches[x]) {
-                insn_match_cnt++;
-            } else {
-                break;
+        for (int p = 0; p < patchset.count; p++) {
+            struct pf_patch32_t patch = patchset.patches[p];
+
+            insn_match_cnt = 0;
+            for (int x = 0; x < patch.count; x++) {
+                if ((stream[i + x] & patch.masks[x]) == patch.matches[x]) {
+                    insn_match_cnt++;
+                } else {
+                    break;
+                }
             }
-        }
-        if (insn_match_cnt == count) {
-            uint32_t *found_stream = stream + i;
-            callback(found_stream);
+            if (insn_match_cnt == patch.count) {
+                uint32_t *found_stream = stream + i;
+                patch.callback(patch, found_stream);
+            }
         }
     }
 }
 
-void pf_find_maskmatch64(void *buf, size_t size, uint64_t matches[], uint64_t masks[], uint32_t count, bool (*callback)(void* stream)) {
+void pf_find_maskmatch64(void *buf, size_t size, struct pf_patchset64_t patchset) {
     uint64_t *stream = buf;
     uint64_t uint_count = size >> 2;
     uint32_t insn_match_cnt = 0;
     for (uint64_t i = 0; i < uint_count; i++) {
-        insn_match_cnt = 0;
-        for (int x = 0; x < count; x++) {
-            if ((stream[i + x] & masks[x]) == matches[x]) {
-                insn_match_cnt++;
-            } else {
-                break;
+        for (int p = 0; p < patchset.count; p++) {
+            struct pf_patch64_t patch = patchset.patches[p];
+
+            insn_match_cnt = 0;
+            for (int x = 0; x < patch.count; x++) {
+                if ((stream[i + x] & patch.masks[x]) == patch.matches[x]) {
+                    insn_match_cnt++;
+                } else {
+                    break;
+                }
             }
-        }
-        if (insn_match_cnt == count) {
-            uint64_t *found_stream = stream + i;
-            callback(found_stream);
+            if (insn_match_cnt == patch.count) {
+                uint64_t *found_stream = stream + i;
+                patch.callback(patch, found_stream);
+            }
         }
     }
 }
