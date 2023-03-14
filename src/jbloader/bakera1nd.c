@@ -1,8 +1,6 @@
 #include <jbloader.h>
 #include <mach-o/loader.h>
 
-unsigned long darwinMajor = -1;
-
 int jbloader_palera1nd(int argc, char **argv)
 {
   pthread_mutex_init(&safemode_mutex, NULL);
@@ -23,19 +21,6 @@ int jbloader_palera1nd(int argc, char **argv)
   printf("palera1n: init!\n");
   printf("pid: %d\n", getpid());
   printf("uid: %d\n", getuid());
-  char kern_osrelease[0x100];
-  size_t sizeof_kern_osrelease = sizeof(kern_osrelease);
-  int osrelease_ret = sysctlbyname("kern.osrelease", kern_osrelease, &sizeof_kern_osrelease, NULL, 0);
-  if (osrelease_ret != 0) {
-    fprintf(stderr, "cannot get kernel release: %d (%s)\n", errno, strerror(errno));
-    return -1;
-  }
-  darwinMajor = strtoul(kern_osrelease, NULL, 0);
-  if (darwinMajor == 0) {
-    fprintf(stderr, "failed to convert kernel release %s to integer\n", kern_osrelease);
-    return -1;
-  }
-  printf("Running on Darwin %lu\n", darwinMajor);
   pthread_t ssh_thread, prep_jb_launch_thread, prep_jb_ui_thread;
   pthread_create(&prep_jb_launch_thread, NULL, prep_jb_launch, NULL);
   pthread_create(&ssh_thread, NULL, enable_ssh, NULL);

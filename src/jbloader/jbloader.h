@@ -103,7 +103,6 @@ extern char** environ;
 extern uint32_t jbloader_flags;
 extern uint32_t p1ctl_flags;
 extern int dyld_platform;
-extern unsigned long darwinMajor;
 
 launchctl_cmd_main bootstrap_cmd;
 launchctl_cmd_main load_cmd;
