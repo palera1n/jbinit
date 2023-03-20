@@ -12,6 +12,7 @@ struct pf_patch32_t pf_construct_patch32(uint32_t matches[], uint32_t masks[], u
     patch.matches = matches;
     patch.masks = masks;
     patch.count = count;
+    patch.disabled = false;
     patch.callback = callback;
 
     return patch;
@@ -24,6 +25,7 @@ struct pf_patch64_t pf_construct_patch64(uint64_t matches[], uint64_t masks[], u
     patch.matches = matches;
     patch.masks = masks;
     patch.count = count;
+    patch.disabled = false;
     patch.callback = callback;
 
     return patch;
@@ -57,6 +59,13 @@ void pf_patchset_emit64(void *buf, size_t size, struct pf_patchset64_t patchset)
     patchset.handler(buf, size, patchset);
 }
 
+void pf_disable_patch32(struct pf_patch32_t patch) {
+    patch.disabled = true;
+}
+
+void pf_disable_patch64(struct pf_patch64_t patch) {
+    patch.disabled = true;
+}
 
 void pf_find_maskmatch32(void *buf, size_t size, struct pf_patchset32_t patchset) {
     uint32_t *stream = buf;
@@ -67,16 +76,19 @@ void pf_find_maskmatch32(void *buf, size_t size, struct pf_patchset32_t patchset
             struct pf_patch32_t patch = patchset.patches[p];
 
             insn_match_cnt = 0;
-            for (int x = 0; x < patch.count; x++) {
-                if ((stream[i + x] & patch.masks[x]) == patch.matches[x]) {
-                    insn_match_cnt++;
-                } else {
-                    break;
+            if (!patch.disabled) {
+                for (int x = 0; x < patch.count; x++) {
+                    if ((stream[i + x] & patch.masks[x]) == patch.matches[x]) {
+                        insn_match_cnt++;
+                    } else {
+                        break;
+                    }
                 }
-            }
-            if (insn_match_cnt == patch.count) {
-                uint32_t *found_stream = stream + i;
-                patch.callback(patch, found_stream);
+
+                if (insn_match_cnt == patch.count) {
+                    uint32_t *found_stream = stream + i;
+                    patch.callback(patch, found_stream);
+                }
             }
         }
     }
@@ -91,16 +103,19 @@ void pf_find_maskmatch64(void *buf, size_t size, struct pf_patchset64_t patchset
             struct pf_patch64_t patch = patchset.patches[p];
 
             insn_match_cnt = 0;
-            for (int x = 0; x < patch.count; x++) {
-                if ((stream[i + x] & patch.masks[x]) == patch.matches[x]) {
-                    insn_match_cnt++;
-                } else {
-                    break;
+            if (!patch.disabled) {
+                for (int x = 0; x < patch.count; x++) {
+                    if ((stream[i + x] & patch.masks[x]) == patch.matches[x]) {
+                        insn_match_cnt++;
+                    } else {
+                        break;
+                    }
                 }
-            }
-            if (insn_match_cnt == patch.count) {
-                uint64_t *found_stream = stream + i;
-                patch.callback(patch, found_stream);
+                
+                if (insn_match_cnt == patch.count) {
+                    uint64_t *found_stream = stream + i;
+                    patch.callback(patch, found_stream);
+                }
             }
         }
     }
@@ -108,7 +123,7 @@ void pf_find_maskmatch64(void *buf, size_t size, struct pf_patchset64_t patchset
 
 uint32_t *pf_find_next(uint32_t *stream, uint32_t count, uint32_t match, uint32_t mask) {
     uint32_t *find_stream = 0;
-    for (int i = 0; i < count; i++) {
+    for (int i = 1; i < count + 1; i++) {
         if ((stream[i] & mask) == match) {
             find_stream = stream + i;
             break;
@@ -121,6 +136,7 @@ uint32_t *pf_find_prev(uint32_t *stream, uint32_t count, uint32_t match, uint32_
     uint32_t *find_stream = 0;
     for (int neg_count = -count; count > 0; count--) {
         int ind = neg_count + count;
+        ind--;
         if ((stream[ind] & mask) == match) {
             find_stream = stream + ind;
             break;
@@ -193,4 +209,139 @@ void *pf_follow_xref(uint32_t *stream) {
     void *xref = (void *)(adrp_addr + add_offset);
 
     return xref;
+}
+
+uint32_t macho_get_magic(void *buf) {
+    uint32_t *buf_ptr = (uint32_t *) buf;
+    uint32_t magic = buf_ptr[0];
+
+    if (magic == 0xfeedfacf || magic == 0xbebafeca) {
+        return magic;
+    } else {
+        printf("Not a mach-o!\n");
+    }
+    
+    return 0;
+}
+
+void *macho_find_arch(void *buf, uint32_t arch) {
+    uint32_t *buf_ptr = (uint32_t *) buf;
+    uint32_t magic = buf_ptr[0];
+
+    if (magic == 0xbebafeca) {
+        struct fat_header *header = (struct fat_header *) buf;
+
+        struct fat_arch *farch = (struct fat_arch *) ((char *) buf + sizeof(struct fat_header));
+
+        for (int i = 0; i < convert_endianness32(header->nfat_arch); i++) {
+            if (farch->cputype == arch) {
+                return buf + convert_endianness32(farch->offset);
+            }
+
+            farch = (struct fat_arch *) ((char *) farch + sizeof(struct fat_arch));
+        }
+
+        printf("Universal mach-o does not contain an arm64 slice!\n");
+    }
+
+    return NULL;
+}
+
+uint32_t macho_get_platform(void *buf) {
+    if (!macho_get_magic(buf)) {
+        return 0;
+    }
+
+    struct load_command_64 *after_header = buf + sizeof(struct mach_header_64);
+    struct mach_header_64 *header = buf;
+
+    for (int i = 0; i < header->ncmds; i++) {
+        if (after_header->cmd == LC_BUILD_VERSION) {
+            struct build_version_command *cmd = (struct build_version_command *) after_header;
+
+            if (cmd->platform > 5) {
+                printf("%s: Invalid platform!\n", __FUNCTION__);
+                return 0;
+            }
+
+            return cmd->platform; 
+        }
+
+        after_header = (struct load_command_64 *) ((char *) after_header + after_header->cmdsize);
+    }
+
+    printf("%s: Unable to get platform!\n", __FUNCTION__);
+    return 0;
+}
+
+struct segment_command_64 *macho_get_segment(void *buf, char *name) {
+    if (!macho_get_magic(buf)) {
+        return NULL;
+    }
+
+    struct load_command_64 *after_header = buf + sizeof(struct mach_header_64);
+    struct mach_header_64 *header = buf;
+
+    for (int i = 0; i < header->ncmds; i++) {
+        if (after_header->cmd == LC_SEGMENT_64) {
+            struct segment_command_64 *segment = (struct segment_command_64 *) after_header;
+
+            if (strcmp(segment->segname, name) == 0) {
+                return segment;
+            }
+        } else {
+            break;
+        }
+
+        after_header = (struct load_command_64 *) ((char *) after_header + after_header->cmdsize);
+    }
+
+    printf("%s: Unable to find segment %s!\n", __FUNCTION__, name);
+    return NULL;
+}
+
+struct section_64 *macho_get_section(void *buf, struct segment_command_64 *segment, char *name) {
+    if (!segment || !macho_get_magic(buf)) {
+        return NULL;
+    }
+
+    struct section_64 *section = (struct section_64 *)((char *)segment + sizeof(struct segment_command_64));
+
+    for (int i = 0; i < segment->nsects; i++) {
+        if (strcmp(section->sectname, name) == 0) {
+            return section;
+        }
+
+        section = (struct section_64 *) ((char *) section + sizeof(struct section_64));
+    }
+
+    printf("%s: Unable to find section %s!\n", __FUNCTION__, name);
+    return NULL;
+}
+
+struct section_64 *macho_find_section(void *buf, char *segment_name, char *section_name) {
+    if (!macho_get_magic(buf)) {
+        return NULL;
+    }
+
+    struct segment_command_64 *segment = macho_get_segment(buf, segment_name);
+    if (!segment) {
+        return NULL;
+    }
+
+    struct section_64 *section = macho_get_section(buf, segment, section_name);
+    if (!section) {
+        return NULL;
+    }
+
+    return section;
+}
+
+uint32_t convert_endianness32(uint32_t val) {
+    uint32_t val1 = (val & 0x000000ff) << 24;
+    uint32_t val2 = (val & 0x0000ff00) << 8;
+    uint32_t val3 = (val & 0x00ff0000) >> 8;
+    uint32_t val4 = (val & 0xff000000) >> 24;
+
+    return val1 | val2 | val3 | val4;
 }
