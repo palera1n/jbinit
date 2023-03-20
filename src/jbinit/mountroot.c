@@ -33,12 +33,12 @@ retry_rootfs_mount:
       printf("statfs64(/) failed with err=%d\n", err);
       spin();
     }
-    if (stat("/sbin/fsck", statbuf)) {
-      printf("stat %s FAILED with err=%d!\n", "/sbin/fsck", err);
+    if (stat("/private/", statbuf)) {
+      printf("stat %s FAILED with err=%d!\n", "/private/", err);
       sleep(1);
       goto retry_rootfs_mount;
     } else {
-      printf("stat %s OK\n", "/sbin/fsck");
+      printf("stat %s OK\n", "/private/");
     }
     printf("%s on %s type %s flags=%u\n", fst.f_mntfromname, fst.f_mntonname, fst.f_fstypename, fst.f_flags);
 }
