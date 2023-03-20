@@ -24,9 +24,12 @@ void pinfo_check(bool* use_fakefs_p, char* bootargs, char* dev_rootdev) {
     if (stat(dev_rootdev, statbuf) == 0) {
       if (!checkrain_option_enabled(pinfo.flags, palerain_option_setup_rootful_forced) &&
       !checkrain_option_enabled(info.flags, checkrain_option_force_revert) ) {
-        printf("cannot create fakefs over an existing one without palerain_option_setup_rootful_forced or checkrain_option_force_revert\n");
+        printf("cannot create fakefs over an existing one without checkrain_option_force_revert\n");
         spin();
       }
+    }
+    if (checkrain_option_enabled(pinfo.flags, palerain_option_setup_rootful_forced)) {
+      puts("Warning: this flag is deprecated, use checkrain_option_force_revert with palerain_option_setup_rootful/palerain_option_setup_partial_root to recreate fakefs/partial fakefs");
     }
   } else if (checkrain_option_enabled(pinfo.flags, palerain_option_setup_partial_root)) {
     printf("cannot have palerain_option_setup_partial_root without palerain_option_setup_rootful\n");
