@@ -1,7 +1,9 @@
-#include <stdbool.h>
-#include <stdint.h>
+#if !__STDC_HOSTED__
 #include <jbinit.h>
-#include <plooshfinder.h>
+#else
+#include <stdlib.h>
+#endif
+#include "plooshfinder.h"
 
 int _internal15_platform = 0;
 
@@ -56,3 +58,4 @@ void patch_platform_check15(void *dyld_buf, size_t dyld_len, uint32_t platform) 
 
     pf_patchset_emit32(dyld_buf, dyld_len, patchset);
 }
+

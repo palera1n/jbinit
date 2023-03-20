@@ -1,8 +1,9 @@
-OBJECTS  = jbinit.o plooshfinder.o prepare_rootfs.o select_root.o
-OBJECTS += syscall.o utils.o printf.o info.o mount_devfs.o rw_file.o
+OBJECTS  = jbinit.o prepare_rootfs.o select_root.o syscall.o
+OBJECTS += utils.o printf.o info.o mount_devfs.o rw_file.o
 OBJECTS += remount_rdisk.o mountroot.o fakefs_check.o init_log.o
-OBJECTS += dyld_platform_old.o dyld_platform_ios15.o dyld_platform_ios16.o
-OBJECTS += cores_init.o rootwait.o patch_dyld.o
+OBJECTS += cores_init.o rootwait.o
+
+SUBDIRS = patch_dyld lib
 
 CFLAGS += -Os -nostdlib -fno-stack-protector -I.
 CFLAGS += --target=arm64-apple-ios7.0 -std=gnu17 -ffreestanding -U__nonnull
@@ -14,12 +15,12 @@ all: jbinit
 %.o: %.c
 	$(CC) -c -nostdlibinc $(CFLAGS) $<
 
-lib:
-	$(MAKE) -C lib
+$(SUBDIRS):
+	$(MAKE) -C $@
 
-jbinit: $(OBJECTS) lib
-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) $(patsubst %.c, %.o, $(wildcard lib/*.c)) -o jbinit
+jbinit: $(OBJECTS) $(SUBDIRS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) $(patsubst %.c, %.o, $(wildcard lib/*.c patch_dyld/*.c)) -o jbinit
 	$(STRIP) jbinit
 	ldid -S -Icom.apple.dyld jbinit
 
-.PHONY: all lib
+.PHONY: all $(SUBDIRS)

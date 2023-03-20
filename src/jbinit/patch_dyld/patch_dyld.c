@@ -1,6 +1,10 @@
 #include <jbinit.h>
 #include <stdint.h>
+
 #include "plooshfinder.h"
+#include "ios15.h"
+#include "ios16.h"
+#include "old.h"
 
 void *dyld_buf;
 size_t dyld_len;

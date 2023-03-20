@@ -1,7 +1,9 @@
-#include <stdbool.h>
-#include <stdint.h>
+#if !__STDC_HOSTED__
 #include <jbinit.h>
-#include <plooshfinder.h>
+#else
+#include <stdlib.h>
+#endif
+#include "plooshfinder.h"
 
 int _internal_old_platform = 0;
 
