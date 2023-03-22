@@ -33,7 +33,7 @@ retry_rootfs_mount:
       printf("statfs64(/) failed with err=%d\n", err);
       spin();
     }
-    if (stat("/private/", statbuf)) {
+    if ((err = stat("/private/", statbuf))) {
       printf("stat %s FAILED with err=%d!\n", "/private/", err);
       sleep(1);
       goto retry_rootfs_mount;
