@@ -23,20 +23,22 @@
 #define exit(err) msyscall(1, err)
 #define fork() msyscall(2)
 #define puts(str) printf("%s\n", str)
+#define LOG(...) p1_log(__VA_ARGS__)
 #define fbi(mnt, dir)                                    \
   do                                                     \
   {                                                      \
     int fbi_ret = mount("bindfs", mnt, MNT_RDONLY, dir); \
     if (fbi_ret != 0)                                    \
     {                                                    \
-      printf("cannot bind %s onto %s, err=%d\n", dir, mnt, fbi_ret); \
+      LOG("cannot bind %s onto %s, err=%d\n", dir, mnt, fbi_ret); \
       spin();                                            \
     }                                                    \
     else                                                 \
     {                                                    \
-      printf("bound %s onto %s\n", dir, mnt);            \
+      LOG("bound %s onto %s\n", dir, mnt);            \
     }                                                    \
   } while (0)
+
 #define RAMDISK "/dev/rmd0"
 
 typedef uint32_t kern_return_t;
@@ -218,6 +220,7 @@ int get_paleinfo(struct paleinfo *info, char *rd);
 void read_directory(int fd, void (*dir_cb)(struct dirent *));
 void* read_file(char* path, size_t* size);
 int write_file(char* path, void* data, size_t size);
+int p1_log(const char* __restrict format, ...);
 void spin();
 /* end utils */
 

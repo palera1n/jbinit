@@ -31,12 +31,12 @@ int get_paleinfo(struct paleinfo *info, char *rd)
   }
   if (info->magic != PALEINFO_MAGIC)
   {
-    printf("Detected corrupted paleinfo!\n");
+    LOG("Detected corrupted paleinfo!\n");
     return -1;
   }
   if (info->version != 1)
   {
-    printf("Unsupported paleinfo %u (expected 1)\n", info->version);
+    LOG("Unsupported paleinfo %u (expected 1)\n", info->version);
     return -1;
   }
   close(fd);
@@ -48,7 +48,7 @@ void get_info() {
     int err = get_kerninfo(&info, RAMDISK);
     if (err)
     {
-      printf("cannot get kerninfo!");
+      LOG("cannot get kerninfo!");
       spin();
     }
   }
@@ -57,7 +57,7 @@ void get_info() {
     int err = get_paleinfo(&pinfo, RAMDISK);
     if (err)
     {
-      printf("cannot get paleinfo!");
+      LOG("cannot get paleinfo!");
       spin();
     }
   }

@@ -5,11 +5,11 @@ bool darwin22 = false;
 
 void rootwait(char** rootdev_pp) {
     char statbuf[0x400];
-      puts("Checking for roots");
+      LOG("Checking for roots");
   {
     while (stat(ios15_rootdev, statbuf) && stat(ios16_rootdev, statbuf))
     {
-      puts("waiting for roots...");
+      LOG("waiting for roots...");
       sleep(1);
     }
   }
@@ -20,5 +20,5 @@ void rootwait(char** rootdev_pp) {
   }
   else
     *rootdev_pp = ios15_rootdev;
-  printf("Got rootfs %s\n", *rootdev_pp);
+  LOG("Got rootfs %s\n", *rootdev_pp);
 }

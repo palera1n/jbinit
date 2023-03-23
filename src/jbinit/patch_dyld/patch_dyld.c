@@ -24,29 +24,29 @@ void patch_platform_check() {
 }
 
 void patch_dyld() {
-    puts("Plooshi(TM) libDyld64Patcher starting up...");
-    puts("patching dyld...");
+    LOG("Plooshi(TM) libDyld64Patcher starting up...\n");
+    LOG("patching dyld...\n");
     dyld_buf = read_file("/usr/lib/dyld", &dyld_len);
     
     uint32_t magic = macho_get_magic(dyld_buf);
     if (!magic) {
-        puts("detected corrupted dyld");
+        LOG("detected corrupted dyld\n");
         spin();
     }
     void *orig_dyld_buf = dyld_buf;
     if (magic == 0xbebafeca) {
         dyld_buf = macho_find_arch(dyld_buf, CPU_TYPE_ARM64);
         if (!dyld_buf) {
-            puts("detected unsupported or invalid dyld architecture");
+            LOG("detected unsupported or invalid dyld architecture\n");
             spin();
         }
     }
     platform = macho_get_platform(dyld_buf);
     if (platform == 0) {
-        puts("detected unsupported or invalid platform");
+        LOG("detected unsupported or invalid platform\n");
         spin();
     }
     patch_platform_check();
     write_file("/cores/dyld", dyld_buf, dyld_len);
-    puts("done patching dyld");
+    LOG("done patching dyld\n");
 }

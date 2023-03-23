@@ -10,14 +10,14 @@ void init_log(const char* dev_rootdev) {
         puts("======== jbinit log start =========");
     } else puts("cannot open /cores/jbinit.log for logging");
 
-    printf("root device: %s\n", dev_rootdev);
-    printf("kbase: 0x%llx\nkslide: 0x%llx\n", info.base, info.slide);
-    printf("kerninfo flags: 0x%08x\npaleinfo flags: 0x%08x\npaleinfo version: %u\n",info.flags, pinfo.flags, pinfo.version);
+    LOG("root device: %s\n", dev_rootdev);
+    LOG("kbase: 0x%llx\nkslide: 0x%llx\n", info.base, info.slide);
+    LOG("kerninfo flags: 0x%08x\npaleinfo flags: 0x%08x\npaleinfo version: %u\n",info.flags, pinfo.flags, pinfo.version);
     char kver_buf[0x100];
     size_t kver_sz = sizeof(kver_buf);
     int err = sys_sysctlbyname("kern.version", sizeof("kern.version"), kver_buf, &kver_sz, NULL, 0);
     if (err)
-        printf("getting kernel version failed: %d\n", err);
+        LOG("getting kernel version failed: %d\n", err);
     else
-        printf("kernel version: %s\n", kver_buf);
+        LOG("kernel version: %s\n", kver_buf);
 }

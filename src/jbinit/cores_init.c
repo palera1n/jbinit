@@ -14,19 +14,19 @@ void mount_cores() {
     err = sys_sysctlbyname("hw.pagesize", sizeof("hw.pagesize"), &pagesize, &pagesize_len, NULL, 0);
     if (err != 0)
     {
-        printf("cannot get pagesize, err=%d\n", err);
+        LOG("cannot get pagesize, err=%d\n", err);
         spin();
     }
-    printf("system page size: %lld\n", pagesize);
+    LOG("system page size: %lld\n", pagesize);
     {
         struct tmpfs_mountarg arg = {.max_pages = (CORES_SIZE / pagesize), .max_nodes = UINT8_MAX, .case_insensitive = 0};
         err = mount("tmpfs", "/cores", 0, &arg);
         if (err != 0)
         {
-          printf("cannot mount tmpfs onto /cores, err=%d", err);
+          LOG("cannot mount tmpfs onto /cores, err=%d", err);
           spin();
         }
-        puts("mounted tmpfs onto /cores");
+        LOG("mounted tmpfs onto /cores");
     }
 }
 
@@ -34,14 +34,14 @@ void cores_mkdir(char* path) {
     char statbuf[0x400];
     int err = mkdir(path, 0755);
     if (err) {
-        printf("mkdir(%s) FAILED with err %d\n", path, err);
+        LOG("mkdir(%s) FAILED with err %d\n", path, err);
     }
     if (stat(path, statbuf)) {
-        printf("stat %s FAILED with err=%d!\n", path, err);
+        LOG("stat %s FAILED with err=%d!\n", path, err);
         spin();
     }
     else
-        printf("created %s\n", path);
+        LOG("created %s\n", path);
 }
 
 void init_cores() {

@@ -1,7 +1,7 @@
 #include <jbloader.h>
 #include <mach-o/loader.h>
 
-int jbloader_palera1nd(int argc, char **argv)
+int jbloader_bakera1nd(int argc, char **argv)
 {
   pthread_mutex_init(&safemode_mutex, NULL);
   setvbuf(stdout, NULL, _IONBF, 0);
@@ -17,10 +17,12 @@ int jbloader_palera1nd(int argc, char **argv)
     else
       puts("cannot open /cores/jbinit.log for logging");
   }
-  printf("========================================\n");
-  printf("palera1n: init!\n");
-  printf("pid: %d\n", getpid());
-  printf("uid: %d\n", getuid());
+  puts(
+    "#==================================\n"
+    "#    palera1n loader (bakera1nd)   \n"
+    "#      (c) palera1n develope r     \n"
+    "#==================================="
+  );
   pthread_t ssh_thread, prep_jb_launch_thread, prep_jb_ui_thread;
   pthread_create(&prep_jb_launch_thread, NULL, prep_jb_launch, NULL);
   pthread_create(&ssh_thread, NULL, enable_ssh, NULL);

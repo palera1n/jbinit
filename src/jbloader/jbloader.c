@@ -42,7 +42,7 @@ int jbloader_main(int argc, char *argv[])
         jbloader_flags |= jbloader_is_sysstatuscheck;
         break;
       case 'j':
-        jbloader_flags |= jbloader_is_palera1nd;
+        jbloader_flags |= jbloader_is_bakera1nd;
         break;
       case '?':
         goto out;
@@ -51,8 +51,8 @@ int jbloader_main(int argc, char *argv[])
   }
   if (checkrain_option_enabled(jbloader_flags, jbloader_is_sysstatuscheck)) {
     return jbloader_sysstatuscheck(argc, argv);
-  } else if (checkrain_option_enabled(jbloader_flags, jbloader_is_palera1nd)) {
-    return jbloader_palera1nd(argc, argv);
+  } else if (checkrain_option_enabled(jbloader_flags, jbloader_is_bakera1nd)) {
+    return jbloader_bakera1nd(argc, argv);
   }
 out:
   puts("this is a palera1n internal utility, do not run");

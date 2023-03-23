@@ -9,14 +9,14 @@ void prepare_rootfs(char* dev_rootdev, bool use_fakefs) {
     if (!use_fakefs || !checkrain_option_enabled(info.flags, checkrain_option_bind_mount)) return;
     char* real_rootdev = ios15_rootdev;
     if (darwin22) real_rootdev = ios16_rootdev;
-    printf("mounting realfs %s\n", real_rootdev);
+    LOG("mounting realfs %s\n", real_rootdev);
     struct apfs_mountarg arg = {
         real_rootdev,
         0, 1 /* "bdevvp failed: open" kernel panic when mount snapshot wat */, 0
     };
     int err = mount("apfs", "/cores/fs/real", MNT_RDONLY, &arg);
     if (err) {
-        printf("cannot mount %s onto %s, err=%d\n", dev_rootdev, "/cores/fs/real", err);
+        LOG("cannot mount %s onto %s, err=%d\n", dev_rootdev, "/cores/fs/real", err);
         spin();
     }
     fbi("/usr/standalone/update", "/cores/fs/real/usr/standalone/update");

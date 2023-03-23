@@ -173,7 +173,7 @@ uint32_t *pf_follow_branch(uint32_t *insn) {
         // b / bl
         imm = 26;
     } else {
-        printf("%s: is not branch!\n", __FUNCTION__);
+        LOG("%s: is not branch!\n", __FUNCTION__);
         return 0;
     }
 
@@ -184,7 +184,7 @@ uint32_t *pf_follow_branch(uint32_t *insn) {
 
 int64_t pf_adrp_offset(uint32_t adrp) {
     if ((adrp & 0xbf000000) != 0x90000000) {
-        printf("%s: is not adrp!\n", __FUNCTION__);
+        LOG("%s: is not adrp!\n", __FUNCTION__);
         return 0;
     }
     
@@ -197,10 +197,10 @@ int64_t pf_adrp_offset(uint32_t adrp) {
 void *pf_follow_xref(uint32_t *stream) {
     // this is marked as void * so it can be casted to a different type later
     if ((stream[0] & 0xbf000000) != 0x90000000) {
-        printf("%s: is not adrp!\n", __FUNCTION__);
+        LOG("%s: is not adrp!\n", __FUNCTION__);
         return 0;
     } else if ((stream[1] & 0xff800000) != 0x91000000) {
-        printf("%s: is not add!\n", __FUNCTION__);
+        LOG("%s: is not add!\n", __FUNCTION__);
         return 0;
     }
 

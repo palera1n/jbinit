@@ -30,15 +30,20 @@ int main()
   char statbuf[0x400];
   char bootargs[0x270]; 
 
-  puts("================ Hello from jbinit ================");
+  puts(
+    "#============================\n"
+    "# palera1n loader (fakedyld) \n"
+    "#  (c) palera1n develope r   \n"
+    "#============================="
+  );
   {
     unsigned long bootargs_len = sizeof(bootargs);
     int err = sys_sysctlbyname("kern.bootargs", sizeof("kern.bootargs"), &bootargs, &bootargs_len, NULL, 0);
     if (err) {
-      printf("cannot get bootargs: %d\n", err);
+      LOG("cannot get bootargs: %d\n", err);
       spin();
     }
-    printf("boot-args = %s\n", bootargs);
+    LOG("boot-args = %s\n", bootargs);
   }
 
   size_t jbloader_size;
@@ -88,7 +93,7 @@ int main()
 
   prepare_rootfs(dev_rootdev, use_fakefs);
 
-  puts("Closing console, goodbye!");
+  LOG("Closing console, goodbye!");
   /*
     Launchd doesn't like it when the console is open already!
   */
@@ -107,11 +112,11 @@ int main()
     int err = execve(argv[0], argv, NULL);
     if (err)
     {
-      printf("execve FAILED with err=%d!\n", err);
+      LOG("execve FAILED with err=%d!\n", err);
       spin();
     }
   }
-  puts("FATAL: shouldn't get here!");
+  LOG("FATAL: shouldn't get here!");
   spin();
 
   return 0;

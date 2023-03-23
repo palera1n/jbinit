@@ -13,7 +13,7 @@ uint32_t macho_get_magic(void *buf) {
     if (magic == 0xfeedfacf || magic == 0xbebafeca) {
         return magic;
     } else {
-        printf("Not a mach-o!\n");
+        LOG("Not a mach-o!\n");
     }
     
     return 0;
@@ -36,7 +36,7 @@ void *macho_find_arch(void *buf, uint32_t arch) {
             farch = (struct fat_arch *) ((char *) farch + sizeof(struct fat_arch));
         }
 
-        printf("Universal mach-o does not contain an arm64 slice!\n");
+        LOG("Universal mach-o does not contain an arm64 slice!\n");
     }
 
     return NULL;
@@ -55,7 +55,7 @@ uint32_t macho_get_platform(void *buf) {
             struct build_version_command *cmd = (struct build_version_command *) after_header;
 
             if (cmd->platform > 5) {
-                printf("%s: Invalid platform!\n", __FUNCTION__);
+                LOG("%s: Invalid platform!\n", __FUNCTION__);
                 return 0;
             }
 
@@ -65,7 +65,7 @@ uint32_t macho_get_platform(void *buf) {
         after_header = (struct load_command_64 *) ((char *) after_header + after_header->cmdsize);
     }
 
-    printf("%s: Unable to get platform!\n", __FUNCTION__);
+    LOG("%s: Unable to get platform!\n", __FUNCTION__);
     return 0;
 }
 
@@ -91,7 +91,7 @@ struct segment_command_64 *macho_get_segment(void *buf, char *name) {
         after_header = (struct load_command_64 *) ((char *) after_header + after_header->cmdsize);
     }
 
-    printf("%s: Unable to find segment %s!\n", __FUNCTION__, name);
+    LOG("%s: Unable to find segment %s!\n", __FUNCTION__, name);
     return NULL;
 }
 
@@ -110,7 +110,7 @@ struct section_64 *macho_get_section(void *buf, struct segment_command_64 *segme
         section = (struct section_64 *) ((char *) section + sizeof(struct section_64));
     }
 
-    printf("%s: Unable to find section %s!\n", __FUNCTION__, name);
+    LOG("%s: Unable to find section %s!\n", __FUNCTION__, name);
     return NULL;
 }
 

@@ -33,7 +33,9 @@ void read_directory(int fd, void (*dir_cb)(struct dirent *))
 
 void spin()
 {
-  puts("jbinit DIED!");
+  puts("########### ALERT: AN ERROR OCCURED ###########");
+  puts("Most likely there are additional information above");
+  puts("spinning...");
   while (1)
   {
     sleep(5);

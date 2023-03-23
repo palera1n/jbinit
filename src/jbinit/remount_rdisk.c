@@ -5,10 +5,10 @@ void remount_rdisk(bool use_fakefs, char* dev_rootdev) {
     int err = mount("hfs", "/", MNT_UPDATE | MNT_RDONLY, &path);
     if (!err)
     {
-      puts("remount rdisk OK");
+      LOG("remount rdisk OK");
     }
     else
     {
-      puts("remount rdisk FAIL");
+      LOG("remount rdisk FAIL");
     }
 }
