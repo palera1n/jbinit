@@ -1,7 +1,7 @@
 OBJECTS  = jbinit.o prepare_rootfs.o select_root.o syscall.o
-OBJECTS += utils.o printf.o info.o mount_devfs.o rw_file.o
+OBJECTS += utils.o info.o mount_devfs.o rw_file.o rootwait.o
 OBJECTS += remount_rdisk.o mountroot.o fakefs_check.o init_log.o
-OBJECTS += cores_init.o rootwait.o
+OBJECTS += cores_init.o
 
 SUBDIRS = patch_dyld lib
 
