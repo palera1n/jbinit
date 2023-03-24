@@ -55,19 +55,19 @@ int jbloader_launchd(int argc, char **argv)
     else
       fputs("cannot open /cores/jbinit.log for logging", stderr);
   }
-  puts(
+  fputs(
     "#============================\n"
     "# palera1n loader (fakelaunchd) \n"
     "#  (c) palera1n develope r   \n"
     "#============================="
-  );
+  , stderr);
   if (getenv("XPC_USERSPACE_REBOOTED") == NULL) {
     int mount_ret = 0;
-    puts("mounting overlay");
+    fputs("mounting overlay", stderr);
     mount_ret = check_and_mount_dmg();
     if (mount_ret)
       spin();
-    puts("mounting loader");
+    fputs("mounting loader", stderr);
     mount_ret = check_and_mount_loader();
     if (mount_ret)
       spin();
