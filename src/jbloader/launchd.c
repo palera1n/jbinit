@@ -120,6 +120,7 @@ int jbloader_launchd(int argc, char **argv)
 
   char *launchd_argv[] = {
       "/sbin/launchd",
+      "-s",
       NULL};
   char *launchd_envp[] = {
       newenv,

@@ -75,8 +75,6 @@ int main()
   select_root(&rootlivefs, &rootopts, &rootdev, dev_rootdev, use_fakefs);
   remount_rdisk(use_fakefs, dev_rootdev);
   mountroot(rootdev, rootlivefs, rootopts);
-  //unmount_root();
-  //mountroot(rootdev, rootlivefs, rootopts);
   mount_devfs();
   mount_cores();
 
