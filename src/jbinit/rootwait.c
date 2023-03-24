@@ -4,16 +4,16 @@
 bool darwin22 = false;
 
 void rootwait(char** rootdev_pp) {
-    char statbuf[0x400];
+    struct stat statbuf;
       LOG("Checking for roots\n");
   {
-    while (stat(ios15_rootdev, statbuf) && stat(ios16_rootdev, statbuf))
+    while (stat(ios15_rootdev, &statbuf) && stat(ios16_rootdev, &statbuf))
     {
       LOG("waiting for roots...\n");
       sleep(1);
     }
   }
-  if (stat(ios15_rootdev, statbuf))
+  if (stat(ios15_rootdev, &statbuf))
   {
     *rootdev_pp = ios16_rootdev;
     darwin22 = true;

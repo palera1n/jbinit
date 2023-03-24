@@ -2,7 +2,7 @@
 #include <common.h>
 
 void prepare_rootfs(char* dev_rootdev, bool use_fakefs) {
-    char statbuf[0x400];
+    struct stat statbuf;
     if (stat("/System/Library/Frameworks/IOKit.framework", &statbuf) == 0) {
         return;
     }

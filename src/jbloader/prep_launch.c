@@ -33,7 +33,6 @@ int loadDaemons()
     puts("loading /Library/LaunchDaemons");
     char* bootstrap_argv[] = { "bootstrap", "system", "/Library/LaunchDaemons", NULL };
     bootstrap_cmd(&msg, 3, bootstrap_argv, environ, launchctl_apple);
-
   }
   else
   {

@@ -128,6 +128,44 @@ typedef enum
 struct dirent __DARWIN_STRUCT_DIRENTRY;
 typedef struct fsid { int32_t val[2]; } fsid_t;
 
+#define __DARWIN_STRUCT_STAT64_TIMES \
+        time_t          st_atime;               /* [XSI] Time of last access */ \
+        long            st_atimensec;           /* nsec of last access */ \
+        time_t          st_mtime;               /* [XSI] Last data modification time */ \
+        long            st_mtimensec;           /* last data modification nsec */ \
+        time_t          st_ctime;               /* [XSI] Time of last status change */ \
+        long            st_ctimensec;           /* nsec of last status change */ \
+        time_t          st_birthtime;           /*  File creation time(birth)  */ \
+        long            st_birthtimensec;       /* nsec of File creation time */
+
+typedef int32_t dev_t;
+typedef uint16_t mode_t;
+typedef uint16_t nlink_t;
+typedef uint64_t __darwin_ino64_t;
+typedef uint32_t uid_t;
+typedef uint32_t gid_t;
+typedef long time_t;
+typedef long long blkcnt_t;
+typedef int blksize_t;
+
+struct stat { \
+        dev_t           st_dev;                 /* [XSI] ID of device containing file */
+        mode_t          st_mode;                /* [XSI] Mode of file (see below) */
+        nlink_t         st_nlink;               /* [XSI] Number of hard links */
+        __darwin_ino64_t st_ino;                /* [XSI] File serial number */
+        uid_t           st_uid;                 /* [XSI] User ID of the file */ 
+        gid_t           st_gid;                 /* [XSI] Group ID of the file */ 
+        dev_t           st_rdev;                /* [XSI] Device ID */
+        __DARWIN_STRUCT_STAT64_TIMES
+        off_t           st_size;                /* [XSI] file size, in bytes */
+        blkcnt_t        st_blocks;              /* [XSI] blocks allocated for file */
+        blksize_t       st_blksize;             /* [XSI] optimal blocksize for I/O */
+        uint32_t      st_flags;               /* user defined flags for file */
+        uint32_t      st_gen;                 /* file generation number */
+        int32_t       st_lspare;              /* RESERVED: DO NOT USE! */
+        int64_t       st_qspare[2];           /* RESERVED: DO NOT USE! */
+};
+
 #define __DARWIN_STRUCT_STATFS64 { \
 	uint32_t	f_bsize;        /* fundamental file system block size */ \
 	int32_t		f_iosize;       /* optimal transfer block size */ \
@@ -179,7 +217,7 @@ __attribute__((naked)) kern_return_t thread_switch(mach_port_t new_thread, int o
 __attribute__((naked)) uint64_t msyscall(uint64_t syscall, ...);
 void sleep(int secs);
 int sys_dup2(int from, int to);
-int stat(void *path, void *ub);
+int stat(void *path, struct stat *ub);
 int mkdir(void *path, int mode);
 int mount(const char *type, char *path, int flags, void *data);
 int unmount(char *path, int flags);
@@ -197,6 +235,7 @@ int statfs64(char *path, struct statfs64 *buf);
 int chroot(char* path);
 int chdir(char* path);
 int munmap(void* addr, size_t len);
+int mknod(char* path, mode_t mode, dev_t dev);
 /* end syscalls */
 
 /* libc */
@@ -226,7 +265,7 @@ void spin();
 
 /* actual components */
 void mount_devfs();
-void unmount_devfs();
+void unmount_devfs(char* rootdev, int* fd_console);
 void unmount_root();
 void get_info();
 void sancheck();

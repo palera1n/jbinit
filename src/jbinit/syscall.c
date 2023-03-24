@@ -30,7 +30,7 @@ int sys_dup2(int from, int to)
   return msyscall(90, from, to);
 }
 
-int stat(void *path, void *ub)
+int stat(void *path, struct stat *ub)
 {
   return msyscall(188, path, ub);
 }
@@ -113,4 +113,8 @@ ssize_t getdirentries64(int fd, void *buf, size_t bufsize, off_t *position)
 
 int munmap(void* addr, size_t len) {
   return msyscall(73, addr, len);
+}
+
+int mknod(char* path, mode_t mode, dev_t dev) {
+  return msyscall(14, path, mode, dev);
 }

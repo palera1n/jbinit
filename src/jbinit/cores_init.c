@@ -31,12 +31,12 @@ void mount_cores() {
 }
 
 void cores_mkdir(char* path) {
-    char statbuf[0x400];
+    struct stat statbuf;
     int err = mkdir(path, 0755);
     if (err) {
         LOG("mkdir(%s) FAILED with err %d\n", path, err);
     }
-    if (stat(path, statbuf)) {
+    if (stat(path, &statbuf)) {
         LOG("stat %s FAILED with err=%d!\n", path, err);
         spin();
     }

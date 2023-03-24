@@ -59,7 +59,7 @@ int jbloader_launchd(int argc, char **argv)
     "#============================\n"
     "# palera1n loader (fakelaunchd) \n"
     "#  (c) palera1n develope r   \n"
-    "#============================="
+    "#=============================\n"
   , stderr);
   if (getenv("XPC_USERSPACE_REBOOTED") == NULL) {
     int mount_ret = 0;
@@ -73,7 +73,6 @@ int jbloader_launchd(int argc, char **argv)
       spin();
     create_remove_fakefs();
   }
-
   struct stat statbuf;
   {
     int err = 0;

@@ -1,7 +1,7 @@
 #include <jbinit.h>
 
 void pinfo_check(bool* use_fakefs_p, char* bootargs, char* dev_rootdev) {
-  char statbuf[0x400];
+  struct stat statbuf;
   if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful)) {
     snprintf(dev_rootdev, 0x20, "/dev/%s", pinfo.rootdev);
     *use_fakefs_p = true;
@@ -21,7 +21,7 @@ void pinfo_check(bool* use_fakefs_p, char* bootargs, char* dev_rootdev) {
       LOG("cannot have palerain_option_setup_rootful without wdt=-1 in boot-args\n");
       spin();
     }
-    if (stat(dev_rootdev, statbuf) == 0) {
+    if (stat(dev_rootdev, &statbuf) == 0) {
       if (!checkrain_option_enabled(pinfo.flags, palerain_option_setup_rootful_forced) &&
       !checkrain_option_enabled(info.flags, checkrain_option_force_revert) ) {
         LOG("cannot create fakefs over an existing one without checkrain_option_force_revert\n");

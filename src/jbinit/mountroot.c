@@ -2,7 +2,7 @@
 #include <common.h>
 
 void mountroot(char* rootdev, uint64_t rootlivefs, int rootopts) {
-    char statbuf[0x400];
+    struct stat statbuf;
     char buf[0x100];
     struct apfs_mountarg arg = {
         rootdev,
@@ -21,7 +21,7 @@ retry_rootfs_mount:
       goto retry_rootfs_mount;
       // spin();
     }
-    if ((err = stat("/private/", statbuf))) {
+    if ((err = stat("/private/", &statbuf))) {
       LOG("stat %s FAILED with err=%d!\n", "/private/", err);
       sleep(1);
       goto retry_rootfs_mount;

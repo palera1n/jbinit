@@ -27,7 +27,7 @@ int main()
   sys_dup2(fd_console, 0);
   sys_dup2(fd_console, 1);
   sys_dup2(fd_console, 2);
-  char statbuf[0x400];
+  struct stat statbuf;
   char bootargs[0x270]; 
 
   puts(
@@ -70,10 +70,11 @@ int main()
   pinfo_check(&use_fakefs, bootargs, dev_rootdev);
 
   uint64_t rootlivefs;
-  int rootopts = MNT_RDONLY;
-
+  int rootopts = MNT_RDONLY | MNT_ROOTFS;
+  
   select_root(&rootlivefs, &rootopts, &rootdev, dev_rootdev, use_fakefs);
   remount_rdisk(use_fakefs, dev_rootdev);
+  // unmount_devfs(rootdev, &fd_console);
   mountroot(rootdev, rootlivefs, rootopts);
   mount_devfs();
   mount_cores();
