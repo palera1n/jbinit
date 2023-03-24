@@ -63,11 +63,11 @@ int jbloader_launchd(int argc, char **argv)
   , stderr);
   if (getenv("XPC_USERSPACE_REBOOTED") == NULL) {
     int mount_ret = 0;
-    fputs("mounting overlay", stderr);
+    fputs("mounting overlay\n", stderr);
     mount_ret = check_and_mount_dmg();
     if (mount_ret)
       spin();
-    fputs("mounting loader", stderr);
+    fputs("mounting loader\n", stderr);
     mount_ret = check_and_mount_loader();
     if (mount_ret)
       spin();
