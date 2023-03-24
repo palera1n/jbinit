@@ -62,7 +62,6 @@ int main()
 
   char* rootdev;
 
-  mount_devfs();
   rootwait(&rootdev);  
   get_info();
 
@@ -75,7 +74,6 @@ int main()
 
   select_root(&rootlivefs, &rootopts, &rootdev, dev_rootdev, use_fakefs);
   remount_rdisk(use_fakefs, dev_rootdev);
-  unmount_devfs();
   mountroot(rootdev, rootlivefs, rootopts);
   //unmount_root();
   //mountroot(rootdev, rootlivefs, rootopts);
