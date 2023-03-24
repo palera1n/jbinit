@@ -5,11 +5,11 @@ bool darwin22 = false;
 
 void rootwait(char** rootdev_pp) {
     char statbuf[0x400];
-      LOG("Checking for roots");
+      LOG("Checking for roots\n");
   {
     while (stat(ios15_rootdev, statbuf) && stat(ios16_rootdev, statbuf))
     {
-      LOG("waiting for roots...");
+      LOG("waiting for roots...\n");
       sleep(1);
     }
   }

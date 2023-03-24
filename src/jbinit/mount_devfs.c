@@ -16,3 +16,14 @@ void mount_devfs() {
       }
     }
 }
+
+void unmount_devfs() {
+  LOG("unmounting devfs");
+  int ret = unmount("/dev", MNT_FORCE);
+  if (ret) {
+    LOG("umount(/dev) failed with err=%d!\n", ret);
+    spin();
+  } else {
+    LOG("unmounted devfs\n");
+  }
+}

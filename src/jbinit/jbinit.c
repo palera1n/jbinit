@@ -62,8 +62,8 @@ int main()
 
   char* rootdev;
 
-  rootwait(&rootdev);
   mount_devfs();
+  rootwait(&rootdev);  
   get_info();
 
   char dev_rootdev[0x20] = "/dev/";
@@ -75,7 +75,10 @@ int main()
 
   select_root(&rootlivefs, &rootopts, &rootdev, dev_rootdev, use_fakefs);
   remount_rdisk(use_fakefs, dev_rootdev);
+  unmount_devfs();
   mountroot(rootdev, rootlivefs, rootopts);
+  //unmount_root();
+  //mountroot(rootdev, rootlivefs, rootopts);
   mount_devfs();
   mount_cores();
 
@@ -92,6 +95,7 @@ int main()
 #endif
 
   prepare_rootfs(dev_rootdev, use_fakefs);
+
 
   LOG("Closing console, goodbye!");
   /*

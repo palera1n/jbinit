@@ -226,6 +226,8 @@ void spin();
 
 /* actual components */
 void mount_devfs();
+void unmount_devfs();
+void unmount_root();
 void get_info();
 void sancheck();
 void pinfo_check(bool* use_fakefs_p, char* bootargs, char* dev_rootdev);
