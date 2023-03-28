@@ -59,6 +59,7 @@
 #define palerain_option_setup_rootful        (1 << 2) /* create fakefs */
 #define palerain_option_setup_rootful_forced (1 << 3) /* create fakefs over an existing one */
 #define palerain_option_setup_partial_root   (1 << 4) /* fakefs creating should be partial */
+#define palerain_option_rootless_livefs      (1 << 5) /* mount root livefs on rootless */
 
 #define palerain_option_test1               (1 << 29)
 #define palerain_option_test2               (1 << 30)
