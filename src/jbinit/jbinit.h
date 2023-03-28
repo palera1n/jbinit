@@ -39,7 +39,9 @@
     }                                                    \
   } while (0)
 
+#ifndef RAMDISK
 #define RAMDISK "/dev/rmd0"
+#endif
 
 typedef uint32_t kern_return_t;
 typedef uint32_t mach_port_t;

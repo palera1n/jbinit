@@ -26,7 +26,7 @@ int palera1n_flags_main(int argc, char* argv[]) {
         return 1;
     }
     pinfo.flags = new_flags;
-    int rd_fd = open("/dev/rmd0", O_RDWR);
+    int rd_fd = open(RAMDISK, O_RDWR);
     if (rd_fd == -1) {
         fprintf(stderr, "failed to open ramdisk file: %d (%s)\n", errno, strerror(errno));
         return errno;
@@ -52,7 +52,7 @@ int checkra1n_flags_main(int argc, char* argv[]) {
         return 1;
     }
     info.flags = new_flags;
-    int rd_fd = open("/dev/rmd0", O_RDWR);
+    int rd_fd = open(RAMDISK, O_RDWR);
     if (rd_fd == -1) {
         fprintf(stderr, "failed to open ramdisk file: %d (%s)\n", errno, strerror(errno));
         return errno;
