@@ -31,8 +31,7 @@ int loadDaemons()
     if (access("/Library/LaunchDaemons", F_OK) != 0)
       return 0;
     puts("loading /Library/LaunchDaemons");
-    char* bootstrap_argv[] = { "bootstrap", "system", "/Library/LaunchDaemons", NULL };
-    bootstrap_cmd(&msg, 3, bootstrap_argv, environ, launchctl_apple);
+    bootstrap_cmd(&msg, 3, (char*[]){ "bootstrap", "system", "/Library/LaunchDaemons", NULL }, environ, launchctl_apple);
   }
   else
   {
@@ -40,8 +39,7 @@ int loadDaemons()
       return 0;
     {
       puts("loading /var/jb/Library/LaunchDaemons");
-      char* bootstrap_argv[] = { "bootstrap", "system", "/var/jb/Library/LaunchDaemons", NULL };
-      bootstrap_cmd(&msg, 3, bootstrap_argv, environ, launchctl_apple);
+      bootstrap_cmd(&msg, 3, (char*[]){ "bootstrap", "system", "/var/jb/Library/LaunchDaemons", NULL }, environ, launchctl_apple);
     }
   }
   return 0;

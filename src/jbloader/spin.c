@@ -7,12 +7,11 @@ void spin()
   if (access("/cores/binpack/bin/sh", F_OK) == 0) {
     putenv("PATH=/cores/binpack/usr/bin:/cores/binpack/usr/sbin:/cores/binpack/sbin:/cores/binpack/bin:/usr/bin:/usr/sbin:/bin:/sbin");
     puts("Welcome to serial=3 emergency shell!");
-    char* shell_argv[] = {
+    run("/cores/binpack/bin/sh", (char*[]){
       "/cores/binpack/bin/sh",
       "-i",
       NULL
-    };
-    run(shell_argv[0], shell_argv);
+    });
   }
   puts("spinning...");
   while (1)

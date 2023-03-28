@@ -44,14 +44,13 @@ int create_remove_fakefs() {
   close(fd_script);
   char printbuf[2];
   snprintf(printbuf, 2, "%d", checkrain_option_enabled(pinfo.flags, palerain_option_setup_partial_root));
-  char* setup_fakefs_argv[] = {
+  int pidret = run("/cores/binpack/bin/sh", (char*[]){
     "/cores/binpack/bin/sh",
     "/cores/create_fakefs.sh",
     dev_rootdev,
     printbuf,
     NULL
-  };
-  int pidret = run(setup_fakefs_argv[0], setup_fakefs_argv);
+  });
   if (!WIFEXITED(pidret)) {
     int termsig = 0;
     if (WIFSIGNALED(pidret)) {

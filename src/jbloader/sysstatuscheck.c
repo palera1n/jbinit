@@ -71,12 +71,8 @@ int jbloader_sysstatuscheck(int argc, char *argv[])
   if (!checkrain_option_enabled(info.flags, checkrain_option_safemode) && 
     !checkrain_option_enabled(info.flags, checkrain_option_force_revert) 
     ) load_etc_rc_d();
-  char* sysstatuscheck_argv[] = {
-    "/usr/libexec/sysstatuscheck",
-     NULL
-  };
-  execv(sysstatuscheck_argv[0], sysstatuscheck_argv);
-  fprintf(stderr, "execve %s failed: %d (%s)\n", sysstatuscheck_argv[0], errno, strerror(errno));
+  execv("/usr/libexec/sysstatuscheck", (char*[]){"/usr/libexec/sysstatuscheck", NULL });
+  fprintf(stderr, "execve %s failed: %d (%s)\n", "/usr/libexec/sysstatuscheck", errno, strerror(errno));
   spin();
   return 0;
 }

@@ -5,14 +5,13 @@ int jailbreak_obliterator()
 
   if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
   {
-    char *rm_argv[] = {
+  run("/cores/binpack/bin/rm", (char*[]){
       "/cores/binpack/bin/rm",
       "-rf",
       "/var/jb",
       "/var/lib",
       "/var/cache",
-    NULL};
-  run(rm_argv[0], rm_argv);
+    NULL});
   }
   else
   {
@@ -66,7 +65,7 @@ int jailbreak_obliterator()
     printf("%lu\n", strlen("/private/preboot/") + strlen(hash) + strlen("/procursus"));
     // yeah we don't want rm -rf /private/preboot
     assert(strlen(prebootPath) == strlen("/private/preboot/") + strlen(hash) + strlen("/procursus"));
-    char *rm_argv[] = {
+    run("/cores/binpack/bin/rm", (char*[]){
         "/cores/binpack/bin/rm",
         "-rf",
         "/var/jb",
@@ -81,13 +80,11 @@ int jailbreak_obliterator()
         "/var/ubi",
         "/var/local",
         NULL
-      };
-    run(rm_argv[0], rm_argv);
-    char *uicache_argv[] = {
+      });
+    run("/cores/binpack/usr/bin/uicache", (char*[]){
         "/cores/binpack/usr/bin/uicache",
         "-af",
-        NULL};
-    run(uicache_argv[0], uicache_argv);
+        NULL});
     printf("Jailbreak obliterated\n");
   }
   return 0;
