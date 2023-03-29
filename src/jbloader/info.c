@@ -91,6 +91,9 @@ const char* str_palerain_flags(checkrain_option_t opt) {
     case palerain_option_test2:
       ret = "palerain_option_test2";
       break;
+    case palerain_option_checkrain_is_clone:
+      ret = "palerain_option_checkrain_is_clone";
+      break;
     case palerain_option_rootless_livefs:
       ret = "palerain_option_rootless_livefs";
       break;
