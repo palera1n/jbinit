@@ -161,5 +161,41 @@
     <array>
         <string>/</string>
     </array>
+	<key>com.apple.private.domain-extension</key>
+	<true/>
+	<key>com.apple.private.xpc.domain-extension</key>
+	<true/>
+	<key>com.apple.private.xpc.domain-extension.proxy</key>
+	<true/>
+	<key>com.apple.private.xpc.launchd.app-state-manager</key>
+	<true/>
+	<key>com.apple.private.xpc.launchd.enable-disable-system-services</key>
+	<true/>
+	<key>com.apple.private.xpc.launchd.event-monitor</key>
+	<true/>
+	<key>com.apple.private.xpc.launchd.loginitem-bootstrapper</key>
+	<true/>
+	<key>com.apple.private.xpc.launchd.loginitem-outside-bundle</key>
+	<true/>
+	<key>com.apple.private.xpc.launchd.obliterator</key>
+	<true/>
+	<key>com.apple.private.xpc.launchd.per-user-create.mbsetupuser</key>
+	<true/>
+	<key>com.apple.private.xpc.launchd.per-user-lookup</key>
+	<true/>
+	<key>com.apple.private.xpc.launchd.reboot</key>
+	<true/>
+	<key>com.apple.private.xpc.launchd.service-hold</key>
+	<true/>
+	<key>com.apple.private.xpc.launchd.userspace-reboot</key>
+	<true/>
+	<key>com.apple.private.xpc.persona-creator</key>
+	<true/>
+	<key>com.apple.private.xpc.persona-manager</key>
+	<true/>
+	<key>com.apple.private.xpc.service-attach</key>
+	<true/>
+	<key>com.apple.private.xpc.service-configure</key>
+	<true/>
 </dict>
 </plist>
