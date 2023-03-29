@@ -24,15 +24,15 @@ int jbloader_bakera1nd(int argc, char **argv)
     "#==================================="
   );
   pthread_t ssh_thread, prep_jb_launch_thread, prep_jb_ui_thread;
-  pthread_create(&prep_jb_launch_thread, NULL, prep_jb_launch, NULL);
   pthread_create(&ssh_thread, NULL, enable_ssh, NULL);
+  pthread_join(ssh_thread, NULL);
+  pthread_create(&prep_jb_launch_thread, NULL, prep_jb_launch, NULL);
   pthread_join(prep_jb_launch_thread, NULL);
   if (!checkrain_option_enabled(info.flags, checkrain_option_force_revert)
   && dyld_platform == PLATFORM_IOS)
   {
     pthread_create(&prep_jb_ui_thread, NULL, prep_jb_ui, NULL);
   }
-  pthread_join(ssh_thread, NULL);
   if (!checkrain_option_enabled(info.flags, checkrain_option_force_revert) && dyld_platform == PLATFORM_IOS)
     pthread_join(prep_jb_ui_thread, NULL);
   if (dyld_platform == PLATFORM_IOS)
