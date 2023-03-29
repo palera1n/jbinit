@@ -36,7 +36,7 @@ int load_etc_rc_d()
       char *args[] = {
           pp,
           NULL};
-      run_async(args[0], args);
+      run(args[0], args);
     }
     free(pp);
   }
