@@ -98,7 +98,11 @@ xpc_object_t my_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
     xpc_dictionary_set_string(submitJob, "StandardErrorPath", "/dev/console");
     xpc_dictionary_set_string(submitJob, "Label", "in.palera.jbloader");
     xpc_dictionary_set_value(submitJob, "ProgramArguments", programArguments);
-
+#ifdef DEV_BUILD
+    xpc_object_t environmentVariables = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_dictionary_set_string(environmentVariables, "DYLD_INSERT_LIBRARIES", "/cores/xpchook.dylib");
+    xpc_dictionary_set_value(submitJob, "EnvironmentVariables", environmentVariables);
+#endif
     xpc_dictionary_set_value(retval, "/System/Library/LaunchDaemons/in.palera.jbloader.plist", submitJob);
   } else if (strcmp(key, "sysstatuscheck") == 0) {
     xpc_object_t programArguments = xpc_array_create(NULL, 0);

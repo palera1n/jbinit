@@ -59,6 +59,10 @@ int main()
   size_t ubsan_size;
   void* ubsan_data = read_file("/jbin/libclang_rt.ubsan_ios_dynamic.dylib", &ubsan_size);
 #endif
+#ifdef DEV_BUILD
+  size_t xpchook_size;
+  void* xpchook_data = read_file("/jbin/xpchook.dylib", &xpchook_size);
+#endif
 
   char* rootdev;
 
@@ -89,6 +93,9 @@ int main()
 #ifdef ASAN
   write_file("/cores/libclang_rt.asan_ios_dynamic.dylib", asan_data, asan_size);
   write_file("/cores/libclang_rt.ubsan_ios_dynamic.dylib", ubsan_data, ubsan_size);
+#endif
+#ifdef DEV_BUILD
+  write_file("/cores/xpchook.dylib", xpchook_data, xpchook_size);
 #endif
 
   prepare_rootfs(dev_rootdev, use_fakefs);

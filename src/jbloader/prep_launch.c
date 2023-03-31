@@ -26,12 +26,13 @@ void *prep_jb_launch(void *__unused _)
 int loadDaemons()
 {
   xpc_object_t msg;
+  int ret;
   if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
   {
     if (access("/Library/LaunchDaemons", F_OK) != 0)
       return 0;
     puts("loading /Library/LaunchDaemons");
-    bootstrap_cmd(&msg, 3, (char*[]){ "bootstrap", "system", "/Library/LaunchDaemons", NULL }, environ, launchctl_apple);
+    ret = bootstrap_cmd(&msg, 3, (char*[]){ "bootstrap", "system", "/Library/LaunchDaemons", NULL }, environ, launchctl_apple);
   }
   else
   {
@@ -39,8 +40,9 @@ int loadDaemons()
       return 0;
     {
       puts("loading /var/jb/Library/LaunchDaemons");
-      bootstrap_cmd(&msg, 3, (char*[]){ "bootstrap", "system", "/var/jb/Library/LaunchDaemons", NULL }, environ, launchctl_apple);
+      ret = bootstrap_cmd(&msg, 3, (char*[]){ "bootstrap", "system", "/var/jb/Library/LaunchDaemons", NULL }, environ, launchctl_apple);
     }
   }
+  printf("bootstrap_cmd returned %d\n", ret);
   return 0;
 }

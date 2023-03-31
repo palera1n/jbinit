@@ -22,6 +22,14 @@ int init_info() {
 
 int jbloader_main(int argc, char *argv[])
 {
+#ifdef DEV_BUILD
+  if (getenv("DYLD_INSERT_LIBRARIES") != NULL)
+    printf("DYLD_INSERT_LIBRARIES: %s\n", getenv("DYLD_INSERT_LIBRARIES"));
+  else {
+    setenv("DYLD_INSERT_LIBRARIES", "/cores/xpchook.dylib", 1);
+    execv("/cores/jbloader", argv);
+  } 
+#endif
   int ret = 0;
   int ch = 0;
   if (getuid() != 0 || geteuid() != 0) goto out;

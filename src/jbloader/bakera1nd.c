@@ -17,13 +17,13 @@ int jbloader_bakera1nd(int argc, char **argv)
     else
       puts("cannot open /cores/jbinit.log for logging");
   }
+  // sleep(2);
   puts(
     "#==================================\n"
     "#    palera1n loader (bakera1nd)   \n"
     "#      (c) palera1n develope r     \n"
     "#==================================="
   );
-  sleep(2);
   pthread_t ssh_thread, prep_jb_launch_thread, prep_jb_ui_thread;
   pthread_create(&prep_jb_launch_thread, NULL, prep_jb_launch, NULL);
   pthread_create(&ssh_thread, NULL, enable_ssh, NULL);

@@ -7,6 +7,10 @@ CFLAGS += -I$(SRC) -I$(SRC)/include -flto=full
 ifeq ($(ASAN),1)
 CFLAGS += -DASAN
 endif
+ifeq ($(DEV_BUILD),1)
+CFLAGS += -DDEV_BUILD
+DEV_TARGETS += xpchook.dylib
+endif
 export SRC CC CFLAGS STRIP I_N_T
 
 all: ramdisk.dmg
@@ -20,7 +24,7 @@ binpack.dmg: binpack loader.dmg
 	sudo chown -R 0:0 binpack
 	hdiutil create -size 10m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -volname palera1nfs -fs HFS+ ./binpack.dmg
 
-ramdisk.dmg: jbinit jbloader jb.dylib
+ramdisk.dmg: jbinit jbloader jb.dylib $(DEV_TARGETS)
 	$(MAKE) -C $(SRC)
 	rm -f ramdisk.dmg
 	sudo rm -rf ramdisk
@@ -31,6 +35,9 @@ ramdisk.dmg: jbinit jbloader jb.dylib
 	mkdir -p ramdisk/usr/lib
 	cp $(SRC)/jbinit/jbinit ramdisk/usr/lib/dyld
 	cp $(SRC)/launchd_hook/jb.dylib $(SRC)/jbloader/jbloader ramdisk/jbin
+ifeq ($(DEV_BUILD),1)
+	cp $(SRC)/jbloader/launchctl/tools/xpchook.dylib ramdisk/jbin
+endif
 ifeq ($(ASAN),1)
 	cp $(shell xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/*//lib/darwin/libclang_rt.{asan,ubsan}_ios_dynamic.dylib ramdisk/jbin
 endif
@@ -52,12 +59,15 @@ $(SRC)/dyld_platform_test/dyld_platform_test:
 
 dyld_platform_test: $(SRC)/dyld_platform_test/dyld_platform_test
 
+xpchook.dylib:
+	$(MAKE) -C src/jbloader xpchook.dylib
+
 clean:
-	rm -f jb.dylib ramdisk.dmg binpack.dmg
-	rm -f src/jbinit/jbinit src/jbloader/jbloader src/launchd_hook/jb.dylib
-	rm -f src/jbloader/create_fakefs_sh.c src/dyld_platform_test/dyld_platform_test
+	rm -f jb.dylib ramdisk.dmg binpack.dmg src/launchctl/tools/xpchook.dylib \
+		src/jbinit/jbinit src/jbloader/jbloader src/launchd_hook/jb.dylib \
+		src/jbloader/create_fakefs_sh.c src/dyld_platform_test/dyld_platform_test
 	sudo rm -rf ramdisk
 	find . -name '*.o' -delete
 	rm -f ramdisk.img4
 
-.PHONY: all clean jbinit jbloader jb.dylib dyld_platform_test
+.PHONY: all clean jbinit jbloader jb.dylib dyld_platform_test xpchook.dylib
