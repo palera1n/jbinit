@@ -51,7 +51,8 @@ if ! [ -b "$fake_rootdev" ]; then
 fi
 
 echo "** mounting realfs $real_rootdev **";
-/sbin/mount_apfs -o ro "$real_rootdev" /cores/fs/real
+#/sbin/mount_apfs -o ro "$real_rootdev" /cores/fs/real
+/cores/binpack/usr/bin/snaputil -s $(/cores/binpack/usr/bin/snaputil -o) / /cores/fs/real
 
 echo "** mounting fakefs $fake_rootdev **";
 /sbin/mount_apfs -o rw "$fake_rootdev" /cores/fs/fake
