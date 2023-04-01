@@ -70,4 +70,4 @@ clean:
 	find . -name '*.o' -delete
 	rm -f ramdisk.img4
 
-.PHONY: all clean jbinit jbloader jb.dylib dyld_platform_test xpchook.dylib
+.PHONY: all clean jbinit jbloader jb.dylib dyld_platform_test xpchook.dylib binpack.dmg
