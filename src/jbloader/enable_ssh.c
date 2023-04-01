@@ -19,11 +19,6 @@ void *enable_ssh(void *__unused _)
   }
   /* WTF */
   char* dropbear_plist = NULL;
-  if (dyld_platform == PLATFORM_IOS) {
-    dropbear_plist = "/cores/binpack/Library/LaunchDaemons/dropbear.plist";
-  } else if (dyld_platform == PLATFORM_BRIDGEOS) {
-    dropbear_plist = "/cores/binpack/Library/LaunchDaemons/dropbear-bridgeos-ncm.plist";
-  }
   switch (dyld_platform) {
     case PLATFORM_IOS:
       dropbear_plist = "/cores/binpack/Library/LaunchDaemons/dropbear.plist";
