@@ -5,8 +5,8 @@ int create_remove_fakefs() {
     if (pinfo.rootdev[strlen(pinfo.rootdev) - 1] == '1') {
       printf("avoiding self destruction by user error\n");
       return 0;
-    } 
-    kern_return_t delete_ret = APFSVolumeDelete(pinfo.rootdev);
+    }
+    kern_return_t delete_ret = DeleteAPFSVolumeWithRole(pinfo.rootdev);
     if (delete_ret != KERN_SUCCESS) {
       fprintf(stderr, "cannot delete fakefs %s: %d %s\n", pinfo.rootdev, delete_ret, mach_error_string(delete_ret));
     } else {
@@ -21,7 +21,7 @@ int create_remove_fakefs() {
       // should be unreachable because jbinit checked it
       assert(0);
     }
-    kern_return_t delete_ret = APFSVolumeDelete(pinfo.rootdev);
+    kern_return_t delete_ret = DeleteAPFSVolumeWithRole(pinfo.rootdev);
     if (delete_ret != KERN_SUCCESS) {
       fprintf(stderr, "cannot delete existing fakefs: %d %s", delete_ret, mach_error_string(delete_ret));
       spin();
