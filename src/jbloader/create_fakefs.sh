@@ -58,11 +58,11 @@ echo "** mounting fakefs $fake_rootdev **";
 /sbin/mount_apfs -o rw "$fake_rootdev" /cores/fs/fake
 
 # make creating fakefs (hopefully) more noticeable for end user
-echo "====================================";
+echo "=========================================================";
 echo "";
 echo "** copying files to fakefs (may take up to 10 minutes) **";
 echo "";
-echo "====================================";
+echo "=========================================================";
 if [ "$partial" != "1" ]; then
     cp -a /cores/fs/real/* /cores/fs/fake/
     cp -a /cores/fs/real/.mb /cores/fs/real/.file /cores/fs/real/.ba /cores/fs/fake/
