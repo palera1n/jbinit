@@ -62,7 +62,7 @@ echo "====================================";
 /sbin/mount_apfs -o rw "$fake_rootdev" /cores/fs/fake
 
 # make creating fakefs (hopefully) more noticeable for end user
-clear
+printf '\033[2J';
 echo "=========================================================";
 echo "";
 echo "** copying files to fakefs (may take up to 10 minutes) **";
@@ -135,7 +135,7 @@ echo "=============================";
 /sbin/umount -a || true
 
 sync
-clear
+printf '\033[2J';
 echo "=========================================================";
 echo "";
 echo "** FakeFS is finished! **";
