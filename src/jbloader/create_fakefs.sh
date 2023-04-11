@@ -78,7 +78,6 @@ else
               [ "$filepath" = "/cores/fs/real/System/Library/AccessibilityBundles" ] ||
               [ "$filepath" = "/cores/fs/real/System/Library/Assistant" ] ||
               [ "$filepath" = "/cores/fs/real/System/Library/Audio" ] ||
-              [ "$filepath" = "/cores/fs/real/System/Library/Caches" ] ||
               [ "$filepath" = "/cores/fs/real/System/Library/Fonts" ] ||
               [ "$filepath" = "/cores/fs/real/System/Library/Health" ] ||
               [ "$filepath" = "/cores/fs/real/System/Library/LinguisticData" ] ||
