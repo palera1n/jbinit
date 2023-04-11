@@ -88,7 +88,6 @@ else
               [ "$filepath" = "/cores/fs/real/System/Library/AccessibilityBundles" ] ||
               [ "$filepath" = "/cores/fs/real/System/Library/Assistant" ] ||
               [ "$filepath" = "/cores/fs/real/System/Library/Audio" ] ||
-              [ "$filepath" = "/cores/fs/real/System/Library/Caches" ] ||
               [ "$filepath" = "/cores/fs/real/System/Library/Fonts" ] ||
               [ "$filepath" = "/cores/fs/real/System/Library/Health" ] ||
               [ "$filepath" = "/cores/fs/real/System/Library/LinguisticData" ] ||
@@ -115,10 +114,6 @@ else
             fi
         fi
     done
-fi
-if [ "$real_rootdev" = "/dev/disk1s1" ]; then
-    rm -rf /cores/fs/fake/System/Library/Caches/com.apple.dyld
-    ln -s /System/Cryptexes/OS/System/Library/Caches/com.apple.dyld /cores/fs/fake/System/Library/Caches/
 fi
 echo "===========================";
 echo "** syncing filesystems **";
