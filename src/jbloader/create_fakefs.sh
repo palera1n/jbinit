@@ -70,11 +70,11 @@ case $device_id in
         echo "how the hell are you doing this?";;
     iPhone10,3|iPhone10,6)
         clear
-        echo "";;
-        echo "";;
-        echo "";;
-        echo "";;
-        echo "";;
+        echo ""
+        echo ""
+        echo ""
+        echo ""
+        echo ""
         echo "";;
     *)
         clear
