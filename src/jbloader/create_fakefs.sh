@@ -82,7 +82,7 @@ esac
 echo "=========================================================";
 echo "";
 echo "";
-echo "** COPYING FILES TO FAKEFS (MAY TAKE UP TO 10 MINUTES **";
+echo "** COPYING FILES TO FAKEFS (MAY TAKE UP TO 10 MINUTES) **";
 echo "";
 echo "";
 echo "=========================================================";
