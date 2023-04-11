@@ -81,7 +81,9 @@ case $device_id in
 esac
 echo "=========================================================";
 echo "";
-echo "** copying files to fakefs (may take up to 10 minutes) **";
+echo "";
+echo "** COPYING FILES TO FAKEFS (MAY TAKE UP TO 10 MINUTES **";
+echo "";
 echo "";
 echo "=========================================================";
 if [ "$partial" != "1" ]; then
@@ -146,7 +148,7 @@ echo "=============================";
 /sbin/umount -a || true
 
 sync
-clear
+printf '\033[H\033[2J'
 echo "=========================================================";
 echo "";
 echo "** FakeFS is finished! **";
