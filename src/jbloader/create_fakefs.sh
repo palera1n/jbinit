@@ -69,7 +69,7 @@ case $device_id in
         clear
         echo "how the hell are you doing this?";;
     iPhone10,3|iPhone10,6)
-        clear
+        printf '\033[H\033[2J'
         echo ""
         echo ""
         echo ""
@@ -77,7 +77,7 @@ case $device_id in
         echo ""
         echo "";;
     *)
-        clear
+        printf '\033[H\033[2J'
 esac
 echo "=========================================================";
 echo "";
