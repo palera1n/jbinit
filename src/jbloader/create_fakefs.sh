@@ -2,6 +2,8 @@
 
 set -e;
 
+device_id=$(uname -m)
+
 export PATH="/cores/binpack/usr/bin:/cores/binpack/usr/sbin:/cores/binpack/sbin:/cores/binpack/bin:/usr/bin:/usr/sbin:/bin:/sbin";
 if [ "$1" = "" ]; then
     >&2 echo "Usage: $0 <fake rootdev> [partial: 0|1]";
@@ -62,7 +64,21 @@ echo "====================================";
 /sbin/mount_apfs -o rw "$fake_rootdev" /cores/fs/fake
 
 # make creating fakefs (hopefully) more noticeable for end user
-clear
+case $device_id in
+    iPhone1[1-9]*|iPhone[2-9][0-9]*)
+        clear
+        echo "how the hell are you doing this?";;
+    iPhone10,3|iPhone10,6)
+        clear
+        echo "";;
+        echo "";;
+        echo "";;
+        echo "";;
+        echo "";;
+        echo "";;
+    *)
+        clear
+esac
 echo "=========================================================";
 echo "";
 echo "** copying files to fakefs (may take up to 10 minutes) **";
