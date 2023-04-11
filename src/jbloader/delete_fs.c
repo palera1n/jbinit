@@ -7,13 +7,7 @@ kern_return_t DeleteAPFSVolumeWithRole(const char* volpath)
 {
     kern_return_t ret;
     uint16_t role = 0;
-    
-    if (strncmp(volpath, "/dev/", 0x5) != 0x0)
-    {
-        printf("wrong path\n");
-        return KERN_INVALID_ARGUMENT;
-    }
-    
+
     ret = APFSVolumeRole(volpath, &role, NULL);
     if(ret != KERN_SUCCESS)
     {
