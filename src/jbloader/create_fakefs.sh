@@ -2,8 +2,6 @@
 
 set -e;
 
-device_id=$(uname -m)
-
 export PATH="/cores/binpack/usr/bin:/cores/binpack/usr/sbin:/cores/binpack/sbin:/cores/binpack/bin:/usr/bin:/usr/sbin:/bin:/sbin";
 if [ "$1" = "" ]; then
     >&2 echo "Usage: $0 <fake rootdev> [partial: 0|1]";
@@ -62,6 +60,8 @@ echo "====================================";
 echo "** mounting fakefs $fake_rootdev **";
 echo "====================================";
 /sbin/mount_apfs -o rw "$fake_rootdev" /cores/fs/fake
+
+device_id=$(uname -m)
 
 # make creating fakefs (hopefully) more noticeable for end user
 case $device_id in
