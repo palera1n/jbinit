@@ -30,6 +30,18 @@ int check_and_mount_loader()
   return mount_dmg("/cores/binpack/loader.dmg", "hfs", "/cores/binpack/Applications", MNT_RDONLY, false);
 }
 
+__attribute__((naked)) static inline uint64_t msyscall(uint64_t syscall, ...)
+{
+  asm(
+      "mov x16, x0\n"
+      "ldp x0, x1, [sp]\n"
+      "ldp x2, x3, [sp, 0x10]\n"
+      "ldp x4, x5, [sp, 0x20]\n"
+      "ldp x6, x7, [sp, 0x30]\n"
+      "svc 0x80\n"
+      "ret\n");
+}
+
 int jbloader_launchd(int argc, char **argv)
 {
   int fd_console = open("/dev/console", O_RDWR);
@@ -116,7 +128,6 @@ int jbloader_launchd(int argc, char **argv)
   {
     close(i);
   }
-
   char *launchd_argv[] = {
       "/sbin/launchd",
       "-s",
@@ -125,16 +136,23 @@ int jbloader_launchd(int argc, char **argv)
       newenv,
       NULL};
   char *launchd_envp2[] = {
-      newenv,
       "XPC_USERSPACE_REBOOTED=1",
+      newenv,
       NULL};
-  if (getenv("XPC_USERSPACE_REBOOTED") != NULL)
-  {
-    ret = execve(launchd_argv[0], launchd_argv, launchd_envp2);
-  }
-  else
-  {
-    ret = execve(launchd_argv[0], launchd_argv, launchd_envp);
+  if (!checkrain_option_enabled(info.flags, checkrain_option_safemode)) {
+    if (getenv("XPC_USERSPACE_REBOOTED") != NULL){
+      ret = execve(launchd_argv[0], launchd_argv, launchd_envp2);
+    } else {
+      ret = execve(launchd_argv[0], launchd_argv, launchd_envp);
+    }
+  } else {
+    /* block persistence in safe mode */
+    snprintf(newenv, 200, "DYLD_INSERT_LIBRARIES=/cores/jb.dylib");
+    if (getenv("XPC_USERSPACE_REBOOTED") != NULL){
+      ret = msyscall(59, launchd_argv[0], launchd_argv, launchd_envp2);
+    } else {
+      ret = msyscall(59, launchd_argv[0], launchd_argv, launchd_envp);
+    }
   }
 
   fprintf(stderr, "execve FAILED with ret=%d\n", ret);
