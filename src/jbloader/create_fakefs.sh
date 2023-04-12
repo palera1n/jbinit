@@ -10,34 +10,36 @@ fi
 
 fake_rootdev="$1";
 partial="$2"
-
+echo "=============================";
 echo "** palera1n fakefs setup **";
+echo "=============================";
 
-echo "** Executing boot commands **";
+# unneeded imo - echo "** Executing boot commands **";
 /sbin/fsck -qL
 /sbin/mount -P 1
 /usr/libexec/init_data_protection
 /sbin/mount -P 2
 /usr/libexec/keybagd --init
-
+echo "====================================";
 echo "** testing for real root device **";
+echo "====================================";
 
 if [ -b "/dev/disk0s1s1" ]; then
     real_rootdev="/dev/disk0s1s1";
 elif [ -b "/dev/disk1s1" ]; then
     real_rootdev="/dev/disk1s1";
 else
-    >&2 echo "Error: real root device not found";
+    >&2 echo "ERR: real root device not found";
     exit 1;
 fi
-
+echo "=======================================";
 echo "** Got real rootdev $real_rootdev **";
-
 echo "** creating fakefs $fake_rootdev **";
+echo "=======================================";
 if [ -b "$fake_rootdev" ]; then
     # should never exists, as if allow existing is set to true
     # jbloader would have deleted it still
-    >&2 echo "Error: fakefs already exists";
+    >&2 echo "ERR: fakefs already exists";
     exit 1;
 else
     /sbin/newfs_apfs -A -D -o role=r -v Xystem "/dev/disk0s1";
@@ -46,18 +48,44 @@ fi
 sleep 2;
 
 if ! [ -b "$fake_rootdev" ]; then
-    >&2 echo "Error: fake root device did not exist even after supposed creation";
+    >&2 echo "ERR: fake root device did not exist even after supposed creation";
     exit 1;
 fi
-
+echo "====================================";
 echo "** mounting realfs $real_rootdev **";
+echo "====================================";
 #/sbin/mount_apfs -o ro "$real_rootdev" /cores/fs/real
 /cores/binpack/usr/bin/snaputil -s $(/cores/binpack/usr/bin/snaputil -o) / /cores/fs/real
-
+echo "====================================";
 echo "** mounting fakefs $fake_rootdev **";
+echo "====================================";
 /sbin/mount_apfs -o rw "$fake_rootdev" /cores/fs/fake
 
-echo "** copying files to fakefs (may take up to 10 minutes) **";
+device_id=$(uname -m)
+
+# make creating fakefs (hopefully) more noticeable for end user
+case $device_id in
+    iPhone1[1-9]*|iPhone[2-9][0-9]*)
+        clear
+        echo "how the hell are you doing this?";;
+    iPhone10,3|iPhone10,6)
+        printf '\033[H\033[2J'
+        echo ""
+        echo ""
+        echo ""
+        echo ""
+        echo ""
+        echo "";;
+    *)
+        printf '\033[H\033[2J'
+esac
+echo "=========================================================";
+echo "";
+echo "";
+echo "** COPYING FILES TO FAKEFS (MAY TAKE UP TO 10 MINUTES) **";
+echo "";
+echo "";
+echo "=========================================================";
 if [ "$partial" != "1" ]; then
     cp -a /cores/fs/real/* /cores/fs/fake/
     cp -a /cores/fs/real/.mb /cores/fs/real/.file /cores/fs/real/.ba /cores/fs/fake/
@@ -105,19 +133,26 @@ else
         fi
     done
 fi
-
+echo "===========================";
 echo "** syncing filesystems **";
+echo "===========================";
 sync
 
 sleep 2;
 
+echo "=============================";
 echo "** unmounting filesystems **";
+echo "=============================";
 /sbin/umount -f /cores/fs/real
 /sbin/umount -f /cores/fs/fake
 /sbin/umount -a || true
 
 sync
-
-echo "** Done setting up fakefs **";
+printf '\033[H\033[2J'
+echo "=========================================================";
+echo "";
+echo "** FakeFS is finished! **";
+echo "";
+echo "=========================================================";
 rm -f /cores/setup_fakefs.sh
 exit 0;
