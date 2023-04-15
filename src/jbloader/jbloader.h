@@ -42,7 +42,7 @@
 #define RAMDISK "/dev/rmd0"
 #endif
 
-#define fakefs_is_in_use checkrain_option_enabled(pinfo.flags, palerain_option_rootful) && !checkrain_option_enabled(pinfo.flags, checkrain_option_force_revert)
+#define fakefs_is_in_use (checkrain_option_enabled(pinfo.flags, palerain_option_rootful) && !checkrain_option_enabled(pinfo.flags, checkrain_option_force_revert))
 
 #define RB_AUTOBOOT     0
 #define RB_PANIC    0x800

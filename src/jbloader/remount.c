@@ -3,7 +3,7 @@
 int remount(char *rootdev)
 {
   int ret = 0;
-  if (fakefs_is_in_use || access("/.mount_rw", F_OK) != 0) {
+  if (fakefs_is_in_use || access("/.mount_rw", F_OK) == 0) {
     char dev_rootdev[0x20];
     snprintf(dev_rootdev, 0x20, "/dev/%s", rootdev);
     struct apfs_mountarg arg = {
