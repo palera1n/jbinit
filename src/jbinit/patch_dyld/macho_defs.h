@@ -1,6 +1,5 @@
 #ifndef MACHO_DEFS_H
 #define MACHO_DEFS_H
-
 #include <stdint.h>
 
 #define LC_SEGMENT_64 0x19

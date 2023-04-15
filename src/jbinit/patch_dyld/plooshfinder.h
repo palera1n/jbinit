@@ -7,7 +7,7 @@
 
 #include "utils.h"
 #include "macho.h"
-#include "macho-defs.h"
+#include "macho_defs.h"
 
 // util macros
 #define nop 0xd503201f

@@ -1,6 +1,6 @@
 #ifndef PLOOSHFINDER_MACHO_H
 #define PLOOSHFINDER_MACHO_H
-#include "macho-defs.h"
+#include "macho_defs.h"
 
 uint32_t macho_get_magic(void *buf);
 void *macho_find_arch(void *buf, uint32_t arch);

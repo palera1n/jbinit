@@ -1,5 +1,6 @@
+// plooshfinder
 // WIP patchfinder
-// Made by ploosh
+// Made by Ploosh
 
 #if !__STDC_HOSTED__
 #include <jbinit.h>

@@ -10,7 +10,7 @@ int _internal15_platform = 0;
 bool platform_check_callback15(struct pf_patch32_t patch, uint32_t *stream) {
     stream[3] = 0x52800001 | (_internal15_platform << 5);
 
-    LOG("%s: Patched platform check (mov: 0x%x)\n", __FUNCTION__, 0x52800001 | (_internal15_platform << 5));
+    printf("%s: Patched platform check (mov: 0x%x)\n", __FUNCTION__, 0x52800001 | (_internal15_platform << 5));
 
     return true;
 }
@@ -18,6 +18,7 @@ bool platform_check_callback15(struct pf_patch32_t patch, uint32_t *stream) {
 void patch_platform_check15(void *dyld_buf, size_t dyld_len, uint32_t platform) {
     _internal15_platform = platform;
 
+    // r2: /x 600240f900004029000040f901008052:e003c0ff0000c0ffe003c0ff1f00e0ff
     uint32_t matches[] = {
         0xf9400260, // ldr x0, [x*, 0x20]
         0x29400000, // ldp
@@ -33,6 +34,7 @@ void patch_platform_check15(void *dyld_buf, size_t dyld_len, uint32_t platform) 
     };
     struct pf_patch32_t patch = pf_construct_patch32(matches, masks, sizeof(matches) / sizeof(uint32_t), (void *) platform_check_callback15);
 
+    // r2: /x 0000801a600240f9000040f901008052:00fce0ffe003c0ffe003c0ff1f00e0ff
     uint32_t matches2[] = {
         0x1a800000, // csel w*, w*, w*, eq
         0xf9400260, // ldr x0, [x*, 0x20]
@@ -58,4 +60,3 @@ void patch_platform_check15(void *dyld_buf, size_t dyld_len, uint32_t platform) 
 
     pf_patchset_emit32(dyld_buf, dyld_len, patchset);
 }
-
