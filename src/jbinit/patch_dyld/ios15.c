@@ -3,9 +3,12 @@
 #else
 #include <stdlib.h>
 #endif
+
 #include "plooshfinder.h"
+#include "shellcode.h"
 
 int _internal15_platform = 0;
+void *_internal15_rbuf;
 
 bool platform_check_callback15(struct pf_patch32_t patch, uint32_t *stream) {
     stream[3] = 0x52800001 | (_internal15_platform << 5);
@@ -15,7 +18,23 @@ bool platform_check_callback15(struct pf_patch32_t patch, uint32_t *stream) {
     return true;
 }
 
-void patch_platform_check15(void *dyld_buf, size_t dyld_len, uint32_t platform) {
+bool platform_check_callback15_bv(struct pf_patch32_t patch, uint32_t *stream) {
+    uint32_t *shc_loc = get_shc_region(_internal15_rbuf);
+    copy_shc(_internal15_platform);
+
+    if (!shc_loc) {
+        return false;
+    }
+
+    stream[1] = 0x94000000 | (uint32_t) (shc_loc - stream - 1); // branch to our shellcode to determine if we should change platform or leave it
+
+    printf("%s: Patched platform check (shc b: 0x%x)\n", __FUNCTION__, 0x94000000 | (uint32_t) (shc_loc - stream - 1));
+
+    return true;
+}
+
+void patch_platform_check15(void *real_buf, void *dyld_buf, size_t dyld_len, uint32_t platform) {
+    _internal15_rbuf = real_buf;
     _internal15_platform = platform;
 
     // r2: /x 600240f900004029000040f901008052:e003c0ff0000c0ffe003c0ff1f00e0ff
@@ -51,9 +70,25 @@ void patch_platform_check15(void *dyld_buf, size_t dyld_len, uint32_t platform) 
 
     struct pf_patch32_t patch2 = pf_construct_patch32(matches2, masks2, sizeof(matches2) / sizeof(uint32_t), (void *) platform_check_callback15);
 
+    // r2: /x 000040f9e10300aa00000014:e003c0ffffffe0ff000000fc
+    uint32_t bv_matches[] = {
+        0xf9400000, // ldr x*, [x0, 0x10]
+        0xaa0003e1, // mov x1, x*
+        0x14000000  // b
+    };
+
+    uint32_t bv_masks[] = {
+        0xffc003e0,
+        0xffe0ffff,
+        0xfc000000
+    };
+
+    struct pf_patch32_t bv_patch = pf_construct_patch32(bv_matches, bv_masks, sizeof(bv_matches) / sizeof(uint32_t), (void *) platform_check_callback15_bv);
+
     struct pf_patch32_t patches[] = {
         patch,
-        patch2
+        patch2,
+        bv_patch
     };
 
     struct pf_patchset32_t patchset = pf_construct_patchset32(patches, sizeof(patches) / sizeof(struct pf_patch32_t), (void *) pf_find_maskmatch32);

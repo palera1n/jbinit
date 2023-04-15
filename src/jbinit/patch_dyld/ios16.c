@@ -5,7 +5,7 @@
 #endif
 
 #include "plooshfinder.h"
-#include "ios16_shc.h"
+#include "shellcode.h"
 
 int _internal16_platform = 0;
 void *_internal16_rbuf;

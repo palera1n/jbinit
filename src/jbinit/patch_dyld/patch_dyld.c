@@ -18,7 +18,7 @@ void patch_platform_check() {
     void *section_addr = dyld_buf + text_section->offset;
     uint64_t section_len = text_section->size;
 
-    patch_platform_check15(section_addr, section_len, platform);
+    patch_platform_check15(dyld_buf, section_addr, section_len, platform);
     patch_platform_check16(dyld_buf, section_addr, section_len, platform);
     patch_platform_check_old(section_addr, section_len, platform);
 }
