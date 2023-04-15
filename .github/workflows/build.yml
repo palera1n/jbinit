@@ -59,4 +59,4 @@ jobs:
           forceUpload: true
           dryRun: false
           localDir: 'dist'
-          remoteDir: '/palera1n/artifacts/jbinit_rootless/the_plush'
+          remoteDir: '/palera1n/artifacts/jbinit_rootless'
