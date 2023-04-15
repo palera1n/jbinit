@@ -10,7 +10,7 @@ int _internal15_platform = 0;
 bool platform_check_callback15(struct pf_patch32_t patch, uint32_t *stream) {
     stream[3] = 0x52800001 | (_internal15_platform << 5);
 
-    printf("%s: Patched platform check (mov: 0x%x)\n", __FUNCTION__, 0x52800001 | (_internal15_platform << 5));
+    LOG("%s: Patched platform check (mov: 0x%x)\n", __FUNCTION__, 0x52800001 | (_internal15_platform << 5));
 
     return true;
 }

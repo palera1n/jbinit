@@ -30,7 +30,7 @@ uint32_t *get_shc_region(void *buf) {
 
 void copy_shc(int platform, char target_reg) {
     if (!shc_loc) {
-        printf("%s: No shellcode location!\n", __FUNCTION__);
+        LOG("%s: No shellcode location!\n", __FUNCTION__);
         return;
     }
 
