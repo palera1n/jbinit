@@ -29,9 +29,12 @@ bool platform_check_callback16_alt(struct pf_patch32_t patch, uint32_t *stream) 
 bool platform_check_callback16_bv(struct pf_patch32_t patch, uint32_t *stream) {
     uint32_t orig_ldp = stream[1];
     char target_reg = orig_ldp & 0x1f;
+    char ldr_reg = stream[2] & 0x1f;
+    char ldp_reg1 = (orig_ldp >> 5) & 0x1f;
+    char ldp_reg2 = (orig_ldp >> 10) & 0x1f;
 
     uint32_t *shc_loc = get_shc_region(_internal16_rbuf);
-    copy_shc(_internal16_platform, target_reg);
+    copy_shc(_internal16_platform, target_reg, ldp_reg1, ldr_reg, ldp_reg2);
 
     if (!shc_loc) {
         return false;
@@ -41,9 +44,6 @@ bool platform_check_callback16_bv(struct pf_patch32_t patch, uint32_t *stream) {
 
     // assemble the new ldp
     // we have to extract a lot of things for this to work properly
-    char ldr_reg = stream[2] & 0x1f;
-    char ldp_reg1 = (orig_ldp >> 5) & 0x1f;
-    char ldp_reg2 = (orig_ldp >> 10) & 0x1f;
     char ldp_imm = (orig_ldp >> 13) & 0x7f;
     char new_imm = ldp_imm + 4;
 
