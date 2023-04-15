@@ -27,36 +27,16 @@ bool platform_check_callback16_alt(struct pf_patch32_t patch, uint32_t *stream) 
 }
 
 bool platform_check_callback16_bv(struct pf_patch32_t patch, uint32_t *stream) {
-    uint32_t orig_ldp = stream[1];
-    char target_reg = orig_ldp & 0x1f;
-    char ldr_reg = stream[2] & 0x1f;
-    char ldp_reg1 = (orig_ldp >> 5) & 0x1f;
-    char ldp_reg2 = (orig_ldp >> 10) & 0x1f;
-
     uint32_t *shc_loc = get_shc_region(_internal16_rbuf);
-    copy_shc(_internal16_platform, target_reg, ldp_reg1, ldr_reg, ldp_reg2);
+    copy_shc(_internal16_platform);
 
     if (!shc_loc) {
         return false;
     }
 
-    stream[1] = 0x94000000 | (shc_loc - stream - 1); // branch to our shellcode to determine if we should change platform or leave it
+    stream[3] = 0x94000000 | (uint32_t) (shc_loc - stream - 3); // branch to our shellcode to determine if we should change platform or leave it
 
-    // assemble the new ldp
-    // we have to extract a lot of things for this to work properly
-    char ldp_imm = (orig_ldp >> 13) & 0x7f;
-    char new_imm = ldp_imm + 4;
-
-    uint32_t insert_imm = (new_imm >> 2) << 15;
-    uint32_t insert_reg1 = ldp_reg1 << 5;
-    uint32_t insert_reg2 = ldp_reg2;
-    uint32_t insert_reg3 = ldr_reg << 10;
-
-    uint32_t new_ldp = 0x29400000 | insert_imm | insert_reg1 | insert_reg2 | insert_reg3;
-
-    stream[2] = new_ldp;
-
-    LOG("%s: Patched platform check (shc b: 0x%x, ldp: 0x%x)\n", __FUNCTION__, 0x94000000 | (shc_loc - stream - 1), new_ldp);
+    LOG("%s: Patched platform check (shc b: 0x%x)\n", __FUNCTION__, 0x94000000 | (uint32_t) (shc_loc - stream - 1));
 
     return true;
 }
@@ -95,19 +75,19 @@ void patch_platform_check16(void *real_buf, void *dyld_buf, size_t dyld_len, uin
 
     struct pf_patch32_t patch2 = pf_construct_patch32(matches2, masks2, sizeof(matches2) / sizeof(uint32_t), (void *) platform_check_callback16_alt);
 
-    // r2: /x 600240f900004029000040b900000014:e003c0ff0000c0ff0000c0bf000000fc
+    // r2: /x 600240f900004029000040f9e10300aa:e003c0ff0000c0ffe003c0ffffffe0ff
     uint32_t bv_matches[] = {
         0xf9400260, // ldr x0, [x*, 0x20]
         0x29400000, // ldp
-        0xb9400000, // ldr x*, [x*, 0x10]
-        0x14000000  // b
+        0xf9400000, // ldr x*, [x0, 0x10]
+        0xaa0003e1  // mov x1, x*
     };
 
     uint32_t bv_masks[] = {
         0xffc003e0,
         0xffc00000,
-        0xbfc00000,
-        0xfc000000
+        0xffc003e0,
+        0xffe0ffff
     };
 
     struct pf_patch32_t bv_patch = pf_construct_patch32(bv_matches, bv_masks, sizeof(bv_matches) / sizeof(uint32_t), (void *) platform_check_callback16_bv);

@@ -4,6 +4,6 @@
 #include <jbinit.h>
 
 uint32_t *get_shc_region(void *buf);
-void copy_shc(int platform, char target_reg, char base_reg, char reg1, char reg2);
+void copy_shc(int platform);
 
 #endif

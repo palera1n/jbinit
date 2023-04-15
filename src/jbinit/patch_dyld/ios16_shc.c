@@ -28,30 +28,20 @@ uint32_t *get_shc_region(void *buf) {
     return shc_loc;
 }
 
-void copy_shc(int platform, char target_reg, char base_reg, char reg1, char reg2) {
+void copy_shc(int platform) {
     if (!shc_loc) {
         LOG("%s: No shellcode location!\n", __FUNCTION__);
         return;
     }
 
     uint32_t shellcode[] = {
-        0xb9400800, // ldr w{reg2}, [x{base}, 0x8]
-        0x52800000, // mov w{reg1}, {platform}
-        0x7100141f, // cmp w{reg2}, #5
-        0x1a80d000, // csel w{target}, w{reg1}, w{reg2}, le
+        0xd2800001, // mov x1, {plat}
+        0xf100151f, // cmp x8, 5
+        0x9a889021, // csel x1, x1, x8, ls
         ret
     };
 
-    uint32_t insert_base = base_reg << 5;
-    uint32_t insert_plat = platform << 5;
-    uint32_t insert_reg1 = reg1 << 5;
-    uint32_t insert_reg2 = reg2 << 5;
-
-    // insert the registers and values into the shellcode
-    shellcode[0] |= reg2 | insert_base;
-    shellcode[1] |= insert_plat | reg1;
-    shellcode[2] |= insert_reg2;
-    shellcode[3] |= target_reg | insert_reg1 | (reg2 << 16); 
+    shellcode[0] |= platform << 5;
 
     for (int i = 0; i < (sizeof(shellcode) / sizeof(uint32_t)); i++) {
         shc_loc[i] = shellcode[i];
