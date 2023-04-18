@@ -8,7 +8,7 @@ int jailbreak_obliterator()
   run("/cores/binpack/bin/rm", (char*[]){
       "/cores/binpack/bin/rm",
       "-rf",
-      "/var/jb",
+      // "/var/jb",
       "/var/lib",
       "/var/cache",
     NULL});
@@ -17,7 +17,6 @@ int jailbreak_obliterator()
   {
     printf("Obliterating jailbraek\n");
     char hash[97];
-    char prebootPath[150] = "/private/preboot/";
     memset(hash, '\0', sizeof(hash));
     int ret = get_boot_manifest_hash(hash);
     if (ret != 0)
@@ -58,20 +57,12 @@ int jailbreak_obliterator()
     }
 
     printf("Apps now unregistered\n");
-    strncat(prebootPath, hash, 150 - sizeof("/procursus") - sizeof("/private/preboot"));
-    strncat(prebootPath, "/procursus", 150 - 97 - sizeof("/private/preboot/"));
-    printf("prebootPath: %s\n", prebootPath);
-    printf("%lu\n", strlen(hash));
-    printf("%lu\n", strlen("/private/preboot/") + strlen(hash) + strlen("/procursus"));
-    // yeah we don't want rm -rf /private/preboot
-    assert(strlen(prebootPath) == strlen("/private/preboot/") + strlen(hash) + strlen("/procursus"));
     run("/cores/binpack/bin/rm", (char*[]){
         "/cores/binpack/bin/rm",
         "-rf",
         "/var/jb",
-        prebootPath,
-        "/var/lib",
-        "/var/cache",
+        // "/var/lib",
+        // "/var/cache",
         "/var/LIB",
         "/var/Liy",
         "/var/ulb",
@@ -81,6 +72,14 @@ int jailbreak_obliterator()
         "/var/local",
         NULL
       });
+    char hash_path[200] = "/private/preboot/";
+    strncat(hash_path, hash, 150 - sizeof("/private/preboot/"));
+    assert(strlen(hash_path) == strlen("/private/preboot/") + strlen(hash));
+    printf("hash_path: %s\n", hash_path);
+    run("/cores/binpack/usr/bin/find", (char*[]){
+      "/cores/binpack/usr/bin/find",
+      hash_path, "-name", "jb-*", "-type", "d", "-maxdepth", "1", "-exec", "/cores/binpack/bin/rm", "-rf", "{}", "+", NULL
+    });
     run("/cores/binpack/usr/bin/uicache", (char*[]){
         "/cores/binpack/usr/bin/uicache",
         "-af",

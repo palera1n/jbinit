@@ -133,6 +133,7 @@ bool get_safemode_spin();
 bool set_safemode_spin(bool val);
 int enable_non_default_system_apps();
 int get_dyld_platform();
+int move_rootless_if_required();
 
 const char* str_checkrain_flags(checkrain_option_t opt);
 const char* str_palerain_flags(checkrain_option_t opt);

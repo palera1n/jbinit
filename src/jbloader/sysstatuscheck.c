@@ -68,6 +68,8 @@ int jbloader_sysstatuscheck(int argc, char *argv[])
   if (!checkrain_option_enabled(jbloader_flags, jbloader_userspace_rebooted)) {
     remount(pinfo.rootdev);
   }
+  move_rootless_if_required();
+
   if (!checkrain_option_enabled(info.flags, checkrain_option_safemode) && 
     !checkrain_option_enabled(info.flags, checkrain_option_force_revert) 
     ) load_etc_rc_d();
