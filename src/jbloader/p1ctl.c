@@ -12,10 +12,11 @@ struct subcommand {
 };
 
 static struct subcommand commands[] = {
-    {"print", "prints kerninfo and paleinfo", "", "The print command prints a textual representation of kerninfo and paleinfo, including the flags", print_info},
-    {"help", "prints usage information", "[subcommand]", NULL, help_cmd},
+    {"print", "\tprints kerninfo and paleinfo", "", "The print command prints a textual representation of kerninfo and paleinfo, including the flags", print_info},
+    {"help", "\tprints usage information", "[subcommand]", NULL, help_cmd},
     {"palera1n_flags", "print or set palera1n flags", "[new flags]", "The palera1n_flags subcommand accept numerical input in [new flags]\nWith no arguments, it prints a hexadecimal representation of the flags.", palera1n_flags_main},
     {"checkra1n_flags", "print or set checkra1n flags", "[new_flags]", "The checkra1n_flags subcommand accept numerical input in [new flags]\nWith no arguments, it prints a hexadecimal representation of the flags.", checkra1n_flags_main },
+    {"print_bmhash", "print the boot manifest hash", "", "The print_bmhash command prints the boot manifest hash in uppercase.", print_boot_manifest_hash_main },
     {NULL, NULL, NULL}
 };
 

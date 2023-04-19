@@ -20,3 +20,14 @@ int get_boot_manifest_hash(char hash[97])
   }
   return 0;
 }
+
+int print_boot_manifest_hash_main(int argc, char* argv[]) {
+  char hash[97];
+  int ret = get_boot_manifest_hash(hash);
+  if (ret != 0) {
+    fprintf(stderr, "could not get boot manifest hash\n");
+    return ret;
+  }
+  printf("%s\n", hash);
+  return 0;
+}
