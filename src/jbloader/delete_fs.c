@@ -6,7 +6,7 @@
 kern_return_t DeleteAPFSVolumeWithRole(const char* volpath)
 {
     kern_return_t ret;
-    uint16_t role = 0;
+    int16_t role = 0;
 
     ret = APFSVolumeRole(volpath, &role, NULL);
     if(ret != KERN_SUCCESS)

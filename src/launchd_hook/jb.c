@@ -132,7 +132,7 @@ DYLD_INTERPOSE(my_xpc_dictionary_get_bool, xpc_dictionary_get_bool);
 int _my__NSGetExecutablePath(char* buf, uint32_t* bufsize) {
   if (getpid() != 1) return _NSGetExecutablePath(buf, bufsize);
   else if (*bufsize > sizeof("/cores/jbloader")) {
-    strncpy(buf, "/cores/jbloader", (size_t)(*bufsize));
+    snprintf(buf, (size_t)(*bufsize), "/cores/jbloader");
     return 0;
   } else {
     *bufsize = sizeof("/cores/jbloader");

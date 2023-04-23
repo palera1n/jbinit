@@ -104,7 +104,7 @@ int jbloader_launchd(int argc, char **argv)
   char *env = getenv("DYLD_INSERT_LIBRARIES");
   if (env == NULL)
   {
-    strncpy(newenv, "DYLD_INSERT_LIBRARIES=/cores/jb.dylib", 200);
+    snprintf(newenv, 200, "DYLD_INSERT_LIBRARIES=/cores/jb.dylib");
   }
   else if (strstr(env, "/cores/jb.dylib") == NULL)
   {
