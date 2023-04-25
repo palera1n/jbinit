@@ -126,7 +126,6 @@ bool my_xpc_dictionary_get_bool(xpc_object_t dictionary, const char *key) {
   if (!strcmp(key, "LogPerformanceStatistics")) return true;
   else return xpc_dictionary_get_bool(dictionary, key);
 }
-
 DYLD_INTERPOSE(my_xpc_dictionary_get_bool, xpc_dictionary_get_bool);
 
 int _my__NSGetExecutablePath(char* buf, uint32_t* bufsize) {
@@ -141,6 +140,70 @@ int _my__NSGetExecutablePath(char* buf, uint32_t* bufsize) {
   return 0;
 }
 DYLD_INTERPOSE(_my__NSGetExecutablePath, _NSGetExecutablePath);
+
+#ifdef CFPREFSD_HOOK
+int posix_spawnp(pid_t *pid,
+                 const char *path,
+                 const posix_spawn_file_actions_t *action,
+                 const posix_spawnattr_t *attr,
+                 char *const argv[], char *const envp[]);
+int hook_posix_spawnp(pid_t *pid,
+                      const char *path,
+                      const posix_spawn_file_actions_t *action,
+                      const posix_spawnattr_t *attr,
+                      char *const argv[], char *envp[])
+{
+    if(!strcmp(argv[0], "xpcproxy"))
+    {
+        if(!strcmp(argv[1], "com.apple.cfprefsd.xpc.daemon"))
+        {
+            int envcnt = 0;
+            while (envp[envcnt] != NULL)
+            {
+                envcnt++;
+            }
+            
+            char** newenvp = malloc((envcnt + 2) * sizeof(char **));
+            int j = 0;
+            char* currentenv = NULL;
+            for (int i = 0; i < envcnt; i++){
+                if (strstr(envp[j], "DYLD_INSERT_LIBRARIES") != NULL)
+                {
+                    currentenv = envp[j];
+                    continue;
+                }
+                newenvp[i] = envp[j];
+                j++;
+            }
+            
+            char *newlib = "/cores/injector.dylib";
+            char *inj = NULL;
+            if(currentenv)
+            {
+                inj = malloc(strlen(currentenv) + 1 + strlen(newlib) + 1);
+                inj[0] = '\0';
+                strcat(inj, currentenv);
+                strcat(inj, ":");
+                strcat(inj, newlib);
+            }
+            else
+            {
+                inj = malloc(strlen("DYLD_INSERT_LIBRARIES=") + strlen(newlib) + 1);
+                inj[0] = '\0';
+                strcat(inj, "DYLD_INSERT_LIBRARIES=");
+                strcat(inj, newlib);
+            }
+            newenvp[j] = inj;
+            newenvp[j + 1] = NULL;
+            
+            int ret = posix_spawnp(pid, path, action, attr, argv, newenvp);
+            return ret;
+        }
+    }
+    return posix_spawnp(pid, path, action, attr, argv, envp);
+}
+DYLD_INTERPOSE(hook_posix_spawnp, posix_spawnp);
+#endif
 
 void DoNothingHandler(int __unused _) {}
 
