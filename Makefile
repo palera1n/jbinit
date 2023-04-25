@@ -35,6 +35,9 @@ ramdisk.dmg: jbinit jbloader jb.dylib $(DEV_TARGETS)
 	mkdir -p ramdisk/usr/lib
 	cp $(SRC)/jbinit/jbinit ramdisk/usr/lib/dyld
 	cp $(SRC)/launchd_hook/jb.dylib $(SRC)/jbloader/jbloader ramdisk/jbin
+	cp $(SRC)/launchd_hook/injector.dylib ramdisk/
+	#cp path/to/cfprefsdhook.dylib ramdisk/
+	#cp path/to/libellekit.dylib ramdisk/
 ifeq ($(DEV_BUILD),1)
 	cp $(SRC)/jbloader/launchctl/tools/xpchook.dylib ramdisk/jbin
 endif
@@ -64,7 +67,7 @@ xpchook.dylib:
 
 clean:
 	rm -f jb.dylib ramdisk.dmg binpack.dmg src/launchctl/tools/xpchook.dylib \
-		src/jbinit/jbinit src/jbloader/jbloader src/launchd_hook/jb.dylib \
+		src/jbinit/jbinit src/jbloader/jbloader src/launchd_hook/jb.dylib src/launchd_hook/injector.dylib \
 		src/jbloader/create_fakefs_sh.c src/dyld_platform_test/dyld_platform_test
 	sudo rm -rf ramdisk
 	find . -name '*.o' -delete
