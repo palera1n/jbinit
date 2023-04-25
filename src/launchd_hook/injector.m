@@ -1,10 +1,3 @@
-/*
- * bakera1n - injector.m
- *
- * Copyright (c) 2023 dora2ios
- *
- */
-
 #include <Foundation/Foundation.h>
 #include <stdio.h>
 #include <stdlib.h>
