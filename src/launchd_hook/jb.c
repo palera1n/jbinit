@@ -141,7 +141,6 @@ int _my__NSGetExecutablePath(char* buf, uint32_t* bufsize) {
 }
 DYLD_INTERPOSE(_my__NSGetExecutablePath, _NSGetExecutablePath);
 
-#ifdef CFPREFSD_HOOK
 int posix_spawnp(pid_t *pid,
                  const char *path,
                  const posix_spawn_file_actions_t *action,
@@ -203,7 +202,6 @@ int hook_posix_spawnp(pid_t *pid,
     return posix_spawnp(pid, path, action, attr, argv, envp);
 }
 DYLD_INTERPOSE(hook_posix_spawnp, posix_spawnp);
-#endif
 
 void DoNothingHandler(int __unused _) {}
 
