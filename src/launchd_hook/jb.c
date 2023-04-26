@@ -151,10 +151,11 @@ int hook_posix_spawnp(pid_t *pid,
                       const posix_spawn_file_actions_t *action,
                       const posix_spawnattr_t *attr,
                       char *const argv[], char *envp[]) {
-    char *inj = NULL;
+
     if(!strcmp(argv[0], "xpcproxy")) {
         if(!strcmp(argv[1], "com.apple.cfprefsd.xpc.daemon"))
         {
+            char *inj = NULL;
             int envcnt = 0;
             while (envp[envcnt] != NULL)
             {
@@ -199,12 +200,11 @@ int hook_posix_spawnp(pid_t *pid,
             newenvp[j + 1] = NULL;
             
             int ret = posix_spawnp(pid, path, action, attr, argv, newenvp);
+            if (inj != NULL) free(inj);
             return ret;
         }
     }
-    int ret = posix_spawnp(pid, path, action, attr, argv, envp);
-    if (inj != NULL) free(inj);
-    return ret;
+    return posix_spawnp(pid, path, action, attr, argv, envp);
 }
 DYLD_INTERPOSE(hook_posix_spawnp, posix_spawnp);
 
