@@ -18,6 +18,12 @@
 #include <mach-o/dyld.h>
 #include <signal.h>
 
+bool do_pspawn_hook = false;
+struct dyld_interpose_tuple {
+	const void* replacement;
+	const void* replacee;
+};
+void dyld_dynamic_interpose(const struct mach_header* mh, const struct dyld_interpose_tuple array[], size_t count);
 
 int sandbox_check_by_audit_token(audit_token_t au, const char *operation, int sandbox_filter_type, ...);
 
@@ -72,6 +78,10 @@ extern const struct _xpc_type_s _xpc_type_string;
 #define DYLD_INTERPOSE(_replacment,_replacee) \
 __attribute__((used)) static struct{ const void* replacment; const void* replacee; } _interpose_##_replacee \
 __attribute__ ((section ("__DATA,__interpose"))) = { (const void*)(unsigned long)&_replacment, (const void*)(unsigned long)&_replacee };
+
+void spin() {
+  while(1) {sleep(5);}
+}
 
 /*
   Launch our Daemon *correctly*
@@ -151,7 +161,7 @@ int hook_posix_spawnp(pid_t *pid,
                       const posix_spawn_file_actions_t *action,
                       const posix_spawnattr_t *attr,
                       char *const argv[], char *envp[]) {
-  if (strcmp(argv[0], "xpcproxy") || argv[1] == NULL || strcmp(argv[1], "com.apple.cfprefsd.xpc.daemon"))
+  if (do_pspawn_hook == false || strcmp(argv[0], "xpcproxy") || argv[1] == NULL || strcmp(argv[1], "com.apple.cfprefsd.xpc.daemon"))
     return posix_spawnp(pid, path, action, attr, argv, envp);
     char *inj = NULL;
     int envcnt = 0;
@@ -195,8 +205,8 @@ int hook_posix_spawnp(pid_t *pid,
     if (inj != NULL) free(inj);
     if (currentenv != NULL) free(currentenv);
     return ret;
-    
 }
+
 DYLD_INTERPOSE(hook_posix_spawnp, posix_spawnp);
 
 void DoNothingHandler(int __unused _) {}
@@ -206,6 +216,10 @@ static void customConstructor(int argc, const char **argv){
   int fd_console = open("/dev/console",O_RDWR,0);
   dprintf(fd_console,"================ Hello from jb.dylib ================ \n");
   signal(SIGBUS, DoNothingHandler);
+  if (access("/cores/injector.dylib", F_OK) == 0) {
+    do_pspawn_hook = true;
+  }
+  dprintf(fd_console, "do_pspawn_hook: %d\n", do_pspawn_hook);
   dprintf(fd_console,"========= Goodbye from jb.dylib constructor ========= \n");
   close(fd_console);
 }

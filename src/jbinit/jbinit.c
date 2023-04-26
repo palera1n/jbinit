@@ -53,7 +53,9 @@ int main()
   void* dylib_data = read_file("/jbin/jb.dylib", &dylib_size);
     
   size_t injector_dylib_size;
-  void* injector_dylib_data = read_file("/jbin/injector.dylib", &injector_dylib_size);
+  void* injector_dylib_data;
+  if (!checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
+    injector_dylib_data = read_file("/jbin/injector.dylib", &injector_dylib_size);
 
 #ifdef ASAN
   size_t asan_size;
@@ -93,7 +95,8 @@ int main()
   patch_dyld();
   write_file("/cores/jbloader", jbloader_data, jbloader_size);
   write_file("/cores/jb.dylib", dylib_data, dylib_size);
-  write_file("/cores/injector.dylib", injector_dylib_data, injector_dylib_size);
+  if (!checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
+    write_file("/cores/injector.dylib", injector_dylib_data, injector_dylib_size);
 #ifdef ASAN
   write_file("/cores/libclang_rt.asan_ios_dynamic.dylib", asan_data, asan_size);
   write_file("/cores/libclang_rt.ubsan_ios_dynamic.dylib", ubsan_data, ubsan_size);
