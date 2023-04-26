@@ -58,7 +58,7 @@ int hook_posix_spawnp(pid_t *pid,
             j++;
         }
         
-        char *newlib = "/cores/cfprefsdhook.dylib";
+        char *newlib = "/cores/binpack/usr/lib/rootlesshooks.dylib";
         char *inj = NULL;
         if(currentenv)
         {

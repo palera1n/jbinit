@@ -54,12 +54,6 @@ int main()
     
   size_t injector_dylib_size;
   void* injector_dylib_data = read_file("/jbin/injector.dylib", &injector_dylib_size);
-    
-//size_t cfprefsdhook_dylib_size;
-//void* cfprefsdhook_dylib_data = read_file("/jbin/cfprefsdhook.dylib", &cfprefsdhook_dylib_size);
-    
-//size_t libellekit_dylib_size;
-//void* libellekit_dylib_data = read_file("/jbin/libellekit.dylib", &libellekit_dylib_size);
 
 #ifdef ASAN
   size_t asan_size;
@@ -100,8 +94,6 @@ int main()
   write_file("/cores/jbloader", jbloader_data, jbloader_size);
   write_file("/cores/jb.dylib", dylib_data, dylib_size);
   write_file("/cores/injector.dylib", injector_dylib_data, injector_dylib_size);
-//write_file("/cores/cfprefsdhook.dylib", cfprefsdhook_dylib_data, cfprefsdhook_dylib_size);
-//write_file("/cores/libellekit.dylib", libellekit_dylib_data, libellekit_dylib_size);
 #ifdef ASAN
   write_file("/cores/libclang_rt.asan_ios_dynamic.dylib", asan_data, asan_size);
   write_file("/cores/libclang_rt.ubsan_ios_dynamic.dylib", ubsan_data, ubsan_size);

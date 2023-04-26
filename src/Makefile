@@ -10,7 +10,6 @@ jbloader:
 	$(MAKE) -C $(SRC)/jbloader
 
 launchd_hook:
-	$(MAKE) -C $(SRC)/launchd_hook
-
+	$(MAKE) -C $(SRC)/launchd_hook jb.dylib injector.dylib
 
 .PHONY: all $(SUBDIRS)

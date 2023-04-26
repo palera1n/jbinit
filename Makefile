@@ -15,14 +15,23 @@ export SRC CC CFLAGS STRIP I_N_T
 
 all: ramdisk.dmg
 
-binpack.dmg: binpack loader.dmg
-	rm -f ./binpack.dmg
-	sudo rm -rf binpack/usr/share
+binpack.dmg: binpack.tar loader.dmg hook_all
+	sudo rm -rf ./binpack.dmg binpack
+	sudo tar --preserve-permissions -xf binpack.tar
+	sudo chown $${UID}:$${GID} .
+	sudo mv cores/binpack .
+	sudo rm -rf binpack/usr/share cores
 	sudo ln -sf /cores/jbloader binpack/usr/sbin/p1ctl
 	sudo mkdir -p binpack/Applications
+	sudo mkdir -p binpack/usr/lib
+	sudo mkdir -p binpack/Library/LaunchDaemons
+	sudo cp -a dropbear-plist/*.plist binpack/Library/LaunchDaemons
+	sudo cp src/launchd_hook/rootlesshooks.dylib binpack/usr/lib
+	sudo cp src/launchd_hook/libellekit.dylib binpack/usr/lib/libelegantlowlevelelements.dylib
 	sudo cp loader.dmg binpack
 	sudo chown -R 0:0 binpack
 	hdiutil create -size 8m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -volname palera1nfs -fs HFS+ ./binpack.dmg
+	sudo rm -rf binpack
 
 ramdisk.dmg: jbinit jbloader jb.dylib $(DEV_TARGETS)
 	$(MAKE) -C $(SRC)
@@ -36,8 +45,6 @@ ramdisk.dmg: jbinit jbloader jb.dylib $(DEV_TARGETS)
 	cp $(SRC)/jbinit/jbinit ramdisk/usr/lib/dyld
 	cp $(SRC)/launchd_hook/jb.dylib $(SRC)/jbloader/jbloader ramdisk/jbin
 	cp $(SRC)/launchd_hook/injector.dylib ramdisk/jbin
-	#cp path/to/cfprefsdhook.dylib ramdisk/jbin
-	#cp path/to/libellekit.dylib ramdisk/jbin
 ifeq ($(DEV_BUILD),1)
 	cp $(SRC)/jbloader/launchctl/tools/xpchook.dylib ramdisk/jbin
 endif
@@ -66,11 +73,15 @@ xpchook.dylib:
 	$(MAKE) -C src/jbloader xpchook.dylib
 
 clean:
-	rm -f jb.dylib ramdisk.dmg binpack.dmg src/launchctl/tools/xpchook.dylib \
+	rm -f jb.dylib ramdisk.dmg binpack.dmg src/launchctl/tools/xpchook.dylib src/launchd_hook/libellekit.dylib \
 		src/jbinit/jbinit src/jbloader/jbloader src/launchd_hook/jb.dylib src/launchd_hook/injector.dylib \
-		src/jbloader/create_fakefs_sh.c src/dyld_platform_test/dyld_platform_test
-	sudo rm -rf ramdisk
+		src/jbloader/create_fakefs_sh.c src/dyld_platform_test/dyld_platform_test src/launchd_hook/rootlesshooks.dylib
+	sudo rm -rf ramdisk binpack cores
+	rm -rf src/launchd_hook/ellekit/build src/launchd_hook/rootlesshooks/.theos
 	find . -name '*.o' -delete
 	rm -f ramdisk.img4
 
-.PHONY: all clean jbinit jbloader jb.dylib dyld_platform_test xpchook.dylib binpack.dmg
+hook_all:
+	$(MAKE) -C src/launchd_hook all
+
+.PHONY: all clean jbinit jbloader jb.dylib dyld_platform_test xpchook.dylib binpack.dmg hook_all
