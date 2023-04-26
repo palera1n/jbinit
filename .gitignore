@@ -14,5 +14,5 @@ palera1n.ipa
 *.dSYM
 *.dSYM.*
 .irecovery
-src/launchd_hook/libellekit.dylib
+src/launchd_hook/libellekit.a
 src/launchd_hook/rootlesshooks.dylib

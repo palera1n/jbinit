@@ -11,7 +11,7 @@ ifeq ($(DEV_BUILD),1)
 CFLAGS += -DDEV_BUILD
 DEV_TARGETS += xpchook.dylib
 endif
-export SRC CC CFLAGS STRIP I_N_T
+export SRC CC CFLAGS LDFLAGS STRIP I_N_T
 
 all: ramdisk.dmg
 
@@ -27,7 +27,6 @@ binpack.dmg: binpack.tar loader.dmg hook_all
 	sudo mkdir -p binpack/Library/LaunchDaemons
 	sudo cp -a dropbear-plist/*.plist binpack/Library/LaunchDaemons
 	sudo cp src/launchd_hook/rootlesshooks.dylib binpack/usr/lib
-	sudo cp src/launchd_hook/libellekit.dylib binpack/usr/lib/libelegantlowlevelelements.dylib
 	sudo cp loader.dmg binpack
 	sudo chown -R 0:0 binpack
 	hdiutil create -size 8m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -volname palera1nfs -fs HFS+ ./binpack.dmg
@@ -73,7 +72,7 @@ xpchook.dylib:
 	$(MAKE) -C src/jbloader xpchook.dylib
 
 clean:
-	rm -f jb.dylib ramdisk.dmg binpack.dmg src/launchctl/tools/xpchook.dylib src/launchd_hook/libellekit.dylib \
+	rm -f jb.dylib ramdisk.dmg binpack.dmg src/launchctl/tools/xpchook.dylib src/launchd_hook/libellekit.a \
 		src/jbinit/jbinit src/jbloader/jbloader src/launchd_hook/jb.dylib src/launchd_hook/injector.dylib \
 		src/jbloader/create_fakefs_sh.c src/dyld_platform_test/dyld_platform_test src/launchd_hook/rootlesshooks.dylib
 	sudo rm -rf ramdisk binpack cores
