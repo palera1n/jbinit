@@ -104,6 +104,14 @@ extern uint32_t jbloader_flags;
 extern uint32_t p1ctl_flags;
 extern int dyld_platform;
 
+/*
+ * Usage Notes:
+ * The first argument is a CFStringRef
+ * Other arguments are just plain types like int and char*,
+ * not CoreFoundation types.
+*/
+void NSLog(CFStringRef format, ...);
+
 launchctl_cmd_main bootstrap_cmd;
 launchctl_cmd_main load_cmd;
 int run(const char *cmd, char *const *args);

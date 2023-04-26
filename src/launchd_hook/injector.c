@@ -1,4 +1,4 @@
-#include <Foundation/Foundation.h>
+#include <CoreFoundation/CoreFoundation.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -21,6 +21,8 @@
 #define DYLD_INTERPOSE(_replacment, _replacee) \
 __attribute__((used)) static struct{ const void* replacment; const void* replacee; } _interpose_##_replacee \
 __attribute__ ((section ("__DATA,__interpose"))) = { (const void*)(unsigned long)&_replacment, (const void*)(unsigned long)&_replacee };
+
+void NSLog(CFStringRef format, ...);
 
 typedef  void *posix_spawnattr_t;
 typedef  void *posix_spawn_file_actions_t;
@@ -87,5 +89,5 @@ DYLD_INTERPOSE(hook_posix_spawnp, posix_spawnp);
 __attribute__((constructor))
 static void customConstructor(int argc, const char **argv)
 {
-    //NSLog(@"hello injector! (pid=%d)", getpid());
+    NSLog(CFSTR("hello injector! (pid=%d)"), getpid());
 }

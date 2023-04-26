@@ -76,7 +76,7 @@ __attribute__ ((section ("__DATA,__interpose"))) = { (const void*)(unsigned long
 /*
   Launch our Daemon *correctly*
 */
-xpc_object_t my_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
+xpc_object_t hook_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
   xpc_object_t retval = xpc_dictionary_get_value(dict,key);
   if (strcmp(key,"LaunchDaemons") == 0) {
     xpc_object_t submitJob = xpc_dictionary_create(NULL, NULL, 0);
@@ -120,15 +120,15 @@ xpc_object_t my_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
   }
   return retval;
 }
-DYLD_INTERPOSE(my_xpc_dictionary_get_value, xpc_dictionary_get_value);
+DYLD_INTERPOSE(hook_xpc_dictionary_get_value, xpc_dictionary_get_value);
 
-bool my_xpc_dictionary_get_bool(xpc_object_t dictionary, const char *key) {
+bool hook_xpc_dictionary_get_bool(xpc_object_t dictionary, const char *key) {
   if (!strcmp(key, "LogPerformanceStatistics")) return true;
   else return xpc_dictionary_get_bool(dictionary, key);
 }
-DYLD_INTERPOSE(my_xpc_dictionary_get_bool, xpc_dictionary_get_bool);
+DYLD_INTERPOSE(hook_xpc_dictionary_get_bool, xpc_dictionary_get_bool);
 
-int _my__NSGetExecutablePath(char* buf, uint32_t* bufsize) {
+int hook__NSGetExecutablePath(char* buf, uint32_t* bufsize) {
   if (getpid() != 1) return _NSGetExecutablePath(buf, bufsize);
   else if (*bufsize > sizeof("/cores/jbloader")) {
     snprintf(buf, (size_t)(*bufsize), "/cores/jbloader");
@@ -139,7 +139,7 @@ int _my__NSGetExecutablePath(char* buf, uint32_t* bufsize) {
   }
   return 0;
 }
-DYLD_INTERPOSE(_my__NSGetExecutablePath, _NSGetExecutablePath);
+DYLD_INTERPOSE(hook__NSGetExecutablePath, _NSGetExecutablePath);
 
 int posix_spawnp(pid_t *pid,
                  const char *path,
@@ -150,10 +150,9 @@ int hook_posix_spawnp(pid_t *pid,
                       const char *path,
                       const posix_spawn_file_actions_t *action,
                       const posix_spawnattr_t *attr,
-                      char *const argv[], char *envp[])
-{
-    if(!strcmp(argv[0], "xpcproxy"))
-    {
+                      char *const argv[], char *envp[]) {
+    char *inj = NULL;
+    if(!strcmp(argv[0], "xpcproxy")) {
         if(!strcmp(argv[1], "com.apple.cfprefsd.xpc.daemon"))
         {
             int envcnt = 0;
@@ -176,21 +175,25 @@ int hook_posix_spawnp(pid_t *pid,
             }
             
             char *newlib = "/cores/injector.dylib";
-            char *inj = NULL;
             if(currentenv)
             {
-                inj = malloc(strlen(currentenv) + 1 + strlen(newlib) + 1);
-                inj[0] = '\0';
-                strcat(inj, currentenv);
-                strcat(inj, ":");
-                strcat(inj, newlib);
+                size_t inj_len = strlen(currentenv) + 1 + strlen(newlib) + 1;
+                inj = malloc(inj_len);
+                if (inj == NULL) {
+                  perror(NULL);
+                  abort();
+                }
+                snprintf(inj, inj_len, "%s:%s", currentenv, newlib);
             }
             else
             {
-                inj = malloc(strlen("DYLD_INSERT_LIBRARIES=") + strlen(newlib) + 1);
-                inj[0] = '\0';
-                strcat(inj, "DYLD_INSERT_LIBRARIES=");
-                strcat(inj, newlib);
+                size_t inj_len = strlen("DYLD_INSERT_LIBRARIES=") + strlen(newlib) + 1;
+                inj = malloc(inj_len);
+                if (inj == NULL) {
+                  perror(NULL);
+                  abort();
+                }
+                snprintf(inj, inj_len, "DYLD_INSERT_LIBRARIES=%s", newlib);
             }
             newenvp[j] = inj;
             newenvp[j + 1] = NULL;
@@ -199,7 +202,9 @@ int hook_posix_spawnp(pid_t *pid,
             return ret;
         }
     }
-    return posix_spawnp(pid, path, action, attr, argv, envp);
+    int ret = posix_spawnp(pid, path, action, attr, argv, envp);
+    if (inj != NULL) free(inj);
+    return ret;
 }
 DYLD_INTERPOSE(hook_posix_spawnp, posix_spawnp);
 
@@ -210,7 +215,6 @@ static void customConstructor(int argc, const char **argv){
   int fd_console = open("/dev/console",O_RDWR,0);
   dprintf(fd_console,"================ Hello from jb.dylib ================ \n");
   signal(SIGBUS, DoNothingHandler);
-  signal(SIGEMT, DoNothingHandler);
   dprintf(fd_console,"========= Goodbye from jb.dylib constructor ========= \n");
   close(fd_console);
 }
