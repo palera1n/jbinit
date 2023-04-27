@@ -13,11 +13,11 @@ int get_boot_manifest_hash(char hash[97])
   }
   length = CFDataGetLength(manifestHash);
   bytes = CFDataGetBytePtr(manifestHash);
-  CFRelease(manifestHash);
   for (int i = 0; i < length; i++)
   {
     snprintf(&hash[i * 2], 3, "%02X", bytes[i]);
   }
+  CFRelease(manifestHash);
   return 0;
 }
 
