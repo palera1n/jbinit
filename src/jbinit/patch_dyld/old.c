@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #endif
 #include "plooshfinder.h"
+#include "shellcode.h"
 
 int _internal_old_platform = 0;
 void *_internal_old_rbuf;
