@@ -1,2 +1,2 @@
-jb.dylib
-injector.dylib
+*.dylib
+*.a

@@ -14,5 +14,3 @@ palera1n.ipa
 *.dSYM
 *.dSYM.*
 .irecovery
-src/systemhooks/libellekit.a
-src/systemhooks/rootlesshooks.dylib
