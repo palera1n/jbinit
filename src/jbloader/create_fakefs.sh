@@ -133,6 +133,9 @@ else
         fi
     done
 fi
+
+/cores/binpack/usr/bin/snaputil -c orig-fs /cores/fs/fake
+
 echo "===========================";
 echo "** syncing filesystems **";
 echo "===========================";
