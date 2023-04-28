@@ -3,6 +3,6 @@
 #include <stdint.h>
 #include <jbinit.h>
 
-void patch_platform_check_old(void *dyld_buf, size_t dyld_len, uint32_t platform);
+void patch_platform_check_old(void *real_buf, void *dyld_buf, size_t dyld_len, uint32_t platform);
 
 #endif

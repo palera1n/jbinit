@@ -127,7 +127,7 @@ void pf_find_maskmatch64(void *buf, size_t size, struct pf_patchset64_t patchset
 
 uint32_t *pf_find_next(uint32_t *stream, uint32_t count, uint32_t match, uint32_t mask) {
     uint32_t *find_stream = 0;
-    for (int i = 1; i < count + 1; i++) {
+    for (int i = 0; i < count; i++) {
         if ((stream[i] & mask) == match) {
             find_stream = stream + i;
             break;
@@ -140,7 +140,6 @@ uint32_t *pf_find_prev(uint32_t *stream, uint32_t count, uint32_t match, uint32_
     uint32_t *find_stream = 0;
     for (int neg_count = -count; count > 0; count--) {
         int ind = neg_count + count;
-        ind--;
         if ((stream[ind] & mask) == match) {
             find_stream = stream + ind;
             break;
