@@ -24,8 +24,8 @@ ellekit/build/Build/Products/Release-iphoneos/libellekit.a:
 			EXECUTABLE_SUFFIX=".a" \
 			LLVM_LTO=YES
 
-cfprefsd.o: cfprefsd.m
-	$(CC) $(CFLAGS) $(LDFLAGS) -flto=thin cfprefsd.m -c -miphoneos-version-min=15.0 -arch arm64 -Os -Wall -Wextra -Wno-unused-parameter
+cfprefsd.o: cfprefsd.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -flto=thin cfprefsd.c -c -miphoneos-version-min=15.0 -arch arm64 -Os -Wall -Wextra -Wno-unused-parameter
 
 rootlesshooks.dylib: cfprefsd.o libellekit.a
 	swiftc -Osize cfprefsd.o libellekit.a -lto=llvm-thin --target=arm64-apple-ios15.0 -sdk $(shell xcrun -sdk iphoneos --show-sdk-path) -Osize -Xlinker -dead_strip -emit-library -framework Foundation -framework CoreFoundation -o rootlesshooks.dylib
