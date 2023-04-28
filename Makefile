@@ -26,7 +26,7 @@ binpack.dmg: binpack.tar loader.dmg hook_all
 	sudo mkdir -p binpack/usr/lib
 	sudo mkdir -p binpack/Library/LaunchDaemons
 	sudo cp -a dropbear-plist/*.plist binpack/Library/LaunchDaemons
-	sudo cp src/launchd_hook/rootlesshooks.dylib binpack/usr/lib
+	sudo cp src/systemhooks/rootlesshooks.dylib binpack/usr/lib
 	sudo cp loader.dmg binpack
 	sudo chown -R 0:0 binpack
 	hdiutil create -size 8m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -volname palera1nfs -fs HFS+ ./binpack.dmg
@@ -42,8 +42,8 @@ ramdisk.dmg: jbinit jbloader jb.dylib $(DEV_TARGETS)
 	ln -s /sbin/launchd ramdisk/jbin/launchd
 	mkdir -p ramdisk/usr/lib
 	cp $(SRC)/jbinit/jbinit ramdisk/usr/lib/dyld
-	cp $(SRC)/launchd_hook/jb.dylib $(SRC)/jbloader/jbloader ramdisk/jbin
-	cp $(SRC)/launchd_hook/injector.dylib ramdisk/jbin
+	cp $(SRC)/systemhooks/jb.dylib $(SRC)/jbloader/jbloader ramdisk/jbin
+	cp $(SRC)/systemhooks/injector.dylib ramdisk/jbin
 ifeq ($(DEV_BUILD),1)
 	cp $(SRC)/jbloader/launchctl/tools/xpchook.dylib ramdisk/jbin
 endif
@@ -72,15 +72,15 @@ xpchook.dylib:
 	$(MAKE) -C src/jbloader xpchook.dylib
 
 clean:
-	rm -f jb.dylib ramdisk.dmg binpack.dmg src/launchctl/tools/xpchook.dylib src/launchd_hook/libellekit.a \
-		src/jbinit/jbinit src/jbloader/jbloader src/launchd_hook/jb.dylib src/launchd_hook/injector.dylib \
-		src/jbloader/create_fakefs_sh.c src/dyld_platform_test/dyld_platform_test src/launchd_hook/rootlesshooks.dylib
+	rm -f jb.dylib ramdisk.dmg binpack.dmg src/launchctl/tools/xpchook.dylib src/systemhooks/libellekit.a \
+		src/jbinit/jbinit src/jbloader/jbloader src/systemhooks/jb.dylib src/systemhooks/injector.dylib \
+		src/jbloader/create_fakefs_sh.c src/dyld_platform_test/dyld_platform_test src/systemhooks/rootlesshooks.dylib
 	sudo rm -rf ramdisk binpack cores
-	rm -rf src/launchd_hook/ellekit/build src/launchd_hook/rootlesshooks/.theos
+	rm -rf src/systemhooks/ellekit/build src/systemhooks/rootlesshooks/.theos
 	find . -name '*.o' -delete
 	rm -f ramdisk.img4
 
 hook_all:
-	$(MAKE) -C src/launchd_hook all
+	$(MAKE) -C src/systemhooks all
 
 .PHONY: all clean jbinit jbloader jb.dylib dyld_platform_test xpchook.dylib binpack.dmg hook_all

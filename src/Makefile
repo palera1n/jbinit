@@ -1,4 +1,4 @@
-SUBDIRS = jbinit jbloader launchd_hook
+SUBDIRS = jbinit jbloader systemhooks
 
 all: $(SUBDIRS)
 	@echo $(SUBDIRS)
@@ -9,7 +9,7 @@ jbinit:
 jbloader:
 	$(MAKE) -C $(SRC)/jbloader
 
-launchd_hook:
-	$(MAKE) -C $(SRC)/launchd_hook jb.dylib injector.dylib
+systemhooks:
+	$(MAKE) -C $(SRC)/systemhooks jb.dylib injector.dylib
 
 .PHONY: all $(SUBDIRS)
