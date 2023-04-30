@@ -77,7 +77,7 @@ xpchook.dylib:
 	$(MAKE) -C src/jbloader xpchook.dylib
 
 clean:
-	rm -f jb.dylib ramdisk.dmg binpack.dmg src/launchctl/tools/xpchook.dylib src/systemhooks/libellekit.a \
+	rm -f jb.dylib ramdisk.dmg loader.dmg binpack.dmg src/launchctl/tools/xpchook.dylib src/systemhooks/libellekit.a \
 		src/jbinit/jbinit src/jbloader/jbloader src/systemhooks/jb.dylib src/systemhooks/injector.dylib \
 		src/jbloader/create_fakefs_sh.c src/dyld_platform_test/dyld_platform_test src/systemhooks/rootlesshooks.dylib
 	sudo rm -rf ramdisk binpack cores
