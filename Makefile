@@ -11,6 +11,15 @@ ifeq ($(DEV_BUILD),1)
 CFLAGS += -DDEV_BUILD
 DEV_TARGETS += xpchook.dylib
 endif
+
+ifeq ($(ASAN),1)
+RAMDISK_SIZE = 8M
+else ifeq ($(DEV_BUILD),1)
+RAMDISK_SIZE = 1M
+else
+RAMDISK_SIZE = 512K
+endif
+
 export SRC CC CFLAGS LDFLAGS STRIP I_N_T
 
 all: ramdisk.dmg
@@ -29,7 +38,7 @@ binpack.dmg: binpack.tar loader.dmg hook_all
 	sudo cp src/systemhooks/rootlesshooks.dylib binpack/usr/lib
 	sudo cp loader.dmg binpack
 	sudo chown -R 0:0 binpack
-	hdiutil create -size 8m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -volname palera1nfs -fs HFS+ ./binpack.dmg
+	hdiutil create -size 16m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -volname palera1nfs -fs HFS+ ./binpack.dmg
 	sudo rm -rf binpack
 
 ramdisk.dmg: jbinit jbloader jb.dylib $(DEV_TARGETS)
@@ -51,16 +60,12 @@ ifeq ($(ASAN),1)
 	cp $(shell xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/*//lib/darwin/libclang_rt.{asan,ubsan}_ios_dynamic.dylib ramdisk/jbin
 endif
 	sudo gchown -R 0:0 ramdisk
-ifeq ($(ASAN),1)
-	hdiutil create -size 8M -layout NONE -format UDRW -uid 0 -gid 0 -srcfolder ./ramdisk -fs HFS+ -volname palera1nrd ./ramdisk.dmg
-else
-	hdiutil create -size 512K -layout NONE -format UDRW -uid 0 -gid 0 -srcfolder ./ramdisk -fs HFS+ -volname palera1nrd ./ramdisk.dmg
-endif
+	hdiutil create -size $(RAMDISK_SIZE) -layout NONE -format UDRW -uid 0 -gid 0 -srcfolder ./ramdisk -fs HFS+ -volname palera1nrd ./ramdisk.dmg
 
 loader.dmg: palera1n.ipa
 	rm -rf loader.dmg Payload
 	unzip palera1n.ipa
-	hdiutil create -size 2m -layout NONE -format ULFO -uid 0 -gid 0 -volname palera1nLoader -srcfolder ./Payload -fs HFS+ ./loader.dmg
+	hdiutil create -size 32m -layout NONE -format ULFO -uid 0 -gid 0 -volname palera1nLoader -srcfolder ./Payload -fs HFS+ ./loader.dmg
 	rm -rf Payload
 
 $(SRC)/dyld_platform_test/dyld_platform_test:

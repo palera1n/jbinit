@@ -250,6 +250,7 @@ char *strstr(const char *string, char *substring);
 char *strcat(char *dest, char *src);
 size_t strlen(const char *str);
 int strcmp(const char *s1, const char *s2);
+int strncmp(const char *s1, const char *s2, size_t n);
 /* end libc */
 
 /* info */
@@ -280,6 +281,6 @@ void init_cores();
 void rootwait(char** rootdev_pp);
 void select_root(uint64_t* rootlivefs_p, int* rootopts_p, char** rootdev_p, char* dev_rootdev, bool use_fakefs);
 void prepare_rootfs(char* dev_rootdev, bool use_fakefs);
-void patch_dyld(void);
+void get_and_patch_dyld(void);
 /* end components */
 #endif

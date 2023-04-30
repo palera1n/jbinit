@@ -1,13 +1,14 @@
-#ifndef MACHO_DEFS_H
-#define MACHO_DEFS_H
+#ifndef _MACHO_DEFS_H
+#define _MACHO_DEFS_H
 #include <stdint.h>
 
 #define LC_SEGMENT_64 0x19
 #define LC_BUILD_VERSION 0x32
+#define LC_SYMTAB 0x2
 #define CPU_TYPE_ARM64 0xc000001
 
 struct mach_header_64 {
-    uint32_t magic; 
+    uint32_t magic;
     uint32_t cputype;
     uint32_t cpusubtype;
     uint32_t filetype;
@@ -33,7 +34,7 @@ struct fat_arch {
 struct section_64 {
     char sectname[16];
     char segname[16];
-    
+
     uint64_t addr;
     uint64_t size;
     uint32_t offset;
@@ -74,6 +75,25 @@ struct build_version_command {
     uint32_t minos;
     uint32_t sdk;
     uint32_t ntools;
+};
+
+struct symtab_command {
+    uint32_t cmd;
+    uint32_t cmdsize;
+    uint32_t symoff;
+    uint32_t nsyms;
+    uint32_t stroff;
+    uint32_t strsize;
+};
+
+struct nlist_64 {
+    union {
+        uint32_t str_index;
+    } un;
+    uint8_t type;
+    uint8_t nsect;
+    uint16_t desc;
+    uint64_t offset;
 };
 
 #endif

@@ -1,10 +1,10 @@
-#if !__STDC_HOSTED__
+#include <stdint.h>
 #include <jbinit.h>
-#else
-#include <stdlib.h>
-#endif
-
+#include <stdbool.h>
 #include "plooshfinder.h"
+#include "plooshfinder32.h"
+#include "macho.h"
+#include "patches/platform/shellcode.h"
 
 uint32_t *shc_loc;
 int shc_copied = 0;
@@ -25,9 +25,10 @@ uint32_t *get_shc_region(void *buf) {
     uint64_t section_len = section->size;
 
     void *shc_base = section_addr + section_len;
-    uint64_t shc_off = (segment->filesize - section->offset) / 2;
+    uint64_t shc_off_base = (segment->filesize - section->offset) / 2;
+    uint64_t shc_off_aligned = shc_off_base & ~0x3;
 
-    void *shc_addr = shc_base + shc_off;
+    void *shc_addr = shc_base + shc_off_aligned;
 
     shc_loc = (uint32_t *) shc_addr;
 
@@ -58,6 +59,9 @@ uint32_t *copy_shc(int platform, uint32_t jmp) {
 
     if ((jmp & 0xfffffc1f) == 0xd61f0000) {
         // this is the old style, don't use a ret
+        // and only copy once
+        if (shc_copied != 0) return shc_loc;
+
         shc_size = shc_size - 1;
         shellcode[4] = 0;
     }

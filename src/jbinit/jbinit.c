@@ -92,9 +92,10 @@ int main()
     init_log(dev_rootdev);
 
   init_cores();
-  patch_dyld();
+  //get_and_patch_dyld();
   write_file("/cores/jbloader", jbloader_data, jbloader_size);
   write_file("/cores/jb.dylib", dylib_data, dylib_size);
+  LOG("hello0");
   if (!checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
     write_file("/cores/injector.dylib", injector_dylib_data, injector_dylib_size);
 #ifdef ASAN
@@ -105,10 +106,13 @@ int main()
   write_file("/cores/xpchook.dylib", xpchook_data, xpchook_size);
 #endif
 
+  LOG("hello1");
   prepare_rootfs(dev_rootdev, use_fakefs);
-
+  LOG("hello2");
 
   LOG("Closing console, goodbye!");
+  LOG("hello3");
+
   /*
     Launchd doesn't like it when the console is open already!
   */

@@ -23,10 +23,10 @@ void mount_cores() {
         err = mount("tmpfs", "/cores", 0, &arg);
         if (err != 0)
         {
-          LOG("cannot mount tmpfs onto /cores, err=%d", err);
+          LOG("cannot mount tmpfs onto /cores, err=%d\n", err);
           spin();
         }
-        LOG("mounted tmpfs onto /cores");
+        LOG("mounted tmpfs onto /cores\n");
     }
 }
 

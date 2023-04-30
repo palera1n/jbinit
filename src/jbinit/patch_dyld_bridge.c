@@ -1,30 +1,29 @@
 #include <jbinit.h>
 #include <stdint.h>
+#include "patch_dyld/plooshfinder.h"
+#include "patch_dyld/macho_defs.h"
+#include "patch_dyld/macho.h"
+#include "patch_dyld/patches/platform/patch.h"
 
-#include "plooshfinder.h"
-#include "new.h"
-#include "old.h"
+#define symbol_to_patch "____ZNK5dyld39MachOFile24forEachSupportedPlatformEU13block_pointerFvNS_8PlatformEjjE_block_invoke"
 
 void *dyld_buf;
 size_t dyld_len;
 int platform = 0;
 
-void patch_platform_check() {
+void platform_check_patch() {
     // this patch tricks dyld into thinking everything is for the current platform
-    struct section_64 *text_section = macho_find_section(dyld_buf, "__TEXT", "__text");
-    if (!text_section) return;
+    struct nlist_64 *forEachSupportedPlatform = macho_find_symbol(dyld_buf, symbol_to_patch);
 
-    void *section_addr = dyld_buf + text_section->offset;
-    uint64_t section_len = text_section->size;
+    void *func_addr = dyld_buf + forEachSupportedPlatform->offset;
+    uint64_t func_len = macho_get_symbol_size(forEachSupportedPlatform);
 
-    patch_platform_check_new(dyld_buf, section_addr, section_len, platform);
-    patch_platform_check_old(dyld_buf, section_addr, section_len, platform);
+    patch_platform_check(dyld_buf, func_addr, func_len, platform);
 }
 
 void patch_dyld() {
     LOG("Plooshi(TM) libDyld64Patcher starting up...\n");
     LOG("patching dyld...\n");
-    dyld_buf = read_file("/usr/lib/dyld", &dyld_len);
     
     uint32_t magic = macho_get_magic(dyld_buf);
     if (!magic) {
@@ -44,7 +43,12 @@ void patch_dyld() {
         LOG("detected unsupported or invalid platform\n");
         spin();
     }
-    patch_platform_check();
-    write_file("/cores/dyld", dyld_buf, dyld_len);
+    platform_check_patch();
     LOG("done patching dyld\n");
+}
+
+void get_and_patch_dyld(void) {
+    dyld_buf = read_file("/usr/lib/dyld", &dyld_len);
+    patch_dyld();
+    write_file("/cores/dyld", dyld_buf, dyld_len);
 }
