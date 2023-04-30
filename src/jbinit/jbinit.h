@@ -50,7 +50,9 @@ typedef int64_t user_ssize_t;
 typedef int64_t off_t;
 typedef uint64_t user_size_t;
 typedef int64_t ssize_t;
+typedef uint32_t attrgroup_t;
 typedef int FILE;
+typedef unsigned short u_short;
 typedef enum
 {
   /* the __getdirentries64 returned all entries */
@@ -116,6 +118,49 @@ typedef enum
 #define GETDIRENTRIES64_EXTENDED_BUFSIZE 1024
 #define MFSTYPENAMELEN  16
 #define MAXPATHLEN __DARWIN_MAXPATHLEN
+
+#define SNAPSHOT_OP_CREATE 0x01
+#define SNAPSHOT_OP_DELETE 0x02
+#define SNAPSHOT_OP_RENAME 0x03
+#define SNAPSHOT_OP_MOUNT  0x04
+#define SNAPSHOT_OP_REVERT 0x05
+#define SNAPSHOT_OP_ROOT   0x06
+
+#define FSOPT_NOFOLLOW          0x00000001
+#define FSOPT_NOINMEMUPDATE     0x00000002
+#define FSOPT_REPORT_FULLSIZE   0x00000004
+#define FSOPT_PACK_INVAL_ATTRS  0x00000008
+#define FSOPT_EXCHANGE_DATA_ONLY 0x0000010
+#define FSOPT_ATTR_CMN_EXTENDED 0x00000020
+#define FSOPT_LIST_SNAPSHOT     0x00000040
+#define FSOPT_NOFIRMLINKPATH     0x00000080
+#define FSOPT_FOLLOW_FIRMLINK    0x00000100
+#define FSOPT_RETURN_REALDEV     0x00000200
+#define FSOPT_ISREALFSID         FSOPT_RETURN_REALDEV
+#define FSOPT_ISREALFSID         FSOPT_RETURN_REALDEV
+#define FSOPT_NOFOLLOW_ANY       0x00000800
+
+#define ATTR_CMN_NAME				0x00000001
+#define ATTR_CMN_DEVID				0x00000002
+#define ATTR_CMN_FSID				0x00000004
+#define ATTR_CMN_OBJTYPE			0x00000008
+#define ATTR_CMN_OBJTAG				0x00000010
+#define ATTR_CMN_OBJID				0x00000020
+#define ATTR_CMN_OBJPERMANENTID			0x00000040
+#define ATTR_CMN_PAROBJID			0x00000080
+#define ATTR_CMN_SCRIPT				0x00000100
+#define ATTR_CMN_CRTIME				0x00000200
+#define ATTR_CMN_MODTIME			0x00000400
+#define ATTR_CMN_CHGTIME			0x00000800
+#define ATTR_CMN_ACCTIME			0x00001000
+#define ATTR_CMN_BKUPTIME			0x00002000
+#define ATTR_CMN_FNDRINFO			0x00004000
+#define ATTR_CMN_OWNERID			0x00008000
+#define ATTR_CMN_GRPID				0x00010000
+#define ATTR_CMN_ACCESSMASK			0x00020000
+#define ATTR_CMN_FLAGS				0x00040000
+#define ATTR_CMN_RETURNED_ATTRS 		0x80000000	
+#define ATTR_BULK_REQUIRED (ATTR_CMN_NAME | ATTR_CMN_RETURNED_ATTRS)
 
 #define __DARWIN_STRUCT_DIRENTRY                                                    \
   {                                                                                 \
@@ -188,6 +233,29 @@ struct stat { \
 	uint32_t	f_reserved[7];  /* For future use */ \
 }
 
+struct attrlist {
+	u_short bitmapcount;                    /* number of attr. bit sets in list (should be 5) */
+	uint16_t reserved;                     /* (to maintain 4-byte alignment) */
+	attrgroup_t commonattr;                 /* common attribute group */
+	attrgroup_t volattr;                    /* Volume attribute group */
+	attrgroup_t dirattr;                    /* directory attribute group */
+	attrgroup_t fileattr;                   /* file attribute group */
+	attrgroup_t forkattr;                   /* fork attribute group */
+};
+
+typedef struct attribute_set {
+	attrgroup_t commonattr;			/* common attribute group */
+	attrgroup_t volattr;			/* Volume attribute group */
+	attrgroup_t dirattr;			/* directory attribute group */
+	attrgroup_t fileattr;			/* file attribute group */
+	attrgroup_t forkattr;			/* fork attribute group */
+} attribute_set_t;
+
+typedef struct attrreference {
+	int32_t     attr_dataoffset;
+	uint32_t   attr_length;
+} attrreference_t;
+
 typedef uint32_t uid_t;
 struct statfs64 __DARWIN_STRUCT_STATFS64;
 
@@ -238,6 +306,8 @@ int chroot(char* path);
 int chdir(char* path);
 int munmap(void* addr, size_t len);
 int mknod(char* path, mode_t mode, dev_t dev);
+int fs_snapshot(uint32_t op, int dirfd, const char* name1, const char* name2, void* data, uint32_t flags);
+int getattrlistbulk(int dirfd, struct attrlist *alist, void *attributeBuffer, size_t bufferSize, uint64_t options);
 /* end syscalls */
 
 /* libc */
@@ -251,6 +321,13 @@ char *strcat(char *dest, char *src);
 size_t strlen(const char *str);
 int strcmp(const char *s1, const char *s2);
 int strncmp(const char *s1, const char *s2, size_t n);
+int fs_snapshot_list(int dirfd, struct attrlist *alist, void *attrbuf, size_t bufsize, uint32_t flags);
+int fs_snapshot_create(int dirfd, const char *name, uint32_t flags);
+int fs_snapshot_delete(int dirfd, const char *name, uint32_t flags);
+int fs_snapshot_rename(int dirfd, const char *old, const char *new, uint32_t flags);
+int fs_snapshot_revert(int dirfd, const char *name, uint32_t flags);
+int fs_snapshot_root(int dirfd, const char *name, uint32_t flags);
+int fs_snapshot_mount(int dirfd, const char *dir, const char *snapshot, uint32_t flags);
 /* end libc */
 
 /* info */
@@ -275,6 +352,7 @@ void sancheck();
 void pinfo_check(bool* use_fakefs_p, char* bootargs, char* dev_rootdev);
 void remount_rdisk(bool use_fakefs, char* dev_rootdev);
 void mountroot(char* rootdev, uint64_t rootlivefs, int rootopts);
+void clean_fakefs(char* rootdev);
 void mount_cores();
 void init_log(const char* dev_rootdev);
 void init_cores();

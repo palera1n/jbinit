@@ -5,7 +5,7 @@ int jbloader_bakera1nd(int argc, char **argv)
 {
   pthread_mutex_init(&safemode_mutex, NULL);
   setvbuf(stdout, NULL, _IONBF, 0);
-  if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
+  if (checkrain_options_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
   {
     int fd_log = open("/cores/jbinit.log", O_WRONLY | O_APPEND | O_SYNC, 0644);
     if (fd_log != -1)
@@ -28,18 +28,18 @@ int jbloader_bakera1nd(int argc, char **argv)
   pthread_create(&prep_jb_launch_thread, NULL, prep_jb_launch, NULL);
   pthread_create(&ssh_thread, NULL, enable_ssh, NULL);
   pthread_join(prep_jb_launch_thread, NULL);
-  if (!checkrain_option_enabled(info.flags, checkrain_option_force_revert)
+  if (!checkrain_options_enabled(info.flags, checkrain_option_force_revert)
   && dyld_platform == PLATFORM_IOS)
   {
     pthread_create(&prep_jb_ui_thread, NULL, prep_jb_ui, NULL);
   }
   pthread_join(ssh_thread, NULL);
-  if (!checkrain_option_enabled(info.flags, checkrain_option_force_revert) && dyld_platform == PLATFORM_IOS)
+  if (!checkrain_options_enabled(info.flags, checkrain_option_force_revert) && dyld_platform == PLATFORM_IOS)
     pthread_join(prep_jb_ui_thread, NULL);
   if (dyld_platform == PLATFORM_IOS)
     uicache_loader();
   if (
-    checkrain_option_enabled(info.flags, checkrain_option_safemode)
+    checkrain_options_enabled(info.flags, checkrain_option_safemode)
   && dyld_platform == PLATFORM_IOS
   )
   {

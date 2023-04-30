@@ -33,7 +33,7 @@ void *enable_ssh(void *__unused _)
   }
   printf("loading %s\n", dropbear_plist);
   int ret;
-  if (checkrain_option_enabled(jbloader_flags, jbloader_userspace_rebooted)) {
+  if (checkrain_options_enabled(jbloader_flags, jbloader_userspace_rebooted)) {
     ret = load_cmd(&msg, 4, (char*[]){ 
       "load",
       "-w",

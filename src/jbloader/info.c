@@ -97,6 +97,9 @@ const char* str_palerain_flags(checkrain_option_t opt) {
     case palerain_option_rootless_livefs:
       ret = "palerain_option_rootless_livefs";
       break;
+    case palerain_option_clean_fakefs:
+      ret = "palerain_option_clean_fakefs";
+      break;
     default:
       ret = NULL;
       break;

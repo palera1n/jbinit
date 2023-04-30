@@ -1,7 +1,7 @@
 #include <jbloader.h>
 
 int move_rootless_if_required() {
-    if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful) || (access("/var/jb", F_OK) != 0))
+    if (checkrain_options_enabled(pinfo.flags, palerain_option_rootful) || (access("/var/jb", F_OK) != 0))
         return 0;
     char hash[97];
     int ret = get_boot_manifest_hash(hash);

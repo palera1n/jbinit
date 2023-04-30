@@ -29,14 +29,3 @@ retry_rootfs_mount:
       LOG("stat %s OK\n", "/private/");
     }
 }
-
-void unmount_root() {
-  LOG("unmounting rootfs\n");
-  int ret = unmount("/", MNT_FORCE);
-  if (ret) {
-    LOG("umount(/) failed with err=%d!\n", ret);
-    spin();
-  } else {
-    LOG("unmounted rootfs\n");
-  }
-}

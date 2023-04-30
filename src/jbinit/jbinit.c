@@ -54,7 +54,7 @@ int main()
     
   size_t injector_dylib_size;
   void* injector_dylib_data;
-  if (!checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
+  if (!checkrain_options_enabled(pinfo.flags, palerain_option_rootful))
     injector_dylib_data = read_file("/jbin/injector.dylib", &injector_dylib_size);
 
 #ifdef ASAN
@@ -83,12 +83,15 @@ int main()
   
   select_root(&rootlivefs, &rootopts, &rootdev, dev_rootdev, use_fakefs);
   remount_rdisk(use_fakefs, dev_rootdev);
-  // unmount_devfs(rootdev, &fd_console);
+
+  if (checkrain_options_enabled(pinfo.flags, palerain_option_clean_fakefs)) 
+    clean_fakefs(rootdev);
+
   mountroot(rootdev, rootlivefs, rootopts);
   mount_devfs();
   mount_cores();
 
-  if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
+  if (checkrain_options_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
     init_log(dev_rootdev);
 
   init_cores();
@@ -96,7 +99,7 @@ int main()
   write_file("/cores/jbloader", jbloader_data, jbloader_size);
   write_file("/cores/jb.dylib", dylib_data, dylib_size);
   LOG("hello0");
-  if (!checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
+  if (!checkrain_options_enabled(pinfo.flags, palerain_option_rootful))
     write_file("/cores/injector.dylib", injector_dylib_data, injector_dylib_size);
 #ifdef ASAN
   write_file("/cores/libclang_rt.asan_ios_dynamic.dylib", asan_data, asan_size);

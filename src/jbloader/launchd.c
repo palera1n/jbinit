@@ -55,7 +55,7 @@ int jbloader_launchd(int argc, char **argv)
   dup2(fd_console, STDOUT_FILENO);
   dup2(fd_console, STDERR_FILENO);
   int ret = 0;
-  if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
+  if (checkrain_options_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
   {
     int fd_log = open("/cores/jbinit.log", O_WRONLY | O_APPEND | O_SYNC, 0644);
     if (fd_log != -1)
@@ -139,7 +139,7 @@ int jbloader_launchd(int argc, char **argv)
       "XPC_USERSPACE_REBOOTED=1",
       newenv,
       NULL};
-  if (!checkrain_option_enabled(info.flags, checkrain_option_safemode)) {
+  if (!checkrain_options_enabled(info.flags, checkrain_option_safemode)) {
     if (getenv("XPC_USERSPACE_REBOOTED") != NULL){
       ret = execve(launchd_argv[0], launchd_argv, launchd_envp2);
     } else {

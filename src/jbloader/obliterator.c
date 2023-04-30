@@ -3,7 +3,7 @@
 int jailbreak_obliterator()
 {
 
-  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
+  if (checkrain_options_enabled(pinfo.flags, palerain_option_rootful))
   {
   run("/cores/binpack/bin/rm", (char*[]){
       "/cores/binpack/bin/rm",

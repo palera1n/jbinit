@@ -1,7 +1,7 @@
 #include <jbloader.h>
 
 int create_remove_fakefs() {
-  if (checkrain_option_enabled(info.flags, checkrain_option_force_revert) && checkrain_option_enabled(pinfo.flags, palerain_option_rootful)) {
+  if (checkrain_options_enabled(info.flags, checkrain_option_force_revert) && checkrain_options_enabled(pinfo.flags, palerain_option_rootful)) {
     if (pinfo.rootdev[strlen(pinfo.rootdev) - 1] == '1') {
       printf("avoiding self destruction by user error\n");
       return 0;
@@ -13,11 +13,11 @@ int create_remove_fakefs() {
       printf("deleted %s\n", pinfo.rootdev);
     }
   }
-  if (!checkrain_option_enabled(pinfo.flags, palerain_option_setup_rootful)) return 0;
+  if (!checkrain_options_enabled(pinfo.flags, palerain_option_setup_rootful)) return 0;
   char dev_rootdev[0x20];
   snprintf(dev_rootdev, 0x20, "/dev/%s", pinfo.rootdev);
   if (access(dev_rootdev, F_OK) == 0) {
-    if (!checkrain_option_enabled(pinfo.flags, palerain_option_setup_rootful_forced)) {
+    if (!checkrain_options_enabled(pinfo.flags, palerain_option_setup_rootful_forced)) {
       // should be unreachable because jbinit checked it
       assert(0);
     }
@@ -43,7 +43,7 @@ int create_remove_fakefs() {
   }
   close(fd_script);
   char printbuf[2];
-  snprintf(printbuf, 2, "%d", checkrain_option_enabled(pinfo.flags, palerain_option_setup_partial_root));
+  snprintf(printbuf, 2, "%d", checkrain_options_enabled(pinfo.flags, palerain_option_setup_partial_root));
   int pidret = run("/cores/binpack/bin/sh", (char*[]){
     "/cores/binpack/bin/sh",
     "/cores/create_fakefs.sh",

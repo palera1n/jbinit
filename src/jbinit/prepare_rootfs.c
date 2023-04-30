@@ -6,7 +6,7 @@ void prepare_rootfs(char* dev_rootdev, bool use_fakefs) {
     if (stat("/System/Library/Frameworks/IOKit.framework", &statbuf) == 0) {
         return;
     }
-    if (!use_fakefs || !checkrain_option_enabled(info.flags, checkrain_option_bind_mount)) return;
+    if (!use_fakefs || !checkrain_options_enabled(info.flags, checkrain_option_bind_mount)) return;
     char* real_rootdev = ios15_rootdev;
     if (darwin22) real_rootdev = ios16_rootdev;
     LOG("mounting realfs %s\n", real_rootdev);

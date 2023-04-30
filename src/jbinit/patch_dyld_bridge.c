@@ -25,6 +25,10 @@ void patch_dyld() {
     LOG("Plooshi(TM) libDyld64Patcher starting up...\n");
     LOG("patching dyld...\n");
     
+    if (!dyld_buf) {
+        LOG("refusing to patch dyld buf at NULL\n");
+        spin();   
+    }
     uint32_t magic = macho_get_magic(dyld_buf);
     if (!magic) {
         LOG("detected corrupted dyld\n");

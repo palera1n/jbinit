@@ -46,7 +46,7 @@ ramdisk.dmg: jbinit jbloader jb.dylib $(DEV_TARGETS)
 	rm -f ramdisk.dmg
 	sudo rm -rf ramdisk
 	mkdir -p ramdisk
-	mkdir -p ramdisk/{usr/lib,sbin,jbin,dev}
+	mkdir -p ramdisk/{usr/lib,sbin,jbin,dev,mnt}
 	ln -s /jbin/jbloader ramdisk/sbin/launchd
 	ln -s /sbin/launchd ramdisk/jbin/launchd
 	mkdir -p ramdisk/usr/lib

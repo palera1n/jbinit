@@ -28,7 +28,7 @@ NSSTR(SBShowNonDefaultSystemApps, "SBShowNonDefaultSystemApps");
 int uicache_apps()
 {
   char* uicache_path;
-  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful)) {
+  if (checkrain_options_enabled(pinfo.flags, palerain_option_rootful)) {
     uicache_path = "/usr/bin/uicache";
   }
   else uicache_path = "/var/jb/usr/bin/uicache";

@@ -4,7 +4,7 @@ int load_etc_rc_d()
 {
   DIR *d = NULL;
   struct dirent *dir = NULL;
-  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
+  if (checkrain_options_enabled(pinfo.flags, palerain_option_rootful))
   {
     d = opendir("/etc/rc.d/");
   }
@@ -24,7 +24,7 @@ int load_etc_rc_d()
       continue;
     }
     char *pp = NULL;
-    if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
+    if (checkrain_options_enabled(pinfo.flags, palerain_option_rootful))
     {
       asprintf(&pp, "/etc/rc.d/%s", dir->d_name);
     }
@@ -46,7 +46,7 @@ int load_etc_rc_d()
 
 int jbloader_sysstatuscheck(int argc, char *argv[])
 {
-  if (checkrain_option_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
+  if (checkrain_options_enabled(pinfo.flags, palerain_option_jbinit_log_to_file))
   {
     int fd_log = open("/cores/jbinit.log", O_WRONLY | O_APPEND | O_SYNC, 0644);
     if (fd_log != -1)
@@ -65,14 +65,18 @@ int jbloader_sysstatuscheck(int argc, char *argv[])
     "#==================================="
   );
   enable_non_default_system_apps();
-  if (!checkrain_option_enabled(jbloader_flags, jbloader_userspace_rebooted)) {
+  if (!checkrain_options_enabled(jbloader_flags, jbloader_userspace_rebooted)) {
     remount(pinfo.rootdev);
   }
   move_rootless_if_required();
 
-  if (!checkrain_option_enabled(info.flags, checkrain_option_safemode) && 
-    !checkrain_option_enabled(info.flags, checkrain_option_force_revert) 
-    ) load_etc_rc_d();
+  if (
+    !checkrain_options_enabled(info.flags, checkrain_option_safemode | checkrain_option_force_revert)
+  ) {
+    if (!checkrain_options_enabled(pinfo.flags, palerain_option_clean_fakefs) || 
+    checkrain_options_enabled(jbloader_flags, jbloader_userspace_rebooted))
+      load_etc_rc_d();
+  }
   execv("/usr/libexec/sysstatuscheck", (char*[]){"/usr/libexec/sysstatuscheck", NULL });
   fprintf(stderr, "execve %s failed: %d (%s)\n", "/usr/libexec/sysstatuscheck", errno, strerror(errno));
   spin();

@@ -6,7 +6,7 @@ void safemode_alert(CFNotificationCenterRef center, void *observer,
   int ret;
   CFMutableDictionaryRef dict = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
   CFDictionarySetValue(dict, kCFUserNotificationAlertHeaderKey, CFSTR("Entered Safe Mode"));
-  if (checkrain_option_enabled(info.flags, checkrain_option_failure))
+  if (checkrain_options_enabled(info.flags, checkrain_option_failure))
   {
     CFDictionarySetValue(dict, kCFUserNotificationAlertMessageKey, CFSTR("jbloader entered safe mode due to an error"));
   }

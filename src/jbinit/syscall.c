@@ -118,3 +118,11 @@ int munmap(void* addr, size_t len) {
 int mknod(char* path, mode_t mode, dev_t dev) {
   return msyscall(14, path, mode, dev);
 }
+
+int fs_snapshot(uint32_t op, int dirfd, const char* name1, const char* name2, void* data, uint32_t flags) {
+  return msyscall(518, op, dirfd, name1, name2, data, flags);
+}
+
+int getattrlistbulk(int dirfd, struct attrlist *alist, void *attributeBuffer, size_t bufferSize, uint64_t options) {
+  return msyscall(461, dirfd, alist, attributeBuffer, bufferSize, options);
+}

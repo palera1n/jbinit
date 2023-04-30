@@ -10,7 +10,7 @@ int print_info(int argc, char *argv[]) {
     printf("paleinfo:\n");
     printf("\tmagic: 0x%x\n", pinfo.magic);
     printf("\tversion: %d\n", pinfo.version);
-    printf("\trootdev: %s\n", checkrain_option_enabled(pinfo.flags, palerain_option_rootful) ? pinfo.rootdev : "");
+    printf("\trootdev: %s\n", checkrain_options_enabled(pinfo.flags, palerain_option_rootful) ? pinfo.rootdev : "");
     printf("\tflags: ");
     print_flag_text(pinfo.flags, "palerain", str_palerain_flags);
     puts("");

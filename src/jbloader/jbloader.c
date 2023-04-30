@@ -57,9 +57,9 @@ int jbloader_main(int argc, char *argv[])
         break;
     }
   }
-  if (checkrain_option_enabled(jbloader_flags, jbloader_is_sysstatuscheck)) {
+  if (checkrain_options_enabled(jbloader_flags, jbloader_is_sysstatuscheck)) {
     return jbloader_sysstatuscheck(argc, argv);
-  } else if (checkrain_option_enabled(jbloader_flags, jbloader_is_bakera1nd)) {
+  } else if (checkrain_options_enabled(jbloader_flags, jbloader_is_bakera1nd)) {
     return jbloader_bakera1nd(argc, argv);
   }
 out:

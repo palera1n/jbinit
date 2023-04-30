@@ -2,7 +2,7 @@
 
 int sbreload()
 {
-  if (checkrain_option_enabled(pinfo.flags, palerain_option_rootful))
+  if (checkrain_options_enabled(pinfo.flags, palerain_option_rootful))
   {
     if (access("/usr/bin/sbreload", F_OK) != 0)
       return 0;
