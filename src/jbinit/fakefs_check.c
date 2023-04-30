@@ -9,6 +9,10 @@ void pinfo_check(bool* use_fakefs_p, char* bootargs, char* dev_rootdev) {
 
   if (checkrain_options_enabled(info.flags, checkrain_option_force_revert)) {
     *use_fakefs_p = false;
+    if (checkrain_options_enabled(pinfo.flags, palerain_option_clean_fakefs)) {
+      LOG("Cannot force revert and clean fakefs at the same time\n");
+      spin();
+    }
   }
 
   if (checkrain_options_enabled(pinfo.flags, palerain_option_clean_fakefs) && 
@@ -38,7 +42,7 @@ void pinfo_check(bool* use_fakefs_p, char* bootargs, char* dev_rootdev) {
       puts("Warning: this flag is deprecated, use checkrain_option_force_revert with palerain_option_setup_rootful/palerain_option_setup_partial_root to recreate fakefs/partial fakefs");
     }
 
-    if (checkrain_option_enabled(pinfo.flags, palerain_option_clean_fakefs)) {
+    if (checkrain_options_enabled(pinfo.flags, palerain_option_clean_fakefs)) {
       LOG("cannot clean and setup fakefs at the same time\n");
       spin();
     }
