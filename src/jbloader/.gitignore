@@ -2,4 +2,3 @@ create_fakefs_sh.c
 framebuffer.c
 iphoneos_headers/
 jbloader
-g
