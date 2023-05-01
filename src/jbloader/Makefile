@@ -1,7 +1,7 @@
-OBJECTS  = create_fakefs_sh.o main.o launchctl/xpc_helper.o
-OBJECTS += launchctl/bootstrap.o launchctl/load.o
+LAUNCHCTL_OBJ = bootstrap.o xpc_helper.o load.o
+OBJECTS  = main.o
 
-SUBDIRS = loader p1ctl utils palera1nHelper
+SUBDIRS = loader p1ctl utils
 
 CFLAGS  += -miphoneos-version-min=15.0 -arch arm64 -Os -I.
 LDFLAGS += $(SRC)/APFS.tbd -framework IOKit -framework CoreFoundation -framework Foundation -lobjc
@@ -15,8 +15,8 @@ all: jbloader
 $(SUBDIRS):
 	$(MAKE) -C $@ all
 
-jbloader: $(OBJECTS) $(SUBDIRS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) $(patsubst %.c, %.o, $(wildcard $(patsubst %, %/*.c, $(SUBDIRS)))) -o jbloader
+jbloader: $(OBJECTS) $(SUBDIRS) $(patsubst %.o, launchctl/%.o, $(LAUNCHCTL_OBJ))
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) $(patsubst %.o, launchctl/%.o, $(LAUNCHCTL_OBJ)) $(patsubst %.c, %.o, $(wildcard $(patsubst %, %/*.c, $(SUBDIRS)))) -o jbloader
 	$(STRIP) jbloader
 ifeq ($(ASAN),1)
 	$(I_N_T) -add_rpath /cores jbloader
@@ -30,7 +30,7 @@ xpchook.dylib:
 %.o: %.c
 	$(CC) -c $(CFLAGS) $<
 
-launchctl/%.o: launchctl/%.c
+$(patsubst %.o, launchctl/%.o, $(LAUNCHCTL_OBJ)): $(patsubst %.o, launchctl/%.c, $(LAUNCHCTL_OBJ)) 
 	$(MAKE) -C launchctl $(shell echo $@ | cut -d/ -f2)
 
 create_fakefs_sh.c: create_fakefs.sh

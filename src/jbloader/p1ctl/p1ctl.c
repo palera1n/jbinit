@@ -50,10 +50,6 @@ static int help_cmd(int argc, char* argv[]) {
 
 
 int p1ctl_main(int argc, char *argv[]) {
-    if (getuid() != 0 || geteuid() != 0) {
-        fprintf(stderr, "%s: this tool must be ran as root\n", argv[0]);
-        return 1;
-    }
     if (argc < 2) {
         usage();
         return 1;
