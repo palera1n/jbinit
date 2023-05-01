@@ -38,7 +38,7 @@ binpack.dmg: binpack.tar loader.dmg hook_all
 	sudo cp src/systemhooks/rootlesshooks.dylib binpack/usr/lib
 	sudo cp loader.dmg binpack
 	sudo chown -R 0:0 binpack
-	hdiutil create -size 16m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -volname palera1nfs -fs HFS+ ./binpack.dmg
+	hdiutil create -size 8m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -volname palera1nfs -fs HFS+ ./binpack.dmg
 	sudo rm -rf binpack
 
 ramdisk.dmg: jbinit jbloader jb.dylib $(DEV_TARGETS)
@@ -65,7 +65,7 @@ endif
 loader.dmg: palera1n.ipa
 	rm -rf loader.dmg Payload
 	unzip palera1n.ipa
-	hdiutil create -size 32m -layout NONE -format ULFO -uid 0 -gid 0 -volname palera1nLoader -srcfolder ./Payload -fs HFS+ ./loader.dmg
+	hdiutil create -size 1m -layout NONE -format ULFO -uid 0 -gid 0 -volname palera1nLoader -srcfolder ./Payload -fs HFS+ ./loader.dmg
 	rm -rf Payload
 
 $(SRC)/dyld_platform_test/dyld_platform_test:
