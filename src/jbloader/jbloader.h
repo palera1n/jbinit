@@ -127,7 +127,6 @@ int check_and_mount_loader();
 int load_etc_rc_d();
 int init_info();
 int create_remove_fakefs();
-int sbreload();
 void *enable_ssh(void *__unused _);
 void *prep_jb_launch(void *__unused _);
 int loadDaemons();

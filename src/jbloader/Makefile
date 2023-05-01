@@ -1,10 +1,7 @@
-OBJECTS  = create_fakefs_sh.o enable_ssh.o fakefs.o lock_vars.o delete_fs.o
-OBJECTS += get_boot_manifest_hash.o info.o bakera1nd.o launchd.o
-OBJECTS += jbloader.o mount_dmg.o obliterator.o p1ctl.o main.o
-OBJECTS += prep_launch.o remount.o runcmd.o safemode_alert.o
-OBJECTS += sbreload.o spin.o uicache.o sysstatuscheck.o print_info.o
-OBJECTS += get_set_flags.o launchctl/xpc_helper.o launchctl/bootstrap.o
-OBJECTS += launchctl/load.o get_dyld_platform.o move_rootless.o
+OBJECTS  = create_fakefs_sh.o main.o launchctl/xpc_helper.o
+OBJECTS += launchctl/bootstrap.o launchctl/load.o
+
+SUBDIRS = loader p1ctl utils palera1nHelper
 
 CFLAGS  += -miphoneos-version-min=15.0 -arch arm64 -Os -I.
 LDFLAGS += $(SRC)/APFS.tbd -framework IOKit -framework CoreFoundation -framework Foundation -lobjc
@@ -14,6 +11,17 @@ CFLAGS += -fsanitize=address,undefined
 endif
 
 all: jbloader
+
+$(SUBDIRS):
+	$(MAKE) -C $@ all
+
+jbloader: $(OBJECTS) $(SUBDIRS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) $(patsubst %.c, %.o, $(wildcard $(patsubst %, %/*.c, $(SUBDIRS)))) -o jbloader
+	$(STRIP) jbloader
+ifeq ($(ASAN),1)
+	$(I_N_T) -add_rpath /cores jbloader
+endif
+	ldid -S$(SRC)/ent.xml -Icom.apple.jbloader jbloader
 
 xpchook.dylib:
 	$(MAKE) -C launchctl/tools LDFLAGS="$(LDFLAGS) $(CFLAGS)" xpchook.dylib
@@ -28,12 +36,4 @@ launchctl/%.o: launchctl/%.c
 create_fakefs_sh.c: create_fakefs.sh
 	xxd -iC create_fakefs.sh > create_fakefs_sh.c
 
-jbloader: $(OBJECTS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) -o jbloader
-	$(STRIP) jbloader
-ifeq ($(ASAN),1)
-	$(I_N_T) -add_rpath /cores jbloader
-endif
-	ldid -S$(SRC)/ent.xml -Icom.apple.jbloader jbloader
-
-.PHONY: all xpchook.dylib
+.PHONY: all xpchook.dylib $(SUBDIRS)
