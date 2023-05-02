@@ -151,10 +151,16 @@ int jbloader_bakera1nd(int argc, char* argv[]);
 int jbloader_sysstatuscheck(int argc, char* argv[]);
 int jbloader_main(int argc, char *argv[]);
 int p1ctl_main(int argc, char *argv[]);
+int helper_main(int argc, char *argv[]);
 int print_info(int argc, char *argv[]);
 int palera1n_flags_main(int argc, char* argv[]);
 int checkra1n_flags_main(int argc, char* argv[]);
 int print_boot_manifest_hash_main(int argc, char* argv[]);
+
+int get_kflags();
+int get_pflags();
+int get_bmhash();
+int setpw(char *pw);
 
 kern_return_t DeleteAPFSVolumeWithRole(const char* volpath);
 

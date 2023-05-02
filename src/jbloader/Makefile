@@ -1,7 +1,7 @@
 LAUNCHCTL_OBJ = bootstrap.o xpc_helper.o load.o
 OBJECTS  = main.o
 
-SUBDIRS = loader p1ctl utils
+SUBDIRS = loader p1ctl utils helper
 
 CFLAGS  += -miphoneos-version-min=15.0 -arch arm64 -Os -I.
 LDFLAGS += $(SRC)/APFS.tbd -framework IOKit -framework CoreFoundation -framework Foundation -lobjc

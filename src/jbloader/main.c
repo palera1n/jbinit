@@ -10,6 +10,8 @@ int main(int argc, char *argv[]) {
     return jbloader_main(argc, argv);
   } else if (!strcmp(name, "p1ctl")) {
     return p1ctl_main(argc, argv);
+  } else if (!strcmp(name, "helper")) {
+    return helper_main(argc, argv);
   } else if (getpid() == 1) {
     return jbloader_main(argc, argv);
   } else {
