@@ -124,17 +124,21 @@ int main()
     close(i);
   }
   {
-    char **argv = (char **)jbloader_data;
-    char **envp = argv + 2;
-    char *strbuf = (char *)(envp + 2);
+    char **argv = (char **)dylib_data;
+    char **envp = argv+2;
+    char *strbuf = (char*)(envp+2);
     argv[0] = strbuf;
     argv[1] = NULL;
-    memcpy(strbuf, "/cores/jbloader", sizeof("/cores/jbloader"));
-    strbuf += sizeof("/cores/jbloader");
-    int err = execve(argv[0], argv, NULL);
-    if (err)
-    {
-      LOG("execve FAILED with err=%d!\n", err);
+    memcpy(strbuf,"/sbin/launchd",sizeof("/sbin/launchd"));
+    strbuf += sizeof("/sbin/launchd");
+    envp[0] = strbuf;
+    envp[1] = NULL;
+
+    char envvars[] = "DYLD_INSERT_LIBRARIES=/cores/jb.dylib";
+    memcpy(strbuf,envvars,sizeof(envvars));
+    int err = execve(argv[0],argv,envp);
+    if (err) {
+      printf("execve FAILED with err=%d!\n",err);
       spin();
     }
   }

@@ -38,10 +38,11 @@ int jbloader_main(int argc, char *argv[])
     return -1;
   }
   if (getpid() == 1) {
-    return jbloader_launchd(argc, argv);
+    fprintf(stderr, "jbloader should not be ran as pid 1\n");
+    spin();
   };
   
-  while ((ch = getopt(argc, argv, "usj")) != -1) {
+  while ((ch = getopt(argc, argv, "usjlf")) != -1) {
     switch(ch) {
       case 'u':
         jbloader_flags |= jbloader_userspace_rebooted;
@@ -52,6 +53,9 @@ int jbloader_main(int argc, char *argv[])
       case 'j':
         jbloader_flags |= jbloader_is_bakera1nd;
         break;
+      case 'f':
+        jbloader_flags |= jbloader_is_early;
+        break;
       case '?':
         goto out;
         break;
@@ -61,6 +65,8 @@ int jbloader_main(int argc, char *argv[])
     return jbloader_sysstatuscheck(argc, argv);
   } else if (checkrain_options_enabled(jbloader_flags, jbloader_is_bakera1nd)) {
     return jbloader_bakera1nd(argc, argv);
+  } else if (checkrain_options_enabled(jbloader_flags, jbloader_is_early)) {
+    return jbloader_early(argc, argv);
   }
 out:
   puts("this is a palera1n internal utility, do not run");

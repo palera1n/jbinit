@@ -17,8 +17,10 @@
 #include <mach/mach.h>
 #include <mach-o/dyld.h>
 #include <signal.h>
+#include <sys/wait.h>
 
 bool do_pspawn_hook = false;
+extern char** environ;
 struct dyld_interpose_tuple {
 	const void* replacement;
 	const void* replacee;
@@ -138,19 +140,6 @@ bool hook_xpc_dictionary_get_bool(xpc_object_t dictionary, const char *key) {
 }
 DYLD_INTERPOSE(hook_xpc_dictionary_get_bool, xpc_dictionary_get_bool);
 
-int hook__NSGetExecutablePath(char* buf, uint32_t* bufsize) {
-  if (getpid() != 1) return _NSGetExecutablePath(buf, bufsize);
-  else if (*bufsize > sizeof("/cores/jbloader")) {
-    snprintf(buf, (size_t)(*bufsize), "/cores/jbloader");
-    return 0;
-  } else {
-    *bufsize = sizeof("/cores/jbloader");
-    return -1;
-  }
-  return 0;
-}
-DYLD_INTERPOSE(hook__NSGetExecutablePath, _NSGetExecutablePath);
-
 int posix_spawnp(pid_t *pid,
                  const char *path,
                  const posix_spawn_file_actions_t *action,
@@ -213,11 +202,24 @@ void DoNothingHandler(int __unused _) {}
 
 __attribute__((constructor))
 static void customConstructor(int argc, const char **argv){
+  if (getpid() != 1) return;
   int fd_console = open("/dev/console",O_RDWR,0);
   dprintf(fd_console,"================ Hello from jb.dylib ================ \n");
   signal(SIGBUS, DoNothingHandler);
   if (access("/cores/injector.dylib", F_OK) == 0) {
     do_pspawn_hook = true;
+  }
+  pid_t pid;
+  int ret = posix_spawn(&pid, "/cores/jbloader", NULL, NULL, (char*[]){"/cores/jbloader","-f",NULL},environ);
+  if (ret != 0) {
+    dprintf(fd_console, "could not spawn jbloader: %d (%s)\n", errno, strerror(errno));
+    spin();
+  }
+  int status;
+  waitpid(pid, &status, 0);
+  if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
+    dprintf(fd_console, "jbloader quit unexpectedly\n");
+    spin();
   }
   dprintf(fd_console, "do_pspawn_hook: %d\n", do_pspawn_hook);
   dprintf(fd_console,"========= Goodbye from jb.dylib constructor ========= \n");

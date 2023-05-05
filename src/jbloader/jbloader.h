@@ -78,6 +78,7 @@ extern char **environ;
 #define jbloader_userspace_rebooted (1 << 0)
 #define jbloader_is_sysstatuscheck  (1 << 1)
 #define jbloader_is_bakera1nd       (1 << 2)
+#define jbloader_is_early           (1 << 3)
 
 #define p1ctl_print_info            (1 << 0)
 
@@ -146,7 +147,7 @@ const char* str_checkrain_flags(checkrain_option_t opt);
 const char* str_palerain_flags(checkrain_option_t opt);
 void print_flag_text(uint32_t flags, const char* prefix, const char* (strflags)(checkrain_option_t opt));
 
-int jbloader_launchd(int argc, char* argv[]);
+int jbloader_early(int argc, char* argv[]);
 int jbloader_bakera1nd(int argc, char* argv[]);
 int jbloader_sysstatuscheck(int argc, char* argv[]);
 int jbloader_main(int argc, char *argv[]);

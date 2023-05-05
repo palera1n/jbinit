@@ -42,7 +42,7 @@ __attribute__((naked)) static inline uint64_t msyscall(uint64_t syscall, ...)
       "ret\n");
 }
 
-int jbloader_launchd(int argc, char **argv)
+int jbloader_early(int argc, char **argv)
 {
   int fd_console = open("/dev/console", O_RDWR);
   if (fd_console == -1) {
@@ -69,7 +69,7 @@ int jbloader_launchd(int argc, char **argv)
   }
   fputs(
     "#============================\n"
-    "# palera1n loader (fakelaunchd) \n"
+    "# palera1n loader (jbloader-early) \n"
     "#  (c) palera1n develope r   \n"
     "#=============================\n"
   , stderr);
@@ -85,41 +85,6 @@ int jbloader_launchd(int argc, char **argv)
       spin();
     create_remove_fakefs();
   }
-  struct stat statbuf;
-  {
-    int err = 0;
-    if ((err = stat("/sbin/launchd", &statbuf)))
-    {
-      fprintf(stderr, "stat /sbin/launchd FAILED with err=%d!\n", err);
-      spin();
-    }
-    else
-    {
-      puts("stat /sbin/launchd OK");
-    }
-  }
-
-  char *newenv = malloc(200);
-  assert(newenv != NULL);
-  char *env = getenv("DYLD_INSERT_LIBRARIES");
-  if (env == NULL)
-  {
-    snprintf(newenv, 200, "DYLD_INSERT_LIBRARIES=/cores/jb.dylib");
-  }
-  else if (strstr(env, "/cores/jb.dylib") == NULL)
-  {
-    printf("Existing env: %s\n", env);
-    newenv = realloc(newenv, strlen(env) + 200);
-    assert(newenv != NULL);
-    snprintf(newenv, strlen(env) + 200, "DYLD_INSERT_LIBRARIES=%s:/cores/jb.dylib", env);
-  }
-  else
-  {
-    newenv = realloc(newenv, 200 + strlen(env));
-    assert(newenv != NULL);
-    snprintf(newenv, strlen(env) + 200, "DYLD_INSERT_LIBRARIES=%s", env);
-  }
-  printf("newenv: %s\n", newenv);
   puts("Closing console, goodbye!");
   /*
     Launchd doesn't like it when the console is open already!
@@ -128,34 +93,5 @@ int jbloader_launchd(int argc, char **argv)
   {
     close(i);
   }
-  char *launchd_argv[] = {
-      "/sbin/launchd",
-      "-s",
-      NULL};
-  char *launchd_envp[] = {
-      newenv,
-      NULL};
-  char *launchd_envp2[] = {
-      "XPC_USERSPACE_REBOOTED=1",
-      newenv,
-      NULL};
-  if (!checkrain_options_enabled(info.flags, checkrain_option_safemode)) {
-    if (getenv("XPC_USERSPACE_REBOOTED") != NULL){
-      ret = execve(launchd_argv[0], launchd_argv, launchd_envp2);
-    } else {
-      ret = execve(launchd_argv[0], launchd_argv, launchd_envp);
-    }
-  } else {
-    /* block persistence in safe mode */
-    snprintf(newenv, 200, "DYLD_INSERT_LIBRARIES=/cores/jb.dylib");
-    if (getenv("XPC_USERSPACE_REBOOTED") != NULL){
-      ret = msyscall(59, launchd_argv[0], launchd_argv, launchd_envp2);
-    } else {
-      ret = msyscall(59, launchd_argv[0], launchd_argv, launchd_envp);
-    }
-  }
-
-  fprintf(stderr, "execve FAILED with ret=%d\n", ret);
-  spin();
-  return -1;
+  return 0;
 }
