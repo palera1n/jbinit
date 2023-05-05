@@ -61,7 +61,7 @@ int jbloader_sysstatuscheck(int argc, char *argv[])
   puts(
     "#==================================\n"
     "# palera1n loader (sysstatuscheck) \n"
-    "#      (c) palera1n develope r     \n"
+    "#      (c) palera1n team     \n"
     "#==================================="
   );
   enable_non_default_system_apps();

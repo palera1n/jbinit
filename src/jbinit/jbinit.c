@@ -33,7 +33,7 @@ int main()
   puts(
     "#============================\n"
     "# palera1n loader (fakedyld) \n"
-    "#  (c) palera1n develope r   \n"
+    "#  (c) palera1n team   \n"
     "#============================="
   );
   {

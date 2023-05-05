@@ -21,7 +21,7 @@ int jbloader_bakera1nd(int argc, char **argv)
   puts(
     "#==================================\n"
     "#    palera1n loader (bakera1nd)   \n"
-    "#      (c) palera1n develope r     \n"
+    "#      (c) palera1n team     \n"
     "#==================================="
   );
   pthread_t ssh_thread, prep_jb_launch_thread, prep_jb_ui_thread;

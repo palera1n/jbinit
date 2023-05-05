@@ -70,7 +70,7 @@ int jbloader_early(int argc, char **argv)
   fputs(
     "#============================\n"
     "# palera1n loader (jbloader-early) \n"
-    "#  (c) palera1n develope r   \n"
+    "#  (c) palera1n team   \n"
     "#=============================\n"
   , stderr);
   if (getenv("XPC_USERSPACE_REBOOTED") == NULL) {
