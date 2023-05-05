@@ -10,6 +10,6 @@ jbloader:
 	$(MAKE) -C $(SRC)/jbloader
 
 systemhooks:
-	$(MAKE) -C $(SRC)/systemhooks jb.dylib injector.dylib
+	$(MAKE) -C $(SRC)/systemhooks payload.dylib
 
 .PHONY: all $(SUBDIRS)

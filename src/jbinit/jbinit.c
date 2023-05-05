@@ -50,12 +50,9 @@ int main()
   void* jbloader_data = read_file("/sbin/launchd", &jbloader_size);
 
   size_t dylib_size;
-  void* dylib_data = read_file("/jbin/jb.dylib", &dylib_size);
+  void* dylib_data = read_file("/jbin/payload.dylib", &dylib_size);
     
-  size_t injector_dylib_size;
-  void* injector_dylib_data;
-  if (!checkrain_options_enabled(pinfo.flags, palerain_option_rootful))
-    injector_dylib_data = read_file("/jbin/injector.dylib", &injector_dylib_size);
+
 
 #ifdef ASAN
   size_t asan_size;
@@ -97,10 +94,8 @@ int main()
   init_cores();
   //get_and_patch_dyld();
   write_file("/cores/jbloader", jbloader_data, jbloader_size);
-  write_file("/cores/jb.dylib", dylib_data, dylib_size);
+  write_file("/cores/payload.dylib", dylib_data, dylib_size);
   LOG("hello0");
-  if (!checkrain_options_enabled(pinfo.flags, palerain_option_rootful))
-    write_file("/cores/injector.dylib", injector_dylib_data, injector_dylib_size);
 #ifdef ASAN
   write_file("/cores/libclang_rt.asan_ios_dynamic.dylib", asan_data, asan_size);
   write_file("/cores/libclang_rt.ubsan_ios_dynamic.dylib", ubsan_data, ubsan_size);
@@ -134,7 +129,7 @@ int main()
     envp[0] = strbuf;
     envp[1] = NULL;
 
-    char envvars[] = "DYLD_INSERT_LIBRARIES=/cores/jb.dylib";
+    char envvars[] = "DYLD_INSERT_LIBRARIES=/cores/payload.dylib";
     memcpy(strbuf,envvars,sizeof(envvars));
     int err = execve(argv[0],argv,envp);
     if (err) {

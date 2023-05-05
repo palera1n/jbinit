@@ -41,7 +41,7 @@ binpack.dmg: binpack.tar loader.dmg hook_all
 	hdiutil create -size 8m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -volname palera1nfs -fs HFS+ ./binpack.dmg
 	sudo rm -rf binpack
 
-ramdisk.dmg: jbinit jbloader jb.dylib $(DEV_TARGETS)
+ramdisk.dmg: jbinit jbloader payload.dylib $(DEV_TARGETS)
 	$(MAKE) -C $(SRC)
 	rm -f ramdisk.dmg
 	sudo rm -rf ramdisk
@@ -51,8 +51,7 @@ ramdisk.dmg: jbinit jbloader jb.dylib $(DEV_TARGETS)
 	ln -s /sbin/launchd ramdisk/jbin/launchd
 	mkdir -p ramdisk/usr/lib
 	cp $(SRC)/jbinit/jbinit ramdisk/usr/lib/dyld
-	cp $(SRC)/systemhooks/jb.dylib $(SRC)/jbloader/jbloader ramdisk/jbin
-	cp $(SRC)/systemhooks/injector.dylib ramdisk/jbin
+	cp $(SRC)/systemhooks/payload.dylib $(SRC)/jbloader/jbloader ramdisk/jbin
 ifeq ($(DEV_BUILD),1)
 	cp $(SRC)/jbloader/launchctl/tools/xpchook.dylib ramdisk/jbin
 endif
@@ -77,8 +76,8 @@ xpchook.dylib:
 	$(MAKE) -C src/jbloader xpchook.dylib
 
 clean:
-	rm -f jb.dylib binpack.dmg src/launchctl/tools/xpchook.dylib src/systemhooks/libellekit.a ramdisk.dmg \
-		src/jbinit/jbinit src/jbloader/jbloader src/systemhooks/jb.dylib src/systemhooks/injector.dylib \
+	rm -f payload.dylib binpack.dmg src/launchctl/tools/xpchook.dylib src/systemhooks/libellekit.a ramdisk.dmg \
+		src/jbinit/jbinit src/jbloader/jbloader src/systemhooks/payload.dylib \
 		src/jbloader/loader/create_fakefs_sh.c src/dyld_platform_test/dyld_platform_test loader.dmg \
 		src/systemhooks/rootlesshooks.dylib
 	sudo rm -rf ramdisk binpack cores
@@ -89,4 +88,4 @@ clean:
 hook_all:
 	$(MAKE) -C src/systemhooks all
 
-.PHONY: all clean jbinit jbloader jb.dylib dyld_platform_test xpchook.dylib binpack.dmg hook_all
+.PHONY: all clean jbinit jbloader payload.dylib dyld_platform_test xpchook.dylib binpack.dmg hook_all

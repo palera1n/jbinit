@@ -18,8 +18,12 @@
 #include <mach-o/dyld.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
+#include <spawn.h>
 
 bool do_pspawn_hook = false;
+uint32_t pflags = 0;
+
 extern char** environ;
 struct dyld_interpose_tuple {
 	const void* replacement;
@@ -36,7 +40,7 @@ int posix_spawn(pid_t *, const char *,const posix_spawn_file_actions_t *,const p
 typedef void* xpc_object_t;
 typedef void* xpc_type_t;
 typedef void* launch_data_t;
-typedef bool (^xpc_dictionary_applier_t)(const char *key, xpc_object_t value);
+//typedef bool (^xpc_dictionary_applier_t)(const char *key, xpc_object_t value);
 
 xpc_object_t xpc_dictionary_create(const char * const *keys, const xpc_object_t *values, size_t count);
 void xpc_dictionary_set_uint64(xpc_object_t dictionary, const char *key, uint64_t value);
@@ -49,7 +53,7 @@ void xpc_dictionary_set_bool(xpc_object_t dictionary, const char *key, bool valu
 const char *xpc_dictionary_get_string(xpc_object_t dictionary, const char *key);
 void xpc_dictionary_set_value(xpc_object_t dictionary, const char *key, xpc_object_t value);
 xpc_type_t xpc_get_type(xpc_object_t object);
-bool xpc_dictionary_apply(xpc_object_t xdict, xpc_dictionary_applier_t applier);
+//bool xpc_dictionary_apply(xpc_object_t xdict, xpc_dictionary_applier_t applier);
 int64_t xpc_int64_get_value(xpc_object_t xint);
 char *xpc_copy_description(xpc_object_t object);
 void xpc_dictionary_set_int64(xpc_object_t dictionary, const char *key, int64_t value);
@@ -90,6 +94,7 @@ void spin() {
 */
 xpc_object_t hook_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
   xpc_object_t retval = xpc_dictionary_get_value(dict,key);
+  if (getpid() != 1) return retval;
   if (strcmp(key,"LaunchDaemons") == 0) {
     xpc_object_t submitJob = xpc_dictionary_create(NULL, NULL, 0);
     xpc_object_t programArguments = xpc_array_create(NULL, 0);
@@ -140,17 +145,12 @@ bool hook_xpc_dictionary_get_bool(xpc_object_t dictionary, const char *key) {
 }
 DYLD_INTERPOSE(hook_xpc_dictionary_get_bool, xpc_dictionary_get_bool);
 
-int posix_spawnp(pid_t *pid,
-                 const char *path,
-                 const posix_spawn_file_actions_t *action,
-                 const posix_spawnattr_t *attr,
-                 char *const argv[], char *const envp[]);
-int hook_posix_spawnp(pid_t *pid,
+int hook_posix_spawnp_launchd(pid_t *pid,
                       const char *path,
                       const posix_spawn_file_actions_t *action,
                       const posix_spawnattr_t *attr,
                       char *const argv[], char *envp[]) {
-  if (do_pspawn_hook == false || strcmp(argv[0], "xpcproxy") || argv[1] == NULL || strcmp(argv[1], "com.apple.cfprefsd.xpc.daemon"))
+  if (argv[1] == NULL || strcmp(argv[1], "com.apple.cfprefsd.xpc.daemon"))
     return posix_spawnp(pid, path, action, attr, argv, envp);
     char *inj = NULL;
     int envcnt = 0;
@@ -169,7 +169,7 @@ int hook_posix_spawnp(pid_t *pid,
         j++;
     }
             
-    char *newlib = "/cores/injector.dylib";
+    char *newlib = "/cores/payload.dylib";
     if(currentenv) {
       size_t inj_len = strlen(currentenv) + 1 + strlen(newlib) + 1;
       inj = malloc(inj_len);
@@ -195,20 +195,133 @@ int hook_posix_spawnp(pid_t *pid,
     if (currentenv != NULL) free(currentenv);
     return ret;
 }
+int hook_posix_spawnp_xpcproxy(pid_t *pid,
+                      const char *path,
+                      const posix_spawn_file_actions_t *action,
+                      const posix_spawnattr_t *attr,
+                      char *const argv[], char *envp[])
+{
+    if(strcmp(argv[0], "/usr/sbin/cfprefsd")) {
+        return posix_spawnp(pid, path, action, attr, argv, envp);
+    }
+    int envcnt = 0;
+    while (envp[envcnt] != NULL)
+    {
+        envcnt++;
+    }
 
+    char **newenvp = malloc((envcnt + 2) * sizeof(char **));
+    if (newenvp == NULL) abort();
+    int j = 0;
+    char *currentenv = NULL;
+    for (int i = 0; i < envcnt; i++)
+    {
+        if (strstr(envp[j], "DYLD_INSERT_LIBRARIES") != NULL)
+        {
+            currentenv = envp[j];
+            continue;
+        }
+        newenvp[i] = envp[j];
+        j++;
+    }
+
+    char *newlib = "/cores/binpack/usr/lib/rootlesshooks.dylib";
+    char *inj = NULL;
+    if (currentenv)
+    {
+        size_t inj_len = strlen(currentenv) + 1 + strlen(newlib) + 1;
+        inj = malloc(inj_len);
+        if (inj == NULL) abort();
+        snprintf(inj, inj_len, "%s:%s", currentenv, newlib);
+    }
+    else
+    {
+        size_t inj_len = strlen("DYLD_INSERT_LIBRARIES=") + strlen(newlib) + 1;
+        inj = malloc(inj_len);
+        if (inj == NULL) abort();
+        snprintf(inj, inj_len, "DYLD_INSERT_LIBRARIES=%s", newlib);
+    }
+    newenvp[j] = inj;
+    newenvp[j + 1] = NULL;
+
+    int ret = posix_spawnp(pid, path, action, attr, argv, newenvp);
+    free(inj);
+    free(newenvp);
+    return ret;
+}
+int hook_posix_spawnp(pid_t *pid,
+                      const char *path,
+                      const posix_spawn_file_actions_t *action,
+                      const posix_spawnattr_t *attr,
+                      char *const argv[], char *envp[]) {
+  /* do_pspawn_hook only works in launchd */
+  if (do_pspawn_hook && getpid() == 1) {
+    return hook_posix_spawnp_launchd(pid, path, action, attr, argv, envp);
+  }
+  char exe_path[PATH_MAX];
+  uint32_t bufsize = PATH_MAX;
+  int ret = _NSGetExecutablePath(exe_path, &bufsize);
+  if (ret) abort();
+  if (!strcmp("/usr/sbin/cfprefsd", path) && getppid() == 1 && !strcmp("/usr/libexec/xpcproxy", exe_path)) {
+    return hook_posix_spawnp_xpcproxy(pid, path, action, attr, argv, envp);
+  } else {
+    return posix_spawnp(pid, path, action, attr, argv, envp);
+  }
+}
 DYLD_INTERPOSE(hook_posix_spawnp, posix_spawnp);
 
 void DoNothingHandler(int __unused _) {}
+
+uint32_t get_flags_from_p1ctl(int fd_console) {
+  if (access("/cores/binpack/usr/sbin/p1ctl", F_OK) != 0) {
+    dprintf(fd_console, "could not access p1ctl: %d (%s)\n", errno, strerror(errno));
+    spin();
+  }
+  int flides[2];
+  int ret = pipe(flides);
+  if (ret != 0) {
+    dprintf(fd_console, "pipe failed: %d (%s)\n", errno, strerror(errno));
+    spin();
+  }
+  posix_spawn_file_actions_t actions;
+  posix_spawn_file_actions_init(&actions);
+  posix_spawn_file_actions_adddup2(&actions, flides[1], STDOUT_FILENO);
+  posix_spawn_file_actions_addopen(&actions, STDERR_FILENO, "/dev/console", O_WRONLY, 0);
+  /* spawn p1ctl */
+  pid_t pid;
+  ret = posix_spawnp(&pid, "/cores/binpack/usr/sbin/p1ctl", &actions, NULL, (char*[]){"p1ctl","palera1n_flags",NULL}, NULL);
+  if (ret != 0) {
+    dprintf(fd_console, "could not spawn p1ctl: %d (%s)\n", errno, strerror(errno));
+    spin();
+  }
+  ssize_t didRead;
+  int status;
+  char p1flags_buf[16];
+  /* in principle the child may block indefinitely without read(), so we read() then waitpid() */
+  didRead = read(flides[0], p1flags_buf, 15);
+  if (didRead < 0) {
+    dprintf(fd_console, "read failed: %d (%s)\n", errno, strerror(errno));
+    spin();
+  }
+  waitpid(pid, &status, 0);
+  close(flides[0]);
+  if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
+    dprintf(fd_console, "p1ctl waitpid status: %d\n", status);
+    spin();
+  }
+  p1flags_buf[15] = '\0';
+  pflags = (uint32_t)strtoul(p1flags_buf, NULL, 16);
+  dprintf(fd_console, "pflags: %u\n", pflags);
+  return pflags;
+}
 
 __attribute__((constructor))
 static void customConstructor(int argc, const char **argv){
   if (getpid() != 1) return;
   int fd_console = open("/dev/console",O_RDWR,0);
-  dprintf(fd_console,"================ Hello from jb.dylib ================ \n");
+  dprintf(fd_console,"================ Hello from payload.dylib ================ \n");
   signal(SIGBUS, DoNothingHandler);
-  if (access("/cores/injector.dylib", F_OK) == 0) {
-    do_pspawn_hook = true;
-  }
+  /* make binpack available */
   pid_t pid;
   int ret = posix_spawn(&pid, "/cores/jbloader", NULL, NULL, (char*[]){"/cores/jbloader","-f",NULL},environ);
   if (ret != 0) {
@@ -221,7 +334,9 @@ static void customConstructor(int argc, const char **argv){
     dprintf(fd_console, "jbloader quit unexpectedly\n");
     spin();
   }
+  get_flags_from_p1ctl(fd_console);
+  if ((pflags & 1) == 0) do_pspawn_hook = true;
   dprintf(fd_console, "do_pspawn_hook: %d\n", do_pspawn_hook);
-  dprintf(fd_console,"========= Goodbye from jb.dylib constructor ========= \n");
+  dprintf(fd_console,"========= Goodbye from payload.dylib constructor ========= \n");
   close(fd_console);
 }
