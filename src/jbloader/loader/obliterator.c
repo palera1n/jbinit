@@ -8,7 +8,6 @@ int jailbreak_obliterator()
   run("/cores/binpack/bin/rm", (char*[]){
       "/cores/binpack/bin/rm",
       "-rf",
-      // "/var/jb",
       "/var/lib",
       "/var/cache",
     NULL});
@@ -61,8 +60,6 @@ int jailbreak_obliterator()
         "/cores/binpack/bin/rm",
         "-rf",
         "/var/jb",
-        // "/var/lib",
-        // "/var/cache",
         "/var/LIB",
         "/var/Liy",
         "/var/ulb",
@@ -80,11 +77,11 @@ int jailbreak_obliterator()
       "/cores/binpack/usr/bin/find",
       hash_path, "-name", "jb-*", "-type", "d", "-maxdepth", "1", "-exec", "/cores/binpack/bin/rm", "-rf", "{}", "+", NULL
     });
-    run("/cores/binpack/usr/bin/uicache", (char*[]){
-        "/cores/binpack/usr/bin/uicache",
-        "-af",
-        NULL});
-    printf("Jailbreak obliterated\n");
   }
+  run("/cores/binpack/usr/bin/uicache", (char*[]){
+    "/cores/binpack/usr/bin/uicache",
+    "-a",
+    NULL});
+  printf("Jailbreak obliterated\n");
   return 0;
 }
