@@ -26,9 +26,8 @@ all: ramdisk.dmg
 
 binpack.dmg: binpack.tar loader.dmg hook_all
 	sudo rm -rf ./binpack.dmg binpack
-	sudo tar --preserve-permissions -xf binpack.tar
-	sudo chown $${UID}:$${GID} .
-	sudo mv cores/binpack .
+	sudo mkdir binpack
+	sudo tar -C binpack --preserve-permissions -xf binpack.tar
 	sudo rm -rf binpack/usr/share cores
 	sudo ln -sf /cores/jbloader binpack/usr/sbin/p1ctl
 	sudo mkdir -p binpack/Applications
