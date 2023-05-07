@@ -20,6 +20,19 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <spawn.h>
+#include <kerninfo.h>
+
+#define RB_AUTOBOOT     0
+#define CHECK_ERROR(action, msg) do { \
+ ret = action; \
+ if (ret) { \
+  dprintf(fd_console, msg ": %d (%s)\n", errno, strerror(errno)); \
+  spin(); \
+ } \
+} while (0)
+
+
+int reboot_np(int howto, const char *message);
 
 bool do_pspawn_hook = false;
 uint32_t pflags = 0;
@@ -278,22 +291,15 @@ uint32_t get_flags_from_p1ctl(int fd_console) {
     spin();
   }
   int flides[2];
-  int ret = pipe(flides);
-  if (ret != 0) {
-    dprintf(fd_console, "pipe failed: %d (%s)\n", errno, strerror(errno));
-    spin();
-  }
+  int ret;
+  CHECK_ERROR(pipe(flides), "pipe failed");
   posix_spawn_file_actions_t actions;
   posix_spawn_file_actions_init(&actions);
   posix_spawn_file_actions_adddup2(&actions, flides[1], STDOUT_FILENO);
   posix_spawn_file_actions_addopen(&actions, STDERR_FILENO, "/dev/console", O_WRONLY, 0);
   /* spawn p1ctl */
   pid_t pid;
-  ret = posix_spawnp(&pid, "/cores/binpack/usr/sbin/p1ctl", &actions, NULL, (char*[]){"p1ctl","palera1n_flags",NULL}, NULL);
-  if (ret != 0) {
-    dprintf(fd_console, "could not spawn p1ctl: %d (%s)\n", errno, strerror(errno));
-    spin();
-  }
+  CHECK_ERROR(posix_spawnp(&pid, "/cores/binpack/usr/sbin/p1ctl", &actions, NULL, (char*[]){"p1ctl","palera1n_flags",NULL}, NULL), "could not spawn p1ctl");
   ssize_t didRead;
   int status;
   char p1flags_buf[16];
@@ -323,11 +329,8 @@ static void customConstructor(int argc, const char **argv){
   signal(SIGBUS, DoNothingHandler);
   /* make binpack available */
   pid_t pid;
-  int ret = posix_spawn(&pid, "/cores/jbloader", NULL, NULL, (char*[]){"/cores/jbloader","-f",NULL},environ);
-  if (ret != 0) {
-    dprintf(fd_console, "could not spawn jbloader: %d (%s)\n", errno, strerror(errno));
-    spin();
-  }
+  int ret;
+  CHECK_ERROR(posix_spawn(&pid, "/cores/jbloader", NULL, NULL, (char*[]){"/cores/jbloader","-f",NULL},environ), "could not spawn jbloader");
   int status;
   waitpid(pid, &status, 0);
   if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
@@ -335,7 +338,18 @@ static void customConstructor(int argc, const char **argv){
     spin();
   }
   get_flags_from_p1ctl(fd_console);
-  if ((pflags & 1) == 0) do_pspawn_hook = true;
+  if ((pflags & palerain_option_setup_rootful)) {
+    int32_t initproc_started = 1;
+    CHECK_ERROR(sysctlbyname("kern.initproc_spawned", NULL, NULL, &initproc_started, 4), "sysctl kern.initproc_spawned=1");
+    CHECK_ERROR(unmount("/cores/binpack/Applications", MNT_FORCE), "unmount(/cores/binpack/Applications)");
+    CHECK_ERROR(unmount("/cores/binpack", MNT_FORCE), "unmount(/cores/binpack)");
+    dprintf(fd_console, "Rebooting\n");
+    reboot_np(RB_AUTOBOOT, NULL);
+    sleep(5);
+    dprintf(fd_console, "reboot timed out\n");
+    spin();
+  }
+  if ((pflags & palerain_option_rootful) == 0) do_pspawn_hook = true;
   dprintf(fd_console, "do_pspawn_hook: %d\n", do_pspawn_hook);
   dprintf(fd_console,"========= Goodbye from payload.dylib constructor ========= \n");
   close(fd_console);

@@ -65,11 +65,5 @@ int create_remove_fakefs() {
     fprintf(stderr, "/cores/create_fakefs.sh exited with code %d\n", WEXITSTATUS(pidret));
     spin();
   }
-  puts("Rebooting in 5 seconds");
-  sleep(5);
-  reboot_np(RB_AUTOBOOT, NULL);
-  sleep(5);
-  puts("reboot timed out");
-  spin();
-  return -1;
+  return 0;
 }

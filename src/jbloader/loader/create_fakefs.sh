@@ -14,7 +14,7 @@ echo "=============================";
 echo "** palera1n fakefs setup **";
 echo "=============================";
 
-# unneeded imo - echo "** Executing boot commands **";
+# needed for proper shutdown
 /sbin/fsck -qL
 /sbin/mount -P 1
 /usr/libexec/init_data_protection
@@ -37,8 +37,6 @@ echo "** Got real rootdev $real_rootdev **";
 echo "** creating fakefs $fake_rootdev **";
 echo "=======================================";
 if [ -b "$fake_rootdev" ]; then
-    # should never exists, as if allow existing is set to true
-    # jbloader would have deleted it still
     >&2 echo "ERR: fakefs already exists";
     exit 1;
 else
@@ -46,6 +44,12 @@ else
 fi
 
 sleep 2;
+
+# yes, this is correct, undo the boot commands
+/usr/libexec/seputil --gigalocker-shutdown
+/sbin/umount -f /private/var
+/sbin/umount -f /private/xarts
+/sbin/umount -a || true
 
 if ! [ -b "$fake_rootdev" ]; then
     >&2 echo "ERR: fake root device did not exist even after supposed creation";
@@ -64,21 +68,25 @@ echo "====================================";
 device_id=$(uname -m)
 
 # make creating fakefs (hopefully) more noticeable for end user
-case $device_id in
-    iPhone1[1-9]*|iPhone[2-9][0-9]*)
-        clear
-        echo "how the hell are you doing this?";;
-    iPhone10,3|iPhone10,6)
-        printf '\033[H\033[2J'
-        echo ""
-        echo ""
-        echo ""
-        echo ""
-        echo ""
-        echo "";;
-    *)
+notch_clear() {
+    case $device_id in
+        iPhone1[1-9]*|iPhone[2-9][0-9]*)
+            clear
+            echo "how the hell are you doing this?";;
+        iPhone10,3|iPhone10,6)
+            printf '\033[H\033[2J'
+            echo ""
+            echo ""
+            echo ""
+            echo ""
+            echo ""
+            echo "";;
+        *)
         printf '\033[H\033[2J'
 esac
+}
+
+notch_clear
 echo "=========================================================";
 echo "";
 echo "";
@@ -151,7 +159,7 @@ echo "=============================";
 /sbin/umount -a || true
 
 sync
-printf '\033[H\033[2J'
+notch_clear
 echo "=========================================================";
 echo "";
 echo "** FakeFS is finished! **";
