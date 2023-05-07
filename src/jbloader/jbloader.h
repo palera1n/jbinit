@@ -203,6 +203,7 @@ void create_dir(char *pathname, mode_t mode, int owner, int group);
 FILE *create_file(char *pathname, mode_t mode, int owner, int group);
 int create_link(char buff[512], int type);
 int mount_check(const char *mountpoint);
+int decompress(char *tar_path);
 
 kern_return_t DeleteAPFSVolumeWithRole(const char* volpath);
 

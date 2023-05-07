@@ -11,6 +11,10 @@
 
 #include <jbloader.h>
 
+#define ZST 1
+#define TAR 2
+#define UNKNOWN 3
+
 static int archive_end(const char *p) {
     for (int n = 511; n >= 0; --n)
         if (p[n] != '\0') return (0);
@@ -115,6 +119,7 @@ static void untar(FILE *a, const char *path) {
 
 int install_bootstrap(const char *tar, const char *output) {
     int ret;
+    int type;
     ret = mount_check("/private/preboot");
     if (ret != 0) return -1;
     
@@ -123,6 +128,15 @@ int install_bootstrap(const char *tar, const char *output) {
     
     if (tar_path == NULL) {
         fprintf(stderr, "%s %s\n", "Unable to find real path:", tar);
+        return -1;
+    }
+
+    int tar_len = strlen(tar);
+    const char *ext = &tar[tar_len-3];
+    if (!strcmp(ext, "zst")) type = ZST;
+    else if (!strcmp(ext, "tar")) type = TAR;
+    else {
+        fprintf(stderr, "%s %s\n", "Unknown tar file supplied.", tar);
         return -1;
     }
 
@@ -162,12 +176,30 @@ int install_bootstrap(const char *tar, const char *output) {
     t = fopen(tar_path, "rb");
     if (t == NULL) {
         fprintf(stderr, "%s %s\n", "Unable to open", tar_path);
-    } else {         
-        untar(t, tar_path);
+        return -1;
+    } else {       
+        if (type == ZST) {
+            fclose(t);
+
+            ret = decompress(tar_path);
+            if (ret != 0) {
+                fprintf(stderr, "%s %d\n", "Failed to decompress zst:", ret);
+                return ret;
+            }
+
+            t = fopen("/var/tmp/bootstrap.tar", "rb");
+            if (t == NULL) {
+                fprintf(stderr, "%s %s\n", "Unable to open", tar_path);
+                return -1;
+            }
+
+            untar(t, "/var/tmp/bootstrap.tar");
+        } else {
+            untar(t, tar_path);
+        }
         fclose(t);
     }
 
     post_install();
     return 0;
 }
-

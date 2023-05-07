@@ -25,7 +25,6 @@ char *create_jb_path() {
     return ret;
 }
 
-
 int post_install() {
     if (check_rootful() == 1) {
         int ret = chdir("/");
@@ -79,11 +78,20 @@ int post_install() {
     }
 
     const char *bin = check_rootful() ? "/usr/bin/sh" : "/var/jb/usr/bin/sh";
-    char *arg[] = {"sh", "prep_bootstrap.sh", NULL};
+    char* args[] = {"sh", "prep_bootstrap.sh", NULL};
 
+    int ret;
     pid_t pid;
-    int ret = posix_spawn(&pid, bin, NULL, NULL, arg, NULL);
+    int status;
+    
+    ret = posix_spawnp(&pid, bin, NULL, NULL, args, NULL);
+    if (ret != 0) {
+        fprintf(stderr, "%s %d", "prep_bootstrap.sh failed with:", ret);
+        return ret;
+    }
 
+    waitpid(pid, &status, 0);
+
+    // need to do some cleanup after for temp files and bootstrap.(tar/zst)
     return 0;
 }
-
