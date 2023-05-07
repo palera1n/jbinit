@@ -32,10 +32,13 @@ binpack.dmg: binpack.tar loader.dmg hook_all
 	sudo ln -sf /cores/jbloader binpack/usr/sbin/p1ctl
 	sudo mkdir -p binpack/Applications
 	sudo mkdir -p binpack/usr/lib
+	sudo mkdir -p binpack/Library/Frameworks/CydiaSubstrate.framework
 	sudo mkdir -p binpack/Library/LaunchDaemons
 	sudo cp -a dropbear-plist/*.plist binpack/Library/LaunchDaemons
 	sudo cp src/systemhooks/rootlesshooks.dylib binpack/usr/lib
 	sudo cp loader.dmg binpack
+	sudo cp src/systemhooks/libellekit.dylib binpack/usr/lib
+	sudo ln -s ../../../usr/lib/libellekit.dylib binpack/Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate
 	sudo chown -R 0:0 binpack
 	hdiutil create -size 8m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -volname palera1nfs -fs HFS+ ./binpack.dmg
 	sudo rm -rf binpack
@@ -75,7 +78,7 @@ xpchook.dylib:
 	$(MAKE) -C src/jbloader xpchook.dylib
 
 clean:
-	rm -f payload.dylib binpack.dmg src/launchctl/tools/xpchook.dylib src/systemhooks/libellekit.a ramdisk.dmg \
+	rm -f payload.dylib binpack.dmg src/launchctl/tools/xpchook.dylib src/systemhooks/libellekit.dylib ramdisk.dmg \
 		src/jbinit/jbinit src/jbloader/jbloader src/systemhooks/payload.dylib \
 		src/jbloader/loader/create_fakefs_sh.c src/dyld_platform_test/dyld_platform_test loader.dmg \
 		src/systemhooks/rootlesshooks.dylib
