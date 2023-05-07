@@ -54,7 +54,9 @@ int p1ctl_main(int argc, char *argv[]) {
         usage();
         return 1;
     }
-    if (init_info()) return -1;
+    if (strcmp(argv[1], "print_bmhash")) {
+        if (init_info()) return -1;
+    }
     for (uint8_t i = 0; commands[i].name != NULL; i++) {
         if (!strcmp(argv[1], commands[i].name)) {
             return commands[i].cmd_main(argc - 1, &argv[1]);

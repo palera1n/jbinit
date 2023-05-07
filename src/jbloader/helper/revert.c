@@ -9,5 +9,6 @@
 #include <jbloader.h>
 
 int revert_install() {
-    return 0;
+    if (init_info()) return -1;
+    return jailbreak_obliterator();
 }
