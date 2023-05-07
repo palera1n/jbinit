@@ -42,6 +42,7 @@ bool preferencePlistNeedsRedirection(char* plistPath) {
 		"wifid.plist",
 		"dprivacyd.plist",
 		"silhouette.plist",
+        "memoryanalyticsd.plist",
 		"nfcd.plist",
 		"kNPProgressTrackerDomain.plist",
 		"siriknowledged.plist",
