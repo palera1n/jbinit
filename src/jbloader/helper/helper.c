@@ -12,7 +12,7 @@ static int helper_usage() {
         "\t-P, --set-password\t\tset 501 (uid) password\n"
         "\t-r, --reboot\t\t\treboot device\n"
         "\t-R, --revert-install\t\trevert palera1n install\n"
-        "\t-i, --post-install\t\tcompletes palera1n install\n"
+        "\t-i, --install\t\t\tcompletes palera1n install\n"
     );
     return 0;
 }
@@ -24,7 +24,7 @@ static struct option long_opt[] = {
     {"set-password", required_argument, 0, 'P'},
     {"reboot", no_argument, 0, 'r'},
     {"revert", required_argument, 0, 'R'},
-    {"post-install", required_argument, 0, 'i'},
+    {"install", required_argument, 0, 'i'},
     {NULL, 0, NULL, 0}
 };
 
@@ -48,7 +48,7 @@ int helper_main(int argc, char *argv[]) {
         return EACCES;
     }
 
-    while((opt = getopt_long(argc, argv, "pkbP:rRi", long_opt, NULL)) != -1) {
+    while((opt = getopt_long(argc, argv, "pkbi:P:rR", long_opt, NULL)) != -1) {
         switch (opt) {
             case 0: if (long_opt[option_index].flag != 0) break; if (optarg) break;
             case 'p': get_pflags(); break;
@@ -57,7 +57,7 @@ int helper_main(int argc, char *argv[]) {
             case 'P': setpw(optarg); break;
             case 'r': reboot(0); break;
             case 'R': helper_usage(); break;
-            case 'i': helper_usage(); break;
+            case 'i': install_bootstrap(optarg, "test_dir"); break;
             default: helper_usage(); break;
         }
     }

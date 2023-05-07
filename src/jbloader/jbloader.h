@@ -18,6 +18,7 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 #include <dirent.h>
 #include <mach/mach.h>
 #include <stdbool.h>
@@ -36,6 +37,8 @@
 #include <APFS/APFS.h>
 #include <APFS/APFSConstants.h>
 #include <xpc/xpc.h>
+#include <utime.h>
+#include <libgen.h>
 #include "kerninfo.h"
 
 #ifndef RAMDISK
@@ -74,6 +77,31 @@ int reboot_np(int howto, const char *message);
   PRINTF_BYTE_TO_BINARY_INT32((i) >> 32), PRINTF_BYTE_TO_BINARY_INT32(i)
 
 extern char **environ;
+
+#define REGTYPE  '0'            /* regular file */
+#define AREGTYPE '\0'           /* regular file */
+#define LNKTYPE  '1'            /* link */
+#define SYMTYPE  '2'            /* reserved */
+#define CHRTYPE  '3'            /* character special */
+#define BLKTYPE  '4'            /* block special */
+#define DIRTYPE  '5'            /* directory */
+#define FIFOTYPE '6'            /* FIFO special */
+
+#define NAME_OFF 0              /* name[100] offset */
+#define MODE_OFF 100            /* mode[8] offset */
+#define UID_OFF 108             /* uid[8] offset */
+#define GID_OFF 116             /* gid[8] offset */
+#define TYPEFLAG_OFF 156        /* typeflag offset */
+#define LINKNAME_OFF 157        /* linkname[100] offset */
+#define OCTAL_OFF 103           /* mode[8] += 3 offset */
+#define MTIME_OFF 136           /* mtime[12] offset */
+
+#define UID parseoct(buff + UID_OFF, 8)
+#define GID parseoct(buff + GID_OFF, 8)
+#define MODE parsemode(buff + OCTAL_OFF, &mode)
+
+#define SYM 1
+#define HARD 0
 
 #define jbloader_userspace_rebooted (1 << 0)
 #define jbloader_is_sysstatuscheck  (1 << 1)
@@ -162,6 +190,19 @@ int get_kflags();
 int get_pflags();
 int get_bmhash();
 int setpw(char *pw);
+int install_bootstrap(const char *tar, const char *output);
+char *create_jb_path();
+int post_install();
+int check_forcerevert();
+int check_rootful();
+int parseoct(const char *p, size_t n);
+int parsemode(const char* str, mode_t* mode);
+time_t parsetime(const char *mtime);
+int set_time(const char *pathName, time_t mtime, int link);
+void create_dir(char *pathname, mode_t mode, int owner, int group);
+FILE *create_file(char *pathname, mode_t mode, int owner, int group);
+int create_link(char buff[512], int type);
+int mount_check(const char *mountpoint);
 
 kern_return_t DeleteAPFSVolumeWithRole(const char* volpath);
 

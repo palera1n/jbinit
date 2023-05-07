@@ -1,3 +1,11 @@
+// 
+//  pwset.c
+//  src/jbloader/helper/pwset.c
+//  
+//  Created 30/04/2023
+//  jbloader (helper)
+//
+
 #include <jbloader.h>
 
 int setpw(char *pw) {

@@ -1,3 +1,11 @@
+// 
+//  info.c
+//  src/jbloader/helper/info.c
+//  
+//  Created 30/04/2023
+//  jbloader (helper)
+//
+
 #include <jbloader.h>
 
 int get_kflags() {
@@ -36,4 +44,26 @@ int get_bmhash() {
  
     write(STDOUT_FILENO, &hash, strlen(hash) + 1);
     return 0;
+}
+
+int check_forcerevert() {
+    struct kerninfo kinfo;
+    int ret = get_kerninfo(&kinfo, RAMDISK);
+    if (ret != 0) {
+        fprintf(stderr, "%s %d\n", "Failed to read kerninfo:", ret);
+        return ret;
+    }
+
+    return (kinfo.flags & checkrain_option_force_revert) != 0;
+}
+
+int check_rootful() {
+    struct paleinfo pinfo;
+    int ret = get_paleinfo(&pinfo, RAMDISK);
+    if (ret != 0) {
+        fprintf(stderr, "%s %d\n", "Failed to read paleinfo:", ret);
+        return ret;
+    }
+
+    return (pinfo.flags & palerain_option_rootful) != 0;
 }
