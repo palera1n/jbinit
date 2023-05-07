@@ -1,7 +1,7 @@
 SHELL := /usr/bin/env bash
 SRC = $(shell pwd)/src
 CC = xcrun -sdk iphoneos clang
-STRIP = xcrun -sdk iphoneos strip
+STRIP = strip
 I_N_T = install_name_tool
 CFLAGS += -I$(SRC) -I$(SRC)/include -flto=full
 ifeq ($(ASAN),1)
