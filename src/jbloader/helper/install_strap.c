@@ -117,17 +117,23 @@ static void untar(FILE *a, const char *path) {
     }
 }
 
-int install_bootstrap(const char *tar, const char *output) {
+int install_bootstrap(const char *tar, char *pm) {
     int ret;
     int type;
     ret = mount_check("/private/preboot");
     if (ret != 0) return -1;
     
     char *tar_path = realpath(tar, NULL);
+    char *pm_path = realpath(pm, NULL);
     FILE *d, *t, *temp;
     
     if (tar_path == NULL) {
-        fprintf(stderr, "%s %s\n", "Unable to find real path:", tar);
+        fprintf(stderr, "%s %s\n", "Unable to find tar real path:", tar);
+        return -1;
+    }
+
+    if (pm_path == NULL) {
+        fprintf(stderr, "%s %s\n", "Unable to find package manager real path:", pm);
         return -1;
     }
 
@@ -200,6 +206,6 @@ int install_bootstrap(const char *tar, const char *output) {
         fclose(t);
     }
 
-    post_install();
+    post_install(pm_path);
     return 0;
 }

@@ -25,7 +25,7 @@ char *create_jb_path() {
     return ret;
 }
 
-int post_install() {
+int post_install(char *pm) {
     if (check_rootful() == 1) {
         int ret = chdir("/");
         if (ret != 0) {
@@ -92,6 +92,12 @@ int post_install() {
 
     waitpid(pid, &status, 0);
 
-    // need to do some cleanup after for temp files and bootstrap.(tar/zst)
+    ret = install_deb(pm);
+    if (ret != 0) {
+        fprintf(stderr, "%s %s %s%d%s", "Failed to install:", pm, "(", ret, ")");
+        return ret;
+    }
+    
+    add_sources();
     return 0;
 }

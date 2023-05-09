@@ -2,6 +2,8 @@
 #include <getopt.h>
 #include <mach-o/arch.h>
 
+
+
 static int helper_usage() {
     fprintf(stderr,
         "Usage: helper [-pkbPrRi] <optional-arguments>\n"
@@ -11,6 +13,7 @@ static int helper_usage() {
         "\t-b, --print-bmhash\t\tprints boot manifest hash\n"
         "\t-P, --set-password\t\tset 501 (uid) password\n"
         "\t-r, --reboot\t\t\treboot device\n"
+        "\t-m, --package-manager\t\tinstall package manager\n"
         "\t-R, --revert-install\t\trevert palera1n install\n"
         "\t-i, --install\t\t\tcompletes palera1n install\n"
     );
@@ -25,11 +28,13 @@ static struct option long_opt[] = {
     {"reboot", no_argument, 0, 'r'},
     {"revert", required_argument, 0, 'R'},
     {"install", required_argument, 0, 'i'},
+    {"package-manager", required_argument, 0, 'm'},
     {NULL, 0, NULL, 0}
 };
 
 int helper_main(int argc, char *argv[]) {
     const NXArchInfo *arch = NXGetLocalArchInfo();
+    char *package_manager;
     int option_index = 0;
     int opt;
 
@@ -48,7 +53,7 @@ int helper_main(int argc, char *argv[]) {
         return EACCES;
     }
 
-    while((opt = getopt_long(argc, argv, "pkbi:P:rR", long_opt, NULL)) != -1) {
+    while((opt = getopt_long(argc, argv, "pkbm:i:P:rR", long_opt, NULL)) != -1) {
         switch (opt) {
             case 0: if (long_opt[option_index].flag != 0) break; if (optarg) break;
             case 'p': get_pflags(); break;
@@ -57,7 +62,8 @@ int helper_main(int argc, char *argv[]) {
             case 'P': setpw(optarg); break;
             case 'r': reboot(0); break;
             case 'R': helper_usage(); break;
-            case 'i': install_bootstrap(optarg, "test_dir"); break;
+            case 'm': printf("argpm: %s\n", optarg); package_manager = optarg; break;
+            case 'i': printf("argtar: %s\n", optarg); install_bootstrap(optarg, argv[3]); break;
             default: helper_usage(); break;
         }
     }
