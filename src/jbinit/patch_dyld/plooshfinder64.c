@@ -33,6 +33,10 @@ void pf_disable_patch64(struct pf_patch64_t patch) {
     patch.disabled = true;
 }
 
+bool pf_maskmatch64(uint64_t insn, uint64_t match, uint64_t mask) {
+    return (insn & mask) == match;
+}
+
 void pf_find_maskmatch64(void *buf, size_t size, struct pf_patchset64_t patchset) {
     uint64_t *stream = buf;
     uint64_t uint_count = size >> 2;
@@ -44,7 +48,7 @@ void pf_find_maskmatch64(void *buf, size_t size, struct pf_patchset64_t patchset
             insn_match_cnt = 0;
             if (!patch.disabled) {
                 for (int x = 0; x < patch.count; x++) {
-                    if ((stream[i + x] & patch.masks[x]) == patch.matches[x]) {
+                    if (pf_maskmatch64(stream[i + x], patch.matches[x], patch.masks[x])) {
                         insn_match_cnt++;
                     } else {
                         break;

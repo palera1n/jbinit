@@ -96,4 +96,25 @@ struct nlist_64 {
     uint64_t offset;
 };
 
+struct kmod_info {
+    struct kmod_info *next;
+	int32_t info_version;
+	uint32_t id;
+	char name[64];
+	char version[64];
+	int32_t reference_count;
+	struct kmod_reference *reference_list;
+	uint64_t address;
+	uint64_t size;
+	uint64_t hdr_size;
+	void *start;
+	void *stop;
+};
+
+struct kmod_reference {
+	struct kmod_reference *next;
+	struct kmod_info *info;
+};
+
+
 #endif

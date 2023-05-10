@@ -3,18 +3,27 @@
 #include "elf.h"
 #include "elf_defs.h"
 
-bool is_elf(void *buf) {
+bool elf_check(void *buf) {
     struct elf_header_64 *hdr = (struct elf_header_64 *) buf;
     char elf_magic[5] = { 0x7f, 'E', 'L', 'F' };
 
     if (strncmp(hdr->ident.signature, elf_magic, 4) == 0) {
         return true;
-    } else {
-        printf("Not an ELF!\n");
     }
 
     return false;
 }
+
+bool is_elf(void *buf) {
+    bool elf = elf_check(buf);
+    
+    if (!elf) {
+        printf("%s: Not an ELF!\n", __FUNCTION__);
+    }
+
+    return elf;
+}
+
 
 struct elf_sheader_64 *elf_get_section(void *buf, char *name) {
     if (!is_elf(buf)) {
@@ -37,11 +46,10 @@ struct elf_sheader_64 *elf_get_section(void *buf, char *name) {
         }
     }
 
-    printf("%s: Unable to find section %s!\n", __FUNCTION__, name);
     return NULL;
 }
 
-uint64_t elf_get_offset(void *buf) {
+void *elf_va_to_ptr(void *buf, uint64_t addr) {
     if (!is_elf(buf)) {
         return 0;
     }
@@ -53,7 +61,12 @@ uint64_t elf_get_offset(void *buf) {
         struct elf_pheader_64 *phdr = program_hdr + i;
 
         if (phdr->type == PT_LOAD) {
-            return phdr->virtual_address;
+            uint64_t segment_start = phdr->virtual_address;
+            uint64_t segment_end = phdr->virtual_address + phdr->file_size;
+            if (segment_start <= addr && segment_end > addr) {
+                uint64_t offset = addr - phdr->virtual_address;
+                return buf + phdr->offset + offset;
+            }
         }
     }
 

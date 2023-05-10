@@ -92,10 +92,8 @@ int main()
     init_log(dev_rootdev);
 
   init_cores();
-  //get_and_patch_dyld();
   write_file("/cores/jbloader", jbloader_data, jbloader_size);
   write_file("/cores/payload.dylib", dylib_data, dylib_size);
-  LOG("hello0");
 #ifdef ASAN
   write_file("/cores/libclang_rt.asan_ios_dynamic.dylib", asan_data, asan_size);
   write_file("/cores/libclang_rt.ubsan_ios_dynamic.dylib", ubsan_data, ubsan_size);
@@ -104,12 +102,10 @@ int main()
   write_file("/cores/xpchook.dylib", xpchook_data, xpchook_size);
 #endif
 
-  LOG("hello1");
   prepare_rootfs(dev_rootdev, use_fakefs);
-  LOG("hello2");
+  //get_and_patch_dyld();
 
   LOG("Closing console, goodbye!");
-  LOG("hello3");
 
   /*
     Launchd doesn't like it when the console is open already!
