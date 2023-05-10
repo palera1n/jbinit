@@ -21,6 +21,27 @@ int dpkg_checks() {
     return 0;
 }
 
+int dpkg_check_install(char* package) {
+    int ret, status;
+    pid_t pid;
+
+    char* args[] = {"dpkg", "-s", package, NULL};
+    const char *apt = check_rootful() ? DPKG_BIN_ROOTFUL : DPKG_BIN_ROOTLESS;
+    if (access(apt, F_OK) != 0) {
+        fprintf(stderr, "Unable to access dpkg: %d (%s)\n", errno, strerror(errno));
+        return -1;
+    }
+
+    ret = posix_spawnp(&pid, apt, NULL, NULL, args, NULL);
+    if (ret != 0) {
+        fprintf(stderr, "%s %d\n", "dpkg failed with error:", ret);
+        return ret;
+    }
+
+    waitpid(pid, &status, 0);
+    return 0;
+}
+
 int install_deb(char *deb_path) {
     const char *dpkg = check_rootful() ? DPKG_BIN_ROOTFUL : DPKG_BIN_ROOTLESS;
     int ret, status;

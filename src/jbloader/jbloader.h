@@ -206,6 +206,10 @@ int mount_check(const char *mountpoint);
 int decompress(char *tar_path);
 int install_deb(char *deb_path);
 int add_sources();
+int apt(char* args[]);
+int dpkg_check_install(char* package);
+int upgrade_packages();
+int revert_install();
 
 kern_return_t DeleteAPFSVolumeWithRole(const char* volpath);
 

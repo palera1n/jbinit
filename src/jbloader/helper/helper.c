@@ -1,8 +1,14 @@
+// 
+//  helper.c
+//  src/jbloader/helper/helper.c
+//  
+//  Created 30/04/2023
+//  jbloader (helper)
+//
+
 #include <jbloader.h>
 #include <getopt.h>
 #include <mach-o/arch.h>
-
-
 
 static int helper_usage() {
     fprintf(stderr,
@@ -61,9 +67,9 @@ int helper_main(int argc, char *argv[]) {
             case 'b': get_bmhash(); break;
             case 'P': setpw(optarg); break;
             case 'r': reboot(0); break;
-            case 'R': helper_usage(); break;
-            case 'm': printf("argpm: %s\n", optarg); package_manager = optarg; break;
-            case 'i': printf("argtar: %s\n", optarg); install_bootstrap(optarg, argv[3]); break;
+            case 'R': revert_install(); break;
+            case 'm': package_manager = optarg; break;
+            case 'i': install_bootstrap(optarg, argv[3]); break;
             default: helper_usage(); break;
         }
     }
