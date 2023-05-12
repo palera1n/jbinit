@@ -11,35 +11,31 @@
 #define DPKG_BIN_ROOTFUL "/usr/bin/dpkg"
 #define DPKG_BIN_ROOTLESS "/var/jb/usr/bin/dpkg"
 
-int dpkg_checks() {
-    const char *dpkg = check_rootful() ? DPKG_BIN_ROOTFUL : DPKG_BIN_ROOTLESS;
-    if (access(dpkg, F_OK) != 0) {
-        fprintf(stderr, "Unable to access dpkg: %d (%s)\n", errno, strerror(errno));
-        return -1;
-    }
+#define NIGHTLY_ROOTFUL "/Applications/Sileo-Nightly.app"
+#define NIGHTLY_ROOTLESS "/var/jb/Applications/Sileo-Nightly.app"
 
-    return 0;
-}
+#define SILEO_ROOTFUL "/Applications/Sileo.app"
+#define SILEO_ROOTLESS "/var/jb/Applications/Sileo.app"
 
-int dpkg_check_install(char* package) {
-    int ret, status;
-    pid_t pid;
+#define ZEBRA_ROOTFUL "/Applications/Zebra.app"
+#define ZEBRA_ROOTLESS "/var/jb/Applications/Zebra.app"
 
-    char* args[] = {"dpkg", "-s", package, NULL};
-    const char *apt = check_rootful() ? DPKG_BIN_ROOTFUL : DPKG_BIN_ROOTLESS;
-    if (access(apt, F_OK) != 0) {
-        fprintf(stderr, "Unable to access dpkg: %d (%s)\n", errno, strerror(errno));
-        return -1;
-    }
+int pm_installed() {
+    int ret_val = 0;
+    FILE *zebra = fopen(check_rootful()?ZEBRA_ROOTFUL:ZEBRA_ROOTLESS, "r");
+    if (zebra != NULL) ret_val += 1;
+    fclose(zebra);
 
-    ret = posix_spawnp(&pid, apt, NULL, NULL, args, NULL);
-    if (ret != 0) {
-        fprintf(stderr, "%s %d\n", "dpkg failed with error:", ret);
-        return ret;
-    }
+    FILE *sileo = fopen(check_rootful()?SILEO_ROOTFUL:SILEO_ROOTLESS, "r");
+    if (sileo != NULL) ret_val += 2;
+    fclose(sileo);
 
-    waitpid(pid, &status, 0);
-    return 0;
+    if (ret_val >= 2) return ret_val;
+    FILE *nightly = fopen(check_rootful()?NIGHTLY_ROOTFUL:NIGHTLY_ROOTLESS, "r");
+    if (nightly != NULL) ret_val += 2;
+    fclose(nightly);
+
+    return ret_val;
 }
 
 int install_deb(char *deb_path) {
@@ -47,12 +43,11 @@ int install_deb(char *deb_path) {
     int ret, status;
     pid_t pid;
     
-    ret = dpkg_checks();
-    if (ret != 0) {
-        fprintf(stderr, "%s\n", "Pre checks for dpkg have failed.");
+    if (access(check_rootful()?DPKG_BIN_ROOTFUL:DPKG_BIN_ROOTLESS, F_OK) != 0) {
+        fprintf(stderr, "Unable to access dpkg: %d (%s)\n", errno, strerror(errno));
         return -1;
     }
-    
+
     char* args[] = {"dpkg", "--force-all", "-i", deb_path, NULL};
     char* env_rootful[] = {"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:", NULL};
     char* env_rootless[] ={"PATH=/var/jb/usr/local/sbin:/var/jb/usr/local/bin:/var/jb/usr/sbin:/var/jb/usr/bin:/var/jb/sbin:/var/jb/bin:", NULL};
@@ -66,3 +61,4 @@ int install_deb(char *deb_path) {
     waitpid(pid, &status, 0);
     return 0;
 }
+

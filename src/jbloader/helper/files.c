@@ -106,7 +106,7 @@ int create_link(char buff[512], int type) {
     int ret;
 
     for (int n = 0; n < 100; ++n) linkname[n] = buff[157 + n];
-    printf("%s -> %s\n", linkname, buff);
+    fprintf(stdout, "%s -> %s\n", linkname, buff);
 
     if (type) ret = symlink(linkname, buff);
     else ret = link(linkname, buff);

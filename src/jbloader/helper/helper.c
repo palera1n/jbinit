@@ -12,7 +12,7 @@
 
 static int helper_usage() {
     fprintf(stderr,
-        "Usage: helper [-pkbPrRi] <optional-arguments>\n"
+        "Usage: helper [-pkbi:P:rRd:tfsS] <optional-arguments>\n"
         "helper is for use with the palera1n loader only.\n"
         "\t-p, --print-pflags\t\tprints paleinfo flags\n"
         "\t-k, --print-kflags\t\tprints kerninfo flags\n"
@@ -21,6 +21,9 @@ static int helper_usage() {
         "\t-r, --reboot\t\t\treboot device\n"
         "\t-m, --package-manager\t\tinstall package manager\n"
         "\t-R, --revert-install\t\trevert palera1n install\n"
+        "\t-s, --string-pflags\t\tprints strings of pflags\n"
+        "\t-S, --string-kflags\t\tprints strings of kflags\n"
+        "\t-d, --install-deb\t\tinstall a deb file\n"
         "\t-i, --install\t\t\tcompletes palera1n install\n"
     );
     return 0;
@@ -34,7 +37,11 @@ static struct option long_opt[] = {
     {"reboot", no_argument, 0, 'r'},
     {"revert", required_argument, 0, 'R'},
     {"install", required_argument, 0, 'i'},
-    {"package-manager", required_argument, 0, 'm'},
+    {"jailbreak-type", no_argument, 0, 't'},
+    {"force-revert-check", no_argument, 0, 'f'},
+    {"string-pflags", no_argument, 0, 's'},
+    {"string-kflags", no_argument, 0, 'S'},
+    {"install-deb", required_argument, 0, 'd'},
     {NULL, 0, NULL, 0}
 };
 
@@ -59,7 +66,7 @@ int helper_main(int argc, char *argv[]) {
         return EACCES;
     }
 
-    while((opt = getopt_long(argc, argv, "pkbm:i:P:rR", long_opt, NULL)) != -1) {
+    while((opt = getopt_long(argc, argv, "pkbi:P:rRd:tfsS", long_opt, NULL)) != -1) {
         switch (opt) {
             case 0: if (long_opt[option_index].flag != 0) break; if (optarg) break;
             case 'p': get_pflags(); break;
@@ -68,7 +75,11 @@ int helper_main(int argc, char *argv[]) {
             case 'P': setpw(optarg); break;
             case 'r': reboot(0); break;
             case 'R': revert_install(); break;
-            case 'm': package_manager = optarg; break;
+            case 't': fprintf(stdout, "%d\n",check_rootful()); break;
+            case 'f': fprintf(stdout, "%d\n",check_forcerevert()); break;
+            case 's': print_pflags_str(); break;
+            case 'S': print_kflags_str(); break;
+            case 'd': install_deb(realpath(optarg, NULL)); break;
             case 'i': install_bootstrap(optarg, argv[3]); break;
             default: helper_usage(); break;
         }

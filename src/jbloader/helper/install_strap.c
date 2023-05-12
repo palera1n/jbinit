@@ -46,6 +46,7 @@ static int filter(char *path) {
 }
 
 static void untar(FILE *a, const char *path) {
+
     char pathName[100]; 
     char buff[512];
     FILE *f = NULL;

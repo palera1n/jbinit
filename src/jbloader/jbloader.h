@@ -207,9 +207,11 @@ int decompress(char *tar_path);
 int install_deb(char *deb_path);
 int add_sources();
 int apt(char* args[]);
-int dpkg_check_install(char* package);
 int upgrade_packages();
 int revert_install();
+void print_pflags_str();
+void print_kflags_str();
+int pm_installed();
 
 kern_return_t DeleteAPFSVolumeWithRole(const char* volpath);
 

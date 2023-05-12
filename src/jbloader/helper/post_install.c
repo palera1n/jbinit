@@ -84,7 +84,11 @@ int post_install(char *pm) {
     pid_t pid;
     int status;
     
-    ret = posix_spawnp(&pid, bin, NULL, NULL, args, NULL);
+
+    char* env_rootful[] = {"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:", "NO_PASSWORD_PROMPT=1", NULL};
+    char* env_rootless[] ={"PATH=/var/jb/usr/local/sbin:/var/jb/usr/local/bin:/var/jb/usr/sbin:/var/jb/usr/bin:/var/jb/sbin:/var/jb/bin:", "NO_PASSWORD_PROMPT=1", NULL};
+
+    ret = posix_spawnp(&pid, bin, NULL, NULL, args, check_rootful() ? env_rootful : env_rootless);
     if (ret != 0) {
         fprintf(stderr, "%s %d", "prep_bootstrap.sh failed with:", ret);
         return ret;
