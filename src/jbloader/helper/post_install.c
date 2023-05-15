@@ -8,6 +8,8 @@
 
 #include <jbloader.h>
 
+#define DOTFILE_ROOTFUL "/.palecursus_strapped"
+#define DOTFILE_ROOTLESS "/var/jb/.palecursus_strapped"
 
 char *create_jb_path() { 
     srand(time(0));
@@ -60,20 +62,28 @@ int post_install(char *pm) {
         else return -1;
         if(rename("var", jb_path) != 0) return -1;
 
-        char *path_link = malloc(sizeof(char) * (256)); // does not need to be 256, maybe 136?
+        char *path_link = malloc(sizeof(char) * (256));
         sprintf(path_link, "/private/preboot/%s/%s/procursus", hash, jb_path);
-        printf("full: %s\n", path_link);
 
         ret = symlink(path_link, "/var/jb");
         if (ret != 0) {
-            fprintf(stderr, "%s %s (%d)\n", "Failed to create link:", "/var/jb", ret);
+            fprintf(stderr, "%s %s %s%d%s\n", "Failed to create link:", "/var/jb", "(", ret, ")");
             return ret;
         }
 
         ret = chdir("/var/jb");
         if (ret != 0) {
-            fprintf(stderr, "%s (%d)\n", "Failed to chdir into /var/jb:", ret);
+            fprintf(stderr, "%s %d\n", "Failed to chdir into /var/jb:", ret);
             return ret;
+        }
+
+        DIR* prefs = opendir("var/mobile/Library/Preferences");
+        if (!prefs) {
+            ret = mkdir("var/mobile/Library/Preferences", 0755);
+            if (ret != 0) {
+                fprintf(stderr, "%s %d\n", "Failed to create preferences folder:", ret);
+                return 1;
+            }
         }
     }
 
@@ -84,13 +94,12 @@ int post_install(char *pm) {
     pid_t pid;
     int status;
     
-
     char* env_rootful[] = {"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:", "NO_PASSWORD_PROMPT=1", NULL};
     char* env_rootless[] ={"PATH=/var/jb/usr/local/sbin:/var/jb/usr/local/bin:/var/jb/usr/sbin:/var/jb/usr/bin:/var/jb/sbin:/var/jb/bin:", "NO_PASSWORD_PROMPT=1", NULL};
 
     ret = posix_spawnp(&pid, bin, NULL, NULL, args, check_rootful() ? env_rootful : env_rootless);
     if (ret != 0) {
-        fprintf(stderr, "%s %d", "prep_bootstrap.sh failed with:", ret);
+        fprintf(stderr, "%s %d\n", "prep_bootstrap.sh failed with:", ret);
         return ret;
     }
 
@@ -98,10 +107,23 @@ int post_install(char *pm) {
 
     ret = install_deb(pm);
     if (ret != 0) {
-        fprintf(stderr, "%s %s %s%d%s", "Failed to install:", pm, "(", ret, ")");
+        fprintf(stderr, "%s %s %s%d%s\n", "Failed to install:", pm, "(", ret, ")");
         return ret;
     }
     
-    add_sources();
+    const char *dotfile_path = check_rootful() ? DOTFILE_ROOTFUL : DOTFILE_ROOTLESS;
+    FILE *dotfile = fopen(dotfile_path, "w+");
+    if (dotfile == NULL) {
+        fprintf(stderr, "%s\n", "Failed to create dotfiles");
+        return -1;
+    }
+
+    fclose(dotfile);
+
+    ret = add_sources();
+    if (ret !=0) { 
+        fprintf(stderr, "%s %d\n", "Failed to add default sources:", ret);
+        return ret;
+    }
     return 0;
 }

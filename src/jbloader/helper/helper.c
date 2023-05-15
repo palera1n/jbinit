@@ -17,7 +17,7 @@ static int helper_usage() {
         "\t-p, --print-pflags\t\tprints paleinfo flags\n"
         "\t-k, --print-kflags\t\tprints kerninfo flags\n"
         "\t-b, --print-bmhash\t\tprints boot manifest hash\n"
-        "\t-P, --set-password\t\tset 501 (uid) password\n"
+        "\t-P, --set-password\t\tset mobile password\n"
         "\t-r, --reboot\t\t\treboot device\n"
         "\t-m, --package-manager\t\tinstall package manager\n"
         "\t-R, --revert-install\t\trevert palera1n install\n"
@@ -52,7 +52,7 @@ int helper_main(int argc, char *argv[]) {
     int opt;
 
     if (strcmp("arm64", arch->name)) {
-        fprintf(stderr, "Architecture type '%s' is not supported.\n", arch->name);
+        fprintf(stderr, "%s %s %s\n", "Architecture type", arch->name, "is not supported.");
         return EPERM;
     }
 
@@ -62,7 +62,7 @@ int helper_main(int argc, char *argv[]) {
     }
     
     if (getuid() != 0 && getgid() != 0) {
-        fprintf(stderr, "helper must be ran as 'root'.\n");
+        fprintf(stderr, "%s\n", "Insufficient permissions.");
         return EACCES;
     }
 

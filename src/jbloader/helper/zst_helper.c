@@ -9,12 +9,12 @@
 #include <jbloader.h>
 
 #define ZSTD_BIN "/cores/binpack/usr/bin/zstd"
-#define TAR_TMP "/var/tmp/bootstrap.tar"
+#define TAR_TMP "/var/mobile/Library/palera1n/temp/bootstrap.tar"
 
 int pre_checks() {
     if (access(ZSTD_BIN, F_OK) != 0) {
-        fprintf(stderr, "could not access zstd: %d (%s)\n", errno, strerror(errno));
-        return -1;
+        fprintf(stderr, "%s %d %s%s%s\n", "could not access zstd:", errno, "(", strerror(errno), ")");
+        return errno;
     }
 
     FILE *bootstrap = fopen(TAR_TMP, "rb");
@@ -43,7 +43,7 @@ int decompress(char *tar_path) {
         return -1;
     }
     
-    char* args[] = {"zstd", "-d", tar_path, "-o", "/var/tmp/bootstrap.tar", NULL};
+    char* args[] = {"zstd", "-d", tar_path, "-o", TAR_TMP, NULL};
     
     ret = posix_spawnp(&pid, ZSTD_BIN, NULL, NULL, args, NULL);
     if (ret != 0) {

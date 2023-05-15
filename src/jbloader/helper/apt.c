@@ -15,7 +15,6 @@
 
 #define SOURCES_PATH_ROOTFUL "/etc/apt/sources.list.d/palera1n.sources"
 #define SOURCES_PATH_ROOTLESS "/var/jb/etc/apt/sources.list.d/palera1n.sources"
-#define PROCURSUS_PATH "/etc/apt/sources.list.d/procursus.sources"
 #define ZEBRA_PATH "/var/mobile/Library/Application Support/xyz.willy.Zebra/sources.list"
 
 #define ELLEKIT_SILEO "Types: deb\nURIs: https://ellekit.space/\nSuites: ./\nComponents:\n\n"
@@ -35,19 +34,22 @@
 #define PROCURSUS_ZEBRA_1900 "deb https://apt.procurs.us/ 1900 main\n"
 #define PROCURSUS_ZEBRA_2000 "deb https://apt.procurs.us/ 2000 main\n" // future proofing
 
+#define PROCURSUS_PATH "/etc/apt/sources.list.d/procursus.sources"
+#define PROCURSUS_PREFS_PATH "/etc/apt/preferences.d/procursus"
+
 int apt(char* args[]) {
     int ret, status;
     pid_t pid;
 
     const char *apt = check_rootful() ? APT_BIN_ROOTFUL : APT_BIN_ROOTLESS;
     if (access(apt, F_OK) != 0) {
-        fprintf(stderr, "Unable to access apt: %d (%s)\n", errno, strerror(errno));
-        return -1;
+        fprintf(stderr, "%s %d %s%s%s\n", "Unable to access apt:", errno, "(", strerror(errno), ")");
+        return EACCES;
     }
 
     ret = posix_spawnp(&pid, apt, NULL, NULL, args, NULL);
     if (ret != 0) {
-        fprintf(stderr, "%s %d \n", "apt failed with error:", ret);
+        fprintf(stderr, "%s %d\n", "apt failed with error:", ret);
         return ret;
     }
 
@@ -58,7 +60,7 @@ int apt(char* args[]) {
 int upgrade_packages() {
     int installed = pm_installed();
     if (installed == 0) {
-        fprintf(stderr, "%s\n", "No package manager found, unable to continue");
+        fprintf(stderr, "%s\n", "No package manager found, unable to continue.");
         return -1;
     }
 
@@ -76,25 +78,32 @@ int rootful_cleanup() {
         return -1;
     }
 
-    FILE *procursus = fopen(PROCURSUS_PATH, "rb");
-    if (procursus != NULL) {
+    FILE *source = fopen(PROCURSUS_PATH, "rb");
+    if (source != NULL) {
         fprintf(stdout, "%s\n", "Removing procursus.sources.");
-        fclose(procursus);
+        fclose(source);
         remove(PROCURSUS_PATH);
     } else {
-        fclose(procursus);
+        fclose(source);
+    }
+
+    FILE *prefs = fopen(PROCURSUS_PATH, "rb");
+    if (prefs != NULL) {
+        fprintf(stdout, "%s\n", "Removing procursus preferences.");
+        fclose(prefs);
+        remove(PROCURSUS_PATH);
+    } else {
+        fclose(prefs);
     }
     
     return 0;
 }
 
 int add_sources_apt() {
-
-    FILE *apt_sources;
     const char *sources_file = check_rootful() ? SOURCES_PATH_ROOTFUL : SOURCES_PATH_ROOTLESS;
     int CF = (int)((floor)(kCFCoreFoundationVersionNumber / 100) * 100);
 
-    apt_sources = fopen(sources_file, "rb");
+    FILE *apt_sources = fopen(sources_file, "rb");
     if (apt_sources != NULL) {
         fprintf(stdout, "%s\n", "Removing zebra.list.");
         fclose(apt_sources);
@@ -121,7 +130,7 @@ int add_sources_apt() {
 
     int ret = fclose(apt_sources);
     if (ret != 0) {
-        fprintf(stderr, "%s %d\n", "Failed to close sources file:", ret);
+        fprintf(stderr, "%s %d\n", "Failed to close apt sources file:", ret);
         return ret;
     }
 
@@ -129,20 +138,17 @@ int add_sources_apt() {
 }
 
 int add_sources_zebra() {
-    FILE *zebra_sources;
-    const char *sources_file = ZEBRA_PATH;
-    int CF = (int)((floor)(kCFCoreFoundationVersionNumber / 100) * 100);
-
-    zebra_sources = fopen(sources_file, "rb");
+    FILE *zebra_sources = fopen(ZEBRA_PATH, "rb");
     if (zebra_sources != NULL) {
         fprintf(stdout, "%s\n", "Removing zebra.list.");
         fclose(zebra_sources);
-        remove(sources_file);
+        remove(ZEBRA_PATH);
     } else {
         fclose(zebra_sources);
     }
 
-    zebra_sources = fopen(sources_file, "w+");
+    int CF = (int)((floor)(kCFCoreFoundationVersionNumber / 100) * 100);
+    zebra_sources = fopen(ZEBRA_PATH, "w+");
     fputs(ZEBRA_ZEBRA, zebra_sources);
     fputs(PALERA1N_ZEBRA, zebra_sources);
 
@@ -161,7 +167,7 @@ int add_sources_zebra() {
 
     int ret = fclose(zebra_sources);
     if (ret != 0) {
-        fprintf(stderr, "%s %d\n", "Failed to close sources file:", ret);
+        fprintf(stderr, "%s %d\n", "Failed to close Zebra sources file:", ret);
         return ret;
     }
 
@@ -179,7 +185,6 @@ int add_sources() {
         return ret;
     }
     
-
     if (installed == 1 || installed == 3) {
         ret = add_sources_zebra();
         if (ret != 0) {

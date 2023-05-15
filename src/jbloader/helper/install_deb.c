@@ -44,8 +44,8 @@ int install_deb(char *deb_path) {
     pid_t pid;
     
     if (access(check_rootful()?DPKG_BIN_ROOTFUL:DPKG_BIN_ROOTLESS, F_OK) != 0) {
-        fprintf(stderr, "Unable to access dpkg: %d (%s)\n", errno, strerror(errno));
-        return -1;
+        fprintf(stderr, "%s %d %s%s%s\n", "Unable to access dpkg:", errno, "(", strerror(errno), ")");
+        return errno;
     }
 
     char* args[] = {"dpkg", "--force-all", "-i", deb_path, NULL};
@@ -54,11 +54,10 @@ int install_deb(char *deb_path) {
 
     ret = posix_spawnp(&pid, dpkg, NULL, NULL, args, check_rootful() ? env_rootful : env_rootless);
     if (ret != 0) {
-        fprintf(stderr, "%s %d", "dpkg failed with:", ret);
+        fprintf(stderr, "%s %d\n", "dpkg failed with:", ret);
         return ret;
     }
 
     waitpid(pid, &status, 0);
     return 0;
 }
-

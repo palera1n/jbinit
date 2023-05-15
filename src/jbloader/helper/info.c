@@ -55,7 +55,6 @@ int check_forcerevert() {
         return ret;
     }
 
-    //fprintf(stdout, "%d\n", ((kinfo.flags & checkrain_option_force_revert) != 0));
     return (kinfo.flags & checkrain_option_force_revert) != 0;
 }
 
@@ -68,7 +67,6 @@ int check_rootful() {
         return ret;
     }
 
-    //fprintf(stdout, "%d\n", ((pinfo.flags & palerain_option_rootful) != 0));
     return (pinfo.flags & palerain_option_rootful) != 0;
 }
 
