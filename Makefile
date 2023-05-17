@@ -1,7 +1,7 @@
 SHELL := /usr/bin/env bash
 SRC = $(shell pwd)/src
 CC = xcrun -sdk iphoneos clang
-STRIP = strip
+STRIP = xcrun -sdk iphoneos strip
 I_N_T = install_name_tool
 CFLAGS += -I$(SRC) -I$(SRC)/include -flto=full
 ifeq ($(ASAN),1)
@@ -59,12 +59,6 @@ ifeq ($(ASAN),1)
 endif
 	sudo gchown -R 0:0 ramdisk
 	hdiutil create -size $(RAMDISK_SIZE) -layout NONE -format UDRW -uid 0 -gid 0 -srcfolder ./ramdisk -fs HFS+ -volname palera1nrd ./ramdisk.dmg
-
-loader.dmg: palera1n.ipa
-	rm -rf loader.dmg Payload
-	unzip palera1n.ipa
-	hdiutil create -size 1m -layout NONE -format ULFO -uid 0 -gid 0 -volname palera1nLoader -srcfolder ./Payload -fs HFS+ ./loader.dmg
-	rm -rf Payload
 
 $(SRC)/dyld_platform_test/dyld_platform_test:
 	$(MAKE) -C $(SRC)/dyld_platform_test
