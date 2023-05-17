@@ -1,9 +1,9 @@
 [submodule "src/jbloader/launchctl"]
 	path = src/jbloader/launchctl
-	url = git@github.com:ProcursusTeam/launchctl.git
+	url = https://github.com/ProcursusTeam/launchctl
 [submodule "src/launchd_hook/ellekit"]
 	path = src/systemhooks/ellekit
-	url = git@github.com:evelyneee/ellekit.git
+	url = https://github.com/evelyneee/ellekit
 [submodule "src/launchd_hook/rootlesshooks"]
 	path = src/launchd_hook/rootlesshooks
-	url = git@github.com:palera1n/rootlesshooks.git
+	url = https://github.com/palera1n/rootlesshooks
