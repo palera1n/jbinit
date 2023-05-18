@@ -10,15 +10,6 @@
 
 struct statfs64 __DARWIN_STRUCT_STATFS64;
 
-
-#pragma mark Checking Mounts
-/*!
- * Used for checking if a device/path/source/etc is mounted or not
- *
- * More information on fstatfs64 & statfs64 can be found in mount.h
- * https://opensource.apple.com/source/xnu/xnu-201.5/bsd/sys/mount.h.auto.html
- */
-
 void fstatfs64(int fd, struct statfs64 *buf) {
     register int x0 asm("x0") = fd; // int fd
     register struct statfs64 *x1 asm("x1") = buf; // struct statfs64 *buf

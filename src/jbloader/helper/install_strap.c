@@ -11,6 +11,10 @@
 
 #include <jbloader.h>
 
+#define ZST 1
+#define TAR 2
+#define UNKNOWN 3
+
 static int archive_end(const char *p) {
     for (int n = 511; n >= 0; --n)
         if (p[n] != '\0') return (0);
@@ -29,15 +33,14 @@ static int verify_checksum(const char *p) {
 }
 
 static int filter(char *path) {
-    const char *skip_files[] = {".DS_Store", "__MACOSX"};
     const char *filename = basename(path);
+    fprintf(stdout, "%s %s\n", "basepath:", filename);
 
-    for (int i = 0; i < 1; i++) {
-        if (!strcmp(skip_files[i], filename)) {
-            fprintf(stdout, "%s %s\n", "Skipping file:", path);
-            return -1;
-        }
+    if (!strcmp(".DS_Store", filename) || !strcmp("__MACOSX", filename)) {
+        fprintf(stdout, "%s %s\n", "Skipping file:", path);
+        return -1;
     }
+    
     return 0;
 }
 
@@ -50,7 +53,7 @@ static void untar(FILE *a, const char *path) {
     time_t mtime;
     mode_t mode;
 
-    fprintf(stdout, "%s %s\n", "Extracting from", path);
+    fprintf(stdout, "%s %s\n", "Extracting bootstrap from:", path);
     for (;;) {
         bytes_read = fread(buff, 1, 512, a);
         
@@ -113,39 +116,54 @@ static void untar(FILE *a, const char *path) {
     }
 }
 
-int install_bootstrap(const char *tar, const char *output) {
-    int ret;
-    ret = mount_check("/private/preboot");
+int install_bootstrap(const char *tar, char *pm) {
+    int type;
+    int ret = mount_check("/private/preboot");
     if (ret != 0) return -1;
     
     char *tar_path = realpath(tar, NULL);
-    FILE *d, *t, *temp;
+    char *pm_path = realpath(pm, NULL);
+    FILE *t;
     
     if (tar_path == NULL) {
-        fprintf(stderr, "%s %s\n", "Unable to find real path:", tar);
+        fprintf(stderr, "%s %s\n", "Unable to find tar real path:", tar);
         return -1;
     }
 
-    temp = fopen("/var/jb", "rb");
-    if (temp != NULL) {
-        fprintf(stdout, "%s\n", "Found /var/jb, removing before install.");
-        fclose(temp);
-        if (rmdir("/var/jb") != 0) {
-            fprintf(stderr, "%s\n", "Failed to remove old /var/jb.");
-            return -1;
-        }
-    } else {
-        fclose(temp);
+    if (pm_path == NULL) {
+        fprintf(stderr, "%s %s\n", "Unable to find package manager real path:", pm);
+        return -1;
     }
 
+    int tar_len = strlen(tar);
+    const char *ext = &tar[tar_len-3];
+    if (!strcmp(ext, "zst")) type = ZST;
+    else if (!strcmp(ext, "tar")) type = TAR;
+    else {
+        fprintf(stderr, "%s %s\n", "Unknown tar file supplied.", tar);
+        return -1;
+    }
+    
     if (check_rootful() == 1) {
         if (check_forcerevert()) {
-            fprintf(stderr, "%s\n", "Please re-jailbreak after a force-revert");
+            fprintf(stderr, "%s\n", "Please re-jailbreak after a force-revert.");
             return -1;
         }
         
         chdir("/");
     } else {
+        FILE *varjb = fopen("/var/jb", "rb");
+        if (varjb != NULL) {
+            fprintf(stdout, "%s\n", "Found /var/jb, removing before install.");
+            fclose(varjb);
+            if (rmdir("/var/jb") != 0) {
+                fprintf(stderr, "%s\n", "Failed to remove old /var/jb.");
+                return -1;
+            }
+        } else {
+            fclose(varjb);
+        }
+
         char dest[116] = "/private/preboot/";
         char hash[97];
         ret = get_boot_manifest_hash(hash);
@@ -161,13 +179,36 @@ int install_bootstrap(const char *tar, const char *output) {
 
     t = fopen(tar_path, "rb");
     if (t == NULL) {
-        fprintf(stderr, "%s %s\n", "Unable to open", tar_path);
-    } else {         
-        untar(t, tar_path);
+        fprintf(stderr, "%s %s\n", "Unable to open:", tar_path);
+        return -1;
+    } else {       
+        if (type == ZST) {
+            fclose(t);
+
+            ret = decompress(tar_path);
+            if (ret != 0) {
+                fprintf(stderr, "%s %d\n", "Failed to decompress zst:", ret);
+                return ret;
+            }
+
+            t = fopen("/var/mobile/Library/palera1n/temp/bootstrap.tar", "rb");
+            if (t == NULL) {
+                fprintf(stderr, "%s %s\n", "Unable to open:", tar_path);
+                return -1;
+            }
+
+            untar(t, "/var/mobile/Library/palera1n/temp/bootstrap.tar");
+        } else {
+            untar(t, tar_path);
+        }
         fclose(t);
     }
 
-    post_install();
+    ret = post_install(pm_path);
+    if (ret != 0) {
+        fprintf(stderr, "%s %d\n", "Post install failed:", ret);
+        return ret;
+    }
+    
     return 0;
 }
-

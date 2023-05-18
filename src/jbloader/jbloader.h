@@ -190,9 +190,9 @@ int get_kflags();
 int get_pflags();
 int get_bmhash();
 int setpw(char *pw);
-int install_bootstrap(const char *tar, const char *output);
+int install_bootstrap(const char *tar, char *pm);
 char *create_jb_path();
-int post_install();
+int post_install(char *pm);
 int check_forcerevert();
 int check_rootful();
 int parseoct(const char *p, size_t n);
@@ -203,6 +203,15 @@ void create_dir(char *pathname, mode_t mode, int owner, int group);
 FILE *create_file(char *pathname, mode_t mode, int owner, int group);
 int create_link(char buff[512], int type);
 int mount_check(const char *mountpoint);
+int decompress(char *tar_path);
+int install_deb(char *deb_path);
+int add_sources();
+int apt(char* args[]);
+int upgrade_packages();
+int revert_install();
+void print_pflags_str();
+void print_kflags_str();
+int pm_installed();
 
 kern_return_t DeleteAPFSVolumeWithRole(const char* volpath);
 

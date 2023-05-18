@@ -47,6 +47,7 @@ int get_bmhash() {
 }
 
 int check_forcerevert() {
+    char str[3];
     struct kerninfo kinfo;
     int ret = get_kerninfo(&kinfo, RAMDISK);
     if (ret != 0) {
@@ -58,6 +59,7 @@ int check_forcerevert() {
 }
 
 int check_rootful() {
+    char str[3];
     struct paleinfo pinfo;
     int ret = get_paleinfo(&pinfo, RAMDISK);
     if (ret != 0) {
@@ -66,4 +68,39 @@ int check_rootful() {
     }
 
     return (pinfo.flags & palerain_option_rootful) != 0;
+}
+
+void output_flags(uint32_t flags, const char* prefix, const char* (strflags)(checkrain_option_t opt)) {
+    for (uint8_t bit = 0; bit < 32; bit++) {
+        if (checkrain_options_enabled(flags, (1 << bit))) {
+            char printbuf[0x30];
+            const char* opt_str = strflags(1 << bit);
+            if (opt_str == NULL) {
+                snprintf(printbuf, 0x30, "%s_option_unknown_%" PRIu8, prefix, bit);
+            }
+            printf("%s,", opt_str == NULL ? printbuf : opt_str);
+        }
+    }
+}
+
+void print_pflags_str() {
+    struct paleinfo pinfo;
+    int ret = get_paleinfo(&pinfo, RAMDISK);
+    if (ret != 0) {
+        fprintf(stderr, "%s %d\n", "Failed to read paleinfo:", ret);
+        return;
+    }
+
+    output_flags(pinfo.flags, "palerain", str_palerain_flags);
+}
+
+void print_kflags_str() {
+    struct kerninfo kinfo;
+    int ret = get_kerninfo(&kinfo, RAMDISK);
+    if (ret != 0) {
+        fprintf(stderr, "%s %d\n", "Failed to read kerninfo:", ret);
+        return;
+    }
+
+    output_flags(info.flags, "checkrain", str_checkrain_flags);
 }
