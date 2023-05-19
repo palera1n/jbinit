@@ -212,6 +212,8 @@ int revert_install();
 void print_pflags_str();
 void print_kflags_str();
 int pm_installed();
+int safemode(int enter_safemode);
+int userspace_reboot();
 
 kern_return_t DeleteAPFSVolumeWithRole(const char* volpath);
 

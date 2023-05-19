@@ -11,6 +11,9 @@
 #define DOTFILE_ROOTFUL "/.palecursus_strapped"
 #define DOTFILE_ROOTLESS "/var/jb/.palecursus_strapped"
 
+#define LIBRARY "/var/jb/var/mobile/Library"
+#define PREFERENCES "/var/jb/var/mobile/Library/Preferences"
+
 char *create_jb_path() { 
     srand(time(0));
     char *valid_set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -27,8 +30,31 @@ char *create_jb_path() {
     return ret;
 }
 
+int create_preferences() {
+    int ret;
+    struct stat *st;
+
+    ret = mkdir(LIBRARY, 0755);
+    if (ret != 0 && ret != EEXIST) {
+        fprintf(stderr, "%s %d\n", "Failed to create library folder:", ret);
+        return 1;
+    }
+    chmod(LIBRARY, 0755);
+    chown(LIBRARY, 0, 0);
+
+    ret = mkdir(PREFERENCES, 0755);
+    if (ret != 0 && ret != EEXIST) {
+        fprintf(stderr, "%s %d\n", "Failed to create preferences folder:", ret);
+        return 1;
+    }
+    chmod(PREFERENCES, 0755);
+    chown(PREFERENCES, 501, 501);
+
+    return 0;
+}
+
 int post_install(char *pm) {
-    if (check_rootful() == 1) {
+    if (check_rootful()) {
         int ret = chdir("/");
         if (ret != 0) {
             fprintf(stderr, "%s\n", "Failed to chdir into /");
@@ -76,15 +102,6 @@ int post_install(char *pm) {
             fprintf(stderr, "%s %d\n", "Failed to chdir into /var/jb:", ret);
             return ret;
         }
-
-        DIR* prefs = opendir("var/mobile/Library/Preferences");
-        if (!prefs) {
-            ret = mkdir("var/mobile/Library/Preferences", 0755);
-            if (ret != 0) {
-                fprintf(stderr, "%s %d\n", "Failed to create preferences folder:", ret);
-                return 1;
-            }
-        }
     }
 
     const char *bin = check_rootful() ? "/usr/bin/sh" : "/var/jb/usr/bin/sh";
@@ -117,13 +134,21 @@ int post_install(char *pm) {
         fprintf(stderr, "%s\n", "Failed to create dotfiles");
         return -1;
     }
-
     fclose(dotfile);
 
+    if (!check_rootful()) {
+        ret = create_preferences();
+        if (ret != 0) {
+            fprintf(stderr, "%s %d\n", "Failed to create preferences:", ret);
+            return ret;
+        }
+    }
+
     ret = add_sources();
-    if (ret !=0) { 
+    if (ret != 0) { 
         fprintf(stderr, "%s %d\n", "Failed to add default sources:", ret);
         return ret;
     }
+
     return 0;
 }

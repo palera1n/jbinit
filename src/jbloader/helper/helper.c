@@ -19,7 +19,7 @@ static int helper_usage() {
         "\t-b, --print-bmhash\t\tprints boot manifest hash\n"
         "\t-P, --set-password\t\tset mobile password\n"
         "\t-r, --reboot\t\t\treboot device\n"
-        "\t-m, --package-manager\t\tinstall package manager\n"
+        "\t-m, --safemode\t\t\tenter/exit safemode\n"
         "\t-R, --revert-install\t\trevert palera1n install\n"
         "\t-s, --string-pflags\t\tprints strings of pflags\n"
         "\t-S, --string-kflags\t\tprints strings of kflags\n"
@@ -35,13 +35,14 @@ static struct option long_opt[] = {
     {"print-bmhash", no_argument, 0, 'b'},
     {"set-password", required_argument, 0, 'P'},
     {"reboot", no_argument, 0, 'r'},
-    {"revert", required_argument, 0, 'R'},
+    {"revert-install", no_argument, 0, 'R'},
     {"install", required_argument, 0, 'i'},
     {"jailbreak-type", no_argument, 0, 't'},
     {"force-revert-check", no_argument, 0, 'f'},
     {"string-pflags", no_argument, 0, 's'},
     {"string-kflags", no_argument, 0, 'S'},
     {"install-deb", required_argument, 0, 'd'},
+    {"safemode", required_argument, 0, 'm'},
     {NULL, 0, NULL, 0}
 };
 
@@ -81,6 +82,7 @@ int helper_main(int argc, char *argv[]) {
             case 'S': print_kflags_str(); break;
             case 'd': install_deb(realpath(optarg, NULL)); break;
             case 'i': install_bootstrap(optarg, argv[3]); break;
+            case 'm': safemode(atoi(optarg)); break;
             default: helper_usage(); break;
         }
     }
