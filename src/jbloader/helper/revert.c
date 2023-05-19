@@ -21,7 +21,7 @@ int clean_fakefs() {
     }
 
     int clean = (pinfo.flags & palerain_option_clean_fakefs) != 0;
-    if (clean) return reboot(0);
+    if (clean) return userspace_reboot();
 
     pinfo.flags += palerain_option_clean_fakefs;
     int rmd = open(RAMDISK, O_RDWR);
@@ -36,7 +36,7 @@ int clean_fakefs() {
     write(rmd, &pinfo, sizeof(struct paleinfo));
     close(rmd);
 
-    return reboot(0);
+    return userspace_reboot();
 }
 
 int revert_install() {

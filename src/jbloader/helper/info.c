@@ -102,5 +102,5 @@ void print_kflags_str() {
         return;
     }
 
-    output_flags(info.flags, "checkrain", str_checkrain_flags);
+    output_flags(kinfo.flags, "checkrain", str_checkrain_flags);
 }

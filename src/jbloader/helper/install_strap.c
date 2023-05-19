@@ -34,8 +34,6 @@ static int verify_checksum(const char *p) {
 
 static int filter(char *path) {
     const char *filename = basename(path);
-    fprintf(stdout, "%s %s\n", "basepath:", filename);
-
     if (!strcmp(".DS_Store", filename) || !strcmp("__MACOSX", filename)) {
         fprintf(stdout, "%s %s\n", "Skipping file:", path);
         return -1;
