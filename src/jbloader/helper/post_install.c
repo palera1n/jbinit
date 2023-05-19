@@ -13,6 +13,7 @@
 
 #define LIBRARY "/var/jb/var/mobile/Library"
 #define PREFERENCES "/var/jb/var/mobile/Library/Preferences"
+#define CACHES "/var/jb/var/mobile/Library/Caches"
 
 char *create_jb_path() { 
     srand(time(0));
@@ -30,17 +31,16 @@ char *create_jb_path() {
     return ret;
 }
 
-int create_preferences() {
+int create_directories() {
     int ret;
-    struct stat *st;
 
-    ret = mkdir(LIBRARY, 0755);
+    ret = mkdir(LIBRARY, 0711);
     if (ret != 0 && ret != EEXIST) {
         fprintf(stderr, "%s %d\n", "Failed to create library folder:", ret);
         return 1;
     }
-    chmod(LIBRARY, 0755);
-    chown(LIBRARY, 0, 0);
+    chmod(LIBRARY, 0711);
+    chown(LIBRARY, 501, 501);
 
     ret = mkdir(PREFERENCES, 0755);
     if (ret != 0 && ret != EEXIST) {
@@ -49,6 +49,14 @@ int create_preferences() {
     }
     chmod(PREFERENCES, 0755);
     chown(PREFERENCES, 501, 501);
+
+    ret = mkdir(CACHES, 0755);
+    if (ret != 0 && ret != EEXIST) {
+        fprintf(stderr, "%s %d\n", "Failed to create caches folder:", ret);
+        return 1;
+    }
+    chmod(CACHES, 0700);
+    chown(CACHES, 501, 501);
 
     return 0;
 }
@@ -137,9 +145,9 @@ int post_install(char *pm) {
     fclose(dotfile);
 
     if (!check_rootful()) {
-        ret = create_preferences();
+        ret = create_directories();
         if (ret != 0) {
-            fprintf(stderr, "%s %d\n", "Failed to create preferences:", ret);
+            fprintf(stderr, "%s %d\n", "Failed to create directories:", ret);
             return ret;
         }
     }
