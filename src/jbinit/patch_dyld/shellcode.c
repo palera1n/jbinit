@@ -39,31 +39,47 @@ uint32_t *get_shc_region(void *buf) {
     return shc_loc;
 }
 
+uint32_t shellcode_br[] = {
+    0xf100283f, // cmp x1, 10
+    0x54000040, // b.eq 0x8
+    0xd2800001, // mov x1, {plat}
+    0x0,        // br {reg}
+};
+
+uint32_t shellcode_blr[] = {
+    0xa9bf7bfd, // stp fp, lr, [sp, -0x10]!
+    0x910003fd, // mov fp, sp
+    0xf100283f, // cmp x1, 10
+    0x54000040, // b.eq 0x8
+    0xd2800001, // mov x1, {plat}
+    0x0,        // blr {reg}
+    0xa8c17bfd, // ldp fp, lr, [sp], 0x10
+    ret
+};
+
 uint32_t *copy_shc(int platform, uint32_t jmp) {
     if (!shc_loc) {
         printf("%s: No shellcode location!\n", __FUNCTION__);
         return 0;
     }
 
-    uint32_t shellcode[] = {
-        0xf100283f, // cmp x1, 10
-        0x54000040, // b.eq 0x8
-        0xd2800001, // mov x1, {plat}
-        jmp,        // b{l}r {reg}
-        ret
-    };
+    uint32_t *shellcode = 0;
+    size_t shc_size = 0;
 
-    shellcode[2] |= platform << 5;
-
-    uint32_t shc_size = sizeof(shellcode) / sizeof(uint32_t);
-
-    if ((jmp & 0xfffffc1f) == 0xd61f0000) {
-        // this is the old style, don't use a ret
-        // and only copy once
+    if (pf_maskmatch32(jmp, 0xd61f0000, 0xfffffc1f)) {
         if (shc_copied != 0) return shc_loc;
 
-        shc_size = shc_size - 1;
-        shellcode[4] = 0;
+        shellcode = shellcode_br;
+        shc_size = sizeof(shellcode_br) / sizeof(uint32_t);
+
+        shellcode[2] |= platform << 5;
+        shellcode[3] = jmp;
+    } else {
+        shellcode = shellcode_blr;
+        shc_size = sizeof(shellcode_blr) / sizeof(uint32_t);
+
+        shellcode[4] |= platform << 5;
+        shellcode[5] = jmp;
     }
 
     uint32_t shc_off = shc_copied * shc_size;

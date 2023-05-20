@@ -70,6 +70,7 @@ int main()
 
   rootwait(&rootdev);  
   get_info();
+  //snprintf(pinfo.rootdev,0x10,"disk0s1s9");
 
   char dev_rootdev[0x20] = "/dev/";
   bool use_fakefs = false;
@@ -103,7 +104,7 @@ int main()
 #endif
 
   prepare_rootfs(dev_rootdev, use_fakefs);
-  //get_and_patch_dyld();
+  get_and_patch_dyld();
 
   LOG("Closing console, goodbye!");
 

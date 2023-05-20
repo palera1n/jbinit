@@ -107,14 +107,30 @@ void *pf_follow_xref(void *buf, uint32_t *stream) {
         return 0;
     }
     
-    uint16_t buf_offset = (uint64_t) buf & 0xfff;
-    uint64_t unaligned_stream = (uint64_t) stream - buf_offset;
-    uint64_t stream_addr = (unaligned_stream & ~0xfffUL) + buf_offset;
-
-    uint64_t adrp_addr = stream_addr + pf_adrp_offset(stream[0]);
+    int64_t adrp_addr = pf_adrp_offset(stream[0]);
     uint32_t add_offset = (stream[1] >> 10) & 0xfff;
 
-    void *xref = (void *)(adrp_addr + add_offset);
+    uint64_t stream_va = 0;
+    if (macho_check(buf)) {
+        stream_va = macho_ptr_to_va(buf, stream);
+    } else if (elf_check(buf)) {
+        stream_va = elf_ptr_to_va(buf, stream);
+    } else {
+        printf("%s: Unknown binary format!\n", __FUNCTION__);
+    }
+
+    uint64_t stream_addr = stream_va & ~0xfffUL;
+
+    uint64_t followed_addr = stream_addr + adrp_addr + add_offset;
+
+    void *xref = 0;
+    if (macho_check(buf)) {
+        xref = macho_va_to_ptr(buf, followed_addr);
+    } else if (elf_check(buf)) {
+        xref = elf_va_to_ptr(buf, followed_addr);
+    } else {
+        printf("%s: Unknown binary format?\n", __FUNCTION__);
+    }
 
     return xref;
 }

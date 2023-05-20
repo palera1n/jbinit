@@ -62,10 +62,38 @@ void *elf_va_to_ptr(void *buf, uint64_t addr) {
 
         if (phdr->type == PT_LOAD) {
             uint64_t segment_start = phdr->virtual_address;
-            uint64_t segment_end = phdr->virtual_address + phdr->file_size;
+            uint64_t segment_end = segment_start + phdr->file_size;
             if (segment_start <= addr && segment_end > addr) {
-                uint64_t offset = addr - phdr->virtual_address;
+                uint64_t offset = addr - segment_start;
                 return buf + phdr->offset + offset;
+            }
+        }
+    }
+
+    return 0;
+}
+
+uint64_t elf_ptr_to_va(void *buf, void *ptr) {
+    if (!is_elf(buf)) {
+        return 0;
+    }
+
+    struct elf_header_64 *hdr = (struct elf_header_64 *) buf;
+    struct elf_pheader_64 *program_hdr = buf + hdr->ph_off;
+    uint64_t ptr_addr = (uint64_t) ptr;
+
+    for (int i = 0; i < hdr->ph_count; i++) {
+        struct elf_pheader_64 *phdr = program_hdr + i;
+
+        if (phdr->type == PT_LOAD) {
+            uint64_t segment_start = (uint64_t) buf + phdr->offset;
+            uint64_t segment_end = segment_start + phdr->file_size;
+            uint64_t segment_va = phdr->virtual_address;
+
+            if (segment_start <= ptr_addr && segment_end > ptr_addr) {
+                uint64_t offset = ptr_addr - segment_start;
+
+                return segment_va + offset;
             }
         }
     }
