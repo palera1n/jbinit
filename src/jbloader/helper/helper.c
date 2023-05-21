@@ -25,6 +25,9 @@ static int helper_usage() {
         "\t-S, --string-kflags\t\tprints strings of kflags\n"
         "\t-d, --install-deb\t\tinstall a deb file\n"
         "\t-i, --install\t\t\tcompletes palera1n install\n"
+        "\t-M, --mount-directories\t\t(re)mount directories\n"
+        "\t-l, --load-tweaks\t\t\tload tweaks\n"
+        "\t-L, --launch-daemons\t\tstart launch daemons\n"
     );
     return 0;
 }
@@ -43,6 +46,9 @@ static struct option long_opt[] = {
     {"string-kflags", no_argument, 0, 'S'},
     {"install-deb", required_argument, 0, 'd'},
     {"safemode", required_argument, 0, 'm'},
+    {"mount-directories", no_argument, 0, 'M'},
+    {"load-tweaks", no_argument, 0, 'l'},
+    {"launch-daemons", no_argument, 0, 'L'},
     {NULL, 0, NULL, 0}
 };
 
@@ -67,7 +73,7 @@ int helper_main(int argc, char *argv[]) {
         return EACCES;
     }
 
-    while((opt = getopt_long(argc, argv, "pkbi:P:rRd:tfsS", long_opt, NULL)) != -1) {
+    while((opt = getopt_long(argc, argv, "pkbi:P:rRd:tfsSmMlL", long_opt, NULL)) != -1) {
         switch (opt) {
             case 0: if (long_opt[option_index].flag != 0) break; if (optarg) break;
             case 'p': get_pflags(); break;
@@ -83,6 +89,10 @@ int helper_main(int argc, char *argv[]) {
             case 'd': install_deb(realpath(optarg, NULL)); break;
             case 'i': install_bootstrap(optarg, argv[3]); break;
             case 'm': safemode(atoi(optarg)); break;
+            case 'M': mount_directories(); break;
+            case 'l': activate_tweaks(); break;
+            case 'L': start_launch_daemons(); break;
+
             default: helper_usage(); break;
         }
     }

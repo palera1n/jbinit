@@ -214,6 +214,9 @@ void print_kflags_str();
 int pm_installed();
 int safemode(int enter_safemode);
 int userspace_reboot();
+int activate_tweaks();
+int start_launch_daemons();
+int mount_directories();
 
 kern_return_t DeleteAPFSVolumeWithRole(const char* volpath);
 
