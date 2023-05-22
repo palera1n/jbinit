@@ -158,7 +158,9 @@ int init_info();
 int create_remove_fakefs();
 void *enable_ssh(void *__unused _);
 void *prep_jb_launch(void *__unused _);
-int loadDaemons();
+
+void load_daemons();
+
 void safemode_alert(CFNotificationCenterRef center, void *observer,
                     CFStringRef name, const void *object, CFDictionaryRef userInfo);
 int uicache_apps();
