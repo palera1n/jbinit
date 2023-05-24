@@ -1,6 +1,13 @@
 #ifndef COMMON_H
 #define COMMON_H
+
 #include <stdint.h>
+
+
+#define CHECK(expression)            \
+    if (!(expression)){              \
+        goto end;                    \
+    }
 
 #define APFS_MOUNT_DEFAULT_SNAPSHOT         0x0
 #define APFS_MOUNT_LIVEFS                   0x1
