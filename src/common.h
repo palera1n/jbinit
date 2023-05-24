@@ -9,15 +9,15 @@
         goto end;                    \
     }
 
-#define APFS_MOUNT_DEFAULT_SNAPSHOT         0x0
-#define APFS_MOUNT_LIVEFS                   0x1
-#define APFS_MOUNT_CUSTOM_SNAPSHOT          0x2
-#define APFS_IMG4_SNAPSHOT                  0x3
+#define APFS_MOUNT_DEFAULT_SNAPSHOT         (0x0)
+#define APFS_MOUNT_LIVEFS                   (0x1)
+#define APFS_MOUNT_CUSTOM_SNAPSHOT          (0x2)
+#define APFS_IMG4_SNAPSHOT                  (0x3)
 /* fusion ? */
-#define APFS_MOUNT_MNTAPFS_LARGE_C_OPT      0x4
-#define APFS_MOUNT_MNTAPFS_SMALL_C_OPT      0x5
+#define APFS_MOUNT_MNTAPFS_LARGE_C_OPT      (0x4)
+#define APFS_MOUNT_MNTAPFS_SMALL_C_OPT      (0x5)
 
-#define APFS_MOUNT_IMG4                     0x8
+#define APFS_MOUNT_IMG4                     (0x8)
 
 struct apfs_mountarg {
     char *path;
