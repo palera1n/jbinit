@@ -33,8 +33,8 @@ binpack.dmg: binpack.tar loader.dmg hook_all
 	sudo mkdir -p binpack/Applications
 	sudo mkdir -p binpack/usr/lib
 	sudo mkdir -p binpack/Library/Frameworks/CydiaSubstrate.framework
-	sudo mkdir -p binpack/Library/LaunchDaemons
-	sudo cp -a dropbear-plist/*.plist binpack/Library/LaunchDaemons
+	sudo mkdir -p binpack/Library/LaunchDaemons/DropBear/
+	sudo cp -a LaunchDaemons/DropBear/*.plist binpack/Library/LaunchDaemons/DropBear/
 	sudo cp src/systemhooks/rootlesshooks.dylib binpack/usr/lib
 	sudo cp loader.dmg binpack
 	sudo cp src/systemhooks/libellekit.dylib binpack/usr/lib

@@ -21,14 +21,14 @@ void *enable_ssh(void *__unused _)
   char* dropbear_plist = NULL;
   switch (dyld_platform) {
     case PLATFORM_IOS:
-      dropbear_plist = "/cores/binpack/Library/LaunchDaemons/dropbear.plist";
+      dropbear_plist = "/cores/binpack/Library/LaunchDaemons/DropBear/dropbear.plist";
       break;
     case PLATFORM_BRIDGEOS:
-      dropbear_plist = "/cores/binpack/Library/LaunchDaemons/dropbear-bridgeos-ncm.plist"; 
+      dropbear_plist = "/cores/binpack/Library/LaunchDaemons/DropBear/dropbear-bridgeos-ncm.plist";
       break;
     case PLATFORM_TVOS:
     default:
-      dropbear_plist = "/cores/binpack/Library/LaunchDaemons/dropbear-tv.plist";
+      dropbear_plist = "/cores/binpack/Library/LaunchDaemons/DropBear/dropbear-tv.plist";
       break;
   }
   printf("loading %s\n", dropbear_plist);
