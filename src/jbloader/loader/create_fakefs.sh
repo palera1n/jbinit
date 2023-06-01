@@ -45,12 +45,6 @@ fi
 
 sleep 2;
 
-# yes, this is correct, undo the boot commands
-/usr/libexec/seputil --gigalocker-shutdown
-/sbin/umount -f /private/var
-/sbin/umount -f /private/xarts
-/sbin/umount -a || true
-
 if ! [ -b "$fake_rootdev" ]; then
     >&2 echo "ERR: fake root device did not exist even after supposed creation";
     exit 1;
@@ -154,6 +148,10 @@ sleep 2;
 echo "=============================";
 echo "** unmounting filesystems **";
 echo "=============================";
+/usr/libexec/seputil --gigalocker-shutdown
+/sbin/umount -f /private/var
+/sbin/umount -f /private/xarts
+/sbin/umount -a || true
 /sbin/umount -f /cores/fs/real
 /sbin/umount -f /cores/fs/fake
 /sbin/umount -a || true
