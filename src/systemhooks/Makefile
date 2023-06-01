@@ -19,7 +19,7 @@ cfprefsd.o: cfprefsd.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -flto=thin cfprefsd.c -c -miphoneos-version-min=15.0 -arch arm64 -Os -Wall -Wextra -Wno-unused-parameter
 
 rootlesshooks.dylib: cfprefsd.o libellekit.dylib
-	swiftc -Osize cfprefsd.o libellekit.dylib \
+	xcrun -sdk iphoneos swiftc -Osize cfprefsd.o libellekit.dylib \
 		-lto=llvm-thin \
 		--target=arm64-apple-ios15.0 \
 		-sdk $(shell xcrun -sdk iphoneos --show-sdk-path) \
