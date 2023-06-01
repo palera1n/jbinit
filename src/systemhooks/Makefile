@@ -32,6 +32,7 @@ rootlesshooks.dylib: cfprefsd.o libellekit.dylib
 		-emit-library \
 		-framework Foundation \
 		-framework CoreFoundation \
+		-lswiftCore \
 		-o rootlesshooks.dylib
 	ldid -S rootlesshooks.dylib 
 
