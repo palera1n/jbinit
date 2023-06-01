@@ -65,7 +65,7 @@ device_id=$(uname -m)
 notch_clear() {
     case $device_id in
         iPhone1[1-9]*|iPhone[2-9][0-9]*)
-            clear
+            printf '\033[H\033[2J'
             echo "how the hell are you doing this?";;
         iPhone10,3|iPhone10,6)
             printf '\033[H\033[2J'
