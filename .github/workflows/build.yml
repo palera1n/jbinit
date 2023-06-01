@@ -24,10 +24,6 @@ jobs:
 
       - name: Install dependecies
         run: |
-          sudo sed -i.bak -Ee 's/API_UNAVAILABLE\(.*\)//g' $(xcrun -sdk iphoneos --show-sdk-path)//System/Library/Frameworks/CoreFoundation.framework/Headers/CFUserNotification.h
-          sudo sed -i.bak -e 's/;}/;/g' $(xcrun -sdk iphoneos --show-sdk-path)//System/Library/Frameworks/CoreFoundation.framework/Headers/CFUserNotification.h
-          sudo sed -i.bak -e 's/__UNAVAILABLE_PUBLIC_IOS;/;/g' $(xcrun -sdk iphoneos --show-sdk-path)/System/Library/Frameworks/IOKit.framework/Headers/IOKitLib.h
-          ruby -e "File.write(ARGV[0], File.read(ARGV[0]).gsub(ARGV[1]) { ARGV[2] })" $(xcrun -sdk iphoneos --show-sdk-path)/System/Library/Frameworks/IOKit.framework/Headers/IOKitLib.h '__API_DEPRECATED_WITH_REPLACEMENT("kIOMainPortDefault", macos(10.0, 12.0)) __API_UNAVAILABLE(ios, watchos, tvos);' '__API_DEPRECATED_WITH_REPLACEMENT("kIOMainPortDefault", macos(10.0, 12.0)) /*__API_UNAVAILABLE(ios, watchos, tvos)*/;'
           curl -LO https://static.palera.in/artifacts/loader/universal_lite/palera1nLoader.ipa
           curl -LO https://static.palera.in/binpack.tar
   
