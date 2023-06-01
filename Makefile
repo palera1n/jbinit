@@ -60,7 +60,7 @@ endif
 ifeq ($(ASAN),1)
 	cp $(shell xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/*//lib/darwin/libclang_rt.{asan,ubsan}_ios_dynamic.dylib ramdisk/jbin
 endif
-	sudo gchown -R 0:0 ramdisk
+	sudo chown -R 0:0 ramdisk
 	hdiutil create -size $(RAMDISK_SIZE) -layout NONE -format UDRW -uid 0 -gid 0 -srcfolder ./ramdisk -fs HFS+ -volname palera1nrd ./ramdisk.dmg
 
 loader.dmg: palera1nLoader.ipa
