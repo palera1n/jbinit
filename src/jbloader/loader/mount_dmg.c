@@ -1,5 +1,7 @@
 #include <jbloader.h>
 
+extern const mach_port_t kIOMasterPortDefault __API_AVAILABLE(ios(15.0));
+
 int mount_dmg(const char *device, const char *fstype, const char *mnt, const int mntopts, bool is_overlay)
 {
   CFDictionaryKeyCallBacks key_callback = kCFTypeDictionaryKeyCallBacks;

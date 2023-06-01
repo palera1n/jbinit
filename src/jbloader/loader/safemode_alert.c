@@ -1,5 +1,9 @@
 #include <jbloader.h>
 
+const CFStringRef kCFUserNotificationAlertHeaderKey __API_AVAILABLE(ios(10.0));
+const CFStringRef kCFUserNotificationAlertMessageKey API_AVAILABLE(ios(10.0));
+CFUserNotificationRef CFUserNotificationCreate(CFAllocatorRef allocator, CFTimeInterval timeout, CFOptionFlags flags, SInt32 *error, CFDictionaryRef dictionary) __API_AVAILABLE(ios(10.0));
+
 void safemode_alert(CFNotificationCenterRef center, void *observer,
                     CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
