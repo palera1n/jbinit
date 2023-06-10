@@ -18,7 +18,7 @@ int userspace_reboot() {
     int status;
 
     if (access(LAUNCHCTL_BIN, F_OK) != 0) {
-        fprintf(stderr, "%s %d %s%s%s\n", "could not access launchctl:", errno, "(", strerror(errno), ")");
+        fprintf(stderr, "%s %s %s%d%s\n", "could not access launchctl:", strerror(errno), "(", errno, ")");
         return errno;
     }
 

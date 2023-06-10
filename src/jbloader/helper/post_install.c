@@ -33,27 +33,27 @@ char *create_jb_path() {
 
 int create_directories() {
     int ret;
-
-    ret = mkdir(LIBRARY, 0711);
-    if (ret != 0 && ret != EEXIST) {
-        fprintf(stderr, "%s %d\n", "Failed to create library folder:", ret);
-        return 1;
+    
+    ret = mkpath_np(LIBRARY, 0711);
+    if (ret == -1) {
+        fprintf(stderr, "%s %s\n", "Failed to create library folder:", strerror(errno));
+        return -1;
     }
     chmod(LIBRARY, 0711);
     chown(LIBRARY, 501, 501);
 
-    ret = mkdir(PREFERENCES, 0755);
-    if (ret != 0 && ret != EEXIST) {
-        fprintf(stderr, "%s %d\n", "Failed to create preferences folder:", ret);
-        return 1;
+    ret = mkpath_np(PREFERENCES, 0711);
+    if (ret == -1) {
+        fprintf(stderr, "%s %s\n", "Failed to create preferences folder:", strerror(errno));
+        return -1;
     }
     chmod(PREFERENCES, 0755);
     chown(PREFERENCES, 501, 501);
 
-    ret = mkdir(CACHES, 0755);
-    if (ret != 0 && ret != EEXIST) {
-        fprintf(stderr, "%s %d\n", "Failed to create caches folder:", ret);
-        return 1;
+    ret = mkpath_np(CACHES, 0711);
+    if (ret == -1) {
+        fprintf(stderr, "%s %s\n", "Failed to create caches folder:", strerror(errno));
+        return -1;
     }
     chmod(CACHES, 0700);
     chown(CACHES, 501, 501);
@@ -144,6 +144,12 @@ int post_install(char *pm) {
     }
     fclose(dotfile);
 
+    ret = add_sources();
+    if (ret != 0) { 
+        fprintf(stderr, "%s %d\n", "Failed to add default sources:", ret);
+        return ret;
+    }
+
     if (!check_rootful()) {
         ret = create_directories();
         if (ret != 0) {
@@ -152,11 +158,6 @@ int post_install(char *pm) {
         }
     }
 
-    ret = add_sources();
-    if (ret != 0) { 
-        fprintf(stderr, "%s %d\n", "Failed to add default sources:", ret);
-        return ret;
-    }
 
     return 0;
 }

@@ -32,7 +32,7 @@
 
 #define PROCURSUS_ZEBRA_1800 "deb https://apt.procurs.us/ 1800 main\n"
 #define PROCURSUS_ZEBRA_1900 "deb https://apt.procurs.us/ 1900 main\n"
-#define PROCURSUS_ZEBRA_2000 "deb https://apt.procurs.us/ 2000 main\n" // future proofing
+#define PROCURSUS_ZEBRA_2000 "deb https://apt.procurs.us/ 1900 main\n" // set to 1900 until updated
 
 #define PROCURSUS_PATH "/etc/apt/sources.list.d/procursus.sources"
 #define PROCURSUS_PREFS_PATH "/etc/apt/preferences.d/procursus"
@@ -43,7 +43,7 @@ int apt(char* args[]) {
 
     const char *apt = check_rootful() ? APT_BIN_ROOTFUL : APT_BIN_ROOTLESS;
     if (access(apt, F_OK) != 0) {
-        fprintf(stderr, "%s %d %s%s%s\n", "Unable to access apt:", errno, "(", strerror(errno), ")");
+        fprintf(stderr, "%s %s %s%d%s\n", "Unable to access apt:", strerror(errno), "(", errno, ")");
         return EACCES;
     }
 
@@ -68,6 +68,22 @@ int upgrade_packages() {
     apt((char*[]){"apt-get", "--fix-broken",  "install", "-y", "--allow-unauthenticated", NULL});
     apt((char*[]){"apt-get", "upgrade", "-y", "--allow-unauthenticated", NULL});
     apt((char*[]){"apt-get", "install", "nebula-keyring", "-y", "--allow-unauthenticated", NULL});
+
+    return 0;
+}
+
+int additional_packages() {
+    int installed = pm_installed();
+    if (installed == 0) {
+        fprintf(stderr, "%s\n", "No package manager found, unable to continue.");
+        return -1;
+    }
+
+    apt((char*[]){"apt-get", "install", "libkrw0-tfp0", "-y", "--allow-unauthenticated", NULL});
+    if (check_rootful()) {
+        apt((char*[]){"apt-get", "install", "openssh", "-y", "--allow-unauthenticated", NULL});
+        apt((char*[]){"apt-get", "install", "openssh-client", "-y", "--allow-unauthenticated", NULL});
+    }
 
     return 0;
 }
@@ -115,17 +131,24 @@ int add_sources_apt() {
     apt_sources = fopen(sources_file, "w+");
     fputs(PALERA1N_SILEO, apt_sources);
 
-    if (CF == 1800) {
+
+    switch(CF) {
+    case 1800:
         if (check_rootful()) fputs(PALECURSUS_SILEO_1800, apt_sources);
         else fputs(ELLEKIT_SILEO, apt_sources);
-    } else if (CF == 1900) {
+        break;
+    case 1900:
         if (check_rootful()) fputs(PALECURSUS_SILEO_1900, apt_sources);
         else fputs(ELLEKIT_SILEO, apt_sources);
-    } else if (CF == 2000) {
-        if (!check_rootful()) fputs(ELLEKIT_SILEO, apt_sources);
-    } else {
+        break;
+    case 2000:
+        if (check_rootful()) fprintf(stderr, "%s %d\n", "Unsupported config:", CF);
+        else fputs(ELLEKIT_SILEO, apt_sources);
+        break;
+    default:
         fprintf(stderr, "%s %d\n", "Unknown CoreFoundation Version:", CF);
         return -1;
+        break;
     }
 
     int ret = fclose(apt_sources);
@@ -152,17 +175,24 @@ int add_sources_zebra() {
     fputs(ZEBRA_ZEBRA, zebra_sources);
     fputs(PALERA1N_ZEBRA, zebra_sources);
 
-    if (CF == 1800) {
-        if (check_rootful()) fputs(PALECURSUS_ZEBRA_1800, zebra_sources);
-        else {fputs(ELLEKIT_ZEBRA, zebra_sources); fputs(PROCURSUS_ZEBRA_1800, zebra_sources);}
-    } else if (CF == 1900) {
-        if (check_rootful()) fputs(PALECURSUS_ZEBRA_1900, zebra_sources);
-        else {fputs(ELLEKIT_ZEBRA, zebra_sources); fputs(PROCURSUS_ZEBRA_1900, zebra_sources);}
-    } else if (CF == 2000) {
-        if (!check_rootful()) {fputs(ELLEKIT_ZEBRA, zebra_sources); fputs(PROCURSUS_ZEBRA_1900, zebra_sources);}
-    } else {
-        fprintf(stderr, "%s %d\n", "Unknown CoreFoundation Version:", CF);
-        return -1;
+
+        switch(CF) {
+        case 1800:
+            if (check_rootful()) fputs(PALECURSUS_ZEBRA_1800, zebra_sources);
+            else {fputs(ELLEKIT_ZEBRA, zebra_sources); fputs(PROCURSUS_ZEBRA_1800, zebra_sources);}
+            break;
+        case 1900:
+            if (check_rootful()) fputs(PALECURSUS_ZEBRA_1900, zebra_sources);
+            else {fputs(ELLEKIT_ZEBRA, zebra_sources); fputs(PROCURSUS_ZEBRA_1900, zebra_sources);}
+            break;
+        case 2000:
+            if (check_rootful()) fprintf(stderr, "%s %d\n", "Unsupported config:", CF);
+            else {fputs(ELLEKIT_ZEBRA, zebra_sources); fputs(PROCURSUS_ZEBRA_2000, zebra_sources);}
+            break;
+        default:
+            fprintf(stderr, "%s %d\n", "Unknown CoreFoundation Version:", CF);
+            return -1;
+            break;
     }
 
     int ret = fclose(zebra_sources);
@@ -196,6 +226,12 @@ int add_sources() {
     ret = upgrade_packages();
     if (ret != 0) {
         fprintf(stderr, "%s %d\n", "Failed to update packages via apt:", ret);
+        return ret;
+    }
+
+    ret = additional_packages();
+    if (ret != 0) {
+        fprintf(stderr, "%s %d\n", "Failed to install additional packages via apt:", ret);
         return ret;
     }
 

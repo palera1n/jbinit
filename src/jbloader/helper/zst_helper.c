@@ -13,7 +13,7 @@
 
 int pre_checks() {
     if (access(ZSTD_BIN, F_OK) != 0) {
-        fprintf(stderr, "%s %d %s%s%s\n", "could not access zstd:", errno, "(", strerror(errno), ")");
+        fprintf(stderr, "%s %s %s%d%s\n", "could not access zstd:", strerror(errno), "(", errno, ")");
         return errno;
     }
 
