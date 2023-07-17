@@ -52,5 +52,5 @@ jobs:
           privateKey: ${{ secrets.NICKCHAN_FTP_KEY }}
           forceUpload: true
           dryRun: false
-          localDir: 'dist'
+          localDir: 'dist/'
           remoteDir: '/palera1n/c-rewrite/deps/'
