@@ -66,7 +66,7 @@ endif
 loader.dmg: palera1nLoader.ipa
 	rm -rf loader.dmg Payload
 	unzip palera1nLoader.ipa
-	hdiutil create -size 1m -layout NONE -format ULFO -uid 0 -gid 0 -volname palera1nLoader -srcfolder ./Payload -fs HFS+ ./loader.dmg
+	hdiutil create -size 2m -layout NONE -format ULFO -uid 0 -gid 0 -volname palera1nLoader -srcfolder ./Payload -fs HFS+ ./loader.dmg
 	rm -rf Payload
 
 $(SRC)/dyld_platform_test/dyld_platform_test:
