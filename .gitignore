@@ -1,0 +1,16 @@
+.vscode
+.DS_Store
+*.o
+*.dmg
+test
+palera1n
+checkra1n
+plooshra1n
+apple-include
+statfs
+statfs.c
+*.xz
+*.lzma
+tools
+*.dSYM
+*.dSYM.zip

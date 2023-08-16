@@ -1,0 +1,6 @@
+[submodule "src/rootlesshooks/ellekit"]
+	path = src/ellekit/ellekit
+	url = https://github.com/evelyneee/ellekit
+[submodule "src/payload/launchctl"]
+	path = src/payload/launchctl
+	url = git@github.com:ProcursusTeam/launchctl
