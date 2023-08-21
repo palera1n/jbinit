@@ -10,7 +10,7 @@ int get_kerninfo(struct kerninfo *info, char *rd)
   read(fd, &ramdisk_size_actual, 4);
   lseek(fd, (long)(ramdisk_size_actual), SEEK_SET);
   int64_t didread = read(fd, info, sizeof(struct kerninfo));
-  if ((unsigned long)didread != sizeof(struct kerninfo) || info->size != (uint64_t)sizeof(struct kerninfo))
+  if ((unsigned long)didread != sizeof(struct kerninfo) || info->size < (uint64_t)sizeof(struct kerninfo))
   {
     return -1;
   }

@@ -6,7 +6,7 @@ char* launchctl_apple[] = { NULL };
 
 void *prep_jb_launch(void *__unused _)
 {
-  assert(info.size == sizeof(struct kerninfo));
+  assert(info.size >= sizeof(struct kerninfo));
   if (checkrain_options_enabled(info.flags, checkrain_option_force_revert))
   {
     jailbreak_obliterator();

@@ -12,7 +12,7 @@ int get_kerninfo(struct kerninfo *info, char *rd)
   if (errno != 0)
     return errno;
   ssize_t didread = read(fd, info, sizeof(struct kerninfo));
-  if ((unsigned long)didread != sizeof(struct kerninfo) || info->size != (uint64_t)sizeof(struct kerninfo))
+  if ((unsigned long)didread != sizeof(struct kerninfo) || info->size < (uint64_t)sizeof(struct kerninfo))
   {
     return EINVAL;
   }
