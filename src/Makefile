@@ -1,5 +1,5 @@
 SUBDIRS = fakedyld rootlesshooks payload_dylib payload systemhook ellekit rootfulhooks mount_cores
-CFLAGS += -I$(ROOT)/include -Wno-deprecated-declarations -Os -g
+CFLAGS += -arch arm64 -I$(ROOT)/include -Wno-deprecated-declarations -Os -g
 CC = xcrun -sdk iphoneos clang
 STRIP = STRIP
 DSYMUTIL = dsymutil
