@@ -4,7 +4,7 @@ OBJDIR = obj
 C_SRC = $(wildcard *.c)
 OBJC_SRC = $(wildcard *.m)
 OBJCFLAGS = -fobjc-arc 
-LIBS = -lobjc -framework Foundation -framework CoreFoundation ../libellekit.tbd
+LIBS = -lobjc -framework Foundation -framework CoreFoundation ../libs/libellekit.tbd
 OBJS = $(patsubst %,$(OBJDIR)/%,$(OBJC_SRC:.m=.m.o) $(C_SRC:.c=.c.o))
 
 ifeq ($(ASAN),1)

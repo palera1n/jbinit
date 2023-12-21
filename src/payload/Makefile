@@ -4,7 +4,7 @@ CFLAGS += -isystem $(ROOT)/apple-include -I$(ROOT)/include -Wno-nullability-comp
 LDFLAGS += -Wl,-dead_strip -Wno-unused-command-line-argument
 OBJDIR = obj
 C_SRC = $(wildcard *.c)
-LIBS = -framework CoreFoundation -framework IOKit -framework Foundation ../APFS.tbd ../libjailbreak/libjailbreak.a
+LIBS = -framework CoreFoundation -framework IOKit -framework Foundation ../libs/APFS.tbd ../libjailbreak/libjailbreak.a
 OBJS = $(patsubst %,$(OBJDIR)/%,$(C_SRC:.c=.c.o))
 
 LAUNCHCTL_OBJ = bootstrap.o xpc_helper.o load.o

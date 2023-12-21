@@ -49,6 +49,8 @@ uint32_t macho_get_platform(const void *buf) {
 }
 
 int get_platform() {
+    static int cached_platform = -1;
+    if (cached_platform != -1) return cached_platform;
     struct stat st;
     int ret = stat("/usr/lib/dyld", &st);
     if (ret) return ret;
@@ -59,5 +61,6 @@ int get_platform() {
     uint32_t platform = macho_get_platform(dyld_buf);
     if (!platform) return -1;
     munmap(dyld_buf, st.st_size);
+    cached_platform = (int)platform;
     return (int)platform;
 }
