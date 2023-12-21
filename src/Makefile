@@ -55,10 +55,11 @@ binpack.dmg: binpack.tar loader.dmg $(patsubst %, %-all, $(SUBDIRS))
 	sudo ln -sf /cores/payload binpack/usr/sbin/p1ctl
 	sudo ln -sf /cores/payload binpack/usr/sbin/palera1nd
 	sudo mkdir -p binpack/Applications
-	sudo mkdir -p binpack/usr/lib
+	sudo mkdir -p binpack/usr/lib binpack/usr/share
 	sudo mkdir -p binpack/Library/Frameworks/CydiaSubstrate.framework
 	sudo mkdir -p binpack/Library/LaunchDaemons
 	sudo cp -a $(ROOT)/shared/*.plist binpack/Library/LaunchDaemons
+	sudo cp -a $(ROOT)/shared/boot.jp2 binpack/usr/share
 	sudo chown 0:0 binpack/Library/LaunchDaemons/*.plist
 	sudo chmod 644 binpack/Library/LaunchDaemons/*.plist
 	sudo cp rootlesshooks/rootlesshooks.dylib binpack/usr/lib

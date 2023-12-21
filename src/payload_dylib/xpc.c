@@ -3,7 +3,9 @@
 #include <sys/stat.h>
 #include <sys/kern_memorystatus.h>
 #include <xpc/private.h>
+#include <sys/sysctl.h>
 #include <sys/reboot.h>
+#include <pthread.h>
 
 xpc_object_t (*xpc_dictionary_get_value_orig)(xpc_object_t xdict, const char *key);
 xpc_object_t hook_xpc_dictionary_get_value(xpc_object_t dict, const char *key){

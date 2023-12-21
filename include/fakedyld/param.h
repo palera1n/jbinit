@@ -40,6 +40,7 @@
 #define MNT_NOBLOCK 0x00020000 /* don't block unmount if not responding */
 #define MNT_RELOAD 0x00040000  /* reload filesystem data */
 #define MNT_FORCE 0x00080000   /* force unmount or readonly change */
+#define MNT_DONTBROWSE  0x00100000
 
 /* sysctl */
 #define CTLTYPE 0xf                   /* Mask for the type */

@@ -42,7 +42,7 @@ uint64_t load_pflags(int fd_console) {
   return pflags;
 }
 
-__attribute__((constructor))void launchd_hook_main() {
+__attribute__((constructor))void launchd_hook_main(void) {
   if (getpid() != 1) return;
   int fd_console = open("/dev/console",O_RDWR|O_SYNC,0);
   if (fd_console == -1) {
@@ -76,6 +76,8 @@ __attribute__((constructor))void launchd_hook_main() {
   } else {
     spin();
   }
+
+  bootscreend_main();
   void* systemhook_handle = dlopen(HOOK_DYLIB_PATH, RTLD_NOW);
   if (!systemhook_handle) {
     dprintf(fd_console, "dlopen systemhook failed: %s\n", dlerror());

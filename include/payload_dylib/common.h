@@ -33,5 +33,6 @@ int (*spawn_hook_common_p)(pid_t *restrict pid, const char *restrict path,
 void (*MSHookFunction_p)(void *symbol, void *replace, void **result);
 void initSpawnHooks(void);
 void InitDaemonHooks(void);
+int bootscreend_main(void);
 
 #endif

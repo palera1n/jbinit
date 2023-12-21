@@ -51,6 +51,7 @@ int remove_jailbreak_files(uint64_t pflags);
 void obliterate(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinfo);
 int print_jailbreakd_reply(xpc_object_t xreply);
 int obliterate_main(int argc, char* argv[]);
+int bootscreend_main(void);
 
 enum {
     /* only for sysstatuscheck and prelaunchd stage! */

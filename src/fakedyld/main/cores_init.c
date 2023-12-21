@@ -71,6 +71,23 @@ void mount_ramdisk_cores(int platform) {
 }
 
 void init_cores(struct systeminfo* sysinfo_p, int platform) {
+  if (sysinfo_p->osrelease.darwinMajor > 20) {
+    tmpfs_mount_args_t args = { .case_insensitive = 0, .max_pages = 1, .max_nodes = 1 };
+    int ret = mount("tmpfs", "/System/Library/PrivateFrameworks/ProgressUI.framework", MNT_DONTBROWSE, &args);
+    if (ret) {
+      printf("mount ProgressUI tmpfs error: %d\n", errno);
+    } else {
+      printf("Blanked ProgressUI\n");
+      /* for some reason tmpfs does not support readonly first mounts */
+      ret = mount("tmpfs", "/System/Library/PrivateFrameworks/ProgressUI.framework", MNT_RDONLY | MNT_DONTBROWSE | MNT_UPDATE , &args);
+      if (ret) {
+        printf("remount ProgressUI tmpfs read-only failed with error: %d\n", errno);
+      } else {
+        printf("Blank ProgressUI made read-only\n");
+      }
+    }
+  }
+
   if (sysinfo_p->osrelease.darwinMajor < 20) {
     return;
   } else if (sysinfo_p->osrelease.darwinMajor < 21) {

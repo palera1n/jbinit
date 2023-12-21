@@ -10,6 +10,7 @@
 #include <sys/utsname.h>
 #include <substrate.h>
 #include <sys/mount.h>
+#include <sys/sysctl.h>
 
 #if 0
 static bool has_fixup_prebootPath = false;
