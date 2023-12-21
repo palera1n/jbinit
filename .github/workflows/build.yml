@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies (packages)
         run: |
-          brew install make autoconf automake pkg-config gnu-sed coreutils ldid-procursus
+          brew install make gnu-sed ldid-procursus
 
       - name: Install dependecies
         run: |
