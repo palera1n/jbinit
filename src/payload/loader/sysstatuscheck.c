@@ -8,6 +8,92 @@
 #include <stdio.h>
 #include <string.h>
 #include <mount_args.h>
+#include <alloca.h>
+#include <CoreFoundation/CoreFoundation.h>
+
+#define SB_PREF_PLIST_PATH "/var/mobile/Library/Preferences/com.apple.springboard.plist"
+#define CF_STRING_GET_CSTRING_PTR(cfStr, cPtr) do { \
+    cPtr = (char*)CFStringGetCStringPtr(cfStr, kCFStringEncodingUTF8); \
+        if (!cPtr) { \
+            CFIndex length = CFStringGetLength(cfStr) + 1; \
+            cPtr = alloca(length); \
+            Boolean CStringStatus = CFStringGetCString(cfStr, cPtr, length, kCFStringEncodingUTF8); \
+            if (!CStringStatus) { \
+                cPtr = "Internal Error: failed to get error description";\
+            }\
+        } \
+    \
+} while(0)
+
+int enable_non_default_system_apps(void) {
+    CFURLRef fileURL = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, CFSTR(SB_PREF_PLIST_PATH), kCFURLPOSIXPathStyle, false);
+    CFReadStreamRef ReadStream = CFReadStreamCreateWithFile(kCFAllocatorDefault, fileURL);
+    if (!ReadStream) {
+        fprintf(stderr, "CFReadStreamCreateWithFile for %s failed\n", SB_PREF_PLIST_PATH);
+        CFRelease(fileURL);
+        return -1;
+    }
+    Boolean ReadStreamStatus = CFReadStreamOpen(ReadStream);
+    if (!ReadStreamStatus) {
+        fprintf(stderr, "CFReadStreamOpen failed\n");
+        CFRelease(ReadStream);
+        CFRelease(fileURL);
+        return -1;
+    }
+    CFPropertyListFormat format;
+    CFErrorRef CFPropertyListCreateWithStreamError;
+    CFPropertyListRef plist = CFPropertyListCreateWithStream(kCFAllocatorDefault, ReadStream, 0, kCFPropertyListMutableContainersAndLeaves, &format, &CFPropertyListCreateWithStreamError);
+    CFReadStreamClose(ReadStream);
+    CFRelease(ReadStream);
+    if (!plist) {
+        CFIndex code = CFErrorGetCode(CFPropertyListCreateWithStreamError);
+        char* errStr; CF_STRING_GET_CSTRING_PTR(CFErrorCopyDescription(CFPropertyListCreateWithStreamError), errStr);
+        fprintf(stderr, "CFPropertyListCreateWithStream failed: %ld (%s)\n", (long)code, errStr);
+        CFRelease(CFPropertyListCreateWithStreamError);
+        CFRelease(fileURL);
+        return -1;
+    }
+    CFTypeID type = CFGetTypeID(plist);
+    if (type != CFDictionaryGetTypeID()) {
+        CFStringRef typeCFString = CFCopyTypeIDDescription(type); 
+        char* typeDesc; CF_STRING_GET_CSTRING_PTR(typeCFString, typeDesc);
+        char* dictDesc; CF_STRING_GET_CSTRING_PTR(CFCopyTypeIDDescription(CFDictionaryGetTypeID()), typeDesc);
+        fprintf(stderr, "Expecting %s to be of type %s, got a %s instead\n", SB_PREF_PLIST_PATH, dictDesc, typeDesc);
+        CFRelease(plist);
+        CFRelease(fileURL);
+        return -1;
+    }
+    CFDictionarySetValue((CFMutableDictionaryRef)plist, CFSTR("SBShowNonDefaultSystemApps"), kCFBooleanTrue);
+    CFWriteStreamRef WriteStream = CFWriteStreamCreateWithFile(kCFAllocatorDefault, fileURL);
+    CFRelease(fileURL);
+    if (!WriteStream) {
+        fprintf(stderr, "CFWriteStreamCreateWithFile for %s failed\n", SB_PREF_PLIST_PATH);
+        CFRelease(plist);
+        return -1;
+    }
+    Boolean WriteStreamStatus = CFWriteStreamOpen(WriteStream);
+    if (!WriteStreamStatus) {
+        fprintf(stderr, "CFWriteStreamOpen failed\n");
+        CFRelease(WriteStream);
+        CFRelease(plist);
+        return -1;
+    }
+    CFErrorRef CFPropertyListWriteError;
+    CFIndex written = CFPropertyListWrite(plist, WriteStream, format, 0, &CFPropertyListWriteError);
+    CFRelease(plist);
+    CFWriteStreamClose(WriteStream);
+    CFRelease(WriteStream);
+    if (!written) {
+        CFIndex code = CFErrorGetCode(CFPropertyListWriteError);
+        char* errStr; CF_STRING_GET_CSTRING_PTR(CFErrorCopyDescription(CFPropertyListWriteError), errStr);
+        fprintf(stderr, "CFPropertyListWrite failed: %ld (%s)\n", (long)code, errStr);
+        CFRelease(CFPropertyListWriteError);
+        return -1;
+    }
+    printf("Wrote %ld bytes to %s\n", (long)written, SB_PREF_PLIST_PATH);
+    return 0;
+
+}
 
 int remove_jailbreak_files(uint64_t pflags) {
     removefile_state_t state = removefile_state_alloc();
@@ -48,6 +134,7 @@ int fixup_databases(void);
 int sysstatuscheck(uint32_t payload_options, uint64_t pflags) {
     printf("plooshInit sysstatuscheck...\n");
     remount(0);
+    enable_non_default_system_apps();
     if (access("/private/var/dropbear_rsa_host_key", F_OK) != 0) {
         printf("generating ssh host key...\n");
         runCommand((char*[]){ "/cores/binpack/usr/bin/dropbearkey", "-f",  "/private/var/dropbear_rsa_host_key", "-t", "rsa", "-s", "4096", });

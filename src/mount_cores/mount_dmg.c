@@ -99,7 +99,6 @@ int attach_dmg(const char *source, bool is_overlay, char* device_path, size_t de
   CFRelease(uuid_string);
   CFRelease(uuid);
   CFRelease(path_bytes);
-  CFRelease(hdix);
   CFRelease(hdi_props);
   IOObjectRelease(hdix_service);
   IOObjectRelease(iter);
