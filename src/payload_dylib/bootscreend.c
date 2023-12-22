@@ -64,9 +64,15 @@ int init_display(void) {
     return 0;
 }
 
+#ifdef TESTMAIN
+#define BOOT_IMAGE_PATH boot_image_path
+#undef CFSTR
+#define CFSTR(x) CFStringCreateWithCString(kCFAllocatorDefault, x, kCFStringEncodingUTF8)
+int bootscreend_main(char* boot_image_path) {
+#else
 #define BOOT_IMAGE_PATH "/cores/binpack/usr/share/boot.jp2"
-
 int bootscreend_main(void) {
+#endif
     init_display();
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
@@ -111,3 +117,15 @@ finish:
 
     return retval;
 }
+
+#ifdef TESTMAIN
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "usage: bootscreend <image path>\n");
+        return -1;
+    }
+    int retval = bootscreend_main(argv[1]);
+    sleep(1);
+    return retval;
+}
+#endif
