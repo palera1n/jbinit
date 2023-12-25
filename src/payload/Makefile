@@ -41,6 +41,6 @@ $(patsubst %, %-clean, $(SUBDIRS)):
 	$(MAKE) -C $$(echo $@ | cut -d- -f1) clean
 
 clean: $(patsubst %, %-clean, $(SUBDIRS))
-	rm -rf payload $(OBJDIR) launchctl/*.o
+	rm -rf payload payload.dSYM $(OBJDIR) launchctl/*.o
 
 .PHONY: all $(patsubst %, %-all, $(SUBDIRS)) $(patsubst %, %-clean, $(SUBDIRS))

@@ -787,7 +787,7 @@ void bootstrap(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinf
     NSLog(CFSTR("loading %s"), launch_path);
     ret = bootstrap_cmd(&msg, 3, (char*[]){ "bootstrap", "system", launch_path, NULL }, environ, (char*[]){ NULL });
 
-    NSLog(CFSTR("bootstrap_cmd returned %d"), bootstrap_cmd);
+    NSLog(CFSTR("bootstrap_cmd returned %d"), ret);
 
     if (pinfo->flags & palerain_option_rootless) {
         xpc_dictionary_set_string(xreply, "bootstrapRootPath", finalBootstrapPath);

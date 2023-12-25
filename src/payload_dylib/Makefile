@@ -29,6 +29,6 @@ payload.dylib: $(OBJS)
 	$(LDID) -S $@
 
 clean:
-	rm -rf payload.dylib* obj
+	rm -rf payload.dylib* payload.dylib.dSYM obj
 
 .PHONY: all clean

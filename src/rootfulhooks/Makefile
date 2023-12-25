@@ -36,6 +36,6 @@ rootfulhooks.dylib: $(OBJS) $(ELLEKIT)
 	$(LDID) -S $@ 
 
 clean:
-	rm -rf rootfulhooks.dylib* obj
+	rm -rf rootfulhooks.dylib* rootfulhooks.dylib.dSYM obj
 
 .PHONY: all clean

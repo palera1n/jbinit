@@ -9,7 +9,7 @@ export CFLAGS LDFLAGS
 all: $(patsubst %, %-all, $(SUBDIRS)) dyld
 
 clean: $(patsubst %, %-clean, $(SUBDIRS))
-	rm -f dyld
+	rm -rf dyld dyld.dSYM
 
 dyld: $(patsubst %, %-all, $(SUBDIRS))
 	$(CC) $(CFLAGS) $(LDFLAGS) $$(find . -name '*.o' | grep 'obj/.*o') -o dyld
