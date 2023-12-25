@@ -13,6 +13,7 @@
 #include <pthread.h>
 #define TARGET_OS_IPHONE 1
 #include <spawn_private.h>
+#include <sys/utsname.h>
 #include <sys/spawn_internal.h>
 #include <sys/kern_memorystatus.h>
 #include <CoreFoundation/CoreFoundation.h>
@@ -106,7 +107,23 @@ void bootstrap(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinf
         return;
     }
 
-    if (remount(1)) {
+    struct utsname name;
+    ret = uname(&name);
+    if (ret) {
+        xpc_dictionary_set_string(xreply, "errorDescription", "remount failed");
+        xpc_dictionary_set_int64(xreply, "error", errno);
+        return;
+    }
+
+    int (*remount_func)(struct utsname* name_p);
+    if (pinfo->flags & palerain_option_rootful) {
+        remount_func = &remount_rootfs;
+    } else {
+        remount_func = &remount_preboot;
+    }
+
+    ret = remount_func(&name);
+    if (ret) {
         xpc_dictionary_set_string(xreply, "errorDescription", "remount failed");
         xpc_dictionary_set_int64(xreply, "error", errno);
         return;

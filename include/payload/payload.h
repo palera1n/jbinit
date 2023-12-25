@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <paleinfo.h>
 #include <unistd.h>
+#include <sys/utsname.h>
 #include <xpc/xpc.h>
 
 #define CHECK_ERROR(action, loop, msg, ...) do { \
@@ -44,7 +45,9 @@ int runCommand(char* argv[]);
 int setup_fakefs(uint32_t payload_options, struct paleinfo* pinfo_p);
 int load_etc_rc_d(uint64_t pflags);
 int create_var_jb();
-int remount(int remount_now);
+int remount(void);
+int remount_rootfs(struct utsname* name_p);
+int remount_preboot(struct utsname* name_p);
 int get_platform();
 void bootstrap(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinfo);
 int remove_jailbreak_files(uint64_t pflags);

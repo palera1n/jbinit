@@ -133,7 +133,7 @@ int remove_jailbreak_files(uint64_t pflags) {
 int fixup_databases(void);
 int sysstatuscheck(uint32_t payload_options, uint64_t pflags) {
     printf("plooshInit sysstatuscheck...\n");
-    remount(0);
+    remount();
     enable_non_default_system_apps();
     if (access("/private/var/dropbear_rsa_host_key", F_OK) != 0) {
         printf("generating ssh host key...\n");

@@ -32,14 +32,13 @@ int remount_preboot(struct utsname* name_p) {
     return mount(fs.f_fstypename, fs.f_mntonname, mntflags, &arg);
 }
 
-int remount(int remount_now) {
+int remount(void) {
     struct utsname name;
     uname(&name);
     int ret;
     if (
         access("/.mount_rw", F_OK) == 0 ||
-        access("/.procursus_strapped", F_OK) == 0 ||
-        remount_now
+        access("/.procursus_strapped", F_OK) == 0
     )
         {
             ret = remount_rootfs(&name);
