@@ -86,6 +86,7 @@ int bootscreend_main(void) {
     CGImageRef cgImage = NULL;
     CGContextRef context = NULL;
     int retval = -1;
+
     imageURL = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, CFSTR(BOOT_IMAGE_PATH), kCFURLPOSIXPathStyle, false);
     if (!imageURL) {
         fprintf(stderr, "could not create image URL\n");
@@ -101,14 +102,32 @@ int bootscreend_main(void) {
         fprintf(stderr, "could not create image\n");
         goto finish;
     }
+
+    CGRect destinationRect = CGRectZero;
+    CGFloat imageAspectRatio = (CGFloat)CGImageGetWidth(cgImage) / CGImageGetHeight(cgImage);
+
+    if (width / height > imageAspectRatio) {
+        destinationRect.size.width = width;
+        destinationRect.size.height = width / imageAspectRatio;
+    } else {
+        destinationRect.size.width = height * imageAspectRatio;
+        destinationRect.size.height = height;
+    }
+    
+    destinationRect.origin.x = (width - CGRectGetWidth(destinationRect)) / 2;
+    destinationRect.origin.y = (height - CGRectGetHeight(destinationRect)) / 2;
+
     context = CGBitmapContextCreate(base, width, height, 8, bytesPerRow, CGColorSpaceCreateDeviceRGB(), kCGImageAlphaPremultipliedFirst);
     if (!context) {
         fprintf(stderr, "could not create context\n");
         goto finish;
     }
-    CGContextDrawImage(context, CGRectMake(0, 0, width, height), cgImage);
+
+    CGContextDrawImage(context, destinationRect, cgImage);
+
     retval = 0;
     fprintf(stderr, "bootscreend: done\n");
+
 finish:
     if (context) CGContextRelease(context);
     if (cgImage) CGImageRelease(cgImage);
