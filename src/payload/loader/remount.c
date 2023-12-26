@@ -33,9 +33,13 @@ int remount_preboot(struct utsname* name_p) {
 }
 
 int remount(void) {
-    struct utsname name;
-    uname(&name);
     int ret;
+    struct utsname name;
+    ret = uname(&name);
+    if (ret) {
+        fprintf(stderr, "uname() failed: %d (%s)\n", errno, strerror(errno));
+        return -1;
+    }
     if (
         access("/.mount_rw", F_OK) == 0 ||
         access("/.procursus_strapped", F_OK) == 0

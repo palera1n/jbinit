@@ -14,3 +14,5 @@ statfs.c
 tools
 *.dSYM
 *.dSYM.zip
+bootscreend
+bootscreend.xml
