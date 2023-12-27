@@ -759,7 +759,7 @@ void bootstrap(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinf
     else
         installed_file = "/.installed_palera1n";
 
-    installed_fd = open(installed_file, O_APPEND | O_CREAT);
+    installed_fd = open(installed_file, O_RDWR | O_CREAT);
     if (installed_fd == -1) {
         char descriptionStr[100];
         snprintf(descriptionStr, 100, "failed to open %s file", installed_file);
@@ -771,6 +771,7 @@ void bootstrap(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinf
         }
         return;
     }
+    lseek(installed_fd, 0, SEEK_END);
 
     dprintf(installed_fd, "Bootstrapper-Name=p1ctl\n");
     dprintf(installed_fd, "Bootstrapper-Version=3.0\n");

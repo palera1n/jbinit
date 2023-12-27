@@ -8,7 +8,7 @@
 #include <spawn.h>
 #include <xpc/xpc.h>
 
-#define spin() _spin(fd_console)
+#define spin() _spin()
 
 #define CHECK_ERROR(action, msg) do { \
  ret = action; \
@@ -20,7 +20,7 @@
 
 extern uint64_t pflags;
 extern char** environ;
-void _spin(int fd_console);
+void _spin();
 int get_platform();
 
 int (*spawn_hook_common_p)(pid_t *restrict pid, const char *restrict path,

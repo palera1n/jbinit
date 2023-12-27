@@ -26,8 +26,8 @@ int (*spawn_hook_common_p)(pid_t *restrict pid, const char *restrict path,
 					   char *const envp[restrict],
 					   void *pspawn_org) = NULL;
 
-void _spin(int fd_console) {
-  dprintf(fd_console, "An error occured");
+void _spin() {
+  fprintf(stderr, "An error occured");
   while (1) {
     sleep(5);
   }
@@ -37,7 +37,7 @@ char* generate_sandbox_extensions(void) {
   return sandbox_extension_issue_mach("com.apple.security.exception.mach-lookup.global-name", "in.palera.palera1nd.systemwide", 0);
 }
 
-uint64_t load_pflags(int fd_console) {
+uint64_t load_pflags(void) {
   pflags = strtoull(getenv("JB_PINFO_FLAGS"), NULL, 0);
   return pflags;
 }
@@ -51,27 +51,25 @@ __attribute__((constructor))void launchd_hook_main(void) {
     reboot_np(RB_PANIC, errMsg);
   }
   
-  dprintf(fd_console, "=========== hello from payload.dylib ===========\n");
+  dup2(fd_console, STDIN_FILENO);
+  dup2(fd_console, STDOUT_FILENO);
+  dup2(fd_console, STDERR_FILENO);
+
+  printf("=========== hello from payload.dylib ===========\n");
   crashreporter_start();
   setenv("JB_SANDBOX_EXTENSIONS", generate_sandbox_extensions(), 1);
-  load_pflags(fd_console);
+  load_pflags();
   pid_t pid;
-  posix_spawn_file_actions_t actions;
-  posix_spawn_file_actions_init(&actions);
-  posix_spawn_file_actions_addopen(&actions, STDIN_FILENO, "/dev/console", O_RDWR, 0);
-  posix_spawn_file_actions_addopen(&actions, STDOUT_FILENO, "/dev/console", O_WRONLY, 0);
-  posix_spawn_file_actions_addopen(&actions, STDERR_FILENO, "/dev/console", O_WRONLY, 0);
   int ret, status;
-  CHECK_ERROR(posix_spawn(&pid, "/cores/payload", &actions, NULL, (char*[]){"/cores/payload","-f",NULL},environ), "could not spawn payload");
-  posix_spawn_file_actions_destroy(&actions);
+  CHECK_ERROR(posix_spawn(&pid, "/cores/payload", NULL, NULL, (char*[]){"/cores/payload","-f",NULL},environ), "could not spawn payload");
   waitpid(pid, &status, 0);
   if (WIFEXITED(status)) {
     if (WEXITSTATUS(status) != 0) {
-      dprintf(fd_console, "/cores/payload exited with status code %d\n", WEXITSTATUS(status));
+      fprintf(stderr, "/cores/payload exited with status code %d\n", WEXITSTATUS(status));
       spin();
     }
   } else if (WIFSIGNALED(status)) {
-    dprintf(fd_console, "/cores/payload exited abnormally: signal %d\n", WTERMSIG(status));
+    fprintf(stderr, "/cores/payload exited abnormally: signal %d\n", WTERMSIG(status));
     spin();
   } else {
     spin();
@@ -80,24 +78,24 @@ __attribute__((constructor))void launchd_hook_main(void) {
   bootscreend_main();
   void* systemhook_handle = dlopen(HOOK_DYLIB_PATH, RTLD_NOW);
   if (!systemhook_handle) {
-    dprintf(fd_console, "dlopen systemhook failed: %s\n", dlerror());
+    fprintf(stderr, "dlopen systemhook failed: %s\n", dlerror());
     spin();
   }
   spawn_hook_common_p = dlsym(systemhook_handle, "spawn_hook_common");
   if (!spawn_hook_common_p) {
-    dprintf(fd_console, "symbol spawn_hook_common not found in " HOOK_DYLIB_PATH ": %s\n", dlerror());
+    fprintf(stderr, "symbol spawn_hook_common not found in " HOOK_DYLIB_PATH ": %s\n", dlerror());
     spin();
   }
 
   void* ellekit_handle = dlopen(ELLEKIT_PATH, RTLD_NOW);
   if (!ellekit_handle) {
-    dprintf(fd_console, "dlopen ellekit failed: %s\n", dlerror());
+    fprintf(stderr, "dlopen ellekit failed: %s\n", dlerror());
     spin();
   }
 
   MSHookFunction_p = dlsym(ellekit_handle, "MSHookFunction");
   if (!MSHookFunction_p) {
-    dprintf(fd_console, "symbol MSHookFunction not found in " ELLEKIT_PATH ": %s\n", dlerror());
+    fprintf(stderr, "symbol MSHookFunction not found in " ELLEKIT_PATH ": %s\n", dlerror());
     spin();
   }
   
@@ -109,10 +107,15 @@ __attribute__((constructor))void launchd_hook_main(void) {
     CHECK_ERROR(sysctlbyname("kern.initproc_spawned", NULL, NULL, &initproc_started, 4), "sysctl kern.initproc_spawned=1");
     CHECK_ERROR(unmount("/cores/binpack/Applications", MNT_FORCE), "unmount(/cores/binpack/Applications)");
     CHECK_ERROR(unmount("/cores/binpack", MNT_FORCE), "unmount(/cores/binpack)");
-    dprintf(fd_console, "Rebooting\n");
+    printf("Rebooting\n");
     kern_return_t failed = host_reboot(mach_host_self(), 0x1000);
-    dprintf(fd_console, "reboot failed: %d (%s)\n", failed, mach_error_string(failed));
+    fprintf(stderr, "reboot failed: %d (%s)\n", failed, mach_error_string(failed));
     spin();
   }
+  printf("=========== bye from payload.dylib ===========\n");
+
   close(fd_console);
+  close(STDIN_FILENO);
+  close(STDOUT_FILENO);
+  close(STDERR_FILENO);
 }
