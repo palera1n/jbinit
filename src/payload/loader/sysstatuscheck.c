@@ -137,7 +137,7 @@ int sysstatuscheck(uint32_t payload_options, uint64_t pflags) {
     enable_non_default_system_apps();
     if (access("/private/var/dropbear_rsa_host_key", F_OK) != 0) {
         printf("generating ssh host key...\n");
-        runCommand((char*[]){ "/cores/binpack/usr/bin/dropbearkey", "-f",  "/private/var/dropbear_rsa_host_key", "-t", "rsa", "-s", "4096", });
+        runCommand((char*[]){ "/cores/binpack/usr/bin/dropbearkey", "-f",  "/private/var/dropbear_rsa_host_key", "-t", "rsa", "-s", "4096", NULL });
     }
     if ((pflags & palerain_option_force_revert)) remove_jailbreak_files(pflags);
     if (pflags & palerain_option_rootful) {
