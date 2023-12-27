@@ -383,7 +383,7 @@ kBinaryConfig configForBinary(const char* path, char *const argv[restrict])
 		if (argv) {
 			if (argv[0]) {
 				if (argv[1]) {
-					if (!strcmp(argv[1], "in.palera.palera1nd")) {
+					if (!strcmp(argv[1], "in.palera.palera1nd.systemwide")) {
 						// Don't do anything for xpcproxy if it's called on palera1nd because this also implies jbd is not running currently
 						return (kBinaryConfigDontInject | kBinaryConfigDontProcess);
 					}

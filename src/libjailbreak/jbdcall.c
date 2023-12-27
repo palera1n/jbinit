@@ -3,7 +3,7 @@
 #include <xpc/connection.h>
 
 xpc_object_t jailbreak_send_jailbreakd_message_with_reply_sync(xpc_object_t xdict) {
-    xpc_connection_t connection = xpc_connection_create_mach_service("in.palera.palera1nd", NULL, 0);
+    xpc_connection_t connection = xpc_connection_create_mach_service("in.palera.palera1nd.systemwide", NULL, 0);
     if (xpc_get_type(connection) == XPC_TYPE_ERROR) {
         return connection;
     }

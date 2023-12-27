@@ -63,7 +63,7 @@ xpc_object_t hook_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
       xpc_dictionary_set_string(submitJob, "UserName", "root");
       xpc_dictionary_set_string(submitJob, "Program", "/cores/binpack/usr/sbin/palera1nd");
       xpc_dictionary_set_string(submitJob, "Label", "in.palera.palera1nd");
-      xpc_dictionary_set_bool(machServices, "in.palera.palera1nd", true);
+      xpc_dictionary_set_bool(machServices, "in.palera.palera1nd.systemwide", true);
 
       xpc_dictionary_set_value(submitJob, "ProgramArguments", programArguments);
       xpc_dictionary_set_value(submitJob, "MachServices", machServices);

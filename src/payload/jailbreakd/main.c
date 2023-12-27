@@ -17,7 +17,7 @@ int palera1nd_main(int argc, char* argv[]) {
     int ret = get_pinfo(&pinfo);
     if (ret) return -1;
 
-    xpc_connection_t connection = xpc_connection_create_mach_service("in.palera.palera1nd", dispatch_get_main_queue(), XPC_CONNECTION_MACH_SERVICE_LISTENER);
+    xpc_connection_t connection = xpc_connection_create_mach_service("in.palera.palera1nd.systemwide", dispatch_get_main_queue(), XPC_CONNECTION_MACH_SERVICE_LISTENER);
 
     xpc_connection_set_event_handler(connection, ^(xpc_object_t peer) {
 		char* desc = xpc_copy_description(peer);
