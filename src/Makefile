@@ -60,6 +60,8 @@ binpack.dmg: binpack.tar loader.dmg $(patsubst %, %-all, $(SUBDIRS))
 	sudo mkdir -p binpack/Library/LaunchDaemons
 	sudo cp -a $(ROOT)/shared/*.plist binpack/Library/LaunchDaemons
 	sudo cp -a $(ROOT)/shared/boot.jp2 binpack/usr/share
+	sudo cp -a $(ROOT)/shared/copyright binpack/usr/share
+	sudo cp -a $(ROOT)/LICENSE binpack/usr/share/copyright/Licnese-plinit.txt
 	sudo chown 0:0 binpack/Library/LaunchDaemons/*.plist
 	sudo chmod 644 binpack/Library/LaunchDaemons/*.plist
 	sudo cp rootlesshooks/rootlesshooks.dylib binpack/usr/lib
