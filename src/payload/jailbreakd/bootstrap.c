@@ -785,6 +785,18 @@ void bootstrap(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinf
         launch_path = "/Library/LaunchDaemons";
     }
 
+    if (access(launch_path, F_OK) != 0) {
+        char descriptionStr[100];
+        snprintf(descriptionStr, 100, "failed to find launch daemons path %s", launch_path);
+        xpc_dictionary_set_string(xreply, "errorDescription", descriptionStr);
+        xpc_dictionary_set_int64(xreply, "error", errno);
+        if ((pinfo->flags & palerain_option_rootless) && strlen(tarPath) > 118) { \
+            removefile(tarPath, NULL, REMOVEFILE_RECURSIVE); \
+            unlink("/var/jb");
+        }
+        return;
+    }
+
     NSLog(CFSTR("loading %s"), launch_path);
     ret = bootstrap_cmd(&msg, 3, (char*[]){ "bootstrap", "system", launch_path, NULL }, environ, (char*[]){ NULL });
 
