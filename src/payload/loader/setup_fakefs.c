@@ -102,10 +102,6 @@ int copyfile_fakefs_cb(int what, int stage, copyfile_state_t state, const char *
 
 int setup_fakefs(uint32_t payload_options, struct paleinfo* pinfo_p) {
     CHECK_ERROR(runCommand((char*[]){ "/sbin/fsck", "-qL", NULL }), 1, "fsck failed");
-    CHECK_ERROR(runCommand((char*[]){ "/sbin/mount", "-P", "1", NULL }), 1, "mount-phase-1 failed");
-    CHECK_ERROR(runCommand((char*[]){ "/usr/libexec/init_data_protection",  NULL }), 1, "init_data_protection failed");
-    CHECK_ERROR(runCommand((char*[]){ "/sbin/mount", "-P", "2",  NULL }), 1, "mount-phase-2 failed");
-    CHECK_ERROR(runCommand((char*[]){ "/usr/libexec/keybagd", "--init",  NULL }), 1, "keybag failed");
 
     struct statfs rootfs_st;
     CHECK_ERROR(statfs("/", &rootfs_st), 1, "statfs / failed");
@@ -279,16 +275,9 @@ int setup_fakefs(uint32_t payload_options, struct paleinfo* pinfo_p) {
     "\n"
     "=========================================================\n"
         );
-    
-    runCommand((char*[]){ "/usr/libexec/seputil", "--gigalocker-shutdown", NULL });
 
-    if (access("/sbin/umount", F_OK) == 0)
-        runCommand((char*[]){ "/sbin/umount", "-a", NULL });
-
-    unmount("/private/var", MNT_FORCE);
     unmount("/cores/fs/real", MNT_FORCE);
     unmount("/cores/fs/fake", MNT_FORCE);
-    unmount("/private/xarts", MNT_FORCE);
 
     if (access("/sbin/umount", F_OK) == 0)
         runCommand((char*[]){ "/sbin/umount", "-a", NULL });
