@@ -58,9 +58,13 @@ int bootstrap_main(int argc, char* argv[]) {
     }
 
     xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
+
     xpc_dictionary_set_string(xdict, "path", bootstrap);
     xpc_dictionary_set_uint64(xdict, "cmd", JBD_CMD_DEPLOY_BOOTSTRAP);
+    xpc_dictionary_set_string(xdict, "bootstrapper-name", "p1ctl");
+    xpc_dictionary_set_string(xdict, "bootstrapper-version", "3.0");
     xpc_dictionary_set_bool(xdict, "no-password", no_password);
+
     if (password) xpc_dictionary_set_string(xdict, "password", password);
     xpc_object_t xreply = jailbreak_send_jailbreakd_message_with_reply_sync(xdict);
     xpc_release(xdict);

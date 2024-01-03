@@ -17,6 +17,10 @@ RAMDISK_SIZE = 8m
 CFLAGS += -DASAN=1
 endif
 
+ifeq ($(DEV_BUILD),1)
+CFLAGS += -DDEV_BUILD=1
+endif
+
 .PHONY: all clean $(patsubst %, %-all, $(SUBDIRS)) $(patsubst %, %-clean, $(SUBDIRS)) libjailbreak
 
 export CC STRIP DSYMUTIL CFLAGS LDID

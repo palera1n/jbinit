@@ -60,6 +60,7 @@ void obliterate(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pin
 int print_jailbreakd_reply(xpc_object_t xreply);
 int obliterate_main(int argc, char* argv[]);
 int remove_bogus_var_jb(void);
+void overwrite_file(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinfo);
 
 enum {
     /* only for sysstatuscheck and prelaunchd stage! */

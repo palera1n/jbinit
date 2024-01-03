@@ -113,6 +113,19 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
             }
             break;
         }
+        case JBD_CMD_OVERWRITE_FILE_WITH_CONTENT: {
+            bool entitled = false;
+            xpc_object_t val = xpc_connection_copy_entitlement_value(peer, BOOTSTRAPPER_ENTITLEMENT);
+            if (xpc_get_type(val) == XPC_TYPE_BOOL) {
+	            entitled = xpc_bool_get_value(val);
+	        }
+            if (!entitled) {
+                xpc_dictionary_set_int64(xreply, "error", EPERM);
+                xpc_dictionary_set_string(xreply, "errorDescription", "This call requires the " BOOTSTRAPPER_ENTITLEMENT ".");
+                break;
+            }
+            overwrite_file(request, xreply, pinfo_p);
+        }
         default:
             xpc_dictionary_set_int64(xreply, "error", EINVAL);
             break;

@@ -49,6 +49,9 @@ void* write_log(void* arg) {
 void bootstrap(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinfo) {
     const char* password = xpc_dictionary_get_string(xrequest, "password");
     const char* path = xpc_dictionary_get_string(xrequest, "path");
+    const char* bootstrapper_name = xpc_dictionary_get_string(xrequest, "bootstrapper-name");
+    const char* bootstrapper_version = xpc_dictionary_get_string(xrequest, "bootstrapper-version");
+
     bool no_password = xpc_dictionary_get_bool(xrequest, "no-password");
 
     if (pinfo->flags & palerain_option_force_revert) {
@@ -789,8 +792,8 @@ void bootstrap(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinf
     }
     lseek(installed_fd, 0, SEEK_END);
 
-    dprintf(installed_fd, "Bootstrapper-Name=p1ctl\n");
-    dprintf(installed_fd, "Bootstrapper-Version=3.0\n");
+    dprintf(installed_fd, "Bootstrapper-Name=%s\n", bootstrapper_name ? bootstrapper_name : "Unknown");
+    dprintf(installed_fd, "Bootstrapper-Version=%s\n", bootstrapper_version ? bootstrapper_version : "Unknown");
     close(installed_fd);
 
     xpc_object_t msg;
