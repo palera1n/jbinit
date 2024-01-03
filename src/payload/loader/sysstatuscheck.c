@@ -141,8 +141,10 @@ int sysstatuscheck(uint32_t payload_options, uint64_t pflags) {
     }
     if ((pflags & palerain_option_force_revert)) remove_jailbreak_files(pflags);
     if (pflags & palerain_option_rootful) {
+        remove_bogus_var_jb();
         unlink("/var/jb");
     } else {
+        remove_bogus_var_jb();
         create_var_jb();
 #ifdef SYSTEMWIDE_IOSEXEC
         if (access("/var/jb", F_OK) == 0) {
@@ -157,5 +159,6 @@ int sysstatuscheck(uint32_t payload_options, uint64_t pflags) {
             load_etc_rc_d(pflags);
     }
 
+    printf("plooshInit sysstatuscheck: bye\n");
     return execv("/usr/libexec/sysstatuscheck", (char*[]){ "/usr/libexec/sysstatuscheck", NULL });
 }

@@ -16,7 +16,6 @@
 #define RB2_USERREBOOT (0x2000000000000000llu)
 int reboot3(uint64_t how, uint64_t unk);
 
-void NSLog(CFStringRef, ...);
 void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo* pinfo_p) {
     xpc_object_t xreply = xpc_dictionary_create_reply(request);
     xpc_object_t xremote = xpc_dictionary_get_remote_connection(request);

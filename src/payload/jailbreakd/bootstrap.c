@@ -31,8 +31,6 @@ struct nslog_stderr_info {
     int fd;
 };
 
-void NSLog(CFStringRef, ...);
-
 void* write_log(void* arg) {
     int fd = ((struct nslog_stderr_info*)arg)->fd;
     ssize_t didRead;
@@ -147,18 +145,36 @@ void bootstrap(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinf
         if (!template) {
             xpc_dictionary_set_string(xreply, "errorDescription", "failed to create jailbreak directory");
             xpc_dictionary_set_int64(xreply, "error", errno);
+            return;
         }
 
         ret = chmod(prebootPath, 0755);
         if (ret) {
             xpc_dictionary_set_string(xreply, "errorDescription", "failed to chmod jailbreak directory");
             xpc_dictionary_set_int64(xreply, "error", errno);
+            return;
+        }
+
+        remove_bogus_var_jb();
+
+        ret = lstat("/var/jb", &st);
+        if (ret && errno != ENOENT) {
+            xpc_dictionary_set_string(xreply, "errorDescription", "lstat /var/jb failed");
+            xpc_dictionary_set_int64(xreply, "error", errno);
+        } else if (ret == 0) {
+            if (!S_ISLNK(st.st_mode)) {
+                char descriptionStr[100];
+                snprintf(descriptionStr, 100, "/var/jb is exists not a link after cleaning up bogus directories. Mode: 0x%" PRIx16, st.st_mode);
+                xpc_dictionary_set_string(xreply, "errorDescription", "/var/jb is exists not a link after cleaning up bogus directories. Mode:");
+                return;
+            }
         }
 
         ret = unlink("/var/jb");
         if (ret && errno != ENOENT) {
             xpc_dictionary_set_string(xreply, "errorDescription", "failed to remove /var/jb");
             xpc_dictionary_set_int64(xreply, "error", errno);
+            return;
         }
         snprintf(tarPath, 150, "%s", prebootPath);
     }

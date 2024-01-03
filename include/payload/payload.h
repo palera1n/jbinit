@@ -7,6 +7,11 @@
 #include <unistd.h>
 #include <sys/utsname.h>
 #include <xpc/xpc.h>
+#include <CoreFoundation/CoreFoundation.h>
+
+#ifndef __OBJC__
+void NSLog(CFStringRef, ...);
+#endif
 
 #define CHECK_ERROR(action, loop, msg, ...) do { \
  {int ___CHECK_ERROR_ret = (action); \
@@ -54,6 +59,7 @@ int remove_jailbreak_files(uint64_t pflags);
 void obliterate(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinfo);
 int print_jailbreakd_reply(xpc_object_t xreply);
 int obliterate_main(int argc, char* argv[]);
+int remove_bogus_var_jb(void);
 
 enum {
     /* only for sysstatuscheck and prelaunchd stage! */
