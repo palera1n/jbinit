@@ -117,7 +117,7 @@ int bootscreend_main(void) {
     destinationRect.origin.x = (width - CGRectGetWidth(destinationRect)) / 2;
     destinationRect.origin.y = (height - CGRectGetHeight(destinationRect)) / 2;
 
-    context = CGBitmapContextCreate(base, width, height, 8, bytesPerRow, CGColorSpaceCreateDeviceRGB(), kCGImageAlphaPremultipliedFirst);
+    context = CGBitmapContextCreate(base, width, height, 8, bytesPerRow, CGColorSpaceCreateDeviceRGB(), 0x2002);
     if (!context) {
         fprintf(stderr, "could not create context\n");
         goto finish;
