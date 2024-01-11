@@ -13,4 +13,6 @@ __attribute__((constructor))void rootfulhooks_main(void) {
     }
 
     if (!strcmp(path, "/usr/libexec/lsd")) lsdInit();
+    else if (strcmp(path, "/usr/libexec/securityd") == 0
+     || strcmp(path, "/usr/libexec/trustd") == 0) securitydInit();
 }

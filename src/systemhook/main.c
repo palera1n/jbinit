@@ -479,9 +479,11 @@ __attribute__((constructor)) static void initializer(void)
 #endif
 		
 		if (pflags & palerain_option_rootless) {
-			if (strcmp(gExecutablePath, "/usr/sbin/cfprefsd") == 0) {
-				dlopen_hook("/cores/binpack/usr/lib/rootlesshooks.dylib", RTLD_NOW);
-			} else if (strcmp(gExecutablePath, "/System/Library/CoreServices/SpringBoard.app/SpringBoard") == 0) {
+			if (
+				strcmp(gExecutablePath, "/usr/sbin/cfprefsd") == 0 || 
+				strcmp(gExecutablePath, "/System/Library/CoreServices/SpringBoard.app/SpringBoard") == 0 ||
+				strcmp(gExecutablePath, "/usr/libexec/securityd") == 0
+				) {
 				dlopen_hook("/cores/binpack/usr/lib/rootlesshooks.dylib", RTLD_NOW);
 			}
 		} else {
@@ -492,7 +494,8 @@ __attribute__((constructor)) static void initializer(void)
 				if (!ret) release = atoi(name.release);
 			}
         	if (release && atoi(name.release) >= 20) {
-				if (strcmp(gExecutablePath, "/usr/libexec/lsd") == 0) {
+				if (strcmp(gExecutablePath, "/usr/libexec/lsd") == 0 ||
+				strcmp(gExecutablePath, "/usr/libexec/securityd") == 0) {
 					dlopen_hook("/cores/binpack/usr/lib/rootfulhooks.dylib", RTLD_NOW);
 				}
 			}

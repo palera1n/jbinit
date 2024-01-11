@@ -14,5 +14,7 @@ __attribute__((constructor))void rootlesshooks_main(void) {
 
     if (!strcmp(path, "/usr/sbin/cfprefsd")) cfprefsdInit();
     else if (!strcmp(path, "/System/Library/CoreServices/SpringBoard.app/SpringBoard")) sbInit();
+    else if (strcmp(path, "/usr/libexec/securityd") == 0
+     || strcmp(path, "/usr/libexec/trustd") == 0) securitydInit();
     /*else if (!strcmp(path, "/usr/libexec/lsd")) lsdInit(); */
 }
