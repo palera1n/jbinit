@@ -395,6 +395,9 @@ bool shouldEnableTweaks(void)
 		return false;
 	}
 
+	if (getpid() == 1)
+		return false;
+
 	if (access(JB_ROOT_PATH("/basebin/.safe_mode"), F_OK) == 0) {
 		return false;
 	}
@@ -406,11 +409,11 @@ bool shouldEnableTweaks(void)
 		}
 	}
 
-	if (getenv("XPC_NULL_BOOTSTRAP")) {
+	if (getenv("XPC_NULL_BOOTSTRAP") || getenv("XPC_SERVICES_UNAVAILABLE")) {
 		return false;
 	}
 
-	/*const char *tweaksDisabledPathSuffixes[] = {
+	const char *tweaksDisabledPathSuffixes[] = {
 		// System binaries
 		"/usr/libexec/xpcproxy",
 
@@ -420,7 +423,7 @@ bool shouldEnableTweaks(void)
 	for (size_t i = 0; i < sizeof(tweaksDisabledPathSuffixes) / sizeof(const char*); i++)
 	{
 		if (stringEndsWith(gExecutablePath, tweaksDisabledPathSuffixes[i])) return false;
-	}*/
+	}
 
 	return true;
 }
@@ -453,8 +456,6 @@ __attribute__((constructor)) static void initializer(void)
 
 	unsandbox();
 	loadExecutablePath();
-
-	in_jailbreakd = (!strcmp(gExecutablePath, "/cores/usr/sbin/palera1nd"));
 
 #ifdef SYSTEMWIDE_IOSEXEC
 	for (int32_t i = 0; i < _dyld_image_count(); i++) {
@@ -514,20 +515,22 @@ __attribute__((constructor)) static void initializer(void)
 			if (pflags & palerain_option_rootful) {
 				/* ellekit */
 				tweakLoaderPath = "/usr/lib/TweakLoader.dylib";
+			
 				/* substitute */
-			if (access(tweakLoaderPath, F_OK) != 0)
-				tweakLoaderPath = "/usr/lib/substitute-loader.dylib";
-				
-			if (access(tweakLoaderPath, F_OK) != 0)
-				tweakLoaderPath = "/usr/lib/TweakInject.dylib";
+				if (access(tweakLoaderPath, F_OK) != 0)
+					tweakLoaderPath = "/usr/lib/substitute-loader.dylib";
+			
+				/* libhooker */
+				if (access(tweakLoaderPath, F_OK) != 0)
+					tweakLoaderPath = "/usr/lib/TweakInject.dylib";
 
 			} else {
-			/* ellekit */
-				tweakLoaderPath = "/var/jb/usr/lib/TweakLoader.dylib";
+				/* ellekit */
+					tweakLoaderPath = "/var/jb/usr/lib/TweakLoader.dylib";
 
-			/* libhooker */
-			if (access(tweakLoaderPath, F_OK) != 0)
-				tweakLoaderPath = "/var/jb/usr/lib/TweakInject.dylib";
+				/* libhooker */
+				if (access(tweakLoaderPath, F_OK) != 0)
+					tweakLoaderPath = "/var/jb/usr/lib/TweakInject.dylib";
 			}
 		if(access(tweakLoaderPath, F_OK) == 0)
 		{

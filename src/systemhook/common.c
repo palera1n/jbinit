@@ -431,6 +431,22 @@ int spawn_hook_common(pid_t *restrict pid, const char *restrict path,
 		return pspawn_orig(pid, path, file_actions, attrp, argv, envp);
 	}
 
+	if (
+		!strcmp(path, "/var/jb/etc/rc.d/ellekit-loader") ||
+		!strcmp(path, "/etc/rc.d/ellekit-loader") ||
+		!strcmp(path, "/var/jb/etc/rc.d/libhooker") ||
+		!strcmp(path, "/etc/rc.d/libhooker") ||
+		!strcmp(path, "/etc/rc.d/substitute-launcher") ||
+		!strcmp(path, "/usr/libexec/ellekit/loader") ||
+		!strcmp(path, "/var/jb/usr/libexec/ellekit/loader")
+	) { 
+		if (access(path, X_OK) == 0) {
+			path = "/cores/binpack/usr/bin/true";
+			argv = (char *const []) { "/cores/binpack/usr/bin/true", NULL };
+		}
+		
+	}
+
 	kBinaryConfig binaryConfig = configForBinary(path, argv);
 
 #if 0
