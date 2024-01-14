@@ -406,7 +406,11 @@ bool shouldEnableTweaks(void)
 		}
 	}
 
-	const char *tweaksDisabledPathSuffixes[] = {
+	if (getenv("XPC_NULL_BOOTSTRAP")) {
+		return false;
+	}
+
+	/*const char *tweaksDisabledPathSuffixes[] = {
 		// System binaries
 		"/usr/libexec/xpcproxy",
 
@@ -416,7 +420,7 @@ bool shouldEnableTweaks(void)
 	for (size_t i = 0; i < sizeof(tweaksDisabledPathSuffixes) / sizeof(const char*); i++)
 	{
 		if (stringEndsWith(gExecutablePath, tweaksDisabledPathSuffixes[i])) return false;
-	}
+	}*/
 
 	return true;
 }
@@ -502,21 +506,38 @@ __attribute__((constructor)) static void initializer(void)
 		}
 	}
 
-#if 0
+	//fprintf(stderr, "shouldEnableTweaks(): %d\n", shouldEnableTweaks());
+
+	/* TODO: API to set tweak loader path */
 	if (shouldEnableTweaks()) {
-		int64_t debugErr = 0;
-		if (debugErr == 0) {
-			const char *tweakLoaderPath = "/var/jb/usr/lib/TweakLoader.dylib";
-			if(access(tweakLoaderPath, F_OK) == 0)
-			{
-				void *tweakLoaderHandle = dlopen_hook(tweakLoaderPath, RTLD_NOW);
-				if (tweakLoaderHandle != NULL) {
+			const char *tweakLoaderPath;
+			if (pflags & palerain_option_rootful) {
+				/* ellekit */
+				tweakLoaderPath = "/usr/lib/TweakLoader.dylib";
+				/* substitute */
+			if (access(tweakLoaderPath, F_OK) != 0)
+				tweakLoaderPath = "/usr/lib/substitute-loader.dylib";
+				
+			if (access(tweakLoaderPath, F_OK) != 0)
+				tweakLoaderPath = "/usr/lib/TweakInject.dylib";
+
+			} else {
+			/* ellekit */
+				tweakLoaderPath = "/var/jb/usr/lib/TweakLoader.dylib";
+
+			/* libhooker */
+			if (access(tweakLoaderPath, F_OK) != 0)
+				tweakLoaderPath = "/var/jb/usr/lib/TweakInject.dylib";
+			}
+		if(access(tweakLoaderPath, F_OK) == 0)
+		{
+			void *tweakLoaderHandle = dlopen_hook(tweakLoaderPath, RTLD_NOW);
+			if (tweakLoaderHandle != NULL) {
 					dlclose(tweakLoaderHandle);
-				}
 			}
 		}
 	}
-#endif
+
 	freeExecutablePath();
 }
 

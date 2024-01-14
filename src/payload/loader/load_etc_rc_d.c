@@ -43,6 +43,7 @@ int load_etc_rc_d(uint64_t pflags) {
     struct dirent* d;
     while ((d = readdir(dir))) {
         if (!strcmp(d->d_name, ".") || !strcmp(d->d_name, "..")) continue;
+        if (!strcmp(d->d_name, "libhooker") || !strcmp(d->d_name, "ellekit-loader")) continue;
         char path[PATH_MAX];
         snprintf(path, PATH_MAX, "%s/%s", etcRcD, d->d_name);
         struct stat st;
