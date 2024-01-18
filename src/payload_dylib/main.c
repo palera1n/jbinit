@@ -6,10 +6,12 @@
 #include <stdint.h>
 #include <spawn.h>
 #include <errno.h>
+#include <sys/utsname.h>
 #include <string.h>
 #include <sys/reboot.h>
 #include <sys/sysctl.h>
 #include <sys/mount.h>
+#include <libjailbreak/libjailbreak.h>
 #include <payload_dylib/common.h>
 #include <payload_dylib/crashreporter.h>
 #include <sandbox/private.h>
@@ -35,6 +37,65 @@ void _spin() {
 
 char* generate_sandbox_extensions(void) {
   return sandbox_extension_issue_mach("com.apple.security.exception.mach-lookup.global-name", "in.palera.palera1nd.systemwide", 0);
+}
+
+void load_bootstrapped_jailbreak_env(void)
+{
+  struct utsname name;
+  int ret = uname(&name);
+  if (!ret){
+    if (atoi(name.release) < 20) {
+      return;
+    } else {
+      char jbPath[150];
+      ret = jailbreak_get_prebootPath(jbPath);
+        void *systemhook_handle = dlopen(HOOK_DYLIB_PATH, RTLD_NOW);
+        if (systemhook_handle) {
+          char **pJB_RootPath = dlsym(systemhook_handle, "JB_RootPath");
+          if (!ret) {
+            if (pJB_RootPath) {
+              setenv("JB_ROOT_PATH", jbPath, 1);
+              char *old_rootPath = *pJB_RootPath;
+              *pJB_RootPath = strdup(jbPath);
+              free(old_rootPath);
+            }
+#ifdef SYSTEMWIDE_IOSEXEC
+            if (!bound_libiosexec) {
+              init_libiosexec_hook_with_ellekit = dlsym(systemhook_handle, "init_libiosexec_hook_with_ellekit");
+              if (init_libiosexec_hook_with_ellekit) {
+              if (!init_libiosexec_hook_with_ellekit())
+                bound_libiosexec = true;
+              }
+            }
+#endif
+          } else if (ret == ENOENT) {
+              setenv("JB_ROOT_PATH", "/var/jb", 1);
+              char *old_rootPath = *pJB_RootPath;
+              *pJB_RootPath = strdup("/var/jb");
+              free(old_rootPath);
+          }
+          dlclose(systemhook_handle);
+        }
+    }
+  }
+}
+
+const char* set_tweakloader_path(const char* path) {
+  const char* retval = "failed to set tweakloader path";
+  void *systemhook_handle = dlopen(HOOK_DYLIB_PATH, RTLD_NOW);
+  if (systemhook_handle) {
+    char **pJB_TweakLoaderPath = dlsym(systemhook_handle, "JB_TweakLoaderPath");
+    if (pJB_TweakLoaderPath) {
+      setenv("JB_TWEAKLOADER_PATH", path, 1);
+      char* old_tweakLoaderPath = *pJB_TweakLoaderPath;
+      *pJB_TweakLoaderPath = strdup(path);
+      free(old_tweakLoaderPath);
+    } else retval = dlerror();
+    dlclose(systemhook_handle);
+  } else {
+    retval = dlerror();
+  }
+  return retval;
 }
 
 uint64_t load_pflags(void) {
@@ -112,6 +173,7 @@ __attribute__((constructor))void launchd_hook_main(void) {
 
   initSpawnHooks();
   InitDaemonHooks();
+  InitXPCHooks();
 
   printf("=========== bye from payload.dylib ===========\n");
 

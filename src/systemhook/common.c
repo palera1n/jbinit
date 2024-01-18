@@ -485,6 +485,10 @@ int spawn_hook_common(pid_t *restrict pid, const char *restrict path,
 		JBEnvAlreadyInsertedCount++;
 	}
 
+	if (envbuf_getenv((const char **)envp, "JB_TWEAKLOADER_PATH")) {
+		JBEnvAlreadyInsertedCount++;
+	}
+
 	// Check if we can find at least one reason to not insert jailbreak related environment variables
 	// In this case we also need to remove pre existing environment variables if they are already set
 	bool shouldInsertJBEnv = true;
@@ -571,6 +575,7 @@ int spawn_hook_common(pid_t *restrict pid, const char *restrict path,
 			envbuf_setenv(&envc, "JB_SANDBOX_EXTENSIONS", JB_SandboxExtensions);
 			envbuf_setenv(&envc, "JB_ROOT_PATH", JB_RootPath);
 			envbuf_setenv(&envc, "JB_PINFO_FLAGS", JB_PinfoFlags);
+			envbuf_setenv(&envc, "JB_TWEAKLOADER_PATH", JB_TweakLoaderPath);
 		}
 		else {
 			if (systemHookAlreadyInserted && existingLibraryInserts) {

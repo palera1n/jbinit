@@ -8,6 +8,8 @@ static int help_cmd(int argc, char* argv[]);
 static int kbase_cmd(int argc, char* argv[]);
 int bootstrap_main(int argc, char* argv[]);
 int reboot_userspace_main(int argc, char* argv[]);
+int reload_main(int argc, char* argv[]);
+int tweakloader_main(int argc, char* argv[]);
 static int usage();
 
 struct subcommand {
@@ -26,8 +28,44 @@ static struct subcommand commands[] = {
     {"bootstrap", "\tDeploy bootstrap", "[-s|-S <password>] <bootstrap path>", "The <bootstrap path> argument should be a path to a zstd-compressed tar archive bootstrap matching the current jailbreak type\nOptions:\n\n\t-s\t\tWhen this option is specified, the terminal password will not be set\n\t-S <password>\tThis option allows supplying the terminal password without responding to prompts", bootstrap_main},
     {"revert-install", "\tRemove bootstrap (Rootless)", NULL, "Remove the installed bootstrap. This operation is only supported on rootless.", obliterate_main},
     {"reboot-userspace", "Reboot userspace", NULL, "Unmount /Developer and reboot userspace", reboot_userspace_main},
+    {"reload", "\t\tReload launchd jailbreak state", NULL, "Reload launchd's jailbreak state, such as the JB_ROOT_PATH variable", reload_main},
+    {"tweakloader", "\tSet TweakLoader path", "<tweakloader path>", "Sets the tweak injection library that will be loaded by systemhook.dylib", tweakloader_main},
     {NULL, NULL, NULL}
 };
+
+int tweakloader_main(int argc, char* argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "No new tweakloader path specified.\n");
+        return -1;
+    }
+
+    xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_object_t xreply;
+    xpc_dictionary_set_uint64(xdict, "cmd", LAUNCHD_CMD_SET_TWEAKLOADER_PATH);
+    xpc_dictionary_set_string(xdict, "path", argv[1]);
+    int ret = jailbreak_send_launchd_message(xdict, &xreply);
+    if (xreply) {
+        print_jailbreakd_reply(xreply);
+    } else {
+        fprintf(stderr, "failed to send launchd message: %d (%s)\n", ret, strerror(ret));
+    }
+    xpc_release(xdict);
+    return ret;
+}
+
+int reload_main(int argc, char* argv[]) {
+    xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_object_t xreply;
+    xpc_dictionary_set_uint64(xdict, "cmd", LAUNCHD_CMD_RELOAD_JB_ENV);
+    int ret = jailbreak_send_launchd_message(xdict, &xreply);
+    if (xreply) {
+        print_jailbreakd_reply(xreply);
+    } else {
+        fprintf(stderr, "failed to send launchd message: %d (%s)\n", ret, strerror(ret));
+    }
+    xpc_release(xdict);
+    return ret;
+}
 
 int reboot_userspace_main(int argc, char* argv[]) {
     P1CTL_UPCALL_JBD_WITH_ERR_CHECK(xreply, JBD_CMD_REBOOT_USERSPACE);

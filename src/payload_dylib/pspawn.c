@@ -12,75 +12,8 @@
 #include <sys/mount.h>
 #include <sys/sysctl.h>
 
-#if 0
-static bool has_fixup_prebootPath = false;
+bool bound_libiosexec = false;
 
-int posix_spawnp_orig_wrapper(pid_t *pid,
-                              const char *path,
-                              const posix_spawn_file_actions_t *action,
-                              const posix_spawnattr_t *attr,
-                              char *const argv[], char *envp[])
-{
-    int ret;
-    pid_t current_pid = getpid();
-    if (current_pid == 1) crashreporter_pause();
-    ret = posix_spawnp(pid, path, action, attr, argv, envp);
-    if (current_pid == 1) crashreporter_resume();
-    return ret;
-}
-
-int hook_posix_spawnp_launchd(pid_t *pid,
-                              const char *path,
-                              const posix_spawn_file_actions_t *action,
-                              const posix_spawnattr_t *attr,
-                              char *const argv[], char *envp[])
-{
-    if ((pflags & palerain_option_rootless) && !strcmp(path, "/cores/payload") && !has_fixup_prebootPath) {
-        struct utsname name;
-        int ret = uname(&name);
-        if (!ret) {
-            if (atoi(name.release) < 20) {
-                has_fixup_prebootPath = true;
-            } else {
-                char jbPath[150];
-                ret = jailbreak_get_prebootPath(jbPath);
-                if (!ret) {
-                    has_fixup_prebootPath = true;
-                    setenv("JB_ROOT_PATH", jbPath, 1);
-                    void* systemhook_handle = dlopen(HOOK_DYLIB_PATH, RTLD_NOW);
-                    if (systemhook_handle) {
-                        char** pJB_RootPath = dlsym(systemhook_handle, "JB_RootPath");
-                        if (pJB_RootPath) {
-                            char* old_rootPath = *pJB_RootPath;
-                            *pJB_RootPath = strdup(jbPath);
-                            free(old_rootPath);
-                        }
-                        dlclose(systemhook_handle);
-                    }
-                }
-            }
-        }
-    }
-    if (spawn_hook_common_p) {
-        return resolvePath(path, NULL, ^int(char *file) {
-		    return spawn_hook_common_p(pid, file, action, attr, argv, envp, posix_spawnp_orig_wrapper);
-	    });
-    } else return posix_spawnp_orig_wrapper(pid, path, action, attr, argv, envp);
-}
-
-int hook_posix_spawn_launchd(pid_t *pid,
-                              const char *path,
-                              const posix_spawn_file_actions_t *action,
-                              const posix_spawnattr_t *attr,
-                              char *const argv[], char *envp[]) {
-
-                              }
-
-DYLD_INTERPOSE(hook_posix_spawnp_launchd, posix_spawnp);
-DYLD_INTERPOSE(hook_posix_spawn_launchd, posix_spawn);
-#endif
-
-static bool has_fixup_prebootPath = false, bound_libiosexec = false;
 // #define LOG_PROCESS_LAUNCHES 1
 
 void *posix_spawn_orig;
@@ -132,40 +65,8 @@ int posix_spawn_hook(pid_t *restrict pid, const char *restrict path,
 
 			// Say goodbye to this process
 			return posix_spawn_orig_wrapper(pid, path, file_actions, attrp, argv, envp);
-		} else if (
-            (pflags & palerain_option_rootless) 
-            && !has_fixup_prebootPath
-            && !strcmp(path, "/cores/payload")) {
-                struct utsname name;
-                int ret = uname(&name);
-                if (!ret) {
-                if (atoi(name.release) < 20) {
-                    has_fixup_prebootPath = true;
-                } else {
-                    char jbPath[150];
-                    ret = jailbreak_get_prebootPath(jbPath);
-                    if (!ret) {
-                        setenv("JB_ROOT_PATH", jbPath, 1);
-                        void* systemhook_handle = dlopen(HOOK_DYLIB_PATH, RTLD_NOW);
-                        if (systemhook_handle) {
-                            char** pJB_RootPath = dlsym(systemhook_handle, "JB_RootPath");
-                            if (pJB_RootPath) {
-                                char* old_rootPath = *pJB_RootPath;
-                                *pJB_RootPath = strdup(jbPath);
-                                free(old_rootPath);
-                                has_fixup_prebootPath = true;
-                            }
-#ifdef SYSTEMWIDE_IOSEXEC
-                            init_libiosexec_hook_with_ellekit = dlsym(systemhook_handle, "init_libiosexec_hook_with_ellekit");
-                            if (init_libiosexec_hook_with_ellekit) {
-                                if (!init_libiosexec_hook_with_ellekit()) bound_libiosexec = true;
-                            }
-#endif
-                            dlclose(systemhook_handle);
-                        }
-                    }
-                }
-            }
+		} else if ((pflags & palerain_option_rootful) == 0 && !strcmp(path, "/cores/payload")) {
+            load_bootstrapped_jailbreak_env();
         }
 	}
 

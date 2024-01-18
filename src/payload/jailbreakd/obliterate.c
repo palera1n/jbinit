@@ -43,5 +43,7 @@ void obliterate(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pin
         xpc_dictionary_set_string(xreply, "message", "Success");
     }
 
+    reload_launchd_env();
+
     return;
 }

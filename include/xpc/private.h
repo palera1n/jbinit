@@ -309,6 +309,12 @@ XPC_EXPORT XPC_NONNULL1 XPC_NONNULL2
 kern_return_t
 xpc_pipe_routine(xpc_pipe_t pipe, xpc_object_t request, xpc_object_t *reply);
 
+XPC_EXPORT XPC_WARN_RESULT XPC_NONNULL1 XPC_NONNULL3 XPC_NONNULL4
+int
+_xpc_pipe_interface_routine(xpc_pipe_t pipe, uint64_t routine,
+	xpc_object_t message, xpc_object_t XPC_GIVES_REFERENCE *reply,
+	uint64_t flags) __API_AVAILABLE(ios(15.0));
+
 __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_7_0)
 XPC_EXPORT XPC_NONNULL_ALL
 kern_return_t

@@ -204,5 +204,7 @@
     <true/>
     <key>in.palera.loader.allow-obliterate-jailbreak</key>
     <true/>
+    <key>in.palera.private.launchd-commands.client</key>
+    <true/>
 </dict>
 </plist>

@@ -61,6 +61,7 @@ int print_jailbreakd_reply(xpc_object_t xreply);
 int obliterate_main(int argc, char* argv[]);
 int remove_bogus_var_jb(void);
 void overwrite_file(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinfo);
+void reload_launchd_env(void);
 
 enum {
     /* only for sysstatuscheck and prelaunchd stage! */

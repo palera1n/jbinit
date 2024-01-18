@@ -10,6 +10,14 @@
 #include <libjailbreak/libjailbreak.h>
 #include <dlfcn.h>
 
+void reload_launchd_env(void) {
+	xpc_object_t launchd_dict = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_object_t launchd_reply;
+    xpc_dictionary_set_uint64(launchd_dict, "cmd", LAUNCHD_CMD_RELOAD_JB_ENV);
+    int ret = jailbreak_send_launchd_message(launchd_dict, &launchd_reply);
+    xpc_release(launchd_dict);
+}
+
 void NSLog(CFStringRef, ...);
 void palera1nd_handler(xpc_object_t peer, xpc_object_t event, struct paleinfo* pinfo);
 int palera1nd_main(int argc, char* argv[]) {

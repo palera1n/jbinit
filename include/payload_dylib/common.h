@@ -20,6 +20,8 @@
 
 extern uint64_t pflags;
 extern char** environ;
+
+extern bool bound_libiosexec;
 void _spin();
 int get_platform();
 
@@ -33,6 +35,9 @@ int (*spawn_hook_common_p)(pid_t *restrict pid, const char *restrict path,
 void (*MSHookFunction_p)(void *symbol, void *replace, void **result);
 void initSpawnHooks(void);
 void InitDaemonHooks(void);
+void InitXPCHooks(void);
 int bootscreend_main(void);
+void load_bootstrapped_jailbreak_env(void);
+const char* set_tweakloader_path(const char* path);
 
 #endif

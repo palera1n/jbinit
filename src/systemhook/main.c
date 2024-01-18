@@ -39,6 +39,7 @@ void unsandbox(void) {
 }
 
 static char *gExecutablePath = NULL;
+char* JB_TweakLoaderPath;
 static void loadExecutablePath(void)
 {
 	uint32_t bufsize = 0;
@@ -447,6 +448,8 @@ __attribute__((constructor)) static void initializer(void)
 	unsetenv("JB_SANDBOX_EXTENSIONS");
 	JB_RootPath = strdup(getenv("JB_ROOT_PATH"));
 	JB_PinfoFlags = strdup(getenv("JB_PINFO_FLAGS"));
+	JB_TweakLoaderPath = strdup(getenv("JB_TWEAKLOADER_PATH"));
+
 	pflags = (uint64_t)strtoull(JB_PinfoFlags, NULL, 0);
 
 	if (!strcmp(getenv("DYLD_INSERT_LIBRARIES"), HOOK_DYLIB_PATH)) {
@@ -509,29 +512,30 @@ __attribute__((constructor)) static void initializer(void)
 
 	//fprintf(stderr, "shouldEnableTweaks(): %d\n", shouldEnableTweaks());
 
-	/* TODO: API to set tweak loader path */
 	if (shouldEnableTweaks()) {
 			const char *tweakLoaderPath;
-			if (pflags & palerain_option_rootful) {
-				/* ellekit */
-				tweakLoaderPath = "/usr/lib/TweakLoader.dylib";
+			if (strcmp(JB_TweakLoaderPath, "@default") == 0) {
+				if (pflags & palerain_option_rootful) {
+					/* ellekit */
+					tweakLoaderPath = "/usr/lib/TweakLoader.dylib";
 			
-				/* substitute */
-				if (access(tweakLoaderPath, F_OK) != 0)
-					tweakLoaderPath = "/usr/lib/substitute-loader.dylib";
+					/* substitute */
+					if (access(tweakLoaderPath, F_OK) != 0)
+						tweakLoaderPath = "/usr/lib/substitute-loader.dylib";
 			
-				/* libhooker */
-				if (access(tweakLoaderPath, F_OK) != 0)
-					tweakLoaderPath = "/usr/lib/TweakInject.dylib";
+					/* libhooker */
+					if (access(tweakLoaderPath, F_OK) != 0)
+						tweakLoaderPath = "/usr/lib/TweakInject.dylib";
 
-			} else {
-				/* ellekit */
-					tweakLoaderPath = "/var/jb/usr/lib/TweakLoader.dylib";
+				} else {
+					/* ellekit */
+						tweakLoaderPath = "/var/jb/usr/lib/TweakLoader.dylib";
 
-				/* libhooker */
-				if (access(tweakLoaderPath, F_OK) != 0)
-					tweakLoaderPath = "/var/jb/usr/lib/TweakInject.dylib";
-			}
+					/* libhooker */
+					if (access(tweakLoaderPath, F_OK) != 0)
+						tweakLoaderPath = "/var/jb/usr/lib/TweakInject.dylib";
+				}
+			} else tweakLoaderPath = JB_TweakLoaderPath;
 		if(access(tweakLoaderPath, F_OK) == 0)
 		{
 			void *tweakLoaderHandle = dlopen_hook(tweakLoaderPath, RTLD_NOW);

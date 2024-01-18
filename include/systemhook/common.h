@@ -5,10 +5,11 @@
 #include <paleinfo.h>
 
 #define HOOK_DYLIB_PATH "/cores/binpack/usr/lib/systemhook.dylib"
-#define JB_ENV_COUNT 4
+#define JB_ENV_COUNT 5
 extern char *JB_SandboxExtensions;
 extern char *JB_RootPath;
 extern char *JB_PinfoFlags;
+extern char *JB_TweakLoaderPath;
 extern bool swh_is_debugged;
 extern uint64_t pflags;
 extern bool has_libiosexec;
