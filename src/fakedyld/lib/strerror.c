@@ -2,6 +2,7 @@
 
 const char *strerror(int err) {
     switch(err) {
+#ifdef HAVE_STRERROR
         case EUNDEFINED:            return (const char*)"Undefined error: 0";
         case EPERM:                 return (const char*)"Operation not permitted";
         case ENOENT:                return (const char*)"No such file or directory";
@@ -109,6 +110,7 @@ const char *strerror(int err) {
         case ENOTRECOVERABLE:       return (const char*)"State not recoverable";
         case EOWNERDEAD:            return (const char*)"Previous owner died";
         case EQFULL:                return (const char*)"Interface output queue is full";
+#endif
         default:                    return (const char*)"Unknown Error";
     }
 }

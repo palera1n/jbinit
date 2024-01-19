@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include <CoreFoundation/CoreFoundation.h>
 
+#if defined(HAVE_CRASHREPORTER)
+
 #define	INSTACK(a)	((a) >= stackbot && (a) <= stacktop)
 #if defined(__x86_64__)
 #define	ISALIGNED(a)	((((uintptr_t)(a)) & 0xf) == 0)
@@ -279,3 +281,5 @@ void crashreporter_resume(void)
 		gCrashReporterState = kCrashReporterStateActive;
 	}
 }
+
+#endif
