@@ -17,3 +17,6 @@ tools
 bootscreend
 bootscreend.xml
 launchd
+build
+plooshInit.xcodeproj/project.xcworkspace/xcuserdata
+plooshInit.xcodeproj/xcuserdata/

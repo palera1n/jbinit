@@ -20,6 +20,14 @@ ifeq ($(DEV_BUILD),1)
 CFLAGS += -DDEV_BUILD=1
 endif
 
+UID != id -u
+ifeq ($(UID),0)
+SUDO = sudo
+else
+PASSWORD != osascript -e 'Tell application "System Events" to display dialog "Password:" default answer "" with hidden answer' -e 'text returned of result' 2>/dev/null
+SUDO = echo "$(PASSWORD)" | sudo -S
+endif
+
 .PHONY: all clean $(patsubst %, %-all, $(SUBDIRS)) $(patsubst %, %-clean, $(SUBDIRS)) libjailbreak
 
 export CC STRIP DSYMUTIL CFLAGS LDID
@@ -50,31 +58,32 @@ loader.dmg: palera1nLoader.ipa
 	rm -rf palera1nLoader
 
 binpack.dmg: binpack.tar loader.dmg $(patsubst %, %-all, $(SUBDIRS))
-	sudo rm -rf binpack.dmg binpack
+	$(SUDO) rm -rf binpack.dmg binpack
 	mkdir binpack
-	-sudo touch binpack/.installed_overlay
-	sudo tar -C binpack --preserve-permissions -xf binpack.tar
-	sudo rm -rf binpack/usr/share cores
-	sudo ln -sf /cores/payload binpack/usr/sbin/p1ctl
-	sudo ln -sf /cores/payload binpack/usr/sbin/palera1nd
-	sudo mkdir -p binpack/Applications
-	sudo mkdir -p binpack/usr/lib binpack/usr/share
-	sudo mkdir -p binpack/Library/Frameworks/CydiaSubstrate.framework
-	sudo mkdir -p binpack/Library/LaunchDaemons
-	sudo cp -a $(ROOT)/shared/*.plist binpack/Library/LaunchDaemons
-	sudo cp -a $(ROOT)/shared/boot.jp2 binpack/usr/share
-	sudo cp -a $(ROOT)/shared/copyright binpack/usr/share
-	sudo cp -a $(ROOT)/LICENSE binpack/usr/share/copyright/Licnese-plinit.txt
-	sudo chown 0:0 binpack/Library/LaunchDaemons/*.plist
-	sudo chmod 644 binpack/Library/LaunchDaemons/*.plist
-	sudo cp rootlesshooks/rootlesshooks.dylib binpack/usr/lib
-	sudo cp rootfulhooks/rootfulhooks.dylib binpack/usr/lib
-	sudo cp systemhook/systemhook.dylib binpack/usr/lib
-	sudo cp loader.dmg binpack
-	sudo cp ellekit/ellekit_build/Build/Products/Release-iphoneos/libellekit.dylib binpack/usr/lib
-	sudo ln -s ../../../usr/lib/libellekit.dylib binpack/Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate
-	hdiutil create -size 10m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -volname plooshra1nfs -fs HFS+ ./binpack.dmg
-	sudo rm -rf binpack
+	$(SUDO) touch binpack/.installed_overlay
+	$(SUDO) tar -C binpack --preserve-permissions -xf binpack.tar
+	$(SUDO) rm -rf binpack/usr/share cores
+	$(SUDO) ln -sf /cores/payload binpack/usr/sbin/p1ctl
+	$(SUDO) ln -sf /cores/payload binpack/usr/sbin/palera1nd
+	$(SUDO) mkdir -p binpack/Applications
+	$(SUDO) mkdir -p binpack/usr/lib binpack/usr/share
+	$(SUDO) mkdir -p binpack/Library/Frameworks/CydiaSubstrate.framework
+	$(SUDO) mkdir -p binpack/Library/LaunchDaemons
+	$(SUDO) cp -a $(ROOT)/shared/*.plist binpack/Library/LaunchDaemons
+	$(SUDO) cp -a $(ROOT)/shared/boot.jp2 binpack/usr/share
+	$(SUDO) cp -a $(ROOT)/shared/copyright binpack/usr/share
+	$(SUDO) cp -a $(ROOT)/LICENSE binpack/usr/share/copyright/Licnese-plinit.txt
+	$(SUDO) chown 0:0 binpack/Library/LaunchDaemons/*.plist
+	$(SUDO) chmod 644 binpack/Library/LaunchDaemons/*.plist
+	$(SUDO) cp rootlesshooks/rootlesshooks.dylib binpack/usr/lib
+	$(SUDO) cp rootfulhooks/rootfulhooks.dylib binpack/usr/lib
+	$(SUDO) cp systemhook/systemhook.dylib binpack/usr/lib
+	$(SUDO) cp loader.dmg binpack
+	$(SUDO) cp ellekit/ellekit_build/Build/Products/Release-iphoneos/libellekit.dylib binpack/usr/lib
+	$(SUDO) ln -s ../../../usr/lib/libellekit.dylib binpack/Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate
+	$(SUDO) hdiutil create -size 10m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -volname plooshra1nfs -fs HFS+ ./binpack.dmg
+	$(SUDO) chown $(UID) binpack.dmg
+	$(SUDO) rm -rf binpack
 
 libjailbreak:
 	$(MAKE) -C libjailbreak all

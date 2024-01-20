@@ -11,7 +11,6 @@
 #include <errno.h>
 #include <spawn.h>
 #include <pthread.h>
-#define TARGET_OS_IPHONE 1
 #include <spawn_private.h>
 #include <sys/utsname.h>
 #include <sys/spawn_internal.h>

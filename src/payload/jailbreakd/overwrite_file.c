@@ -11,7 +11,6 @@
 #include <errno.h>
 #include <spawn.h>
 #include <pthread.h>
-#define TARGET_OS_IPHONE 1
 #include <spawn_private.h>
 #include <sys/utsname.h>
 #include <sys/spawn_internal.h>
@@ -41,7 +40,7 @@ void overwrite_file(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo*
         NULL
     };
 
-    bool is_allowlisted;
+    bool is_allowlisted = false;
     for (uint16_t i = 0; allowlist[i] != NULL; i++) {
         if (!strncmp(allowlist[i], path, strlen(allowlist[i]))) {
             is_allowlisted = true;

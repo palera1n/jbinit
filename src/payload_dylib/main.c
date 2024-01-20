@@ -28,7 +28,7 @@ int (*spawn_hook_common_p)(pid_t *restrict pid, const char *restrict path,
 					   char *const envp[restrict],
 					   void *pspawn_org) = NULL;
 
-void _spin() {
+void _spin(void) {
   fprintf(stderr, "An error occured");
   while (1) {
     sleep(5);
