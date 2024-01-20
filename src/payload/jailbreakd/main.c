@@ -16,6 +16,7 @@ void reload_launchd_env(void) {
     xpc_dictionary_set_uint64(launchd_dict, "cmd", LAUNCHD_CMD_RELOAD_JB_ENV);
     int ret = jailbreak_send_launchd_message(launchd_dict, &launchd_reply);
     xpc_release(launchd_dict);
+	xpc_release(launchd_reply);
 }
 
 void NSLog(CFStringRef, ...);

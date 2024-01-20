@@ -1,15 +1,16 @@
 ROOT := $(shell pwd)
 MACOSX_SYSROOT = $(shell xcrun -sdk macosx --show-sdk-path)
 TARGET_SYSROOT = $(shell xcrun -sdk iphoneos --show-sdk-path)
-CC = xcrun -sdk iphoneos clang
+CC = $(shell xcrun --find clang)
+CFLAGS += -isystem $(ROOT)/apple-include -I$(ROOT)/include -isysroot $(TARGET_SYSROOT)
 OBJC = $(CC)
 
-export ROOT CC OBJC
+export ROOT CC OBJC CFLAGS
 
 all: apple-include
 	$(MAKE) -C $(ROOT)/src
 
-apple-include:
+apple-include: apple-include-private/**
 	mkdir -p apple-include/{bsm,objc,os/internal,sys,firehose,CoreFoundation,FSEvents,IOSurface,IOKit/kext,libkern,kern,arm,{mach/,}machine,CommonCrypto,Security,CoreSymbolication,Kernel/{kern,IOKit,libkern},rpc,rpcsvc,xpc/private,ktrace,mach-o,dispatch}
 	cp -af $(MACOSX_SYSROOT)/usr/include/{arpa,bsm,hfs,net,xpc,netinet,servers,timeconv.h,launch.h} apple-include
 	cp -af $(MACOSX_SYSROOT)/usr/include/objc/objc-runtime.h apple-include/objc
@@ -38,6 +39,7 @@ apple-include:
 	gsed -E /'__API_UNAVAILABLE'/d < $(TARGET_SYSROOT)/usr/include/pthread.h > apple-include/pthread.h
 	@if [ -f $(TARGET_SYSROOT)/System/Library/Frameworks/CoreFoundation.framework/Headers/CFUserNotification.h ]; then gsed -E 's/API_UNAVAILABLE\(ios, watchos, tvos\)//g' < $(TARGET_SYSROOT)/System/Library/Frameworks/CoreFoundation.framework/Headers/CFUserNotification.h > apple-include/CoreFoundation/CFUserNotification.h; fi
 	gsed -i -E s/'__API_UNAVAILABLE\(.*\)'// apple-include/IOKit/IOKitLib.h
+	cp -a apple-include-private/. apple-include
 
 clean:
 	$(MAKE) -C $(ROOT)/src clean

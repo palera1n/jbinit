@@ -1,5 +1,4 @@
 CFLAGS += -miphoneos-version-min=12.0 -std=gnu17
-CFLAGS += -isystem $(ROOT)/apple-include -I$(ROOT)/include
 LDFLAGS += -Wl,-dead_strip -Wno-unused-command-line-argument
 OBJDIR = obj
 C_SRC = $(wildcard *.c)

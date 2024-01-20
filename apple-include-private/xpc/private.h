@@ -3,6 +3,10 @@
 #ifndef __XPC_PRIVATE_H__
 #define __XPC_PRIVATE_H__
 
+#ifndef __BLOCKS__
+#error "XPC private APIs require Blocks support."
+#endif // __BLOCKS__
+
 #include <dispatch/dispatch.h>
 #include <uuid/uuid.h>
 #include <os/object.h>
@@ -180,30 +184,6 @@ XPC_EXPORT
 xpc_object_t
 xpc_create_reply_with_format(xpc_object_t original, const char * format, ...);
 
-// Should move to <xpc/xpc_transaction_deprecate.h>
-
-#ifndef __XPC_TRANSACTION_DEPRECATE_H__
-#define __XPC_TRANSACTION_DEPRECATE_H__
-
-#pragma mark Transactions
-
-__OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_5_0)
-XPC_TRANSACTION_DEPRECATED
-void
-xpc_transaction_exit_clean(void);
-
-__OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_5_0)
-XPC_TRANSACTION_DEPRECATED
-void
-xpc_transaction_interrupt_clean_exit(void);
-
-__OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_5_0)
-XPC_TRANSACTION_DEPRECATED
-void
-xpc_transactions_enable(void);
-
-#endif
-
 #pragma mark Tracks
 
 XPC_EXPORT
@@ -307,13 +287,14 @@ xpc_pipe_invalidate(xpc_pipe_t pipe);
 __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_7_0)
 XPC_EXPORT XPC_NONNULL1 XPC_NONNULL2
 kern_return_t
-xpc_pipe_routine(xpc_pipe_t pipe, xpc_object_t request, xpc_object_t *reply);
+xpc_pipe_routine(xpc_pipe_t pipe, xpc_object_t request, xpc_object_t XPC_GIVES_REFERENCE *reply);
 
+API_AVAILABLE(macos(12.0), ios(15.0), tvos(15.0), watchos(8.0))
 XPC_EXPORT XPC_WARN_RESULT XPC_NONNULL1 XPC_NONNULL3 XPC_NONNULL4
 int
 _xpc_pipe_interface_routine(xpc_pipe_t pipe, uint64_t routine,
 	xpc_object_t message, xpc_object_t XPC_GIVES_REFERENCE *reply,
-	uint64_t flags) __API_AVAILABLE(ios(15.0));
+	uint64_t flags);
 
 __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_7_0)
 XPC_EXPORT XPC_NONNULL_ALL

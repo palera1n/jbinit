@@ -64,6 +64,7 @@ int reload_main(int argc, char* argv[]) {
         fprintf(stderr, "failed to send launchd message: %d (%s)\n", ret, strerror(ret));
     }
     xpc_release(xdict);
+    xpc_release(xreply);
     return ret;
 }
 
