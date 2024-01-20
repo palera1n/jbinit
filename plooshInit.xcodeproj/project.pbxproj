@@ -62,7 +62,6 @@
 		01D3D7172B5C80DA007845B6 /* jbdcall.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5292B5C80DA007845B6 /* jbdcall.c */; };
 		01D3D7182B5C80DA007845B6 /* prebootpath.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D52A2B5C80DA007845B6 /* prebootpath.c */; };
 		01D3D7192B5C80DA007845B6 /* strflags.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D52B2B5C80DA007845B6 /* strflags.c */; };
-		01D3D71A2B5C80DA007845B6 /* libjailbreak.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D52C2B5C80DA007845B6 /* libjailbreak.a */; };
 		01D3D7552B5C80DA007845B6 /* libellekit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5EC2B5C80DA007845B6 /* libellekit.tbd */; };
 		01D3D7562B5C80DA007845B6 /* APFS.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5ED2B5C80DA007845B6 /* APFS.tbd */; };
 		01D3D7572B5C80DA007845B6 /* IOMobileFramebuffer.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5EE2B5C80DA007845B6 /* IOMobileFramebuffer.tbd */; };
@@ -81,19 +80,8 @@
 		01D3D7782B5C80DA007845B6 /* start.S in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6252B5C80DA007845B6 /* start.S */; };
 		01D3D7792B5C80DA007845B6 /* syscall.S in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6262B5C80DA007845B6 /* syscall.S */; };
 		01D3D77E2B5C80DA007845B6 /* shellcode.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6302B5C80DA007845B6 /* shellcode.c */; };
-		01D3D77F2B5C80DA007845B6 /* shellcode.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D6322B5C80DA007845B6 /* shellcode.o */; platformFilter = ios; };
-		01D3D7802B5C80DA007845B6 /* patch.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D6332B5C80DA007845B6 /* patch.o */; platformFilter = ios; };
 		01D3D7812B5C80DA007845B6 /* patch.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6342B5C80DA007845B6 /* patch.c */; };
 		01D3D7832B5C80DA007845B6 /* patcher.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6362B5C80DA007845B6 /* patcher.c */; };
-		01D3D7842B5C80DA007845B6 /* plooshfinder.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D6392B5C80DA007845B6 /* plooshfinder.o */; platformFilter = ios; };
-		01D3D7852B5C80DA007845B6 /* utils.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D63A2B5C80DA007845B6 /* utils.o */; platformFilter = ios; };
-		01D3D7862B5C80DA007845B6 /* arm64.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D63C2B5C80DA007845B6 /* arm64.o */; platformFilter = ios; };
-		01D3D7872B5C80DA007845B6 /* elf.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D63E2B5C80DA007845B6 /* elf.o */; platformFilter = ios; };
-		01D3D7882B5C80DA007845B6 /* pe.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D63F2B5C80DA007845B6 /* pe.o */; platformFilter = ios; };
-		01D3D7892B5C80DA007845B6 /* macho.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D6402B5C80DA007845B6 /* macho.o */; platformFilter = ios; };
-		01D3D78A2B5C80DA007845B6 /* multi.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D6412B5C80DA007845B6 /* multi.o */; platformFilter = ios; };
-		01D3D78B2B5C80DA007845B6 /* plooshfinder64.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D6422B5C80DA007845B6 /* plooshfinder64.o */; platformFilter = ios; };
-		01D3D78C2B5C80DA007845B6 /* plooshfinder32.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D6432B5C80DA007845B6 /* plooshfinder32.o */; platformFilter = ios; };
 		01D3D78E2B5C80DA007845B6 /* plooshfinder32.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6482B5C80DA007845B6 /* plooshfinder32.c */; };
 		01D3D78F2B5C80DA007845B6 /* arm64.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64A2B5C80DA007845B6 /* arm64.c */; };
 		01D3D7902B5C80DA007845B6 /* pe.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64C2B5C80DA007845B6 /* pe.c */; };
@@ -395,20 +383,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01D3D7862B5C80DA007845B6 /* arm64.o in Frameworks */,
-				01D3D7882B5C80DA007845B6 /* pe.o in Frameworks */,
-				01D3D71A2B5C80DA007845B6 /* libjailbreak.a in Frameworks */,
-				01D3D78B2B5C80DA007845B6 /* plooshfinder64.o in Frameworks */,
-				01D3D78A2B5C80DA007845B6 /* multi.o in Frameworks */,
-				01D3D7842B5C80DA007845B6 /* plooshfinder.o in Frameworks */,
-				01D3D78C2B5C80DA007845B6 /* plooshfinder32.o in Frameworks */,
-				01D3D7802B5C80DA007845B6 /* patch.o in Frameworks */,
-				01D3D7872B5C80DA007845B6 /* elf.o in Frameworks */,
-				01D3D77F2B5C80DA007845B6 /* shellcode.o in Frameworks */,
 				01D3D7572B5C80DA007845B6 /* IOMobileFramebuffer.tbd in Frameworks */,
 				01D3D7552B5C80DA007845B6 /* libellekit.tbd in Frameworks */,
-				01D3D7892B5C80DA007845B6 /* macho.o in Frameworks */,
-				01D3D7852B5C80DA007845B6 /* utils.o in Frameworks */,
 				01D3D7562B5C80DA007845B6 /* APFS.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1374,6 +1350,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1381,6 +1359,7 @@
 					"apple-include",
 					include,
 				);
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1407,12 +1386,15 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"apple-include",
 					include,
 				);
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
