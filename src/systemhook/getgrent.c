@@ -2,7 +2,7 @@
 #include <systemhook/common.h>
 #include <dyld-interpose.h>
 
-#ifdef SYSTEMWIDE_IOSEXEC
+#ifdef HAVE_SYSTEMWIDE_IOSEXEC
 struct group * 
 getgrgid_hook(gid_t gid) {
     RET_TWC(getgrgid, gid);

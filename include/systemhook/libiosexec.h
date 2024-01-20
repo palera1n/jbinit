@@ -5,7 +5,7 @@
 #include <grp.h>
 #include <stdbool.h>
 
-#ifdef SYSTEMWIDE_IOSEXEC
+#ifdef HAVE_SYSTEMWIDE_IOSEXEC
 
 #define THREE_WAY_CALL(func, ...) ( ie_ ## func && !has_libiosexec ) ? ie_ ## func( __VA_ARGS__ ) : (orig_ ## func ? orig_ ## func( __VA_ARGS__ ) : func( __VA_ARGS__ ))
 #define RET_TWC(...) return THREE_WAY_CALL( __VA_ARGS__ )

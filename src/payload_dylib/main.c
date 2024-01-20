@@ -59,7 +59,7 @@ void load_bootstrapped_jailbreak_env(void)
               *pJB_RootPath = strdup(jbPath);
               free(old_rootPath);
             }
-#ifdef SYSTEMWIDE_IOSEXEC
+#ifdef HAVE_SYSTEMWIDE_IOSEXEC
             if (!bound_libiosexec) {
               init_libiosexec_hook_with_ellekit = dlsym(systemhook_handle, "init_libiosexec_hook_with_ellekit");
               if (init_libiosexec_hook_with_ellekit) {

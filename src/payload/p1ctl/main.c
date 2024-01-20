@@ -67,12 +67,23 @@ int reload_main(int argc, char* argv[]) {
     return ret;
 }
 
-int reboot_userspace_main(int argc, char* argv[]) {
-    P1CTL_UPCALL_JBD_WITH_ERR_CHECK(xreply, JBD_CMD_REBOOT_USERSPACE);
+#define RB2_USERREBOOT (0x2000000000000000llu)
 
-    int retval = print_jailbreakd_reply(xreply);
+int reboot_userspace_main(int argc, char* argv[]) {
+    xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_dictionary_set_uint64(xdict, "cmd", JBD_CMD_PERFORM_REBOOT3);
+    xpc_dictionary_set_uint64(xdict, "howto", RB2_USERREBOOT);
+    xpc_object_t xreply = jailbreak_send_jailbreakd_message_with_reply_sync(xdict);
+    if (xpc_get_type(xreply) != XPC_TYPE_ERROR) {
+        print_jailbreakd_reply(xreply);
+    } else {
+        char* desc = xpc_copy_description(xreply);
+        fprintf(stderr, "failed to send jailbreakd message: %s\n", desc);
+        free(desc);
+    }
     xpc_release(xreply);
-    return retval;
+    xpc_release(xdict);
+    return 0;
 }
 
 

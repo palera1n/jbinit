@@ -146,7 +146,7 @@ int sysstatuscheck(uint32_t payload_options, uint64_t pflags) {
     } else {
         remove_bogus_var_jb();
         create_var_jb();
-#ifdef SYSTEMWIDE_IOSEXEC
+#ifdef HAVE_SYSTEMWIDE_IOSEXEC
         if (access("/var/jb", F_OK) == 0) {
             fixup_databases();
         }

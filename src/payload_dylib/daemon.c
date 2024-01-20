@@ -73,7 +73,7 @@ xpc_object_t hook_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
       xpc_dictionary_set_value(retval, "/System/Library/LaunchDaemons/in.palera.palera1nd.plist", submitJob);
     }
 
-#ifdef DEBUG_SHELL
+#ifdef HAVE_DEBUG_SHELL
     {
       xpc_object_t submitJob = xpc_dictionary_create(NULL, NULL, 0);
       xpc_object_t programArguments = xpc_array_create(NULL, 0);

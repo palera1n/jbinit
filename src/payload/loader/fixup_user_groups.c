@@ -10,7 +10,7 @@
 #include <pwd.h>
 #include <grp.h>
 
-#ifdef SYSTEMWIDE_IOSEXEC
+#ifdef HAVE_SYSTEMWIDE_IOSEXEC
 int fixup_pwgrp_file(char* sysfile, char* jbfile) {
     if (access(sysfile, F_OK) != 0) {
         fprintf(stderr, "cannot access %s\n", sysfile);

@@ -2,7 +2,7 @@
 #include <systemhook/common.h>
 #include <dyld-interpose.h>
 
-#ifdef SYSTEMWIDE_IOSEXEC
+#ifdef HAVE_SYSTEMWIDE_IOSEXEC
 char* getusershell_hook(void) {
     RET_TWC(getusershell);
 }

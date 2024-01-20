@@ -439,7 +439,7 @@ void applyKbdFix(void)
 }
 #endif
 
-#ifdef SYSTEMWIDE_IOSEXEC
+#ifdef HAVE_SYSTEMWIDE_IOSEXEC
 bool has_libiosexec = false;
 #endif
 __attribute__((constructor)) static void initializer(void)
@@ -460,7 +460,7 @@ __attribute__((constructor)) static void initializer(void)
 	unsandbox();
 	loadExecutablePath();
 
-#ifdef SYSTEMWIDE_IOSEXEC
+#ifdef HAVE_SYSTEMWIDE_IOSEXEC
 	for (int32_t i = 0; i < _dyld_image_count(); i++) {
 		const char* name = _dyld_get_image_name(i);
 		if (strstr(name, "/libiosexec.1.dylib")) has_libiosexec = true;
@@ -548,29 +548,47 @@ __attribute__((constructor)) static void initializer(void)
 	freeExecutablePath();
 }
 
-
-
+#define ITHINK_PURPOSE (0x0100000000000000llu)
 #define RB2_USERREBOOT (0x2000000000000000llu)
 #define RB2_OBLITERATE (0x4000000000000000llu)
 #define RB2_FULLREBOOT (0x8000000000000000llu)
+#define ITHINK_HALT    (0x8000000000000008llu)
 
-int reboot3(uint64_t how, uint64_t unk);
-int reboot3_hook(uint64_t how, uint64_t unk)
+int reboot3(uint64_t howto, ...);
+int reboot3_hook(uint64_t howto, ...)
 {
-	if(how == RB2_USERREBOOT && !in_jailbreakd) {
-		xpc_object_t xreply = jailbreak_send_jailbreakd_command_with_reply_sync(JBD_CMD_REBOOT_USERSPACE);
-		if (xpc_get_type(xreply) == XPC_TYPE_ERROR) {
-			errno = EAGAIN;
-        	return -1;
-    	}
-		int error;
-		if ((error = xpc_dictionary_get_int64(xreply, "error"))) {
-			errno = error;
-			return -1;
-		}
-		return 0;
+	if (in_jailbreakd || ((howto & RB2_USERREBOOT) == 0)) {
+		if (howto & ITHINK_PURPOSE) {
+			va_list va;
+			va_start(va, howto);
+			uint32_t purpose = va_arg(va, uint32_t);
+			va_end(va);
+			return reboot3(howto, purpose);
+		} else return reboot3(howto);
 	}
-	return reboot3(how, unk);
+
+	xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
+	xpc_dictionary_set_uint64(xdict, "howto", howto);
+	if (howto & ITHINK_PURPOSE) {
+		va_list va;
+		va_start(va, howto);
+		uint32_t purpose = va_arg(va, uint32_t);
+		va_end(va);
+		xpc_dictionary_set_uint64(xdict, "purpose", purpose);
+	}
+	xpc_dictionary_set_uint64(xdict, "cmd", JBD_CMD_PERFORM_REBOOT3);
+
+	xpc_object_t xreply = jailbreak_send_jailbreakd_message_with_reply_sync(xdict);
+	if (xpc_get_type(xreply) == XPC_TYPE_ERROR) {
+		xpc_release(xreply);
+        return EAGAIN;
+    }
+	int error;
+	if ((error = xpc_dictionary_get_int64(xreply, "error"))) {
+		xpc_release(xreply);
+		return error;
+	}
+	return 0;
 }
 
 DYLD_INTERPOSE(posix_spawn_hook, posix_spawn)

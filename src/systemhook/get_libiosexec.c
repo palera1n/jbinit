@@ -3,7 +3,7 @@
 #include <dlfcn.h>
 #include <substrate.h>
 
-#ifdef SYSTEMWIDE_IOSEXEC
+#ifdef HAVE_SYSTEMWIDE_IOSEXEC
 #define BIND_IOSEXEC_SYMBOL(sym) ie_ ## sym = dlsym(libiosexec_handle, "ie_" #sym)
 
 void* libiosexec_handle;

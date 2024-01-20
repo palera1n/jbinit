@@ -2,7 +2,7 @@
 #include <systemhook/common.h>
 #include <dyld-interpose.h>
 
-#ifdef SYSTEMWIDE_IOSEXEC
+#ifdef HAVE_SYSTEMWIDE_IOSEXEC
 struct passwd * 
 getpwuid_hook(uid_t uid) {
     RET_TWC(getpwuid, uid);
