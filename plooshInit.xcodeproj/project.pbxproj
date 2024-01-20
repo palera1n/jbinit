@@ -228,7 +228,6 @@
 		01D3D5292B5C80DA007845B6 /* jbdcall.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jbdcall.c; sourceTree = "<group>"; };
 		01D3D52A2B5C80DA007845B6 /* prebootpath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = prebootpath.c; sourceTree = "<group>"; };
 		01D3D52B2B5C80DA007845B6 /* strflags.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = strflags.c; sourceTree = "<group>"; };
-		01D3D52C2B5C80DA007845B6 /* libjailbreak.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libjailbreak.a; sourceTree = "<group>"; };
 		01D3D52E2B5C80DA007845B6 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01D3D5302B5C80DA007845B6 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		01D3D5EC2B5C80DA007845B6 /* libellekit.tbd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.text-based-dylib-definition"; path = libellekit.tbd; sourceTree = "<group>"; };
@@ -574,7 +573,6 @@
 				01D3D5292B5C80DA007845B6 /* jbdcall.c */,
 				01D3D52A2B5C80DA007845B6 /* prebootpath.c */,
 				01D3D52B2B5C80DA007845B6 /* strflags.c */,
-				01D3D52C2B5C80DA007845B6 /* libjailbreak.a */,
 			);
 			path = libjailbreak;
 			sourceTree = "<group>";

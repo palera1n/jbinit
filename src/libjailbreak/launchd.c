@@ -14,7 +14,7 @@ int jailbreak_send_launchd_message(xpc_object_t xdict, xpc_object_t *xreply) {
 		ret = xpc_pipe_routine(bootstrap_pipe, xdict, xreply);
 	}
     //ret = xpc_pipe_routine(bootstrap_pipe, xdict, xreply);
-	if (ret == 0 && (ret = xpc_dictionary_get_int64(*xreply, "error")) == 0)
+	if (ret == 0 && (ret = (int)xpc_dictionary_get_int64(*xreply, "error")) == 0)
 		return 0;
 
     return ret;
