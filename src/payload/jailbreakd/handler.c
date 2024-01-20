@@ -16,21 +16,17 @@
 #define ENOTPLATFORM 154
 #define RB2_USERREBOOT (0x2000000000000000llu)
 
-#define HAVE_DEBUG_JBD
-
 void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo* pinfo_p) {
     xpc_object_t xreply = xpc_dictionary_create_reply(request);
     xpc_object_t xremote = xpc_dictionary_get_remote_connection(request);
-#ifdef HAVE_DEBUG_JBD
+#ifdef HAVE_DEBUG_JBD_MSG
     char* xrequeststr = xpc_copy_description(request);
     pid_t pid = xpc_connection_get_pid(peer);
     NSLog(CFSTR("received dictionary from pid %d: %s"), pid, xrequeststr);
     free(xrequeststr);
 #endif
 
-
     if (!xremote || !xreply) return;
-
     uint64_t cmd = xpc_dictionary_get_uint64(request, "cmd");
     switch (cmd) {
         case JBD_CMD_GET_PINFO_FLAGS:
@@ -123,7 +119,7 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
             break;
     }
 
-#ifdef HAVE_DEBUG_JBD
+#ifdef HAVE_DEBUG_JBD_MSG
     char* xreplystr = xpc_copy_description(xreply);
     NSLog(CFSTR("sending reply: %s"), xreplystr);
     free(xreplystr);

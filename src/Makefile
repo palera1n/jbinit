@@ -1,5 +1,5 @@
 SUBDIRS = fakedyld rootlesshooks payload_dylib payload systemhook ellekit rootfulhooks mount_cores
-CFLAGS += -arch arm64 -I$(ROOT)/include -Wno-deprecated-declarations -Os -g
+CFLAGS += -arch arm64 -I$(ROOT)/include -Wno-deprecated-declarations -g
 STRIP = STRIP
 DSYMUTIL = dsymutil
 LDID = ldid
@@ -17,7 +17,9 @@ CFLAGS += -DASAN=1
 endif
 
 ifeq ($(DEV_BUILD),1)
-CFLAGS += -DDEV_BUILD=1
+CFLAGS += -O0 -DDEV_BUILD=1 -DHAVE_DEBUG_SHELL=1 -DHAVE_DEBUG_JBD_MSG=1
+else
+CFLAGS += -Os
 endif
 
 UID != id -u
