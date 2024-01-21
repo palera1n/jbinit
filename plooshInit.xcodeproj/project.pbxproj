@@ -1266,10 +1266,6 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SYSTEM_HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/apple-include",
-					"$(PROJECT_DIR)/include",
-				);
 			};
 			name = Debug;
 		};
@@ -1324,10 +1320,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				SYSTEM_HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/apple-include",
-					"$(PROJECT_DIR)/include",
-				);
 			};
 			name = Release;
 		};
@@ -1337,6 +1329,7 @@
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/include";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1359,10 +1352,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				SYSTEM_HEADER_SEARCH_PATHS = (
-					"apple-include",
-					include,
-				);
+				SYSTEM_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/apple-include";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1373,6 +1363,7 @@
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/include";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1394,10 +1385,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
-				SYSTEM_HEADER_SEARCH_PATHS = (
-					"apple-include",
-					include,
-				);
+				SYSTEM_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/apple-include";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
