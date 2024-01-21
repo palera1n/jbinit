@@ -1011,7 +1011,7 @@
 			buildConfigurationList = 01D3DA592B5C8519007845B6 /* Build configuration list for PBXLegacyTarget "plooshInit" */;
 			buildPhases = (
 			);
-			buildToolPath = ./build.command;
+			buildToolPath = "$(PROJECT_DIR)/build.command";
 			buildWorkingDirectory = "";
 			dependencies = (
 			);
@@ -1267,8 +1267,8 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
-					"apple-include",
-					include,
+					"$(PROJECT_DIR)/apple-include",
+					"$(PROJECT_DIR)/include",
 				);
 			};
 			name = Debug;
@@ -1325,8 +1325,8 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
-					"apple-include",
-					include,
+					"$(PROJECT_DIR)/apple-include",
+					"$(PROJECT_DIR)/include",
 				);
 			};
 			name = Release;
