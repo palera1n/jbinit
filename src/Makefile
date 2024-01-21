@@ -59,7 +59,9 @@ loader.dmg: palera1nLoader.ipa
 	rm -rf palera1nLoader
 
 binpack.dmg: binpack.tar loader.dmg $(patsubst %, %-all, $(SUBDIRS))
+ifneq ($(UID),0)
 	$(eval PASSWORD != osascript -e 'Tell application "System Events" to display dialog "Password:" default answer "" with hidden answer' -e 'text returned of result' 2>/dev/null)
+endif
 	$(SUDO) rm -rf binpack.dmg binpack
 	mkdir binpack
 	$(SUDO) touch binpack/.installed_overlay

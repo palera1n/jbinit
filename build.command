@@ -2,7 +2,7 @@
 
 # This file is for Xcode only! Do not run directly
 
-export PATH="/opt/procursus/bin:/usr/local/bin:/opt/homebrew/bin:${PATH}"
+export PATH="${HOME}/.local/bin:/opt/procursus/bin:/usr/local/bin:/opt/homebrew/bin:${PATH}"
 echo "Invoked as: $0 $@"
 
 if [ "$XCODE_VERSION_ACTUAL" = "" ]; then
