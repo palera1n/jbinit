@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-_Noreturn void spin() {
+_Noreturn void spin(void) {
     setenv("PATH", "/cores/binpack/usr/bin:/cores/binpack/usr/sbin:/cores/binpack/bin:/cores/binpack/sbin:/usr/bin:/usr/sbin:/bin:/sbin",1);
     if (access("/cores/binpack/bin/sh", F_OK) == 0) {
         runCommand((char*[]){ "/cores/binpack/bin/sh", "-i", NULL });

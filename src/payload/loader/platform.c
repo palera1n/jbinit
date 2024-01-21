@@ -48,7 +48,7 @@ uint32_t macho_get_platform(const void *buf) {
     return 0;
 }
 
-int get_platform() {
+int get_platform(void) {
     static int cached_platform = -1;
     if (cached_platform != -1) return cached_platform;
     struct stat st;

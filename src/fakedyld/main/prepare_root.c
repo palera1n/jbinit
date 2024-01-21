@@ -3,12 +3,6 @@
 
 void prepare_rootfs(struct systeminfo* sysinfo_p, struct paleinfo* pinfo_p) {
     int ret;
-#if 0
-    if ((ret = mount("devfs", "/dev", 0, "devfs"))) {
-        LOG("mount devfs failed: %d", errno);
-        spin();
-    }
-#endif
     struct stat64 statbuf;
     if (stat64("/System/Library/Frameworks/IOKit.framework", &statbuf) == 0) {
         return;

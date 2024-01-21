@@ -12,10 +12,10 @@ int get_pinfo(struct paleinfo* pinfo_p) {
     int fd = open("/dev/rmd0", O_RDONLY);
     if (fd == -1) return -1;
 
-    didRead = read(didRead, &ramdisk_size, 4);
+    didRead = read(fd, &ramdisk_size, 4);
     if (didRead == -1) return -1;
     
-    ret = lseek(fd, (off_t)ramdisk_size, SEEK_SET);
+    ret = (int)lseek(fd, (off_t)ramdisk_size, SEEK_SET);
     if (ret == -1) return -1;
 
     didRead = read(fd, pinfo_p, sizeof(struct paleinfo));
@@ -36,11 +36,13 @@ int set_pinfo(struct paleinfo* pinfo_p) {
     int fd = open("/dev/rmd0", O_RDWR);
     if (fd == -1) return -1;
 
-    didRead = read(didRead, &ramdisk_size, 4);
+    didRead = read(fd, &ramdisk_size, 4);
     if (didRead == -1) return -1;
     
-    ret = lseek(fd, (off_t)ramdisk_size, SEEK_SET);
+    ret = (int)lseek(fd, (off_t)ramdisk_size, SEEK_SET);
     if (ret == -1) return -1;
 
-    return (int)write(fd, pinfo_p, sizeof(struct paleinfo));
+    ret = (int)write(fd, pinfo_p, sizeof(struct paleinfo));
+    close(fd);
+    return ret;
 }

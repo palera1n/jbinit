@@ -57,7 +57,7 @@ int enable_non_default_system_apps(void) {
     if (type != CFDictionaryGetTypeID()) {
         CFStringRef typeCFString = CFCopyTypeIDDescription(type); 
         char* typeDesc; CF_STRING_GET_CSTRING_PTR(typeCFString, typeDesc);
-        char* dictDesc; CF_STRING_GET_CSTRING_PTR(CFCopyTypeIDDescription(CFDictionaryGetTypeID()), typeDesc);
+        char* dictDesc; CF_STRING_GET_CSTRING_PTR(CFCopyTypeIDDescription(CFDictionaryGetTypeID()), dictDesc);
         fprintf(stderr, "Expecting %s to be of type %s, got a %s instead\n", SB_PREF_PLIST_PATH, dictDesc, typeDesc);
         CFRelease(plist);
         CFRelease(fileURL);

@@ -136,69 +136,7 @@ int setup_fakefs(uint32_t payload_options, struct paleinfo* pinfo_p) {
         }
     }
     
-#if 0
-    {
-        struct attrlist alist = { 0 };
-        char abuf[2048];
-        int rootfs_fd = open("/", O_RDONLY | O_DIRECTORY);
-        if (rootfs_fd == -1) {
-            fprintf(stderr, "open(/) failed: %d (%s)\n", errno, strerror(errno));
-        }
-        alist.commonattr = ATTR_BULK_REQUIRED;
-	    int count = fs_snapshot_list(rootfs_fd, &alist, &abuf[0], sizeof (abuf), 0);
-        if (count < 0) {
-            fprintf(stderr, "fs_snapshot_list(/) failed\n");
-            spin();
-        }
-        bool found_snapshot = false;
-        char *p = &abuf[0];
-        io_registry_entry_t chosen = IORegistryEntryFromPath(0, "IODeviceTree:/chosen");
-        if (!MACH_PORT_VALID(chosen)) {
-          fprintf(stderr, "get /chosen failed");
-          spin();
-        }
-        char expectedSnapshotName[150];
-        CFDataRef root_snapshot_name_data = IORegistryEntryCreateCFProperty(chosen, CFSTR("root-snapshot-name"), kCFAllocatorDefault, 0);
-        if (root_snapshot_name_data == NULL) {
-          fprintf(stderr, "cannot get root-snapshot-name\n");
-          spin();
-        }
-        CFStringRef RootSnapshotName = CFStringCreateFromExternalRepresentation(kCFAllocatorDefault, root_snapshot_name_data, kCFStringEncodingUTF8);
-        IOObjectRelease(chosen);
-        CFStringGetCString(RootSnapshotName, expectedSnapshotName, 150, kCFStringEncodingUTF8);
-        CFRelease (RootSnapshotName);
-        CFRelease (root_snapshot_name_data);
-        while (count > 0) {
-			    char *field = p;
-	      	uint32_t len = *(uint32_t *)field;
-		  	  field += sizeof (uint32_t);
-			    attribute_set_t attrs = *(attribute_set_t *)field;
-    			field += sizeof (attribute_set_t);
-
-		    	if (attrs.commonattr & ATTR_CMN_NAME) {
-				    attrreference_t ar = *(attrreference_t *)field;
-    				char *name = field + ar.attr_dataoffset;
-		    		field += sizeof(attrreference_t);
-				    if (strcmp(name, expectedSnapshotName) == 0) {
-              found_snapshot = true;
-              break;
-            }
-          }
-          count--;
-        }
-        printf("snapshot name: %s\n", expectedSnapshotName);
-        if (!found_snapshot) {
-            fprintf(stderr, "expected rootfs snapshot %s not found\n", expectedSnapshotName);
-            spin();
-        }
-        CHECK_ERROR(fs_snapshot_mount(rootfs_fd, "/cores/fs/real", expectedSnapshotName, MNT_RDONLY), 1, "fs_snapshot_mount() failed");
-        close(rootfs_fd);
-    }
-#else
-    {
-        CHECK_ERROR(mount("bindfs", "/cores/fs/real", MNT_RDONLY, "/"), 1, "mount_bindfs(/ -> /cores/fs/real) failed");
-    }
-#endif
+    CHECK_ERROR(mount("bindfs", "/cores/fs/real", MNT_RDONLY, "/"), 1, "mount_bindfs(/ -> /cores/fs/real) failed");
 
     CFMutableDictionaryRef dict = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     int recoveryNumber = APFS_VOL_ROLE_RECOVERY;

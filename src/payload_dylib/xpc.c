@@ -102,7 +102,7 @@ uint32_t* find_prev_insn(uint32_t* from, uint32_t num, uint32_t insn, uint32_t m
 void InitXPCHooks(void) {
     uint32_t bufsize = PATH_MAX;
     char launchd_path[PATH_MAX];
-    int launchd_image_index;
+    int launchd_image_index = 0;
     int ret = _NSGetExecutablePath(launchd_path, &bufsize);
     if (ret) {
         fprintf(stderr, "_NSGetExecutablePath() failed\n");

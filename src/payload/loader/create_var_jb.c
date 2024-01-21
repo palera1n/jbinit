@@ -26,7 +26,7 @@ int remove_bogus_var_jb(void) {
     }
     if (S_ISLNK(st.st_mode)) {
         char link_path[PATH_MAX];
-        ret = readlink("/var/jb", link_path, PATH_MAX);
+        ret = (int)readlink("/var/jb", link_path, PATH_MAX);
         if (ret == -1) return -1;
         // unc0ver
         if (!strcmp(link_path, "/jb") || !strcmp(link_path, "/jb/")) {
@@ -84,7 +84,7 @@ int remove_bogus_var_jb(void) {
     return 0;
 }
 
-int create_var_jb() {
+int create_var_jb(void) {
     if (access("/var/jb", F_OK) == 0) return 0;
     char prebootPath[150];
     int ret = jailbreak_get_prebootPath(prebootPath);
