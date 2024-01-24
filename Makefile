@@ -42,7 +42,7 @@ OBJC = $(CC)
 HFSPLUS += $(ROOT)/tools/libdmg-hfsplus/build/hfs/hfsplus
 DMG += $(ROOT)/tools/libdmg-hfsplus/build/dmg/dmg
 
-ifeq ($(shell command -v gsed && echo 1),1)
+ifeq ($(shell command -v gsed > /dev/null && echo 1),1)
 SED = gsed
 else
 SED = sed
