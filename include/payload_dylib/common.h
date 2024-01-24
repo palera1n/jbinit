@@ -25,19 +25,26 @@ extern bool bound_libiosexec;
 void _spin();
 int get_platform();
 
-int (*spawn_hook_common_p)(pid_t *restrict pid, const char *restrict path,
+extern int (*spawn_hook_common_p)(pid_t *restrict pid, const char *restrict path,
 					   const posix_spawn_file_actions_t *restrict file_actions,
 					   const posix_spawnattr_t *restrict attrp,
 					   char *const argv[restrict],
 					   char *const envp[restrict],
 					   void *pspawn_org);
 
-void (*MSHookFunction_p)(void *symbol, void *replace, void **result);
+extern void (*MSHookFunction_p)(void *symbol, void *replace, void **result);
 void initSpawnHooks(void);
 void InitDaemonHooks(void);
 void InitXPCHooks(void);
 int bootscreend_main(void);
 void load_bootstrapped_jailbreak_env(void);
 const char* set_tweakloader_path(const char* path);
+extern int (*spawn_hook_common_p)(pid_t *restrict pid, const char *restrict path,
+					   const posix_spawn_file_actions_t *restrict file_actions,
+					   const posix_spawnattr_t *restrict attrp,
+					   char *const argv[restrict],
+					   char *const envp[restrict],
+					   void *pspawn_org);
+
 
 #endif

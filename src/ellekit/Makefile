@@ -12,7 +12,7 @@ ifeq ($(MAC),1)
 	$(LDID) -S $(ELLEKIT);
 else
 	@echo "ElleKit cannot be built on this machine"
-	exit 1;
+	cp ellekit.dylib $(ELLEKIT)
 endif
 clean:
 	rm -rf ellekit_build obj

@@ -23,12 +23,12 @@ mount_cores: $(OBJS)
 	$(STRIP) $@
 
 mount_cores.%: mount_cores entitlements.xml
-	vtool -remove-build-version 2 -output $@ $<
+	$(VTOOL) -remove-build-version 2 -output $@ $<
 	if [ "$@" = "mount_cores.5" ]; then \
 		os=3; \
 	else os=12; \
 	fi; \
-	vtool -set-build-version $$(echo $@ | cut -d. -f2) $$os $$os -replace -output $@ $@
+	$(VTOOL) -set-build-version $$(echo $@ | cut -d. -f2) $$os $$os -replace -output $@ $@
 	$(LDID) -Sentitlements.xml $@
 
 clean:

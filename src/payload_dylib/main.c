@@ -21,6 +21,7 @@
 #define ELLEKIT_PATH "/cores/binpack/usr/lib/libellekit.dylib"
 
 uint64_t pflags;
+void (*MSHookFunction_p)(void *symbol, void *replace, void **result) = NULL;
 int (*spawn_hook_common_p)(pid_t *restrict pid, const char *restrict path,
 					   const posix_spawn_file_actions_t *restrict file_actions,
 					   const posix_spawnattr_t *restrict attrp,

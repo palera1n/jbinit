@@ -1,8 +1,5 @@
 SUBDIRS = fakedyld rootlesshooks payload_dylib payload systemhook ellekit rootfulhooks mount_cores
 CFLAGS += -arch arm64 -I$(ROOT)/include -Wno-deprecated-declarations -g
-STRIP = STRIP
-DSYMUTIL = dsymutil
-LDID = ldid
 
 ifneq ($(ASAN),1)
 RAMDISK_SIZE = 2m
@@ -25,24 +22,22 @@ endif
 CREATE_UDRW_IMAGE = \
 	set -e; \
 	dd if=/dev/zero of=$(1) bs=1M count=$(2); \
-	if [ $$MAC = "1" ]; then \
+	if [ "$$MAC" = "1" ]; then \
 		IMAGE_DEV="$$(hdiutil attach -nomount -imagekey diskimage-class=CRawDiskImage $(1))"; \
-	elif [ $$UNAME = "Darwin" ]; then \
+	elif [ "$$UNAME" = "Darwin" ]; then \
 		IMAGE_DEV="$$(hdik $(1))"; \
 	else \
 		IMAGE_DEV="$(1)"; \
 	fi; \
 	$(NEWFS_HFS) -G 0 -U 0 -v $(3) $$IMAGE_DEV; \
-        if [ $$MAC = "1" ]; then \
+        if [ "$$MAC" = "1" ]; then \
 		hdiutil detach $$IMAGE_DEV; \
-	else \
+	elif [ "$$UNAME" = "Darwin" ]; then \
 		hdik -e $$IMAGE_DEV; \
 	fi; \
 	$(FAKEROOT) $(HFSPLUS) $(1) addall $(4);
 
 .PHONY: all clean $(patsubst %, %-all, $(SUBDIRS)) $(patsubst %, %-clean, $(SUBDIRS)) libjailbreak
-
-export CC STRIP DSYMUTIL CFLAGS LDID
 
 all: ramdisk.dmg binpack.dmg
 
