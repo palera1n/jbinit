@@ -22,12 +22,23 @@ else
 CFLAGS += -Os
 endif
 
-UID != id -u
-ifeq ($(UID),0)
-SUDO = sudo
-else
-SUDO = echo "$(PASSWORD)" | sudo -S
-endif
+CREATE_UDRW_IMAGE = \
+	set -e; \
+	dd if=/dev/zero of=$(1) bs=1M count=$(2); \
+	if [ $$MAC = "1" ]; then \
+		IMAGE_DEV="$$(hdiutil attach -nomount -imagekey diskimage-class=CRawDiskImage $(1))"; \
+	elif [ $$UNAME = "Darwin" ]; then \
+		IMAGE_DEV="$$(hdik $(1))"; \
+	else \
+		IMAGE_DEV="$(1)"; \
+	fi; \
+	$(NEWFS_HFS) -G 0 -U 0 -v $(3) $$IMAGE_DEV; \
+        if [ $$MAC = "1" ]; then \
+		hdiutil detach $$IMAGE_DEV; \
+	else \
+		hdik -e $$IMAGE_DEV; \
+	fi; \
+	$(FAKEROOT) $(HFSPLUS) $(1) addall $(4);
 
 .PHONY: all clean $(patsubst %, %-all, $(SUBDIRS)) $(patsubst %, %-clean, $(SUBDIRS)) libjailbreak
 
@@ -49,45 +60,50 @@ endif
 	ln -sf ../payload ramdisk/sbin/launchd
 	ln -sf ../../dyld ramdisk/usr/lib/dyld
 	ln -sf payload ramdisk/ploosh
-	hdiutil create -fs HFS+ -layout NONE -format UDRW -size $(RAMDISK_SIZE) -srcdir ramdisk -volname plooshra1nrd ramdisk.dmg
+	$(call CREATE_UDRW_IMAGE,ramdisk.dmg,2,plooshra1nrd,ramdisk)
 
 loader.dmg: palera1nLoader.ipa
 	rm -rf loader.dmg palera1nLoader
 	mkdir palera1nLoader
 	cd palera1nLoader && unzip ../palera1nLoader.ipa
-	hdiutil create -size 2m -layout NONE -format ULFO -volname palera1nLoader -srcfolder ./palera1nLoader/Payload -fs HFS+ ./loader.dmg
+	$(call CREATE_UDRW_IMAGE,loader.img,2,palera1nLoader,palera1nLoader/Payload)
+ifeq ($(MAC),1)
+	hdiutil convert -format ULFO loader.img -o loader.dmg
+else
+	$(DMG) build binpack.img binpack.dmg
+endif
 	rm -rf palera1nLoader
 
 binpack.dmg: binpack.tar loader.dmg $(patsubst %, %-all, $(SUBDIRS))
-ifneq ($(UID),0)
-	$(eval PASSWORD != osascript -e 'Tell application "System Events" to display dialog "Password:" default answer "" with hidden answer' -e 'text returned of result' 2>/dev/null)
-endif
-	$(SUDO) rm -rf binpack.dmg binpack
+	rm -rf binpack.dmg binpack.img binpack
 	mkdir binpack
-	$(SUDO) touch binpack/.installed_overlay
-	$(SUDO) tar -C binpack --preserve-permissions -xf binpack.tar
-	$(SUDO) rm -rf binpack/usr/share cores
-	$(SUDO) ln -sf /cores/payload binpack/usr/sbin/p1ctl
-	$(SUDO) ln -sf /cores/payload binpack/usr/sbin/palera1nd
-	$(SUDO) mkdir -p binpack/Applications
-	$(SUDO) mkdir -p binpack/usr/lib binpack/usr/share
-	$(SUDO) mkdir -p binpack/Library/Frameworks/CydiaSubstrate.framework
-	$(SUDO) mkdir -p binpack/Library/LaunchDaemons
-	$(SUDO) cp -a $(ROOT)/shared/*.plist binpack/Library/LaunchDaemons
-	$(SUDO) cp -a $(ROOT)/shared/boot.jp2 binpack/usr/share
-	$(SUDO) cp -a $(ROOT)/shared/copyright binpack/usr/share
-	$(SUDO) cp -a $(ROOT)/LICENSE binpack/usr/share/copyright/Licnese-plinit.txt
-	$(SUDO) chown 0:0 binpack/Library/LaunchDaemons/*.plist
-	$(SUDO) chmod 644 binpack/Library/LaunchDaemons/*.plist
-	$(SUDO) cp rootlesshooks/rootlesshooks.dylib binpack/usr/lib
-	$(SUDO) cp rootfulhooks/rootfulhooks.dylib binpack/usr/lib
-	$(SUDO) cp systemhook/systemhook.dylib binpack/usr/lib
-	$(SUDO) cp loader.dmg binpack
-	$(SUDO) cp ellekit/ellekit_build/Build/Products/Release-iphoneos/libellekit.dylib binpack/usr/lib
-	$(SUDO) ln -s ../../../usr/lib/libellekit.dylib binpack/Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate
-	$(SUDO) hdiutil create -size 10m -layout NONE -format UDZO -imagekey zlib-level=9 -srcfolder ./binpack -volname plooshra1nfs -fs HFS+ ./binpack.dmg
-	$(SUDO) chown $(UID) binpack.dmg
-	$(SUDO) rm -rf binpack
+	touch binpack/.installed_overlay
+	tar -C binpack --preserve-permissions -xf binpack.tar
+	rm -rf binpack/usr/share cores
+	ln -sf /cores/payload binpack/usr/sbin/p1ctl
+	ln -sf /cores/payload binpack/usr/sbin/palera1nd
+	mkdir -p binpack/Applications
+	mkdir -p binpack/usr/lib binpack/usr/share
+	mkdir -p binpack/Library/Frameworks/CydiaSubstrate.framework
+	mkdir -p binpack/Library/LaunchDaemons
+	cp -a $(ROOT)/shared/*.plist binpack/Library/LaunchDaemons
+	cp -a $(ROOT)/shared/boot.jp2 binpack/usr/share
+	cp -a $(ROOT)/shared/copyright binpack/usr/share
+	cp -a $(ROOT)/LICENSE binpack/usr/share/copyright/Licnese-plinit.txt
+	chmod 644 binpack/Library/LaunchDaemons/*.plist
+	cp rootlesshooks/rootlesshooks.dylib binpack/usr/lib
+	cp rootfulhooks/rootfulhooks.dylib binpack/usr/lib
+	cp systemhook/systemhook.dylib binpack/usr/lib
+	cp loader.dmg binpack
+	cp ellekit/ellekit_build/Build/Products/Release-iphoneos/libellekit.dylib binpack/usr/lib
+	ln -s ../../../usr/lib/libellekit.dylib binpack/Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate
+	$(call CREATE_UDRW_IMAGE,binpack.img,10,plooshra1nfs,binpack)
+ifeq ($(MAC),1)
+	hdiutil convert -format UDZO -imagekey zlib-level=9 binpack.img -o binpack.dmg
+else
+	$(DMG) build binpack.img binpack.dmg
+endif
+	rm -rf binpack
 
 libjailbreak:
 	$(MAKE) -C libjailbreak all
@@ -102,4 +118,3 @@ $(patsubst %, %-clean, $(SUBDIRS)):
 	$(MAKE) -C $$(echo $@ | cut -d- -f1) clean
 	$(MAKE) -C libjailbreak clean
 	rm -rf ramdisk ramdisk.dmg
-

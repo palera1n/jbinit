@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies (packages)
         run: |
-          brew install make gnu-sed ldid-procursus
+          brew install make gnu-sed ldid-procursus fakeroot
 
       - name: Install dependecies
         run: |
@@ -30,7 +30,7 @@ jobs:
           install -m644 binpack.tar palera1nLoader.ipa src
 
       - name: Compile
-        run: sudo xcodebuild -scheme plooshInit build -configuration Release
+        run: xcodebuild -scheme plooshInit build -configuration Release
 
       - name: Prepare for upload
         run: |

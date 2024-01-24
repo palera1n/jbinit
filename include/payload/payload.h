@@ -35,7 +35,7 @@ typedef int launchctl_cmd_main(xpc_object_t *msg, int argc, char **argv, char **
 launchctl_cmd_main bootstrap_cmd;
 launchctl_cmd_main load_cmd;
 
-_Noreturn void spin();
+_Noreturn void spin(void);
 int loader_main(int argc, char* argv[]);
 int p1ctl_main(int argc, char* argv[]);
 int palera1nd_main(int argc, char* argv[]);
@@ -49,11 +49,11 @@ int set_pinfo(struct paleinfo* pinfo_p);
 int runCommand(char* argv[]);
 int setup_fakefs(uint32_t payload_options, struct paleinfo* pinfo_p);
 int load_etc_rc_d(uint64_t pflags);
-int create_var_jb();
+int create_var_jb(void);
 int remount(void);
 int remount_rootfs(struct utsname* name_p);
 int remount_preboot(struct utsname* name_p);
-int get_platform();
+int get_platform(void);
 void bootstrap(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinfo);
 int remove_jailbreak_files(uint64_t pflags);
 void obliterate(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinfo);
@@ -63,6 +63,7 @@ int remove_bogus_var_jb(void);
 void overwrite_file(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinfo);
 void reload_launchd_env(void);
 void perform_reboot3(xpc_object_t peer, xpc_object_t xreply, xpc_object_t request, struct paleinfo* pinfo_p);
+ssize_t write_fdout(int fd, void* buf, size_t len);
 
 enum {
     /* only for sysstatuscheck and prelaunchd stage! */

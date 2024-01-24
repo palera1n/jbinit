@@ -1,13 +1,35 @@
 ROOT := $(shell pwd)
-MACOSX_SYSROOT = $(shell xcrun -sdk macosx --show-sdk-path)
-TARGET_SYSROOT = $(shell xcrun -sdk iphoneos --show-sdk-path)
-CC = $(shell xcrun --find clang)
+UNAME != uname -s
+CC_FOR_BUILD ?= cc
+FAKEROOT = fakeroot
+ifeq ($(UNAME),Darwin)
+PRODUCT_NAME != sw_vers -productName
+NEWFS_HFS = newfs_hfs
+MAC != echo "$(PRODUCT_NAME)" | grep -qi mac && echo 1
+else
+NEWFS_HFS = mkfs.hfsplus
+endif
+ifeq ($(MAC),1)
+MACOSX_SYSROOT != xcrun -sdk macosx --show-sdk-path
+TARGET_SYSROOT != xcrun -sdk iphoneos --show-sdk-path
+CC != xcrun --find clang
+else ifeq ($(UNAME),Darwin)
+CC ?= clang
+MACOSX_SYSROOT ?= /usr/share/SDKs/MacOSX.sdk
+TARGET_SYSROOT ?= /usr/share/SDKs/iPhoneOS.sdk
+else
+CC ?= clang
+MACOSX_SYSROOT ?= $(HOME)/cctools/SDKs/MacOSX.sdk
+TARGET_SYSROOT ?= $(HOME)/cctools/SDKs/iPhoneOS.sdk
+endif
 CFLAGS += -isystem $(ROOT)/apple-include -I$(ROOT)/include -isysroot $(TARGET_SYSROOT)
 OBJC = $(CC)
+HFSPLUS += $(ROOT)/tools/libdmg-hfsplus/build/hfs/hfsplus
+DMG += $(ROOT)/tools/libdmg-hfsplus/build/dmg/dmg
 
-export ROOT CC OBJC CFLAGS
+export ROOT CC OBJC CFLAGS CC_FOR_BUILD HFSPLUS DMG NEWFS_HFS MAC UNAME
 
-all: apple-include
+all: apple-include tools
 	$(MAKE) -C $(ROOT)/src
 
 apple-include: apple-include-private/**
@@ -44,6 +66,10 @@ apple-include: apple-include-private/**
 
 clean:
 	$(MAKE) -C $(ROOT)/src clean
+	$(MAKE) -C $(ROOT)/tools clean
 	rm -rf apple-include
 
-.PHONY: all clean apple-include
+tools:
+	$(MAKE) -C $(ROOT)/tools
+
+.PHONY: all clean apple-include tools

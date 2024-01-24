@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <paleinfo.h>
 #include <errno.h>
+#include <payload/payload.h>
 
 int get_pinfo(struct paleinfo* pinfo_p) {
     int ret;
@@ -42,7 +43,7 @@ int set_pinfo(struct paleinfo* pinfo_p) {
     ret = (int)lseek(fd, (off_t)ramdisk_size, SEEK_SET);
     if (ret == -1) return -1;
 
-    ret = (int)write(fd, pinfo_p, sizeof(struct paleinfo));
+    ret = (int)write_fdout(fd, pinfo_p, sizeof(struct paleinfo));
     close(fd);
     return ret;
 }

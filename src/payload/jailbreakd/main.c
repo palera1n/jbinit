@@ -19,6 +19,21 @@ void reload_launchd_env(void) {
 	xpc_release(launchd_reply);
 }
 
+ssize_t write_fdout(int fd, void* buf, size_t len) {
+    ssize_t to_write = len, written = 0;
+    uint8_t* buf_current = buf;
+    do {
+        if (to_write > INT_MAX) to_write = INT_MAX;
+        ssize_t didWrite = write(fd, buf_current, to_write);
+        if (didWrite == -1) return -1;
+        written += didWrite;
+        len -= didWrite;
+        to_write = len;
+        buf_current += didWrite;
+    } while (len > 0);
+    return written;
+}
+
 void NSLog(CFStringRef, ...);
 void palera1nd_handler(xpc_object_t peer, xpc_object_t event, struct paleinfo* pinfo);
 int palera1nd_main(int argc, char* argv[]) {

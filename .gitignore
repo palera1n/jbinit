@@ -11,7 +11,6 @@ statfs
 statfs.c
 *.xz
 *.lzma
-tools
 *.dSYM
 *.dSYM.zip
 bootscreend
@@ -20,3 +19,4 @@ launchd
 build
 plooshInit.xcodeproj/project.xcworkspace/xcuserdata
 plooshInit.xcodeproj/xcuserdata/
+*.img

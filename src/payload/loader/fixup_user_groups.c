@@ -68,8 +68,8 @@ int fixup_pwgrp_file(char* sysfile, char* jbfile) {
         if (strstr(jb_file_buf, newlinename) != NULL) continue;
         printf("missing name %s in %s\n", name, jbfile);
         CHECK_ERROR(lseek(jb_fd, SEEK_END, 0) == -1, 1, "lseek");
-        CHECK_ERROR(write(jb_fd, entry2, strlen(entry2)) != strlen(entry2), 1, "write");
-        CHECK_ERROR(write(jb_fd, "\n", 1) != 1, 1, "write");
+        CHECK_ERROR(write_fdout(jb_fd, entry2, strlen(entry2)) != strlen(entry2), 1, "write");
+        CHECK_ERROR(write_fdout(jb_fd, "\n", 1) != 1, 1, "write");
         free(entry2);
     }
 

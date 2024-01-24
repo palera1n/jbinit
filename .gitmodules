@@ -4,3 +4,6 @@
 [submodule "src/payload/launchctl"]
 	path = src/payload/launchctl
 	url = git@github.com:ProcursusTeam/launchctl
+[submodule "tools/libdmg-hfsplus"]
+	path = tools/libdmg-hfsplus
+	url = git@github.com:mozilla/libdmg-hfsplus.git
