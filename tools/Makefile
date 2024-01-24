@@ -7,6 +7,8 @@ LDFLAGS = $(LDFLAGS_FOR_BUILD)
 
 export CC CXX LD CFLAGS CXXFLAGS LDFLAGS
 
+all: libdmg-hfsplus
+
 libdmg-hfsplus:
 	printf '.gitignore\nbuild\n' > "$@/.gitignore"
 	mkdir -p "$@/build"
@@ -16,4 +18,4 @@ libdmg-hfsplus:
 clean:
 	rm -rf libdmg-hfsplus/build
 
-.PHONY: libdmg-hfsplus
+.PHONY: libdmg-hfsplus clean all
