@@ -48,10 +48,15 @@ else
 SED = sed
 endif
 
-export ROOT CC OBJC CFLAGS CC_FOR_BUILD HFSPLUS DMG NEWFS_HFS MAC UNAME SED SHELL LDFLAGS VTOOL STRIP DSYMUTIL LDID AR
+SUBDIRS = fakedyld rootlesshooks payload_dylib payload systemhook rootfulhooks mount_cores ellekit
 
-all: apple-include tools
-	$(MAKE) -C $(ROOT)/src
+export ROOT CC OBJC CFLAGS CC_FOR_BUILD HFSPLUS DMG NEWFS_HFS MAC UNAME SED SHELL LDFLAGS VTOOL STRIP DSYMUTIL LDID AR SUBDIRS
+
+all: binaries tools
+	$(MAKE) -C $(ROOT)/src ramdisk.dmg binpack.dmg
+
+binaries: apple-include
+	$(MAKE) -C $(ROOT)/src $(patsubst %, %-all, $(SUBDIRS))
 
 apple-include: apple-include-private/**
 	mkdir -p apple-include/{bsm,objc,os/internal,sys,firehose,CoreFoundation,FSEvents,IOSurface,IOKit/kext,libkern,kern,arm,{mach/,}machine,CommonCrypto,Security,CoreSymbolication,Kernel/{kern,IOKit,libkern},rpc,rpcsvc,xpc/private,ktrace,mach-o,dispatch}

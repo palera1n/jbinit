@@ -1,4 +1,3 @@
-SUBDIRS = fakedyld rootlesshooks payload_dylib payload systemhook rootfulhooks mount_cores ellekit
 CFLAGS += -arch arm64 -I$(ROOT)/include -Wno-deprecated-declarations -g
 
 ifneq ($(ASAN),1)
