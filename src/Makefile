@@ -1,4 +1,4 @@
-SUBDIRS = fakedyld rootlesshooks payload_dylib payload systemhook ellekit rootfulhooks mount_cores
+SUBDIRS = fakedyld rootlesshooks payload_dylib payload systemhook rootfulhooks mount_cores ellekit
 CFLAGS += -arch arm64 -I$(ROOT)/include -Wno-deprecated-declarations -g
 
 ifneq ($(ASAN),1)
@@ -113,3 +113,6 @@ $(patsubst %, %-clean, $(SUBDIRS)):
 	$(MAKE) -C $$(echo $@ | cut -d- -f1) clean
 	$(MAKE) -C libjailbreak clean
 	rm -rf ramdisk ramdisk.dmg
+
+distclean:
+	$(MAKE) -C ellekit distclean

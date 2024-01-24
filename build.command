@@ -30,6 +30,13 @@ for p1 in ${PALERA1NS}; do
 		break;
 	fi
 done
+
+if ! [ -f "$BUILT_PRODUCTS_DIR"/../.didbuild ]; then
+	gmake -j$(sysctl -n hw.ncpu) clean
+fi
+
+touch "$BUILT_PRODUCTS_DIR"/../.didbuild
+
 case "$ACTION" in
 	clean)
 		gmake -j$(sysctl -n hw.ncpu) clean

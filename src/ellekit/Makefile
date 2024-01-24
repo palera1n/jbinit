@@ -15,6 +15,9 @@ else
 	cp ellekit.dylib $(ELLEKIT)
 endif
 clean:
+	@echo "distclean to clean ellekit"
+
+distclean:
 	rm -rf ellekit_build obj
 
-.PHONY: all clean
+.PHONY: all clean distclean

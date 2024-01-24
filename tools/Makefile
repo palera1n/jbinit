@@ -13,7 +13,7 @@ libdmg-hfsplus:
 	printf '.gitignore\nbuild\n' > "$@/.gitignore"
 	mkdir -p "$@/build"
 	cd "$@/build" && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="$(CC)" -DCMAKE_C_FLAGS="$(CFLAGS)" "$(ROOT)/tools/$@"
-	$(MAKE) -C "$(ROOT)/tools/$@/build"
+	$(MAKE) -C "$(ROOT)/tools/$@/build" dmg-bin hfsplus
 
 clean:
 	rm -rf libdmg-hfsplus/build

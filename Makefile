@@ -87,8 +87,11 @@ apple-include: apple-include-private/**
 
 clean:
 	$(MAKE) -C $(ROOT)/src clean
-	$(MAKE) -C $(ROOT)/tools clean
 	rm -rf apple-include
+
+distclean: clean
+	$(MAKE) -C $(ROOT)/tools clean
+	$(MAKE) -C $(ROOT)/src distclean
 
 tools:
 	$(MAKE) -C $(ROOT)/tools
