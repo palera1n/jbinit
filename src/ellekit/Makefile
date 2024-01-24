@@ -12,7 +12,8 @@ ifeq ($(MAC),1)
 	$(LDID) -S $(ELLEKIT);
 else
 	@echo "ElleKit cannot be built on this machine"
-	cp ellekit.dylib $(ELLEKIT)
+	mkdir -p $@
+	cp libellekit.dylib $(ELLEKIT)
 endif
 clean:
 	@echo "distclean to clean ellekit"

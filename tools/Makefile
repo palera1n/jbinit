@@ -5,6 +5,11 @@ CFLAGS = $(CFLAGS_FOR_BUILD)
 CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
 LDFLAGS = $(LDFLAGS_FOR_BUILD)
 
+ifeq ($(UNAME),Darwin)
+# zlib is included in the SDK
+LIBDMG_HFSPLUS_CMAKE_FLAGS += -DZLIB_LIBRARY="-lz" -DZLIB_INCLUDE_DIR=" "
+endif
+
 export CC CXX LD CFLAGS CXXFLAGS LDFLAGS
 
 all: libdmg-hfsplus
@@ -12,7 +17,12 @@ all: libdmg-hfsplus
 libdmg-hfsplus/build/Makefile:
 	printf '.gitignore\nbuild\n' > "libdmg-hfsplus/.gitignore"
 	mkdir -p "libdmg-hfsplus/build"
-	cd "libdmg-hfsplus/build" && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="$(CC)" -DCMAKE_C_FLAGS="$(CFLAGS)" "$(ROOT)/tools/libdmg-hfsplus"
+	cd "libdmg-hfsplus/build" && cmake \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_C_COMPILER="$(CC)" \
+		-DCMAKE_C_FLAGS="$(CFLAGS)" \
+		$(LIBDMG_HFSPLUS_CMAKE_FLAGS) \
+		"$(ROOT)/tools/libdmg-hfsplus"
 
 libdmg-hfsplus/build/hfs/hfsplus: libdmg-hfsplus/build/Makefile
 	$(MAKE) -C "$(ROOT)/tools/libdmg-hfsplus/build" hfsplus

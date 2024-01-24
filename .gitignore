@@ -21,3 +21,4 @@ plooshInit.xcodeproj/project.xcworkspace/xcuserdata
 plooshInit.xcodeproj/xcuserdata/
 *.img
 *.log
+src/ellekit/libellekit.dylib

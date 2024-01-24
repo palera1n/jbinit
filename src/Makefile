@@ -1,4 +1,5 @@
 CFLAGS += -arch arm64 -I$(ROOT)/include -Wno-deprecated-declarations -g
+SHELL = /usr/bin/env bash
 
 ifneq ($(ASAN),1)
 RAMDISK_SIZE = 2m
@@ -24,7 +25,7 @@ CREATE_UDRW_IMAGE = \
 	if [ "$$MAC" = "1" ]; then \
 		IMAGE_DEV="$$(hdiutil attach -nomount -imagekey diskimage-class=CRawDiskImage $(1))"; \
 	elif [ "$$UNAME" = "Darwin" ]; then \
-		IMAGE_DEV="$$(hdik $(1))"; \
+		IMAGE_DEV="$$(hdik -drivekey diskimage-class=CRawDiskImage -nomount $(1))"; \
 	else \
 		IMAGE_DEV="$(1)"; \
 	fi; \
