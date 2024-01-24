@@ -12,7 +12,7 @@ ifeq ($(MAC),1)
 	$(LDID) -S $(ELLEKIT);
 else
 	@echo "ElleKit cannot be built on this machine"
-	mkdir -p $@
+	mkdir -p ellekit_build/Build/Products/Release-iphoneos
 	cp libellekit.dylib $(ELLEKIT)
 endif
 clean:

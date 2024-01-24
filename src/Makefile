@@ -21,18 +21,21 @@ endif
 
 CREATE_UDRW_IMAGE = \
 	set -e; \
-	dd if=/dev/zero of=$(1) bs=1M count=$(2); \
 	if [ "$$MAC" = "1" ]; then \
+		dd if=/dev/zero of=$(1) bs=1M count=$(2); \
 		IMAGE_DEV="$$(hdiutil attach -nomount -imagekey diskimage-class=CRawDiskImage $(1))"; \
 	elif [ "$$UNAME" = "Darwin" ]; then \
-		IMAGE_DEV="$$(hdik -drivekey diskimage-class=CRawDiskImage -nomount $(1))"; \
+		IMAGE_DEV="$$(hdik -drivekey diskimage-class=CRawDiskImage -nomount "ram://1024")"; \
 	else \
+		dd if=/dev/zero of=$(1) bs=1M count=$(2); \
 		IMAGE_DEV="$(1)"; \
 	fi; \
-	$(NEWFS_HFS) -G 0 -U 0 -v $(3) $$IMAGE_DEV; \
+	$(NEWFS_HFS) -s -G 0 -U 0 -v $(3) $$IMAGE_DEV; \
         if [ "$$MAC" = "1" ]; then \
 		hdiutil detach $$IMAGE_DEV; \
 	elif [ "$$UNAME" = "Darwin" ]; then \
+		dd if=$$IMAGE_DEV of=$(1); \
+		$(HFSPLUS) $(1) grow $$(expr $(2) '*' 1048576); \
 		hdik -e $$IMAGE_DEV; \
 	fi; \
 	$(FAKEROOT) $(HFSPLUS) $(1) addall $(4);
@@ -65,7 +68,7 @@ loader.dmg: palera1nLoader.ipa
 ifeq ($(MAC),1)
 	hdiutil convert -format ULFO loader.img -o loader.dmg
 else
-	$(DMG) build binpack.img binpack.dmg
+	$(DMG) dmg loader.img loader.dmg
 endif
 	rm -rf palera1nLoader
 
@@ -96,7 +99,7 @@ binpack.dmg: binpack.tar loader.dmg $(patsubst %, %-all, $(SUBDIRS))
 ifeq ($(MAC),1)
 	hdiutil convert -format UDZO -imagekey zlib-level=9 binpack.img -o binpack.dmg
 else
-	$(DMG) build binpack.img binpack.dmg
+	$(DMG) dmg binpack.img binpack.dmg
 endif
 	rm -rf binpack
 
@@ -107,7 +110,7 @@ $(patsubst %, %-all, $(SUBDIRS)): libjailbreak
 	$(MAKE) -C $$(echo $@ | cut -d- -f1) all
 
 clean: $(patsubst %, %-clean, $(SUBDIRS))
-	rm -rf binpack.dmg ramdisk.dmg palera1nLoader binpack ramdisk
+	rm -rf binpack.img ramdisk.img loader.img binpack.dmg ramdisk.dmg loader.dmg palera1nLoader binpack ramdisk
 
 $(patsubst %, %-clean, $(SUBDIRS)):
 	$(MAKE) -C $$(echo $@ | cut -d- -f1) clean
