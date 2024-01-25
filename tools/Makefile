@@ -24,10 +24,10 @@ libdmg-hfsplus/build/Makefile: ../.git/modules/tools/libdmg-hfsplus/HEAD
 		"$(ROOT)/tools/libdmg-hfsplus"
 
 libdmg-hfsplus/build/hfs/hfsplus: libdmg-hfsplus/build/Makefile
-	$(MAKE) -C "$(ROOT)/tools/libdmg-hfsplus/build" hfsplus
+	$(MAKE) -j1 -C "$(ROOT)/tools/libdmg-hfsplus/build" hfsplus
 
 libdmg-hfsplus/build/dmg/dmg: libdmg-hfsplus/build/Makefile
-	$(MAKE) -C "$(ROOT)/tools/libdmg-hfsplus/build" dmg-bin
+	$(MAKE) -j1 -C "$(ROOT)/tools/libdmg-hfsplus/build" dmg-bin
 
 libdmg-hfsplus: libdmg-hfsplus/build/hfs/hfsplus libdmg-hfsplus/build/dmg/dmg
 
