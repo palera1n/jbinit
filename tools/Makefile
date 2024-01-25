@@ -14,8 +14,7 @@ export CC CXX LD CFLAGS CXXFLAGS LDFLAGS
 
 all: libdmg-hfsplus
 
-libdmg-hfsplus/build/Makefile:
-	printf '.gitignore\nbuild\n' > "libdmg-hfsplus/.gitignore"
+libdmg-hfsplus/build/Makefile: ../.git/modules/tools/libdmg-hfsplus/HEAD
 	mkdir -p "libdmg-hfsplus/build"
 	cd "libdmg-hfsplus/build" && cmake \
 		-DCMAKE_BUILD_TYPE=Release \

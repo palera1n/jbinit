@@ -68,7 +68,7 @@ loader.dmg: palera1nLoader.ipa
 ifeq ($(MAC),1)
 	hdiutil convert -format ULFO loader.img -o loader.dmg
 else
-	$(DMG) dmg loader.img loader.dmg
+	$(DMG) dmg loader.img loader.dmg -zlib-level 9
 endif
 	rm -rf palera1nLoader
 
@@ -99,7 +99,7 @@ binpack.dmg: binpack.tar loader.dmg $(patsubst %, %-all, $(SUBDIRS))
 ifeq ($(MAC),1)
 	hdiutil convert -format UDZO -imagekey zlib-level=9 binpack.img -o binpack.dmg
 else
-	$(DMG) dmg binpack.img binpack.dmg
+	$(DMG) dmg binpack.img binpack.dmg -zlib-level 9
 endif
 	rm -rf binpack
 
