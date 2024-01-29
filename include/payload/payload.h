@@ -74,6 +74,7 @@ int print_jailbreakd_reply(xpc_object_t xreply);
 int obliterate_main(int argc, char* argv[]);
 int remove_bogus_var_jb(void);
 void overwrite_file(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinfo);
+int overwrite_main(int argc, char* argv[]);
 void reload_launchd_env(void);
 void perform_reboot3(xpc_object_t peer, xpc_object_t xreply, xpc_object_t request, struct paleinfo* pinfo_p);
 ssize_t write_fdout(int fd, void* buf, size_t len);

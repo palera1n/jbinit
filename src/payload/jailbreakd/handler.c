@@ -18,6 +18,12 @@
 #define ENOTPLATFORM 154
 #define RB2_USERREBOOT (0x2000000000000000llu)
 
+#ifdef HAVE_DEBUG_JBD_MSG
+#define STR_FORMAT "%{public}s"
+#else
+#define STR_FORMAT "%s"
+#endif
+
 //typedef struct CF_BRIDGED_TYPE(id) __SecTask *SecTaskRef;
 //SecTaskRef SecTaskCreateWithAuditToken(CFAllocatorRef allocator, audit_token_t token);
 
@@ -32,7 +38,7 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
     SecTaskRef task = SecTaskCreateWithAuditToken(kCFAllocatorDefault, token);
     if (task) {
         CFStringRef signingIdentifier = SecTaskCopySigningIdentifier(task, NULL);
-        PALERA1ND_LOG_DEBUG("received dictionary from client %@(%d): %s", signingIdentifier ? signingIdentifier : CFSTR("unknown"), pid, xrequeststr);
+        PALERA1ND_LOG("received dictionary from client %{public}@(%d): " STR_FORMAT, signingIdentifier ? signingIdentifier : CFSTR("unknown"), pid, xrequeststr);
         if (signingIdentifier) CFRelease(signingIdentifier);
         if (task) CFRelease(task);
     }
@@ -126,6 +132,7 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
                 break;
             }
             overwrite_file(request, xreply, pinfo_p);
+            break;
         }
         default:
             xpc_dictionary_set_int64(xreply, "error", EINVAL);
@@ -134,7 +141,7 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
 
 #ifdef HAVE_DEBUG_JBD_MSG
     char* xreplystr = xpc_copy_description(xreply);
-    PALERA1ND_LOG_DEBUG("sending reply: %s", xreplystr);
+    PALERA1ND_LOG("sending reply: " STR_FORMAT, xreplystr);
     free(xreplystr);
 #endif
     xpc_connection_send_message(xremote, xreply);

@@ -39,6 +39,7 @@
 		01B9F8A42B68045300428E81 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F80E2B68045300428E81 /* main.c */; };
 		01B9F8A52B68045300428E81 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F80F2B68045300428E81 /* Makefile */; };
 		01B9F8A62B68045300428E81 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F8122B68045300428E81 /* Makefile */; };
+		01B9F8AE2B68170D00428E81 /* overwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F8AD2B68170D00428E81 /* overwrite.c */; };
 		01D3D6BC2B5C80DA007845B6 /* pinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4B12B5C80D9007845B6 /* pinfo.c */; };
 		01D3D6E22B5C80DA007845B6 /* overwrite_file.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4EA2B5C80DA007845B6 /* overwrite_file.c */; };
 		01D3D6E32B5C80DA007845B6 /* handler.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4EB2B5C80DA007845B6 /* handler.c */; };
@@ -234,6 +235,7 @@
 		01B9F80F2B68045300428E81 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01B9F8122B68045300428E81 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01B9F8A82B680D1900428E81 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		01B9F8AD2B68170D00428E81 /* overwrite.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = overwrite.c; sourceTree = "<group>"; };
 		01D3D47F2B5C7DDE007845B6 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01D3D4812B5C7DDE007845B6 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		01D3D4832B5C7DDE007845B6 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -721,6 +723,7 @@
 				01D3D51B2B5C80DA007845B6 /* main.c */,
 				01D3D51C2B5C80DA007845B6 /* preboot_path.c */,
 				01D3D51D2B5C80DA007845B6 /* bootstrap.c */,
+				01B9F8AD2B68170D00428E81 /* overwrite.c */,
 			);
 			path = p1ctl;
 			sourceTree = "<group>";
@@ -1344,6 +1347,7 @@
 				01B9F88B2B68045300428E81 /* fastunicodecompare.c in Sources */,
 				01B9F8812B68045300428E81 /* io.c in Sources */,
 				01D3D7642B5C80DA007845B6 /* main.c in Sources */,
+				01B9F8AE2B68170D00428E81 /* overwrite.c in Sources */,
 				01B9F8802B68045300428E81 /* filevault.c in Sources */,
 				01D3D6E42B5C80DA007845B6 /* obliterate.c in Sources */,
 				01D3D7982B5C80DA007845B6 /* memcpy.c in Sources */,

@@ -10,7 +10,7 @@ int bootstrap_main(int argc, char* argv[]);
 int reboot_userspace_main(int argc, char* argv[]);
 int reload_main(int argc, char* argv[]);
 int tweakloader_main(int argc, char* argv[]);
-static int usage();
+static int usage(void);
 
 struct subcommand {
     const char* name;
@@ -29,10 +29,14 @@ static struct subcommand commands[] = {
     {"revert-install", "\tRemove bootstrap (Rootless)", NULL, "Remove the installed bootstrap. This operation is only supported on rootless.", obliterate_main},
     {"reboot-userspace", "Reboot userspace", NULL, "Unmount /Developer and reboot userspace", reboot_userspace_main},
     {"reload", "\t\tReload launchd jailbreak state", NULL, "Reload launchd's jailbreak state, such as the JB_ROOT_PATH variable", reload_main},
+#ifdef DEV_BUILD
     {"tweakloader", "\tSet TweakLoader path", "<tweakloader path>", "Sets the tweak injection library that will be loaded by systemhook.dylib", tweakloader_main},
+    {"overwrite", "\tOverwrite file", "[-m mode] <source> <destination>", "Ask jailbreakd to overwrite a file\n\nThe -m option can be used to specify a file mode if the file is newly created.", overwrite_main},
+#endif
     {NULL, NULL, NULL}
 };
 
+#ifdef DEV_BUILD
 int tweakloader_main(int argc, char* argv[]) {
     if (argc < 2) {
         fprintf(stderr, "No new tweakloader path specified.\n");
@@ -52,6 +56,7 @@ int tweakloader_main(int argc, char* argv[]) {
     xpc_release(xdict);
     return ret;
 }
+#endif
 
 int reload_main(int argc, char* argv[]) {
     xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
@@ -121,7 +126,7 @@ static int kbase_cmd(int argc, char* argv[]) {
     return retval;
 }
 
-static int usage() {
+static int usage(void) {
     fprintf(stderr,
         "Usage: p1ctl <subcommand> [subcommand options] [subcommand argument]\n"
         "p1ctl is a tool to interact with palera1n internal interfaces\n\nSubcommands:\n"

@@ -24,10 +24,17 @@
 void overwrite_file(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinfo) {
     size_t data_size;
     const char* path = xpc_dictionary_get_string(xrequest, "path");
-    uint64_t mode = xpc_dictionary_get_uint64(xrequest, "mode");
+    xpc_object_t xpc_mode = xpc_dictionary_get_value(xrequest, "mode");
+    uint64_t mode = xpc_mode ? xpc_uint64_get_value(xpc_mode) : 0644;
     const uint8_t* data = xpc_dictionary_get_data(xrequest, "data", &data_size);
     if (!path) {
         xpc_dictionary_set_string(xreply, "errorDescription", "Missing file path");
+        xpc_dictionary_set_int64(xreply, "error", EINVAL);
+        return;
+    }
+    
+    if (path[0] != '/') {
+        xpc_dictionary_set_string(xreply, "errorDescription", "supplied destination path is not an absolute path");
         xpc_dictionary_set_int64(xreply, "error", EINVAL);
         return;
     }
@@ -41,8 +48,11 @@ void overwrite_file(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo*
     };
 
     bool is_allowlisted = false;
+    
     for (uint16_t i = 0; allowlist[i] != NULL; i++) {
-        if (!strncmp(allowlist[i], path, strlen(allowlist[i]))) {
+        char allowlist_absolute[PATH_MAX];
+        realpath(allowlist[i], allowlist_absolute);
+        if (!strncmp(allowlist_absolute, path, strlen(allowlist_absolute))) {
             is_allowlisted = true;
         }
     }
@@ -67,12 +77,12 @@ void overwrite_file(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo*
             xpc_dictionary_set_int64(xreply, "error", errno);
             return;
         }
-    }
-
-    if (!S_ISREG(st.st_mode)) {
-        xpc_dictionary_set_string(xreply, "errorDescription", "destination file exists and is not a regular file");
-        xpc_dictionary_set_int64(xreply, "error", errno);
-        return;
+    } else {
+        if (!S_ISREG(st.st_mode)) {
+            xpc_dictionary_set_string(xreply, "errorDescription", "destination file exists and is not a regular file");
+            xpc_dictionary_set_int64(xreply, "error", errno);
+            return;
+        }
     }
 
     int fd = open(path, O_WRONLY | O_TRUNC | O_CREAT, (mode_t)mode);
