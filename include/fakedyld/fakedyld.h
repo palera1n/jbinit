@@ -26,6 +26,8 @@ extern char** environ;
 extern const struct KernelArgs* gKernArgs;
 extern void* gPreDyldMH;
 
+#define PRIx64 "llx"
+
 void mountroot(struct paleinfo* pinfo_p, struct systeminfo* sysinfo_p);
 void init_cores(struct systeminfo* sysinfo_p, int platform);
 void patch_dyld(memory_file_handle_t* dyld_handle, int platform);

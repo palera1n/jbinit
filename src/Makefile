@@ -16,7 +16,7 @@ endif
 ifeq ($(DEV_BUILD),1)
 CFLAGS += -O0 -DDEV_BUILD=1 -DHAVE_DEBUG_SHELL=1 -DHAVE_DEBUG_JBD_MSG=1
 else
-CFLAGS += -Os
+CFLAGS += -Os -flto=full
 endif
 
 CREATE_UDRW_IMAGE = \
@@ -58,8 +58,11 @@ endif
 	ln -sf ../payload ramdisk/sbin/launchd
 	ln -sf ../../dyld ramdisk/usr/lib/dyld
 	ln -sf payload ramdisk/ploosh
+ifeq ($(INCLUDE_ASAN),1)
+	$(call CREATE_UDRW_IMAGE,ramdisk.dmg,8,plooshra1nrd,ramdisk)
+else
 	$(call CREATE_UDRW_IMAGE,ramdisk.dmg,2,plooshra1nrd,ramdisk)
-
+endif
 loader.dmg: palera1nLoader.ipa
 	rm -rf loader.dmg palera1nLoader
 	mkdir palera1nLoader

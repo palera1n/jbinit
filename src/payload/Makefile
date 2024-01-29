@@ -2,9 +2,11 @@ SUBDIRS = loader p1ctl jailbreakd
 CFLAGS += -miphoneos-version-min=12.0 -std=gnu17
 CFLAGS += -Wno-nullability-completeness
 LDFLAGS += -Wl,-dead_strip -Wno-unused-command-line-argument
+LDFLAGS += -Wl,-sectcreate,__TEXT,__info_plist,Info.plist
 OBJDIR = obj
 C_SRC = $(wildcard *.c)
 LIBS = -framework CoreFoundation -framework IOKit -framework Foundation
+LIBS += -framework Security
 LIBS += ../libs/APFS.tbd ../libjailbreak/libjailbreak.a
 OBJS = $(patsubst %,$(OBJDIR)/%,$(C_SRC:.c=.c.o))
 

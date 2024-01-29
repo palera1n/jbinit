@@ -8,6 +8,7 @@
 #include <sys/utsname.h>
 #include <xpc/xpc.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include <os/log.h>
 
 #ifndef __OBJC__
 void NSLog(CFStringRef, ...);
@@ -30,6 +31,18 @@ void NSLog(CFStringRef, ...);
         free(desc); \
         return -1; \
     }
+
+extern os_log_t palera1nd_log;
+
+#ifdef DEV_BUILD
+#define PALERA1ND_LOG_DEBUG(...) os_log_debug(palera1nd_log, __VA_ARGS__)
+#else
+#define PALERA1ND_LOG_DEBUG(...)
+#endif
+#define PALERA1ND_LOG_ERROR(...) os_log_error(palera1nd_log, __VA_ARGS__)
+#define PALERA1ND_LOG_FAULT(...) os_log_fault(palera1nd_log, __VA_ARGS__)
+#define PALERA1ND_LOG_INFO(...) os_log_info(palera1nd_log, __VA_ARGS__)
+#define PALERA1ND_LOG(...) os_log(palera1nd_log, __VA_ARGS__)
 
 typedef int launchctl_cmd_main(xpc_object_t *msg, int argc, char **argv, char **envp, char **apple);
 launchctl_cmd_main bootstrap_cmd;

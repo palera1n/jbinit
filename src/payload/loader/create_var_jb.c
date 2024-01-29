@@ -20,7 +20,7 @@ int remove_bogus_var_jb(void) {
     struct stat st;
     if (lstat("/var/jb", &st) != 0) {
         if (errno != ENOENT) {
-            NSLog(CFSTR("failed to lstat /var/jb: %d (%s)"), errno, strerror(errno));
+            PALERA1ND_LOG_ERROR("failed to lstat /var/jb: %d (%s)", errno, strerror(errno));
         }
         return 0;
     }
@@ -30,7 +30,7 @@ int remove_bogus_var_jb(void) {
         if (ret == -1) return -1;
         // unc0ver
         if (!strcmp(link_path, "/jb") || !strcmp(link_path, "/jb/")) {
-            NSLog(CFSTR("Found unc0ver! /var/jb -> %s, deleting"), link_path);
+            PALERA1ND_LOG_INFO("Found unc0ver! /var/jb -> %s, deleting", link_path);
             /*if (access("/jb", F_OK) == 0) {
                 removefile("/jb", NULL, 0);
             }*/
@@ -48,12 +48,12 @@ int remove_bogus_var_jb(void) {
                 access("/var/jb/etc/profile.ro", F_OK) == 0 &&
                 access("/var/jb/etc/apt/sources.list.d/saurik.list", F_OK) == 0
             ) {
-                NSLog(CFSTR("Found unc0ver! /var/jb -> %s, deleting"), link_path);
+                PALERA1ND_LOG_INFO("Found unc0ver! /var/jb -> %s, deleting", link_path);
                 // removefile("/private/var/containers/Bundle/jb", NULL, 0);
                 ret = unlink("/var/jb");
                 return ret;
             }
-            NSLog(CFSTR("Not removing /var/jb -> %s"), link_path);
+            PALERA1ND_LOG_INFO("Found unc0ver! /var/jb -> %s, deleting", link_path);
             return 0;
         }
         return 0;
@@ -73,10 +73,10 @@ int remove_bogus_var_jb(void) {
         }
         if (access("/var/jb/var/mobile/Library", F_OK) == 0 ||
             access("/var/jb/var/root/Library", F_OK) == 0) {
-            NSLog(CFSTR("Found rootlesshooks artifact /var/jb, deleting"));
+            PALERA1ND_LOG_INFO("Found rootlesshooks artifact /var/jb, deleting");
             return removefile("/var/jb", NULL, REMOVEFILE_RECURSIVE);
         }
-        NSLog(CFSTR("Not deleting (probably bogus) /var/jb directory"));
+        PALERA1ND_LOG("Not deleting (probably bogus) /var/jb directory");
     } else {
         return 0;
     }

@@ -4,15 +4,19 @@ LD = $(LD_FOR_BUILD)
 CFLAGS = $(CFLAGS_FOR_BUILD)
 CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
 LDFLAGS = $(LDFLAGS_FOR_BUILD)
+ROOT = $(shell pwd)/..
 
 ifeq ($(UNAME),Darwin)
 # zlib is included in the SDK
 LIBDMG_HFSPLUS_CMAKE_FLAGS += -DZLIB_LIBRARY="-lz" -DZLIB_INCLUDE_DIR=" "
 endif
 
-export CC CXX LD CFLAGS CXXFLAGS LDFLAGS
+export CC CXX LD CFLAGS CXXFLAGS LDFLAGS ROOT
 
 all: libdmg-hfsplus
+
+patch_dyld-test:
+	$(MAKE) -C patch_dyld-test
 
 libdmg-hfsplus/build/Makefile: ../.git/modules/tools/libdmg-hfsplus/HEAD
 	mkdir -p "libdmg-hfsplus/build"
@@ -33,5 +37,6 @@ libdmg-hfsplus: libdmg-hfsplus/build/hfs/hfsplus libdmg-hfsplus/build/dmg/dmg
 
 clean:
 	rm -rf libdmg-hfsplus/build
+	$(MAKE) -C patch_dyld-test clean
 
-.PHONY: libdmg-hfsplus clean all
+.PHONY: libdmg-hfsplus patch_dyld-test clean all

@@ -9,6 +9,7 @@
 #include <os/log.h>
 #include <libjailbreak/libjailbreak.h>
 #include <dlfcn.h>
+#include <os/log.h>
 
 void reload_launchd_env(void) {
 	xpc_object_t launchd_dict = xpc_dictionary_create(NULL, NULL, 0);
@@ -34,9 +35,9 @@ ssize_t write_fdout(int fd, void* buf, size_t len) {
     return written;
 }
 
-void NSLog(CFStringRef, ...);
 void palera1nd_handler(xpc_object_t peer, xpc_object_t event, struct paleinfo* pinfo);
 int palera1nd_main(int argc, char* argv[]) {
+    PALERA1ND_LOG_DEBUG("starting palera1nd");
     struct paleinfo pinfo;
     int ret = get_pinfo(&pinfo);
     if (ret) return -1;
@@ -49,20 +50,19 @@ int palera1nd_main(int argc, char* argv[]) {
 		if (xpc_get_type(peer) == XPC_TYPE_CONNECTION) {
 			xpc_connection_set_event_handler(peer, ^(xpc_object_t event) {
 				char* desc = xpc_copy_description(event);
-				free(desc);
-		    	if (event == XPC_TYPE_ERROR) {
+		    	if (xpc_get_type(event) == XPC_TYPE_ERROR) {
+                    PALERA1ND_LOG_DEBUG("received error dictionary: %s", desc);
+                    free(desc);
 					return;
 				}
+                free(desc);
 
 				palera1nd_handler(peer, event, (struct paleinfo*)&pinfo);
 			});
 
 			xpc_connection_resume(peer);
 		} else if (xpc_get_type(peer) == XPC_TYPE_ERROR) {
-			if (peer == XPC_ERROR_CONNECTION_INVALID) {
-			} else {
-			}
-			exit(1);
+            return;
 		}
 	});
 

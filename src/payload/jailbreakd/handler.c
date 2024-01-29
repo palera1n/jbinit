@@ -10,11 +10,16 @@
 #include <paleinfo.h>
 #include <sys/codesign.h>
 #include <sys/mount.h>
+#include <Security/Security.h>
+#include <Security/SecTask.h>
 #include <errno.h>
 
 #define ENOENTITLEMENT 144
 #define ENOTPLATFORM 154
 #define RB2_USERREBOOT (0x2000000000000000llu)
+
+//typedef struct CF_BRIDGED_TYPE(id) __SecTask *SecTaskRef;
+//SecTaskRef SecTaskCreateWithAuditToken(CFAllocatorRef allocator, audit_token_t token);
 
 void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo* pinfo_p) {
     xpc_object_t xreply = xpc_dictionary_create_reply(request);
@@ -22,7 +27,15 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
 #ifdef HAVE_DEBUG_JBD_MSG
     char* xrequeststr = xpc_copy_description(request);
     pid_t pid = xpc_connection_get_pid(peer);
-    NSLog(CFSTR("received dictionary from pid %d: %s"), pid, xrequeststr);
+    audit_token_t token = {};
+    xpc_connection_get_audit_token(peer, &token);
+    SecTaskRef task = SecTaskCreateWithAuditToken(kCFAllocatorDefault, token);
+    if (task) {
+        CFStringRef signingIdentifier = SecTaskCopySigningIdentifier(task, NULL);
+        PALERA1ND_LOG_DEBUG("received dictionary from client %@(%d): %s", signingIdentifier ? signingIdentifier : CFSTR("unknown"), pid, xrequeststr);
+        if (signingIdentifier) CFRelease(signingIdentifier);
+        if (task) CFRelease(task);
+    }
     free(xrequeststr);
 #endif
 
@@ -121,7 +134,7 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
 
 #ifdef HAVE_DEBUG_JBD_MSG
     char* xreplystr = xpc_copy_description(xreply);
-    NSLog(CFSTR("sending reply: %s"), xreplystr);
+    PALERA1ND_LOG_DEBUG("sending reply: %s", xreplystr);
     free(xreplystr);
 #endif
     xpc_connection_send_message(xremote, xreply);

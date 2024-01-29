@@ -64,7 +64,9 @@ xpc_object_t hook_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
       xpc_dictionary_set_string(submitJob, "Program", "/cores/binpack/usr/sbin/palera1nd");
       xpc_dictionary_set_string(submitJob, "Label", "in.palera.palera1nd");
       xpc_dictionary_set_bool(machServices, "in.palera.palera1nd.systemwide", true);
-
+      xpc_dictionary_set_string(submitJob, "StandardInPath", "/dev/console");
+      xpc_dictionary_set_string(submitJob, "StandardOutPath", "/dev/console");
+      xpc_dictionary_set_string(submitJob, "StandardErrorPath", "/dev/console");
       xpc_dictionary_set_value(submitJob, "ProgramArguments", programArguments);
       xpc_dictionary_set_value(submitJob, "MachServices", machServices);
       xpc_dictionary_set_int64(jetsamProperties, "JetsamMemoryLimit", 128);

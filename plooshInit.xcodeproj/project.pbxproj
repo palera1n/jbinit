@@ -8,6 +8,37 @@
 
 /* Begin PBXBuildFile section */
 		019B1B462B5CACA800BABAB5 /* load_etc_rc_d.c in Sources */ = {isa = PBXBuildFile; fileRef = 019B1B452B5CACA800BABAB5 /* load_etc_rc_d.c */; };
+		01B9F8792B68045300428E81 /* abstractfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7BC2B68045300428E81 /* abstractfile.c */; };
+		01B9F87A2B68045300428E81 /* adc.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7BF2B68045300428E81 /* adc.c */; };
+		01B9F87B2B68045300428E81 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C02B68045300428E81 /* base64.c */; };
+		01B9F87C2B68045300428E81 /* checksum.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C12B68045300428E81 /* checksum.c */; };
+		01B9F87D2B68045300428E81 /* dmg.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C32B68045300428E81 /* dmg.c */; };
+		01B9F87E2B68045300428E81 /* dmgfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C42B68045300428E81 /* dmgfile.c */; };
+		01B9F87F2B68045300428E81 /* dmglib.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C52B68045300428E81 /* dmglib.c */; };
+		01B9F8802B68045300428E81 /* filevault.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C62B68045300428E81 /* filevault.c */; };
+		01B9F8812B68045300428E81 /* io.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C72B68045300428E81 /* io.c */; };
+		01B9F8822B68045300428E81 /* partition.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C82B68045300428E81 /* partition.c */; };
+		01B9F8832B68045300428E81 /* resources.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C92B68045300428E81 /* resources.c */; };
+		01B9F8842B68045300428E81 /* udif.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7CA2B68045300428E81 /* udif.c */; };
+		01B9F8852B68045300428E81 /* win32test.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7CB2B68045300428E81 /* win32test.c */; };
+		01B9F8862B68045300428E81 /* hdutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7CE2B68045300428E81 /* hdutil.c */; };
+		01B9F8872B68045300428E81 /* win32test.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7CF2B68045300428E81 /* win32test.c */; };
+		01B9F8882B68045300428E81 /* btree.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7D12B68045300428E81 /* btree.c */; };
+		01B9F8892B68045300428E81 /* catalog.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7D22B68045300428E81 /* catalog.c */; };
+		01B9F88A2B68045300428E81 /* extents.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7D42B68045300428E81 /* extents.c */; };
+		01B9F88B2B68045300428E81 /* fastunicodecompare.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7D52B68045300428E81 /* fastunicodecompare.c */; };
+		01B9F88C2B68045300428E81 /* flatfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7D62B68045300428E81 /* flatfile.c */; };
+		01B9F88D2B68045300428E81 /* hfs.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7D72B68045300428E81 /* hfs.c */; };
+		01B9F88E2B68045300428E81 /* hfscompress.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7D82B68045300428E81 /* hfscompress.c */; };
+		01B9F88F2B68045300428E81 /* hfslib.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7D92B68045300428E81 /* hfslib.c */; };
+		01B9F8902B68045300428E81 /* rawfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7DA2B68045300428E81 /* rawfile.c */; };
+		01B9F8912B68045300428E81 /* utility.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7DB2B68045300428E81 /* utility.c */; };
+		01B9F8922B68045300428E81 /* volume.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7DC2B68045300428E81 /* volume.c */; };
+		01B9F8932B68045300428E81 /* xattr.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7DD2B68045300428E81 /* xattr.c */; };
+		01B9F8942B68045300428E81 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7E32B68045300428E81 /* Makefile */; };
+		01B9F8A42B68045300428E81 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F80E2B68045300428E81 /* main.c */; };
+		01B9F8A52B68045300428E81 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F80F2B68045300428E81 /* Makefile */; };
+		01B9F8A62B68045300428E81 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F8122B68045300428E81 /* Makefile */; };
 		01D3D6BC2B5C80DA007845B6 /* pinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4B12B5C80D9007845B6 /* pinfo.c */; };
 		01D3D6E22B5C80DA007845B6 /* overwrite_file.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4EA2B5C80DA007845B6 /* overwrite_file.c */; };
 		01D3D6E32B5C80DA007845B6 /* handler.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4EB2B5C80DA007845B6 /* handler.c */; };
@@ -109,6 +140,30 @@
 		01D3D7EC2B5C80DB007845B6 /* cfprefsd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6B72B5C80DA007845B6 /* cfprefsd.c */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		01B9F81A2B68045300428E81 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 01B9F7E52B68045300428E81 /* libdmg-hfsplus.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 63F9226E0DC493710056EA77;
+			remoteInfo = hfsplus;
+		};
+		01B9F81C2B68045300428E81 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 01B9F7E52B68045300428E81 /* libdmg-hfsplus.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 63F921E30DC4909A0056EA77;
+			remoteInfo = dmg;
+		};
+		01B9F81E2B68045300428E81 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 01B9F7E52B68045300428E81 /* libdmg-hfsplus.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 63F9222C0DC4922E0056EA77;
+			remoteInfo = z;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		01D3D4872B5C7F95007845B6 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -123,6 +178,62 @@
 
 /* Begin PBXFileReference section */
 		019B1B452B5CACA800BABAB5 /* load_etc_rc_d.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load_etc_rc_d.c; sourceTree = "<group>"; };
+		01B9F7BC2B68045300428E81 /* abstractfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = abstractfile.c; sourceTree = "<group>"; };
+		01B9F7BD2B68045300428E81 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		01B9F7BF2B68045300428E81 /* adc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = adc.c; sourceTree = "<group>"; };
+		01B9F7C02B68045300428E81 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
+		01B9F7C12B68045300428E81 /* checksum.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = checksum.c; sourceTree = "<group>"; };
+		01B9F7C22B68045300428E81 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		01B9F7C32B68045300428E81 /* dmg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dmg.c; sourceTree = "<group>"; };
+		01B9F7C42B68045300428E81 /* dmgfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dmgfile.c; sourceTree = "<group>"; };
+		01B9F7C52B68045300428E81 /* dmglib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dmglib.c; sourceTree = "<group>"; };
+		01B9F7C62B68045300428E81 /* filevault.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = filevault.c; sourceTree = "<group>"; };
+		01B9F7C72B68045300428E81 /* io.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = io.c; sourceTree = "<group>"; };
+		01B9F7C82B68045300428E81 /* partition.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = partition.c; sourceTree = "<group>"; };
+		01B9F7C92B68045300428E81 /* resources.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resources.c; sourceTree = "<group>"; };
+		01B9F7CA2B68045300428E81 /* udif.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = udif.c; sourceTree = "<group>"; };
+		01B9F7CB2B68045300428E81 /* win32test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = win32test.c; sourceTree = "<group>"; };
+		01B9F7CD2B68045300428E81 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		01B9F7CE2B68045300428E81 /* hdutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hdutil.c; sourceTree = "<group>"; };
+		01B9F7CF2B68045300428E81 /* win32test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = win32test.c; sourceTree = "<group>"; };
+		01B9F7D12B68045300428E81 /* btree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btree.c; sourceTree = "<group>"; };
+		01B9F7D22B68045300428E81 /* catalog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = catalog.c; sourceTree = "<group>"; };
+		01B9F7D32B68045300428E81 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		01B9F7D42B68045300428E81 /* extents.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = extents.c; sourceTree = "<group>"; };
+		01B9F7D52B68045300428E81 /* fastunicodecompare.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fastunicodecompare.c; sourceTree = "<group>"; };
+		01B9F7D62B68045300428E81 /* flatfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = flatfile.c; sourceTree = "<group>"; };
+		01B9F7D72B68045300428E81 /* hfs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hfs.c; sourceTree = "<group>"; };
+		01B9F7D82B68045300428E81 /* hfscompress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hfscompress.c; sourceTree = "<group>"; };
+		01B9F7D92B68045300428E81 /* hfslib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hfslib.c; sourceTree = "<group>"; };
+		01B9F7DA2B68045300428E81 /* rawfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rawfile.c; sourceTree = "<group>"; };
+		01B9F7DB2B68045300428E81 /* utility.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utility.c; sourceTree = "<group>"; };
+		01B9F7DC2B68045300428E81 /* volume.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = volume.c; sourceTree = "<group>"; };
+		01B9F7DD2B68045300428E81 /* xattr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xattr.c; sourceTree = "<group>"; };
+		01B9F7DF2B68045300428E81 /* org.eclipse.cdt.core.prefs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = org.eclipse.cdt.core.prefs; sourceTree = "<group>"; };
+		01B9F7E12B68045300428E81 /* .cdtproject */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = .cdtproject; sourceTree = "<group>"; };
+		01B9F7E22B68045300428E81 /* .project */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = .project; sourceTree = "<group>"; };
+		01B9F7E32B68045300428E81 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		01B9F7E52B68045300428E81 /* libdmg-hfsplus.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = "libdmg-hfsplus.xcodeproj"; sourceTree = "<group>"; };
+		01B9F7E82B68045300428E81 /* adc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = adc.h; sourceTree = "<group>"; };
+		01B9F7E92B68045300428E81 /* dmg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dmg.h; sourceTree = "<group>"; };
+		01B9F7EA2B68045300428E81 /* dmgfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dmgfile.h; sourceTree = "<group>"; };
+		01B9F7EB2B68045300428E81 /* dmglib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dmglib.h; sourceTree = "<group>"; };
+		01B9F7EC2B68045300428E81 /* filevault.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filevault.h; sourceTree = "<group>"; };
+		01B9F7EE2B68045300428E81 /* hfscompress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hfscompress.h; sourceTree = "<group>"; };
+		01B9F7EF2B68045300428E81 /* hfslib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hfslib.h; sourceTree = "<group>"; };
+		01B9F7F02B68045300428E81 /* hfsplus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hfsplus.h; sourceTree = "<group>"; };
+		01B9F7F22B68045300428E81 /* abstractfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = abstractfile.h; sourceTree = "<group>"; };
+		01B9F7F32B68045300428E81 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
+		01B9F7F52B68045300428E81 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		01B9F7F62B68045300428E81 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		01B9F7F72B68045300428E81 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		01B9F7F82B68045300428E81 /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.markdown; sourceTree = "<group>"; };
+		01B9F7FA2B68045300428E81 /* fakedyld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fakedyld.h; sourceTree = "<group>"; };
+		01B9F80D2B68045300428E81 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		01B9F80E2B68045300428E81 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		01B9F80F2B68045300428E81 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		01B9F8122B68045300428E81 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		01B9F8A82B680D1900428E81 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		01D3D47F2B5C7DDE007845B6 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01D3D4812B5C7DDE007845B6 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		01D3D4832B5C7DDE007845B6 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -321,6 +432,7 @@
 		0133721E2B5C7CFB00D035BB = {
 			isa = PBXGroup;
 			children = (
+				01B9F8132B68045300428E81 /* tools */,
 				01D3DA212B5C83B7007845B6 /* include */,
 				01D3D4812B5C7DDE007845B6 /* LICENSE */,
 				01D3D47F2B5C7DDE007845B6 /* Makefile */,
@@ -328,6 +440,198 @@
 				01D3D4932B5C80D9007845B6 /* src */,
 				01D3D48A2B5C7F95007845B6 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		01B9F7BE2B68045300428E81 /* common */ = {
+			isa = PBXGroup;
+			children = (
+				01B9F7BC2B68045300428E81 /* abstractfile.c */,
+				01B9F7BD2B68045300428E81 /* CMakeLists.txt */,
+			);
+			path = common;
+			sourceTree = "<group>";
+		};
+		01B9F7CC2B68045300428E81 /* dmg */ = {
+			isa = PBXGroup;
+			children = (
+				01B9F7BF2B68045300428E81 /* adc.c */,
+				01B9F7C02B68045300428E81 /* base64.c */,
+				01B9F7C12B68045300428E81 /* checksum.c */,
+				01B9F7C22B68045300428E81 /* CMakeLists.txt */,
+				01B9F7C32B68045300428E81 /* dmg.c */,
+				01B9F7C42B68045300428E81 /* dmgfile.c */,
+				01B9F7C52B68045300428E81 /* dmglib.c */,
+				01B9F7C62B68045300428E81 /* filevault.c */,
+				01B9F7C72B68045300428E81 /* io.c */,
+				01B9F7C82B68045300428E81 /* partition.c */,
+				01B9F7C92B68045300428E81 /* resources.c */,
+				01B9F7CA2B68045300428E81 /* udif.c */,
+				01B9F7CB2B68045300428E81 /* win32test.c */,
+			);
+			path = dmg;
+			sourceTree = "<group>";
+		};
+		01B9F7D02B68045300428E81 /* hdutil */ = {
+			isa = PBXGroup;
+			children = (
+				01B9F7CD2B68045300428E81 /* CMakeLists.txt */,
+				01B9F7CE2B68045300428E81 /* hdutil.c */,
+				01B9F7CF2B68045300428E81 /* win32test.c */,
+			);
+			path = hdutil;
+			sourceTree = "<group>";
+		};
+		01B9F7DE2B68045300428E81 /* hfs */ = {
+			isa = PBXGroup;
+			children = (
+				01B9F7D12B68045300428E81 /* btree.c */,
+				01B9F7D22B68045300428E81 /* catalog.c */,
+				01B9F7D32B68045300428E81 /* CMakeLists.txt */,
+				01B9F7D42B68045300428E81 /* extents.c */,
+				01B9F7D52B68045300428E81 /* fastunicodecompare.c */,
+				01B9F7D62B68045300428E81 /* flatfile.c */,
+				01B9F7D72B68045300428E81 /* hfs.c */,
+				01B9F7D82B68045300428E81 /* hfscompress.c */,
+				01B9F7D92B68045300428E81 /* hfslib.c */,
+				01B9F7DA2B68045300428E81 /* rawfile.c */,
+				01B9F7DB2B68045300428E81 /* utility.c */,
+				01B9F7DC2B68045300428E81 /* volume.c */,
+				01B9F7DD2B68045300428E81 /* xattr.c */,
+			);
+			path = hfs;
+			sourceTree = "<group>";
+		};
+		01B9F7E02B68045300428E81 /* .settings */ = {
+			isa = PBXGroup;
+			children = (
+				01B9F7DF2B68045300428E81 /* org.eclipse.cdt.core.prefs */,
+			);
+			path = .settings;
+			sourceTree = "<group>";
+		};
+		01B9F7E42B68045300428E81 /* eclipse */ = {
+			isa = PBXGroup;
+			children = (
+				01B9F7E02B68045300428E81 /* .settings */,
+				01B9F7E12B68045300428E81 /* .cdtproject */,
+				01B9F7E22B68045300428E81 /* .project */,
+				01B9F7E32B68045300428E81 /* Makefile */,
+			);
+			path = eclipse;
+			sourceTree = "<group>";
+		};
+		01B9F7E62B68045300428E81 /* xcode */ = {
+			isa = PBXGroup;
+			children = (
+				01B9F7E52B68045300428E81 /* libdmg-hfsplus.xcodeproj */,
+			);
+			path = xcode;
+			sourceTree = "<group>";
+		};
+		01B9F7E72B68045300428E81 /* ide */ = {
+			isa = PBXGroup;
+			children = (
+				01B9F7E42B68045300428E81 /* eclipse */,
+				01B9F7E62B68045300428E81 /* xcode */,
+			);
+			path = ide;
+			sourceTree = "<group>";
+		};
+		01B9F7ED2B68045300428E81 /* dmg */ = {
+			isa = PBXGroup;
+			children = (
+				01B9F7E82B68045300428E81 /* adc.h */,
+				01B9F7E92B68045300428E81 /* dmg.h */,
+				01B9F7EA2B68045300428E81 /* dmgfile.h */,
+				01B9F7EB2B68045300428E81 /* dmglib.h */,
+				01B9F7EC2B68045300428E81 /* filevault.h */,
+			);
+			path = dmg;
+			sourceTree = "<group>";
+		};
+		01B9F7F12B68045300428E81 /* hfs */ = {
+			isa = PBXGroup;
+			children = (
+				01B9F7EE2B68045300428E81 /* hfscompress.h */,
+				01B9F7EF2B68045300428E81 /* hfslib.h */,
+				01B9F7F02B68045300428E81 /* hfsplus.h */,
+			);
+			path = hfs;
+			sourceTree = "<group>";
+		};
+		01B9F7F42B68045300428E81 /* includes */ = {
+			isa = PBXGroup;
+			children = (
+				01B9F7ED2B68045300428E81 /* dmg */,
+				01B9F7F12B68045300428E81 /* hfs */,
+				01B9F7F22B68045300428E81 /* abstractfile.h */,
+				01B9F7F32B68045300428E81 /* common.h */,
+			);
+			path = includes;
+			sourceTree = "<group>";
+		};
+		01B9F7F92B68045300428E81 /* libdmg-hfsplus */ = {
+			isa = PBXGroup;
+			children = (
+				01B9F7BE2B68045300428E81 /* common */,
+				01B9F7CC2B68045300428E81 /* dmg */,
+				01B9F7D02B68045300428E81 /* hdutil */,
+				01B9F7DE2B68045300428E81 /* hfs */,
+				01B9F7E72B68045300428E81 /* ide */,
+				01B9F7F42B68045300428E81 /* includes */,
+				01B9F7F52B68045300428E81 /* .gitignore */,
+				01B9F7F62B68045300428E81 /* CMakeLists.txt */,
+				01B9F7F72B68045300428E81 /* LICENSE */,
+				01B9F7F82B68045300428E81 /* README.markdown */,
+			);
+			path = "libdmg-hfsplus";
+			sourceTree = "<group>";
+		};
+		01B9F7FB2B68045300428E81 /* fakedyld */ = {
+			isa = PBXGroup;
+			children = (
+				01B9F7FA2B68045300428E81 /* fakedyld.h */,
+			);
+			path = fakedyld;
+			sourceTree = "<group>";
+		};
+		01B9F7FC2B68045300428E81 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				01B9F7FB2B68045300428E81 /* fakedyld */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		01B9F8112B68045300428E81 /* patch_dyld-test */ = {
+			isa = PBXGroup;
+			children = (
+				01B9F7FC2B68045300428E81 /* include */,
+				01B9F80D2B68045300428E81 /* .gitignore */,
+				01B9F80E2B68045300428E81 /* main.c */,
+				01B9F80F2B68045300428E81 /* Makefile */,
+			);
+			path = "patch_dyld-test";
+			sourceTree = "<group>";
+		};
+		01B9F8132B68045300428E81 /* tools */ = {
+			isa = PBXGroup;
+			children = (
+				01B9F7F92B68045300428E81 /* libdmg-hfsplus */,
+				01B9F8112B68045300428E81 /* patch_dyld-test */,
+				01B9F8122B68045300428E81 /* Makefile */,
+			);
+			path = tools;
+			sourceTree = SOURCE_ROOT;
+		};
+		01B9F8142B68045300428E81 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				01B9F81B2B68045300428E81 /* hfsplus */,
+				01B9F81D2B68045300428E81 /* dmg */,
+				01B9F81F2B68045300428E81 /* libz.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		01D3D48A2B5C7F95007845B6 /* Products */ = {
@@ -368,6 +672,7 @@
 				01D3D4F32B5C80DA007845B6 /* .gitignore */,
 				01D3D4F42B5C80DA007845B6 /* loader */,
 				01D3D50F2B5C80DA007845B6 /* p1ctl */,
+				01B9F8A82B680D1900428E81 /* Info.plist */,
 			);
 			path = payload;
 			sourceTree = "<group>";
@@ -882,6 +1187,12 @@
 			mainGroup = 0133721E2B5C7CFB00D035BB;
 			productRefGroup = 01D3D48A2B5C7F95007845B6 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 01B9F8142B68045300428E81 /* Products */;
+					ProjectRef = 01B9F7E52B68045300428E81 /* libdmg-hfsplus.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				01D3D4882B5C7F95007845B6 /* dummy */,
@@ -889,6 +1200,30 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		01B9F81B2B68045300428E81 /* hfsplus */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = hfsplus;
+			remoteRef = 01B9F81A2B68045300428E81 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		01B9F81D2B68045300428E81 /* dmg */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = dmg;
+			remoteRef = 01B9F81C2B68045300428E81 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		01B9F81F2B68045300428E81 /* libz.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libz.a;
+			remoteRef = 01B9F81E2B68045300428E81 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
 		01D3D4852B5C7F95007845B6 /* Sources */ = {
@@ -900,6 +1235,8 @@
 				01D3D7B52B5C80DB007845B6 /* isalpha.c in Sources */,
 				01D3D7992B5C80DA007845B6 /* strchr.c in Sources */,
 				01D3D6E22B5C80DA007845B6 /* overwrite_file.c in Sources */,
+				01B9F87E2B68045300428E81 /* dmgfile.c in Sources */,
+				01B9F8A42B68045300428E81 /* main.c in Sources */,
 				01D3D7712B5C80DA007845B6 /* get_libiosexec.c in Sources */,
 				01D3D6E72B5C80DA007845B6 /* bootstrap.c in Sources */,
 				01D3D7CD2B5C80DB007845B6 /* pinfo_check.c in Sources */,
@@ -908,21 +1245,28 @@
 				01D3D7CE2B5C80DB007845B6 /* start.c in Sources */,
 				01D3D70A2B5C80DA007845B6 /* palera1n_flags.c in Sources */,
 				01D3D79A2B5C80DA007845B6 /* printf.c in Sources */,
+				01B9F87F2B68045300428E81 /* dmglib.c in Sources */,
+				01B9F8932B68045300428E81 /* xattr.c in Sources */,
+				01B9F8842B68045300428E81 /* udif.c in Sources */,
 				01D3D6E62B5C80DA007845B6 /* reboot3.c in Sources */,
 				01D3D6E52B5C80DA007845B6 /* main.c in Sources */,
 				01D3D7AF2B5C80DB007845B6 /* strstr.c in Sources */,
 				01D3D7B12B5C80DB007845B6 /* syscalls.c in Sources */,
+				01B9F8882B68045300428E81 /* btree.c in Sources */,
 				01D3D6FC2B5C80DA007845B6 /* platform.c in Sources */,
 				01D3D7012B5C80DA007845B6 /* remount.c in Sources */,
+				01B9F8892B68045300428E81 /* catalog.c in Sources */,
 				01D3D7BD2B5C80DB007845B6 /* isspace.c in Sources */,
 				01D3D7B42B5C80DB007845B6 /* strncmp.c in Sources */,
 				01D3D7C72B5C80DB007845B6 /* pinfo.c in Sources */,
 				01D3D7B92B5C80DB007845B6 /* bzero.c in Sources */,
+				01B9F8832B68045300428E81 /* resources.c in Sources */,
 				01D3D7922B5C80DA007845B6 /* multi.c in Sources */,
 				01D3D7652B5C80DA007845B6 /* common.c in Sources */,
 				01D3D7DF2B5C80DB007845B6 /* pspawn.c in Sources */,
 				01D3D75E2B5C80DA007845B6 /* securityd.c in Sources */,
 				01D3D7E02B5C80DB007845B6 /* xpc.c in Sources */,
+				01B9F8862B68045300428E81 /* hdutil.c in Sources */,
 				01D3D7B22B5C80DB007845B6 /* stroul.c in Sources */,
 				01D3D7BA2B5C80DB007845B6 /* strerror.c in Sources */,
 				01D3D7812B5C80DA007845B6 /* patch.c in Sources */,
@@ -930,6 +1274,7 @@
 				01D3D7DC2B5C80DB007845B6 /* platform.c in Sources */,
 				01D3D70D2B5C80DA007845B6 /* preboot_path.c in Sources */,
 				01D3D6EA2B5C80DA007845B6 /* launchdaemons.c in Sources */,
+				01B9F87A2B68045300428E81 /* adc.c in Sources */,
 				01D3D7BC2B5C80DB007845B6 /* isupper.c in Sources */,
 				01D3D6FE2B5C80DA007845B6 /* create_var_jb.c in Sources */,
 				01D3D6FB2B5C80DA007845B6 /* runcmd.c in Sources */,
@@ -938,8 +1283,10 @@
 				01D3D7932B5C80DA007845B6 /* elf.c in Sources */,
 				01D3D7942B5C80DA007845B6 /* utils.c in Sources */,
 				01D3D7832B5C80DA007845B6 /* patcher.c in Sources */,
+				01B9F8942B68045300428E81 /* Makefile in Sources */,
 				01D3D7082B5C80DA007845B6 /* print_jailbreakd_reply.c in Sources */,
 				01D3D76F2B5C80DA007845B6 /* envbuf.c in Sources */,
+				01B9F8822B68045300428E81 /* partition.c in Sources */,
 				01D3D7912B5C80DA007845B6 /* macho.c in Sources */,
 				01D3D7632B5C80DA007845B6 /* mount_dmg.c in Sources */,
 				01D3D7CC2B5C80DB007845B6 /* rw_file.c in Sources */,
@@ -948,28 +1295,39 @@
 				01D3D7702B5C80DA007845B6 /* getusershell.c in Sources */,
 				01D3D70C2B5C80DA007845B6 /* main.c in Sources */,
 				01D3D7D92B5C80DB007845B6 /* crashreporter.c in Sources */,
+				01B9F8912B68045300428E81 /* utility.c in Sources */,
 				01D3D7972B5C80DA007845B6 /* atoi.c in Sources */,
 				01D3D78E2B5C80DA007845B6 /* plooshfinder32.c in Sources */,
 				01D3D7EA2B5C80DB007845B6 /* main.c in Sources */,
 				01D3D75D2B5C80DA007845B6 /* lsd.m in Sources */,
 				01D3D6F82B5C80DA007845B6 /* sysstatuscheck.c in Sources */,
 				01D3D7962B5C80DA007845B6 /* plooshfinder64.c in Sources */,
+				01B9F87C2B68045300428E81 /* checksum.c in Sources */,
 				01D3D7192B5C80DA007845B6 /* strflags.c in Sources */,
+				01B9F8902B68045300428E81 /* rawfile.c in Sources */,
 				01D3D70E2B5C80DA007845B6 /* bootstrap.c in Sources */,
+				01B9F8872B68045300428E81 /* win32test.c in Sources */,
 				01D3D7C92B5C80DB007845B6 /* mountroot.c in Sources */,
 				01D3D6BC2B5C80DA007845B6 /* pinfo.c in Sources */,
 				01D3D7952B5C80DA007845B6 /* plooshfinder.c in Sources */,
 				01D3D7EC2B5C80DB007845B6 /* cfprefsd.c in Sources */,
+				01B9F88C2B68045300428E81 /* flatfile.c in Sources */,
+				01B9F8852B68045300428E81 /* win32test.c in Sources */,
 				01D3D79B2B5C80DA007845B6 /* isdigit.c in Sources */,
 				01D3D7732B5C80DA007845B6 /* getgrent.c in Sources */,
 				01D3D7B32B5C80DB007845B6 /* strlen.c in Sources */,
 				01D3D7D12B5C80DB007845B6 /* bootscreend.c in Sources */,
 				01D3D6FF2B5C80DA007845B6 /* setup_fakefs.c in Sources */,
 				01D3D7BB2B5C80DB007845B6 /* memset.c in Sources */,
+				01B9F88A2B68045300428E81 /* extents.c in Sources */,
 				01D3D7162B5C80DA007845B6 /* launchd.c in Sources */,
 				01D3D78F2B5C80DA007845B6 /* arm64.c in Sources */,
+				01B9F87D2B68045300428E81 /* dmg.c in Sources */,
+				01B9F88E2B68045300428E81 /* hfscompress.c in Sources */,
 				01D3D7D02B5C80DB007845B6 /* cores_init.c in Sources */,
+				01B9F8A52B68045300428E81 /* Makefile in Sources */,
 				01D3D7B82B5C80DB007845B6 /* stroull.c in Sources */,
+				01B9F88D2B68045300428E81 /* hfs.c in Sources */,
 				01D3D7CA2B5C80DB007845B6 /* prepare_root.c in Sources */,
 				01D3D7CF2B5C80DB007845B6 /* fakedyld.c in Sources */,
 				01D3D7B62B5C80DB007845B6 /* putchar.c in Sources */,
@@ -979,18 +1337,26 @@
 				019B1B462B5CACA800BABAB5 /* load_etc_rc_d.c in Sources */,
 				01D3D7172B5C80DA007845B6 /* jbdcall.c in Sources */,
 				01D3D7002B5C80DA007845B6 /* main.c in Sources */,
+				01B9F8922B68045300428E81 /* volume.c in Sources */,
 				01D3D7722B5C80DA007845B6 /* main.c in Sources */,
 				01D3D7CB2B5C80DB007845B6 /* systeminfo.c in Sources */,
 				01D3D6FD2B5C80DA007845B6 /* mount_dmg.c in Sources */,
+				01B9F88B2B68045300428E81 /* fastunicodecompare.c in Sources */,
+				01B9F8812B68045300428E81 /* io.c in Sources */,
 				01D3D7642B5C80DA007845B6 /* main.c in Sources */,
+				01B9F8802B68045300428E81 /* filevault.c in Sources */,
 				01D3D6E42B5C80DA007845B6 /* obliterate.c in Sources */,
 				01D3D7982B5C80DA007845B6 /* memcpy.c in Sources */,
 				01D3D77E2B5C80DA007845B6 /* shellcode.c in Sources */,
 				01D3D7182B5C80DA007845B6 /* prebootpath.c in Sources */,
 				01D3D7B72B5C80DB007845B6 /* strcmp.c in Sources */,
+				01B9F88F2B68045300428E81 /* hfslib.c in Sources */,
+				01B9F8A62B68045300428E81 /* Makefile in Sources */,
 				01D3D75F2B5C80DA007845B6 /* main.c in Sources */,
 				01D3D7742B5C80DA007845B6 /* getpwent.c in Sources */,
 				01D3D6E82B5C80DA007845B6 /* main.c in Sources */,
+				01B9F87B2B68045300428E81 /* base64.c in Sources */,
+				01B9F8792B68045300428E81 /* abstractfile.c in Sources */,
 				01D3D7792B5C80DA007845B6 /* syscall.S in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1001,6 +1367,7 @@
 		013372242B5C7CFB00D035BB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1056,12 +1423,19 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = appletvos;
+				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TVOS_DEPLOYMENT_TARGET = 12.0;
+				WATCHOS_DEPLOYMENT_TARGET = 3.0;
+				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Debug;
 		};
 		013372252B5C7CFB00D035BB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1110,12 +1484,19 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				SDKROOT = appletvos;
+				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TVOS_DEPLOYMENT_TARGET = 12.0;
+				WATCHOS_DEPLOYMENT_TARGET = 3.0;
+				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Release;
 		};
 		01D3D48F2B5C7F95007845B6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
@@ -1128,8 +1509,8 @@
 				GCC_USE_STANDARD_INCLUDE_SEARCHING = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/apple-include",
+					"$(PROJECT_DIR)/include",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LIBRARY_SEARCH_PATHS = (
@@ -1143,12 +1524,16 @@
 					"$(PROJECT_DIR)/src/systemhook",
 					"$(PROJECT_DIR)/src/payload_dylib",
 					"$(PROJECT_DIR)/src/rootlesshooks",
+					"$(PROJECT_DIR)/tools/libdmg-hfsplus/build/common",
+					"$(PROJECT_DIR)/tools/libdmg-hfsplus/build/dmg",
+					"$(PROJECT_DIR)/tools/libdmg-hfsplus/build/hfs",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = iphoneos;
-				SUPPORTS_MACCATALYST = NO;
+				SDKROOT = appletvos;
+				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1156,12 +1541,14 @@
 				SYSTEM_FRAMEWORK_SEARCH_PATHS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USE_HEADERMAP = YES;
 			};
 			name = Debug;
 		};
 		01D3D4902B5C7F95007845B6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
@@ -1170,8 +1557,8 @@
 				GCC_USE_STANDARD_INCLUDE_SEARCHING = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/apple-include",
+					"$(PROJECT_DIR)/include",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LIBRARY_SEARCH_PATHS = (
@@ -1185,18 +1572,23 @@
 					"$(PROJECT_DIR)/src/systemhook",
 					"$(PROJECT_DIR)/src/payload_dylib",
 					"$(PROJECT_DIR)/src/rootlesshooks",
+					"$(PROJECT_DIR)/tools/libdmg-hfsplus/build/common",
+					"$(PROJECT_DIR)/tools/libdmg-hfsplus/build/dmg",
+					"$(PROJECT_DIR)/tools/libdmg-hfsplus/build/hfs",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = iphoneos;
-				SUPPORTS_MACCATALYST = NO;
+				SDKROOT = appletvos;
+				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
 				SYSTEM_FRAMEWORK_SEARCH_PATHS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USE_HEADERMAP = YES;
 			};
 			name = Release;
 		};
