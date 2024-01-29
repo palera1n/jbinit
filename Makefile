@@ -102,4 +102,7 @@ distclean: clean
 tools:
 	$(MAKE) -C $(ROOT)/tools
 
-.PHONY: all clean apple-include tools
+patch_dyld-test:
+	$(MAKE) -C $(ROOT)/tools patch_dyld-test
+
+.PHONY: all clean apple-include tools patch_dyld-test

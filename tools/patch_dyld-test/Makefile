@@ -1,5 +1,4 @@
 C_SRC = main.c $(shell find $(ROOT)/src/fakedyld/patch_dyld -name '*.c')
-CC = clang
 OBJDIR = obj
 CFLAGS = -Iinclude -I$(ROOT)/include/plooshfinder -I$(ROOT)/include
 CFLAGS += -flto=full
