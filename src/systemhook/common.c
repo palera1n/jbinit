@@ -13,7 +13,8 @@
 #include <systemhook/envbuf.h>
 #include <paleinfo.h>
 
-int posix_spawnattr_getprocesstype_np(const posix_spawnattr_t * __restrict, int * __restrict) __API_AVAILABLE(macos(10.8), ios(6.0));
+__API_AVAILABLE(macos(10.8), ios(6.0))
+int posix_spawnattr_getprocesstype_np(const posix_spawnattr_t * __restrict, int * __restrict);
 
 char *JB_SandboxExtensions = NULL;
 char *JB_RootPath = NULL;
@@ -488,6 +489,12 @@ int spawn_hook_common(pid_t *restrict pid, const char *restrict path,
 	if (envbuf_getenv((const char **)envp, "JB_TWEAKLOADER_PATH")) {
 		JBEnvAlreadyInsertedCount++;
 	}
+    
+    // This must be set to 0 because systemhook might not be of the same platform of the binary that will be ran
+    const char* existingDyldInCacheValue = envbuf_getenv((const char **)envp, "DYLD_IN_CACHE");
+    if (existingDyldInCacheValue && strcmp(existingDyldInCacheValue, "0") == 0) {
+        JBEnvAlreadyInsertedCount++;
+    }
 
 	// Check if we can find at least one reason to not insert jailbreak related environment variables
 	// In this case we also need to remove pre existing environment variables if they are already set
@@ -576,6 +583,7 @@ int spawn_hook_common(pid_t *restrict pid, const char *restrict path,
 			envbuf_setenv(&envc, "JB_ROOT_PATH", JB_RootPath);
 			envbuf_setenv(&envc, "JB_PINFO_FLAGS", JB_PinfoFlags);
 			envbuf_setenv(&envc, "JB_TWEAKLOADER_PATH", JB_TweakLoaderPath);
+            envbuf_setenv(&envc, "DYLD_IN_CACHE", "0");
 		}
 		else {
 			if (systemHookAlreadyInserted && existingLibraryInserts) {
@@ -608,6 +616,8 @@ int spawn_hook_common(pid_t *restrict pid, const char *restrict path,
 			envbuf_unsetenv(&envc, "_MSSafeMode");
 			envbuf_unsetenv(&envc, "JB_SANDBOX_EXTENSIONS");
 			envbuf_unsetenv(&envc, "JB_ROOT_PATH");
+            envbuf_unsetenv(&envc, "JB_PINFO_FLAGS");
+            envbuf_unsetenv(&envc, "DYLD_IN_CACHE");
 		}
 
 		int retval = pspawn_orig(pid, path, file_actions, attrp, argv, envc);

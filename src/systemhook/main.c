@@ -456,6 +456,8 @@ __attribute__((constructor)) static void initializer(void)
 		// Unset DYLD_INSERT_LIBRARIES, but only if systemhook itself is the only thing contained in it
 		unsetenv("DYLD_INSERT_LIBRARIES");
 	}
+    
+    unsetenv("DYLD_IN_CACHE");
 
 	unsandbox();
 	loadExecutablePath();
