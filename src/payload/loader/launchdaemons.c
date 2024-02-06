@@ -42,6 +42,14 @@ int launchdaemons(uint32_t payload_options, uint64_t pflags) {
         CFMutableDictionaryRef dict = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
         if (dict) {
             CFDictionarySetValue(dict, kCFUserNotificationAlertHeaderKey, CFSTR("Entered Safe Mode"));
+            if (pflags & palerain_option_failure)
+                CFDictionarySetValue(dict, kCFUserNotificationAlertMessageKey, CFSTR(
+                    "palera1n entered safe mode due to a failure\n\n"
+                    "palera1n /did not/ cause this problem, rather, it has protected you from it\n\n"
+                    "You can exit safe mode by clicking on exit safe mode in the palera1n app\n\n"
+                    "If this issue persists, then most likely you have a bad tweak installed, and you should uninstall it from your package manager."
+                ));
+                else
             CFDictionarySetValue(dict, kCFUserNotificationAlertMessageKey, CFSTR("palera1n entered safe mode due to a user request"));
 
             CFUserNotificationRef notif = CFUserNotificationCreate(kCFAllocatorDefault, 0, 0, NULL, dict);

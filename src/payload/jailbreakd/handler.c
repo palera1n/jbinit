@@ -11,6 +11,8 @@
 #include <sys/codesign.h>
 #include <sys/mount.h>
 #include <Security/Security.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 #include <Security/SecTask.h>
 #include <errno.h>
 
@@ -23,6 +25,28 @@
 #else
 #define STR_FORMAT "%s"
 #endif
+
+int reboot3(uint64_t howto, ...);
+
+void dumpUserspacePanicLog(const char *message)
+{
+    time_t t = time(NULL);
+    struct tm *tm = localtime(&t);
+    char timestamp[20];
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%d_%H-%M-%S", tm);
+
+    char panicPath[PATH_MAX];
+    snprintf(panicPath, PATH_MAX, "/var/mobile/Library/Logs/CrashReporter/userspace-panic-%s.ips", timestamp);
+
+    FILE * f = fopen(panicPath, "w");
+    if (f) {
+        fprintf(f, "%s", message);
+        fprintf(f, "\n\nThis panic was prevented by palera1n and palera1nd triggered a userspace reboot instead.");
+        fclose(f);
+        chown(panicPath, 0, 250);
+        chmod(panicPath, 0660);
+    }
+}
 
 //typedef struct CF_BRIDGED_TYPE(id) __SecTask *SecTaskRef;
 //SecTaskRef SecTaskCreateWithAuditToken(CFAllocatorRef allocator, audit_token_t token);
@@ -132,6 +156,50 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
                 break;
             }
             overwrite_file(request, xreply, pinfo_p);
+            break;
+        }
+        case JBD_CMD_INTERCEPT_USERSPACE_PANIC: {
+            bool entitled = false;
+            xpc_object_t val = xpc_connection_copy_entitlement_value(peer, "com.apple.private.iowatchdog.user-access");
+            if (val && xpc_get_type(val) == XPC_TYPE_BOOL) {
+                entitled = xpc_bool_get_value(val);
+            }
+            if (val) xpc_release(val);
+            if (!entitled) { // this api is only used by watchdogd
+                xpc_dictionary_set_int64(xreply, "error", EPERM);
+                break;
+            }
+            int ret = 0;
+            xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
+            pinfo_p->flags |= (palerain_option_safemode | palerain_option_failure);
+            ret = set_pinfo(pinfo_p);
+            PALERA1ND_LOG_INFO("set_pinfo retval: %d", ret);
+            xpc_dictionary_set_uint64(xdict, "cmd", LAUNCHD_CMD_SET_PINFO_FLAGS);
+            unmount("/Developer", MNT_FORCE);
+            reboot3(RB2_USERREBOOT);
+            break;
+        }
+        case JBD_CMD_EXIT_SAFE_MODE: {
+            bool entitled = false;
+            xpc_object_t val = xpc_connection_copy_entitlement_value(peer, BOOTSTRAPPER_ENTITLEMENT);
+            if (val && xpc_get_type(val) == XPC_TYPE_BOOL) {
+                entitled = xpc_bool_get_value(val);
+            }
+            if (val) xpc_release(val);
+            if (!entitled) {
+                xpc_dictionary_set_int64(xreply, "error", ENOENTITLEMENT);
+                break;
+            }
+            const char* message = xpc_dictionary_get_string(request, "message");
+            if (message) dumpUserspacePanicLog(message);
+            int ret = 0;
+            xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
+            pinfo_p->flags &= ~(palerain_option_safemode | palerain_option_failure);
+            ret = set_pinfo(pinfo_p);
+            PALERA1ND_LOG_INFO("set_pinfo retval: %d", ret);
+            xpc_dictionary_set_uint64(xdict, "cmd", LAUNCHD_CMD_SET_PINFO_FLAGS);
+            unmount("/Developer", MNT_FORCE);
+            reboot3(RB2_USERREBOOT);
             break;
         }
         default:

@@ -3,6 +3,5 @@
 
 void cfprefsdInit(void);
 void sbInit(void);
-void securitydInit(void);
 
 #endif

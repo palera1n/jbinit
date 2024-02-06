@@ -46,6 +46,7 @@ typedef uint64_t palerain_option_t;
 #define palerain_option_jbinit_log_to_file   (UINT64_C(1) << 50) /* make ramdisk log to file (jbinit2) */
 #define palerain_option_setup_rootful_forced (UINT64_C(1) << 51) /* create fakefs over an existing one (jbinit2) */
 
+#define palerain_option_failure              (UINT64_C(1) << 60) /* something went wrong */
 #define palerain_option_flower_chain         (UINT64_C(1) << 61) /* Flower chain */
 #define palerain_option_test1                (UINT64_C(1) << 62) /* Developer test option 1 */
 #define palerain_option_test2                (UINT64_C(1) << 63) /* Developer test option 2 */

@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		019B1B462B5CACA800BABAB5 /* load_etc_rc_d.c in Sources */ = {isa = PBXBuildFile; fileRef = 019B1B452B5CACA800BABAB5 /* load_etc_rc_d.c */; };
+		01B6169D2B720DC70080AB28 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 01B6169C2B720DC70080AB28 /* Makefile */; };
+		01B616A12B720E870080AB28 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B616A02B720E870080AB28 /* main.c */; };
+		01B616A32B720ED90080AB28 /* securityd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B616A22B720ED90080AB28 /* securityd.c */; };
+		01B616A52B72106F0080AB28 /* watchdogd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B616A42B72106F0080AB28 /* watchdogd.c */; };
 		01B9F8792B68045300428E81 /* abstractfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7BC2B68045300428E81 /* abstractfile.c */; };
 		01B9F87A2B68045300428E81 /* adc.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7BF2B68045300428E81 /* adc.c */; };
 		01B9F87B2B68045300428E81 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C02B68045300428E81 /* base64.c */; };
@@ -74,7 +78,6 @@
 		01D3D7562B5C80DA007845B6 /* APFS.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5ED2B5C80DA007845B6 /* APFS.tbd */; };
 		01D3D7572B5C80DA007845B6 /* IOMobileFramebuffer.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5EE2B5C80DA007845B6 /* IOMobileFramebuffer.tbd */; };
 		01D3D75D2B5C80DA007845B6 /* lsd.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5F62B5C80DA007845B6 /* lsd.m */; };
-		01D3D75E2B5C80DA007845B6 /* securityd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5F82B5C80DA007845B6 /* securityd.c */; };
 		01D3D75F2B5C80DA007845B6 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5F92B5C80DA007845B6 /* main.c */; };
 		01D3D7632B5C80DA007845B6 /* mount_dmg.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6022B5C80DA007845B6 /* mount_dmg.c */; };
 		01D3D7642B5C80DA007845B6 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6032B5C80DA007845B6 /* main.c */; };
@@ -135,7 +138,6 @@
 		01D3D7DF2B5C80DB007845B6 /* pspawn.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6A62B5C80DA007845B6 /* pspawn.c */; };
 		01D3D7E02B5C80DB007845B6 /* xpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6A72B5C80DA007845B6 /* xpc.c */; };
 		01D3D7E82B5C80DB007845B6 /* lsd.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6B12B5C80DA007845B6 /* lsd.m */; };
-		01D3D7E92B5C80DB007845B6 /* securityd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6B22B5C80DA007845B6 /* securityd.c */; };
 		01D3D7EA2B5C80DB007845B6 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6B32B5C80DA007845B6 /* main.c */; };
 		01D3D7EB2B5C80DB007845B6 /* sb.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6B52B5C80DA007845B6 /* sb.m */; };
 		01D3D7EC2B5C80DB007845B6 /* cfprefsd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6B72B5C80DA007845B6 /* cfprefsd.c */; };
@@ -179,6 +181,11 @@
 
 /* Begin PBXFileReference section */
 		019B1B452B5CACA800BABAB5 /* load_etc_rc_d.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load_etc_rc_d.c; sourceTree = "<group>"; };
+		01B6169C2B720DC70080AB28 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		01B6169F2B720E3F0080AB28 /* hooks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hooks.h; sourceTree = "<group>"; };
+		01B616A02B720E870080AB28 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		01B616A22B720ED90080AB28 /* securityd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = securityd.c; sourceTree = "<group>"; };
+		01B616A42B72106F0080AB28 /* watchdogd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = watchdogd.c; sourceTree = "<group>"; };
 		01B9F7BC2B68045300428E81 /* abstractfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = abstractfile.c; sourceTree = "<group>"; };
 		01B9F7BD2B68045300428E81 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		01B9F7BF2B68045300428E81 /* adc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = adc.c; sourceTree = "<group>"; };
@@ -286,7 +293,6 @@
 		01D3D5EE2B5C80DA007845B6 /* IOMobileFramebuffer.tbd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.text-based-dylib-definition"; path = IOMobileFramebuffer.tbd; sourceTree = "<group>"; };
 		01D3D5F52B5C80DA007845B6 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01D3D5F62B5C80DA007845B6 /* lsd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = lsd.m; sourceTree = "<group>"; };
-		01D3D5F82B5C80DA007845B6 /* securityd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = securityd.c; sourceTree = "<group>"; };
 		01D3D5F92B5C80DA007845B6 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		01D3D5FA2B5C80DA007845B6 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		01D3D5FF2B5C80DA007845B6 /* entitlements.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = entitlements.xml; sourceTree = "<group>"; };
@@ -369,7 +375,6 @@
 		01D3D6A72B5C80DA007845B6 /* xpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xpc.c; sourceTree = "<group>"; };
 		01D3D6B02B5C80DA007845B6 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01D3D6B12B5C80DA007845B6 /* lsd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = lsd.m; sourceTree = "<group>"; };
-		01D3D6B22B5C80DA007845B6 /* securityd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = securityd.c; sourceTree = "<group>"; };
 		01D3D6B32B5C80DA007845B6 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		01D3D6B42B5C80DA007845B6 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		01D3D6B52B5C80DA007845B6 /* sb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = sb.m; sourceTree = "<group>"; };
@@ -442,6 +447,25 @@
 				01D3D4932B5C80D9007845B6 /* src */,
 				01D3D48A2B5C7F95007845B6 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		01B6169B2B720D150080AB28 /* universalhooks */ = {
+			isa = PBXGroup;
+			children = (
+				01B6169C2B720DC70080AB28 /* Makefile */,
+				01B616A02B720E870080AB28 /* main.c */,
+				01B616A22B720ED90080AB28 /* securityd.c */,
+				01B616A42B72106F0080AB28 /* watchdogd.c */,
+			);
+			path = universalhooks;
+			sourceTree = "<group>";
+		};
+		01B6169E2B720E0C0080AB28 /* universalhooks */ = {
+			isa = PBXGroup;
+			children = (
+				01B6169F2B720E3F0080AB28 /* hooks.h */,
+			);
+			path = universalhooks;
 			sourceTree = "<group>";
 		};
 		01B9F7BE2B68045300428E81 /* common */ = {
@@ -647,6 +671,7 @@
 		01D3D4932B5C80D9007845B6 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				01B6169B2B720D150080AB28 /* universalhooks */,
 				01D3D4A92B5C80D9007845B6 /* Makefile */,
 				01D3D4AC2B5C80D9007845B6 /* payload */,
 				01D3D51E2B5C80DA007845B6 /* libjailbreak */,
@@ -766,7 +791,6 @@
 			children = (
 				01D3D5F52B5C80DA007845B6 /* Makefile */,
 				01D3D5F62B5C80DA007845B6 /* lsd.m */,
-				01D3D5F82B5C80DA007845B6 /* securityd.c */,
 				01D3D5F92B5C80DA007845B6 /* main.c */,
 				01D3D5FA2B5C80DA007845B6 /* .gitignore */,
 			);
@@ -963,7 +987,6 @@
 			children = (
 				01D3D6B02B5C80DA007845B6 /* Makefile */,
 				01D3D6B12B5C80DA007845B6 /* lsd.m */,
-				01D3D6B22B5C80DA007845B6 /* securityd.c */,
 				01D3D6B32B5C80DA007845B6 /* main.c */,
 				01D3D6B42B5C80DA007845B6 /* .gitignore */,
 				01D3D6B52B5C80DA007845B6 /* sb.m */,
@@ -975,6 +998,7 @@
 		01D3DA212B5C83B7007845B6 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				01B6169E2B720E0C0080AB28 /* universalhooks */,
 				01D3DA222B5C83B7007845B6 /* dyld-interpose.h */,
 				01D3DA232B5C83B7007845B6 /* mount_args.h */,
 				01D3DA242B5C83B7007845B6 /* patches */,
@@ -1243,6 +1267,7 @@
 				01D3D7712B5C80DA007845B6 /* get_libiosexec.c in Sources */,
 				01D3D6E72B5C80DA007845B6 /* bootstrap.c in Sources */,
 				01D3D7CD2B5C80DB007845B6 /* pinfo_check.c in Sources */,
+				01B6169D2B720DC70080AB28 /* Makefile in Sources */,
 				01D3D70B2B5C80DA007845B6 /* obliterate.c in Sources */,
 				01D3D7EB2B5C80DB007845B6 /* sb.m in Sources */,
 				01D3D7CE2B5C80DB007845B6 /* start.c in Sources */,
@@ -1267,7 +1292,6 @@
 				01D3D7922B5C80DA007845B6 /* multi.c in Sources */,
 				01D3D7652B5C80DA007845B6 /* common.c in Sources */,
 				01D3D7DF2B5C80DB007845B6 /* pspawn.c in Sources */,
-				01D3D75E2B5C80DA007845B6 /* securityd.c in Sources */,
 				01D3D7E02B5C80DB007845B6 /* xpc.c in Sources */,
 				01B9F8862B68045300428E81 /* hdutil.c in Sources */,
 				01D3D7B22B5C80DB007845B6 /* stroul.c in Sources */,
@@ -1294,7 +1318,6 @@
 				01D3D7632B5C80DA007845B6 /* mount_dmg.c in Sources */,
 				01D3D7CC2B5C80DB007845B6 /* rw_file.c in Sources */,
 				01D3D7782B5C80DA007845B6 /* start.S in Sources */,
-				01D3D7E92B5C80DB007845B6 /* securityd.c in Sources */,
 				01D3D7702B5C80DA007845B6 /* getusershell.c in Sources */,
 				01D3D70C2B5C80DA007845B6 /* main.c in Sources */,
 				01D3D7D92B5C80DB007845B6 /* crashreporter.c in Sources */,
@@ -1302,8 +1325,10 @@
 				01D3D7972B5C80DA007845B6 /* atoi.c in Sources */,
 				01D3D78E2B5C80DA007845B6 /* plooshfinder32.c in Sources */,
 				01D3D7EA2B5C80DB007845B6 /* main.c in Sources */,
+				01B616A52B72106F0080AB28 /* watchdogd.c in Sources */,
 				01D3D75D2B5C80DA007845B6 /* lsd.m in Sources */,
 				01D3D6F82B5C80DA007845B6 /* sysstatuscheck.c in Sources */,
+				01B616A32B720ED90080AB28 /* securityd.c in Sources */,
 				01D3D7962B5C80DA007845B6 /* plooshfinder64.c in Sources */,
 				01B9F87C2B68045300428E81 /* checksum.c in Sources */,
 				01D3D7192B5C80DA007845B6 /* strflags.c in Sources */,
@@ -1358,6 +1383,7 @@
 				01B9F8A62B68045300428E81 /* Makefile in Sources */,
 				01D3D75F2B5C80DA007845B6 /* main.c in Sources */,
 				01D3D7742B5C80DA007845B6 /* getpwent.c in Sources */,
+				01B616A12B720E870080AB28 /* main.c in Sources */,
 				01D3D6E82B5C80DA007845B6 /* main.c in Sources */,
 				01B9F87B2B68045300428E81 /* base64.c in Sources */,
 				01B9F8792B68045300428E81 /* abstractfile.c in Sources */,

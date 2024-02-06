@@ -48,7 +48,7 @@ else
 SED = sed
 endif
 
-SUBDIRS = fakedyld rootlesshooks payload_dylib payload systemhook rootfulhooks mount_cores ellekit
+SUBDIRS = fakedyld rootlesshooks payload_dylib payload systemhook rootfulhooks universalhooks mount_cores ellekit
 
 export ROOT CC OBJC CFLAGS CC_FOR_BUILD HFSPLUS DMG NEWFS_HFS MAC UNAME SED SHELL LDFLAGS VTOOL STRIP DSYMUTIL LDID AR SUBDIRS
 

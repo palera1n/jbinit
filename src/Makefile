@@ -95,6 +95,7 @@ binpack.dmg: binpack.tar loader.dmg $(patsubst %, %-all, $(SUBDIRS))
 	cp rootlesshooks/rootlesshooks.dylib binpack/usr/lib
 	cp rootfulhooks/rootfulhooks.dylib binpack/usr/lib
 	cp systemhook/systemhook.dylib binpack/usr/lib
+	cp universalhooks/universalhooks.dylib binpack/usr/lib
 	cp loader.dmg binpack
 	cp ellekit/ellekit_build/Build/Products/Release-iphoneos/libellekit.dylib binpack/usr/lib
 	ln -s ../../../usr/lib/libellekit.dylib binpack/Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate

@@ -7,6 +7,7 @@
 #include <sys/reboot.h>
 #include <libjailbreak/libjailbreak.h>
 #include <mach-o/dyld.h>
+#include <dlfcn.h>
 #include <mach-o/loader.h>
 #include <pthread.h>
 #include <errno.h>
@@ -47,7 +48,24 @@ void xpc_handler_hook(uint64_t a1, uint64_t a2, xpc_object_t xdict) {
             }
             break;
         }
-        
+        case LAUNCHD_CMD_SET_PINFO_FLAGS: {
+            xpc_object_t xpc_flags = xpc_dictionary_get_value(xdict, "flags");
+            if (xpc_get_type(xpc_flags) != XPC_TYPE_UINT64) {
+                xpc_dictionary_set_int64(xreply, "error", EINVAL);
+                break;
+            }
+            uint64_t flags = xpc_uint64_get_value(xpc_flags);
+            pflags = flags;
+            void *systemhook_handle = dlopen(HOOK_DYLIB_PATH, RTLD_NOW);
+            if (systemhook_handle) {
+                uint64_t* pJB_PinfoFlags = dlsym(systemhook_handle, "JB_PinfoFlags");
+                if (pJB_PinfoFlags) {
+                    *pJB_PinfoFlags = flags;
+                }
+                dlclose(systemhook_handle);
+            }
+            break;
+        }
         default: {
             xpc_dictionary_set_int64(xreply, "error", EINVAL);
             return;

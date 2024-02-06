@@ -10,6 +10,7 @@ int bootstrap_main(int argc, char* argv[]);
 int reboot_userspace_main(int argc, char* argv[]);
 int reload_main(int argc, char* argv[]);
 int tweakloader_main(int argc, char* argv[]);
+int exitsafe_main(int argc, char* argv[]);
 static int usage(void);
 
 struct subcommand {
@@ -29,12 +30,21 @@ static struct subcommand commands[] = {
     {"revert-install", "\tRemove bootstrap (Rootless)", NULL, "Remove the installed bootstrap. This operation is only supported on rootless.", obliterate_main},
     {"reboot-userspace", "Reboot userspace", NULL, "Unmount /Developer and reboot userspace", reboot_userspace_main},
     {"reload", "\t\tReload launchd jailbreak state", NULL, "Reload launchd's jailbreak state, such as the JB_ROOT_PATH variable", reload_main},
+    {"exitsafe", "\tExit safe mode", NULL, "Exit safe mode", exitsafe_main},
 #ifdef DEV_BUILD
     {"tweakloader", "\tSet TweakLoader path", "<tweakloader path>", "Sets the tweak injection library that will be loaded by systemhook.dylib", tweakloader_main},
     {"overwrite", "\tOverwrite file", "[-m mode] <source> <destination>", "Ask jailbreakd to overwrite a file\n\nThe -m option can be used to specify a file mode if the file is newly created.", overwrite_main},
 #endif
     {NULL, NULL, NULL}
 };
+
+int exitsafe_main(int argc, char* argv[]) {
+    P1CTL_UPCALL_JBD_WITH_ERR_CHECK(xreply, JBD_CMD_EXIT_SAFE_MODE);
+
+    int retval = print_jailbreakd_reply(xreply);
+    xpc_release(xreply);
+    return retval;
+}
 
 #ifdef DEV_BUILD
 int tweakloader_main(int argc, char* argv[]) {

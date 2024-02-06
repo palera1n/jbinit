@@ -15,7 +15,7 @@ int get_pinfo(struct paleinfo* pinfo_p) {
 
     didRead = read(fd, &ramdisk_size, 4);
     if (didRead == -1) return -1;
-    
+
     ret = (int)lseek(fd, (off_t)ramdisk_size, SEEK_SET);
     if (ret == -1) return -1;
 
@@ -39,7 +39,7 @@ int set_pinfo(struct paleinfo* pinfo_p) {
 
     didRead = read(fd, &ramdisk_size, 4);
     if (didRead == -1) return -1;
-    
+
     ret = (int)lseek(fd, (off_t)ramdisk_size, SEEK_SET);
     if (ret == -1) return -1;
 

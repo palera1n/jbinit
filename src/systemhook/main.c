@@ -272,25 +272,16 @@ void* dlopen_hook(const char* path, int mode)
 
 void* dlopen_from_hook(const char* path, int mode, void* addressInCaller)
 {
-	if (path) {
-		// jbdswProcessLibrary(path);
-	}
 	return dlopen_from(path, mode, addressInCaller);
 }
 
 void* dlopen_audited_hook(const char* path, int mode)
 {
-	if (path) {
-		// jbdswProcessLibrary(path);
-	}
 	return dlopen_audited(path, mode);
 }
 
 bool dlopen_preflight_hook(const char* path)
 {
-	if (path) {
-		// jbdswProcessLibrary(path);
-	}
 	return dlopen_preflight(path);
 }
 
@@ -324,63 +315,21 @@ int sandbox_init_with_extensions_hook(const char *profile, uint64_t flags, const
 int ptrace_hook(int request, pid_t pid, caddr_t addr, int data)
 {
 	int retval = ptrace(request, pid, addr, data);
-#if 0
-	/*
-		ptrace works on any process when the parent is unsandboxed,
-		but when the victim process does not have the get-task-allow entitlement,
-		it will fail to set the debug flags, therefore we patch ptrace to manually apply them
-	*/
-	if (retval == 0 && (request == PT_ATTACHEXC || request == PT_ATTACH)) {
-		static int64_t (*__jbdProcSetDebugged)(pid_t pid);
-		static dispatch_once_t onceToken;
-		dispatch_once(&onceToken, ^{
-			void *libjbHandle = dlopen(JB_ROOT_PATH("/basebin/libjailbreak.dylib"), RTLD_NOW);
-			if (libjbHandle) {
-				__jbdProcSetDebugged = dlsym(libjbHandle, "jbdProcSetDebugged");
-			}
-		});
-
-		// we assume that when ptrace has worked, XPC to jailbreakd will also work
-		if (__jbdProcSetDebugged) {
-			__jbdProcSetDebugged(pid);
-			__jbdProcSetDebugged(getpid());
-		}
-	}
-#endif
 	return retval;
 }
 
-#if 0
-void loadForkFix(void)
-{
-	if (swh_is_debugged) {
-		static dispatch_once_t onceToken;
-		dispatch_once (&onceToken, ^{
-			// Once this process has wx_allowed, we need to load forkfix to ensure forking will work
-			// Optimization: If the process cannot fork at all due to sandbox, we don't need to load forkfix
-			if (sandbox_check(getpid(), "process-fork", SANDBOX_CHECK_NO_REPORT, NULL) == 0) {
-				dlopen(JB_ROOT_PATH("/basebin/forkfix.dylib"), RTLD_NOW);
-			}
-		});
-	}
-}
-#endif
-
 pid_t fork_hook(void)
 {
-	// loadForkFix();
 	return fork();
 }
 
 pid_t vfork_hook(void)
 {
-	// loadForkFix();
 	return vfork();
 }
 
 pid_t forkpty_hook(int *amaster, char *name, struct termios *termp, struct winsize *winp)
 {
-	// loadForkFix();
 	return forkpty(amaster, name, termp, winp);
 }
 
@@ -399,7 +348,7 @@ bool shouldEnableTweaks(void)
 	if (getpid() == 1)
 		return false;
 
-	if (access(JB_ROOT_PATH("/basebin/.safe_mode"), F_OK) == 0) {
+	if (access("/cores/.safe_mode", F_OK) == 0) {
 		return false;
 	}
 
@@ -428,16 +377,6 @@ bool shouldEnableTweaks(void)
 
 	return true;
 }
-
-#if 0
-void applyKbdFix(void)
-{
-	// For whatever reason after SpringBoard has restarted, AutoFill and other stuff stops working
-	// The fix is to always also restart the kbd daemon alongside SpringBoard
-	// Seems to be something sandbox related where kbd doesn't have the right extensions until restarted
-	killall("/System/Library/TextInput/kbd", false);
-}
-#endif
 
 #ifdef HAVE_SYSTEMWIDE_IOSEXEC
 bool has_libiosexec = false;
@@ -487,29 +426,35 @@ __attribute__((constructor)) static void initializer(void)
 			}
 		}
 #endif
+        static struct utsname name;
+        static int release = 0;
+        if (!release) {
+            int ret = uname(&name);
+            if (!ret) release = atoi(name.release);
+        }
 		
 		if (pflags & palerain_option_rootless) {
 			if (
 				strcmp(gExecutablePath, "/usr/sbin/cfprefsd") == 0 || 
-				strcmp(gExecutablePath, "/System/Library/CoreServices/SpringBoard.app/SpringBoard") == 0 ||
-				strcmp(gExecutablePath, "/usr/libexec/securityd") == 0
+				strcmp(gExecutablePath, "/System/Library/CoreServices/SpringBoard.app/SpringBoard") == 0
 				) {
 				dlopen_hook("/cores/binpack/usr/lib/rootlesshooks.dylib", RTLD_NOW);
 			}
 		} else {
-			static struct utsname name;
-			static int release = 0;
-			if (!release) {
-				int ret = uname(&name);
-				if (!ret) release = atoi(name.release);
-			}
-        	if (release && atoi(name.release) >= 20) {
-				if (strcmp(gExecutablePath, "/usr/libexec/lsd") == 0 ||
-				strcmp(gExecutablePath, "/usr/libexec/securityd") == 0) {
+        	if (release >= 20) {
+				if (strcmp(gExecutablePath, "/usr/libexec/lsd") == 0) {
 					dlopen_hook("/cores/binpack/usr/lib/rootfulhooks.dylib", RTLD_NOW);
 				}
 			}
 		}
+        if (release >= 20) {
+            if (
+                strcmp(gExecutablePath, "/usr/libexec/securityd") == 0 ||
+                strcmp(gExecutablePath, "/usr/libexec/trustd") == 0 ||
+                strcmp(gExecutablePath, "/usr/libexec/watchdogd") == 0) {
+                dlopen_hook("/cores/binpack/usr/lib/universalhooks.dylib", RTLD_NOW);
+            }
+        }
 	}
 
 	//fprintf(stderr, "shouldEnableTweaks(): %d\n", shouldEnableTweaks());
@@ -585,12 +530,33 @@ int reboot3_hook(uint64_t howto, ...)
 		xpc_release(xreply);
         return EAGAIN;
     }
+    xpc_release(xdict);
 	int error;
 	if ((error = xpc_dictionary_get_int64(xreply, "error"))) {
 		xpc_release(xreply);
 		return error;
 	}
+    xpc_release(xreply);
 	return 0;
+}
+
+int64_t jbdswInterceptUserspacePanic(const char *messageString) {
+    xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_dictionary_set_uint64(xdict, "cmd", JBD_CMD_INTERCEPT_USERSPACE_PANIC);
+    xpc_dictionary_set_string(xdict, "message", messageString);
+    xpc_object_t xreply = jailbreak_send_jailbreakd_message_with_reply_sync(xdict);
+    if (xpc_get_type(xreply) == XPC_TYPE_ERROR) {
+        xpc_release(xreply);
+        return EAGAIN;
+    }
+    xpc_release(xdict);
+    int error;
+    if ((error = xpc_dictionary_get_int64(xreply, "error"))) {
+        xpc_release(xreply);
+        return error;
+    }
+    xpc_release(xreply);
+    return 0;
 }
 
 typedef struct {
