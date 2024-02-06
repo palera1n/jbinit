@@ -38,6 +38,10 @@ void overwrite_file(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo*
         xpc_dictionary_set_int64(xreply, "error", EINVAL);
         return;
     }
+    
+    char path_real[PATH_MAX];
+    realpath(path, path_real);
+    path = path_real;
 
     const char* allowlist[] = {
         "/var/jb/etc/apt/sources.list.d",

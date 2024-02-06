@@ -37,7 +37,13 @@ void _spin(void) {
 }
 
 char* generate_sandbox_extensions(void) {
-  return sandbox_extension_issue_mach("com.apple.security.exception.mach-lookup.global-name", "in.palera.palera1nd.systemwide", 0);
+    static char* extensions = NULL;
+    if (extensions) return extensions;
+    asprintf(&extensions, "%s|%s",
+             sandbox_extension_issue_mach("com.apple.security.exception.mach-lookup.global-name", "in.palera.palera1nd.systemwide", 0),
+             sandbox_extension_issue_mach("com.apple.app-sandbox.mach", "in.palera.palera1nd.systemwide", 0)
+             );
+    return extensions;
 }
 
 void load_bootstrapped_jailbreak_env(void)
