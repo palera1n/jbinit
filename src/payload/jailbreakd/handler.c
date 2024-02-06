@@ -175,6 +175,8 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
             ret = set_pinfo(pinfo_p);
             PALERA1ND_LOG_INFO("set_pinfo retval: %d", ret);
             xpc_dictionary_set_uint64(xdict, "cmd", LAUNCHD_CMD_SET_PINFO_FLAGS);
+            const char* message = xpc_dictionary_get_string(request, "message");
+            if (message) dumpUserspacePanicLog(message);
             unmount("/Developer", MNT_FORCE);
             reboot3(RB2_USERREBOOT);
             break;
@@ -190,8 +192,6 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
                 xpc_dictionary_set_int64(xreply, "error", ENOENTITLEMENT);
                 break;
             }
-            const char* message = xpc_dictionary_get_string(request, "message");
-            if (message) dumpUserspacePanicLog(message);
             int ret = 0;
             xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
             pinfo_p->flags &= ~(palerain_option_safemode | palerain_option_failure);
