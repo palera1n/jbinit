@@ -16,6 +16,7 @@
 #include <Security/SecTask.h>
 #include <errno.h>
 
+#define ENOTDEVELOPMENT 142
 #define ENOENTITLEMENT 144
 #define ENOTPLATFORM 154
 #define RB2_USERREBOOT (0x2000000000000000llu)
@@ -26,6 +27,9 @@
 #define STR_FORMAT "%s"
 #endif
 
+
+uint32_t dyld_get_active_platform(void);
+extern char** environ;
 int reboot3(uint64_t howto, ...);
 
 void dumpUserspacePanicLog(const char *message)
@@ -165,7 +169,11 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
                 entitled = xpc_bool_get_value(val);
             }
             if (val) xpc_release(val);
+#ifdef DEV_BUILD
+            if (!entitled && !xpc_dictionary_get_bool(request, "simulated")) {
+#else
             if (!entitled) { // this api is only used by watchdogd
+#endif
                 xpc_dictionary_set_int64(xreply, "error", EPERM);
                 break;
             }
@@ -173,9 +181,36 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
             xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
             pinfo_p->flags |= (palerain_option_safemode | palerain_option_failure);
             ret = set_pinfo(pinfo_p);
-            PALERA1ND_LOG_INFO("set_pinfo retval: %d", ret);
             xpc_dictionary_set_uint64(xdict, "cmd", LAUNCHD_CMD_SET_PINFO_FLAGS);
+            xpc_dictionary_set_uint64(xdict, "flags", pinfo_p->flags);
+            xpc_object_t lreply;
+            jailbreak_send_launchd_message(xdict, &lreply);
+            char* lreply_desc = xpc_copy_description(lreply);
+            PALERA1ND_LOG_INFO("launchd reply: " STR_FORMAT, lreply_desc);
+            free(lreply_desc);
+            lreply_desc = NULL;
+            xpc_release(lreply);
             const char* message = xpc_dictionary_get_string(request, "message");
+#if 0
+            uint32_t platform = dyld_get_active_platform();
+            if (platform == PLATFORM_IOS) {
+                xpc_object_t msg;
+                load_cmd(&msg, 2, (char*[]){ "unload", "/System/Library/LaunchDaemons/com.apple.SpringBoard.plist", NULL }, environ, (char*[]){ NULL });
+                xpc_release(msg);
+                load_cmd(&msg, 2, (char*[]){ "unload", "/System/Library/LaunchDaemons/com.apple.backboardd.plist", NULL }, environ, (char*[]){ NULL });
+                xpc_release(msg);
+                xpc_dictionary_set_value(xdict, "flags", NULL);
+                xpc_dictionary_set_uint64(xdict, "cmd", LAUNCHD_CMD_DRAW_IMAGE);
+                xpc_dictionary_set_string(xdict, "path", "/cores/binpack/usr/share/RSOD.heic");
+                jailbreak_send_launchd_message(xdict, &lreply);
+                lreply_desc = xpc_copy_description(lreply);
+                PALERA1ND_LOG_INFO("launchd reply: " STR_FORMAT, lreply_desc);
+                free(lreply_desc);
+                lreply_desc = NULL;
+                xpc_release(lreply);
+            }
+#endif
+            xpc_release(xdict);
             if (message) dumpUserspacePanicLog(message);
             unmount("/Developer", MNT_FORCE);
             reboot3(RB2_USERREBOOT);
@@ -196,8 +231,16 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
             xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
             pinfo_p->flags &= ~(palerain_option_safemode | palerain_option_failure);
             ret = set_pinfo(pinfo_p);
-            PALERA1ND_LOG_INFO("set_pinfo retval: %d", ret);
+            xpc_dictionary_set_uint64(xdict, "flags", pinfo_p->flags);
             xpc_dictionary_set_uint64(xdict, "cmd", LAUNCHD_CMD_SET_PINFO_FLAGS);
+            xpc_object_t lreply;
+            jailbreak_send_launchd_message(xdict, &lreply);
+            xpc_release(xdict);
+            char* lreply_desc = xpc_copy_description(lreply);
+            PALERA1ND_LOG_INFO("launchd reply: " STR_FORMAT, lreply_desc);
+            free(lreply_desc);
+            lreply_desc = NULL;
+            xpc_release(lreply);
             unmount("/Developer", MNT_FORCE);
             reboot3(RB2_USERREBOOT);
             break;

@@ -89,6 +89,7 @@ binpack.dmg: binpack.tar loader.dmg $(patsubst %, %-all, $(SUBDIRS))
 	mkdir -p binpack/Library/LaunchDaemons
 	cp -a $(ROOT)/shared/*.plist binpack/Library/LaunchDaemons
 	cp -a $(ROOT)/shared/boot.jp2 binpack/usr/share
+	#cp -a $(ROOT)/shared/RSOD.heic binpack/usr/share
 	cp -a $(ROOT)/shared/copyright binpack/usr/share
 	cp -a $(ROOT)/LICENSE binpack/usr/share/copyright/Licnese-plinit.txt
 	chmod 644 binpack/Library/LaunchDaemons/*.plist

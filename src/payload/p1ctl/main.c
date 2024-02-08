@@ -4,13 +4,17 @@
 #include <stdio.h>
 #include <xpc/private.h>
 
-static int help_cmd(int argc, char* argv[]);
-static int kbase_cmd(int argc, char* argv[]);
-int bootstrap_main(int argc, char* argv[]);
-int reboot_userspace_main(int argc, char* argv[]);
-int reload_main(int argc, char* argv[]);
-int tweakloader_main(int argc, char* argv[]);
-int exitsafe_main(int argc, char* argv[]);
+typedef int p1ctl_cmd_main(int, char*[]);
+
+static p1ctl_cmd_main help_cmd, kbase_cmd;
+p1ctl_cmd_main reboot_userspace_main,
+bootstrap_main,
+reload_main,
+tweakloader_main,
+exitsafe_main,
+rsod_main,
+crash_main;
+
 static int usage(void);
 
 struct subcommand {
@@ -23,7 +27,7 @@ struct subcommand {
 
 static struct subcommand commands[] = {
     {"help", "\t\tPrints usage information", "[subcommand]", NULL, help_cmd},
-    {"palera1n_flags", "\tPrint palera1n flags", "[-s]", "With no options specified, this command prints a hexadecimal representation of the flags.\nOptions:\n\n\t-s\tPrint a string description of all the flags instead", palera1n_flags_main},
+    {"palera1n_flags", "\tPrint palera1n flags", "[-sd]", "With no options specified, this command prints a hexadecimal representation of the flags.\nOptions:\n\n\t-s\tPrint a string description of all the flags instead\n\t-d\tRead flags from disk rather than asking jailbreakd", palera1n_flags_main},
     {"kbase", "\t\tPrint kernel base", NULL, "Get a hexadecimal representation of the kernel base", kbase_cmd},
     {"kslide", "\t\tPrint kernel slide", NULL, "Get a hexadecimal representation of the kernel slide", kbase_cmd},
     {"bootstrap", "\tDeploy bootstrap", "[-s|-S <password>] <bootstrap path>", "The <bootstrap path> argument should be a path to a zstd-compressed tar archive bootstrap matching the current jailbreak type\nOptions:\n\n\t-s\t\tWhen this option is specified, the terminal password will not be set\n\t-S <password>\tThis option allows supplying the terminal password without responding to prompts", bootstrap_main},
@@ -34,19 +38,42 @@ static struct subcommand commands[] = {
 #ifdef DEV_BUILD
     {"tweakloader", "\tSet TweakLoader path", "<tweakloader path>", "Sets the tweak injection library that will be loaded by systemhook.dylib", tweakloader_main},
     {"overwrite", "\tOverwrite file", "[-m mode] <source> <destination>", "Ask jailbreakd to overwrite a file\n\nThe -m option can be used to specify a file mode if the file is newly created.", overwrite_main},
+    {"rsod", "\t\tRSOD", NULL, "RSOD!!!!!", rsod_main},
+    {"crash", "\t\tCrash", NULL, "crash initproc", crash_main},
 #endif
-    {NULL, NULL, NULL}
+    {NULL, NULL, NULL, NULL}
 };
 
-int exitsafe_main(int argc, char* argv[]) {
-    P1CTL_UPCALL_JBD_WITH_ERR_CHECK(xreply, JBD_CMD_EXIT_SAFE_MODE);
-
-    int retval = print_jailbreakd_reply(xreply);
+#ifdef DEV_BUILD
+int crash_main(int argc, char* argv[]) {
+    xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_object_t xreply;
+    xpc_dictionary_set_uint64(xdict, "cmd", LAUNCHD_CMD_CRASH);
+    jailbreak_send_launchd_message(xdict, &xreply);
+    int retval = (int)xpc_dictionary_get_int64(xdict, "error");
+    print_jailbreakd_reply(xreply);
     xpc_release(xreply);
     return retval;
 }
 
-#ifdef DEV_BUILD
+int rsod_main(int argc, char* argv[]) {
+    xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_dictionary_set_uint64(xdict, "cmd", JBD_CMD_INTERCEPT_USERSPACE_PANIC);
+    xpc_dictionary_set_bool(xdict, "simulated", true);
+    xpc_dictionary_set_string(xdict, "message", "p1ctl triggered crash");
+    xpc_object_t xreply = jailbreak_send_jailbreakd_message_with_reply_sync(xdict);
+    if (xpc_get_type(xreply) != XPC_TYPE_ERROR) {
+        print_jailbreakd_reply(xreply);
+    } else {
+        char* desc = xpc_copy_description(xreply);
+        fprintf(stderr, "failed to send jailbreakd message: %s\n", desc);
+        free(desc);
+    }
+    xpc_release(xreply);
+    xpc_release(xdict);
+    return 0;
+}
+
 int tweakloader_main(int argc, char* argv[]) {
     if (argc < 2) {
         fprintf(stderr, "No new tweakloader path specified.\n");
@@ -67,6 +94,14 @@ int tweakloader_main(int argc, char* argv[]) {
     return ret;
 }
 #endif
+
+int exitsafe_main(int argc, char* argv[]) {
+    P1CTL_UPCALL_JBD_WITH_ERR_CHECK(xreply, JBD_CMD_EXIT_SAFE_MODE);
+
+    int retval = print_jailbreakd_reply(xreply);
+    xpc_release(xreply);
+    return retval;
+}
 
 int reload_main(int argc, char* argv[]) {
     xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);

@@ -6,26 +6,39 @@
 
 int palera1n_flags_main(int argc, char* argv[]) {
     int ch;
-    bool stringify = false;
-    while ((ch = getopt(argc, argv, "s")) != -1) {
+    bool stringify = false, disk = false;
+    while ((ch = getopt(argc, argv, "sd")) != -1) {
         switch(ch) {
             case 's':
                 stringify = true;
+                break;
+            case 'd':
+                disk = true;
                 break;
             default:
                 return -1;
         }
     }
+    uint64_t pflags;
+    if (!disk) {
+        P1CTL_UPCALL_JBD_WITH_ERR_CHECK(xreply, JBD_CMD_GET_PINFO_FLAGS);
+        uint64_t error = xpc_dictionary_get_int64(xreply, "error");
+        if (error) {
+            fprintf(stderr, "get pinfo failed: %d (%s)\n", (int)error, xpc_strerror((int)error));
+            return -1;
+        }
 
-    P1CTL_UPCALL_JBD_WITH_ERR_CHECK(xreply, JBD_CMD_GET_PINFO_FLAGS);
-    uint64_t error = xpc_dictionary_get_int64(xreply, "error");
-    if (error) {
-        fprintf(stderr, "get pinfo failed: %d (%s)\n", (int)error, xpc_strerror((int)error));
-        return -1;
+        pflags = xpc_dictionary_get_uint64(xreply, "flags");
+        xpc_release(xreply);
+    } else {
+        struct paleinfo pinfo;
+        int ret = get_pinfo(&pinfo);
+        if (ret) {
+            fprintf(stderr, "get pinfo failed: %d (%s)\n", errno, strerror(errno));
+            return -1;
+        }
+        pflags = pinfo.flags;
     }
-
-    uint64_t pflags = xpc_dictionary_get_uint64(xreply, "flags");
-    xpc_release(xreply);
     if (!stringify) {
         printf("0x%llx\n", pflags);
     } else {

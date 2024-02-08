@@ -27,3 +27,4 @@ src/ellekit/libellekit.dylib
 a.out
 dyld.*
 tools/libdmg-hfsplus/ide/xcode/libdmg-hfsplus.xcodeproj/xcuserdata/
+shared/RSOD.heic

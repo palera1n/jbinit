@@ -64,15 +64,7 @@ int init_display(void) {
     return 0;
 }
 
-#ifdef TESTMAIN
-#define BOOT_IMAGE_PATH boot_image_path
-#undef CFSTR
-#define CFSTR(x) CFStringCreateWithCString(kCFAllocatorDefault, x, kCFStringEncodingUTF8)
-int bootscreend_main(char* boot_image_path) {
-#else
-#define BOOT_IMAGE_PATH "/cores/binpack/usr/share/boot.jp2"
-int bootscreend_main(void) {
-#endif
+int bootscreend_draw_image(const char* image_path) {
     init_display();
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
@@ -86,8 +78,14 @@ int bootscreend_main(void) {
     CGImageRef cgImage = NULL;
     CGContextRef context = NULL;
     int retval = -1;
+    
+    CFStringRef bootImageCfString = CFStringCreateWithCString(kCFAllocatorDefault, image_path, kCFStringEncodingUTF8);
+    if (!bootImageCfString) {
+        fprintf(stderr, "could not create boot image cfstring\n");
+        goto finish;
+    }
 
-    imageURL = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, CFSTR(BOOT_IMAGE_PATH), kCFURLPOSIXPathStyle, false);
+    imageURL = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, bootImageCfString, kCFURLPOSIXPathStyle, false);
     if (!imageURL) {
         fprintf(stderr, "could not create image URL\n");
         goto finish;
@@ -129,6 +127,7 @@ int bootscreend_main(void) {
     fprintf(stderr, "bootscreend: done\n");
 
 finish:
+    if (bootImageCfString) CFRelease(bootImageCfString);
     if (context) CGContextRelease(context);
     if (cgImage) CGImageRelease(cgImage);
     if (cgImageSource) CFRelease(cgImageSource);
@@ -143,8 +142,14 @@ int main(int argc, char* argv[]) {
         fprintf(stderr, "usage: bootscreend <image path>\n");
         return -1;
     }
+    init_display();
     int retval = bootscreend_main(argv[1]);
     sleep(1);
     return retval;
+}
+#else
+#define BOOT_IMAGE_PATH "/cores/binpack/usr/share/boot.jp2"
+int bootscreend_main(void) {
+    return bootscreend_draw_image(BOOT_IMAGE_PATH);
 }
 #endif

@@ -12,11 +12,19 @@
 #include <pthread.h>
 #include <errno.h>
 
+#define ENOTDEVELOPMENT 142
+
 void (*xpc_handler_orig)(uint64_t a1, uint64_t a2, xpc_object_t xdict);
 void xpc_handler_hook(uint64_t a1, uint64_t a2, xpc_object_t xdict) {
     if (!xdict || xpc_get_type(xdict) != XPC_TYPE_DICTIONARY || !xpc_dictionary_get_bool(xdict, "jailbreak")) {
         return xpc_handler_orig(a1, a2, xdict);
     }
+    
+#ifdef DEV_BUILD
+    char* description = xpc_copy_description(xdict);
+    if (description) fprintf(stderr, "received jailbreak-related dictionary: %s\n", description);
+    free(description);
+#endif
 
     audit_token_t token = {};
     xpc_dictionary_get_audit_token(xdict, &token);
@@ -36,6 +44,7 @@ void xpc_handler_hook(uint64_t a1, uint64_t a2, xpc_object_t xdict) {
             }
         }
         case LAUNCHD_CMD_SET_TWEAKLOADER_PATH: {
+#ifdef DEV_BUILD
             const char* path = xpc_dictionary_get_string(xdict, "path");
             if (!path) {
                 xpc_dictionary_set_string(xdict, "errorDescription", "no tweakloader path supplied");
@@ -46,6 +55,9 @@ void xpc_handler_hook(uint64_t a1, uint64_t a2, xpc_object_t xdict) {
             if ((desc = set_tweakloader_path(path))) {
                 xpc_dictionary_set_string(xdict, "errorDescription", desc);
             }
+#else
+            xpc_dictionary_set_int64(xreply, "error", ENOTDEVELOPMENT);
+#endif
             break;
         }
         case LAUNCHD_CMD_SET_PINFO_FLAGS: {
@@ -66,12 +78,35 @@ void xpc_handler_hook(uint64_t a1, uint64_t a2, xpc_object_t xdict) {
             }
             break;
         }
+#if 0
+        case LAUNCHD_CMD_DRAW_IMAGE: {
+            const char* path = xpc_dictionary_get_string(xdict, "path");
+            if (!path) {
+                xpc_dictionary_set_int64(xreply, "error", EINVAL);
+                break;
+            }
+            bootscreend_draw_image(path);
+            break;
+        }
+#endif
+        case LAUNCHD_CMD_CRASH:
+#ifdef DEV_BUILD
+            ((void(*)(void))0x4141414141414141)();
+#else
+            xpc_dictionary_set_int64(xreply, "error", ENOTDEVELOPMENT);
+#endif
+            break;
         default: {
             xpc_dictionary_set_int64(xreply, "error", EINVAL);
             return;
         }
     }
 reply:
+#ifdef DEV_BUILD
+    description = xpc_copy_description(xreply);
+    if (description) fprintf(stderr, "replying to jailbreak related dictionary: %s\n", description);
+    free(description);
+#endif
     xpc_pipe_routine_reply(xreply);
     return;
 

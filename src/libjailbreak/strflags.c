@@ -53,6 +53,8 @@ const char* jailbreak_str_pinfo_flag(uint64_t flag) {
             return "palerain_option_jbinit_log_to_file";
         case palerain_option_setup_rootful_forced:
             return "palerain_option_setup_rootful_forced";
+        case palerain_option_failure:
+            return "palerain_option_failure";
         case palerain_option_flower_chain:
             return "palerain_option_flower_chain";
         case palerain_option_test1:
