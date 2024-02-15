@@ -259,20 +259,23 @@ int execvp_hook(const char *name, char * const *argv)
 	return execvP_hook(name, path, argv);
 }
 
-
-void* dlopen_hook(const char* path, int mode)
-{
-	if (path) {
-		// jbdswProcessLibrary(path);
-	}
-	
-	void* callerAddress = __builtin_return_address(0);
-    return dlopen_from(path, mode, callerAddress);
+const char * libroot_get_jbroot_prefix(void) {
+    if ((pflags & palerain_option_rootful) == 0) return "/var/jb";
+    else return "";
 }
+const char * libroot_get_root_prefix(void) { return ""; }
+const char *libroot_get_boot_uuid(void) { return "00000000-0000-0000-0000-000000000000"; }
+
 
 void* dlopen_from_hook(const char* path, int mode, void* addressInCaller)
 {
-	return dlopen_from(path, mode, addressInCaller);
+    return dlopen_from(path, mode, addressInCaller);
+}
+
+void* dlopen_hook(const char* path, int mode)
+{
+	void* callerAddress = __builtin_return_address(0);
+    return dlopen_from_hook(path, mode, callerAddress);
 }
 
 void* dlopen_audited_hook(const char* path, int mode)
@@ -335,7 +338,6 @@ pid_t forkpty_hook(int *amaster, char *name, struct termios *termp, struct winsi
 
 int daemon_hook(int __nochdir, int __noclose)
 {
-	// loadForkFix();
 	return daemon(__nochdir, __noclose);
 }
 
@@ -388,18 +390,24 @@ __attribute__((constructor)) static void initializer(void)
 	JB_RootPath = strdup(getenv("JB_ROOT_PATH"));
 	JB_PinfoFlags = strdup(getenv("JB_PINFO_FLAGS"));
 	JB_TweakLoaderPath = strdup(getenv("JB_TWEAKLOADER_PATH"));
-
 	pflags = (uint64_t)strtoull(JB_PinfoFlags, NULL, 0);
 
-	if (!strcmp(getenv("DYLD_INSERT_LIBRARIES"), HOOK_DYLIB_PATH)) {
-		// Unset DYLD_INSERT_LIBRARIES, but only if systemhook itself is the only thing contained in it
-		unsetenv("DYLD_INSERT_LIBRARIES");
-	}
+    unsandbox();
+    loadExecutablePath();
+
+    if (getenv("DYLD_INSERT_LIBRARIES") && !strcmp(getenv("DYLD_INSERT_LIBRARIES"), HOOK_DYLIB_PATH)) {
+        // Unset DYLD_INSERT_LIBRARIES, but only if systemhook itself is the only thing contained in it
+        unsetenv("DYLD_INSERT_LIBRARIES");
+    }
+
+
+    if (getenv("DYLD_LIBRARY_PATH") && !strcmp(getenv("DYLD_LIBRARY_PATH"), LIBROOT_DYLIB_DIRECTORY_PATH)) {
+        // Unset DYLD_LIBRARY_PATH, but only if libroot.dylib directory path is the only thing contained in it
+        unsetenv("DYLD_LIBRARY_PATH");
+    }
     
     unsetenv("DYLD_IN_CACHE");
 
-	unsandbox();
-	loadExecutablePath();
 
 #ifdef HAVE_SYSTEMWIDE_IOSEXEC
 	for (int32_t i = 0; i < _dyld_image_count(); i++) {

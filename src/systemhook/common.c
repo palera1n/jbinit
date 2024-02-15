@@ -466,13 +466,22 @@ int spawn_hook_common(pid_t *restrict pid, const char *restrict path,
 			if (!strcmp(existingLibraryInsert, HOOK_DYLIB_PATH)) {
 				systemHookAlreadyInserted = true;
 			}
-			else {
-				// jbdswProcessBinary(existingLibraryInsert);
-			}
 		});
 	}
 
 	int JBEnvAlreadyInsertedCount = (int)systemHookAlreadyInserted;
+
+    const char* existingLibrarySearchPaths = envbuf_getenv((const char **)envp, "DYLD_LIBRARY_PATH");
+    __block bool librootDirectoryPathAlreadySearched = false;
+    if (existingLibrarySearchPaths) {
+        enumeratePathString(existingLibrarySearchPaths, ^(const char *existingSearchPath, bool *stop) {
+            if (!strcmp(existingSearchPath, LIBROOT_DYLIB_DIRECTORY_PATH)) {
+                librootDirectoryPathAlreadySearched = true;
+            }
+        });
+    }
+
+    JBEnvAlreadyInsertedCount += (int)librootDirectoryPathAlreadySearched;
 
 	if (envbuf_getenv((const char **)envp, "JB_SANDBOX_EXTENSIONS")) {
 		JBEnvAlreadyInsertedCount++;
@@ -579,6 +588,16 @@ int spawn_hook_common(pid_t *restrict pid, const char *restrict path,
 				envbuf_setenv(&envc, "DYLD_INSERT_LIBRARIES", newLibraryInsert);
 			}
 
+            if (!librootDirectoryPathAlreadySearched) {
+                char newLibrarySearchPaths[strlen(LIBROOT_DYLIB_DIRECTORY_PATH) + (existingLibrarySearchPaths ? (strlen(existingLibrarySearchPaths) + 1) : 0) + 1];
+                strcpy(newLibrarySearchPaths, LIBROOT_DYLIB_DIRECTORY_PATH);
+                if (existingLibrarySearchPaths) {
+                    strcat(newLibrarySearchPaths, ":");
+                    strcat(newLibrarySearchPaths, existingLibrarySearchPaths);
+                }
+                envbuf_setenv(&envc, "DYLD_LIBRARY_PATH", newLibrarySearchPaths);
+            }
+
 			envbuf_setenv(&envc, "JB_SANDBOX_EXTENSIONS", JB_SandboxExtensions);
 			envbuf_setenv(&envc, "JB_ROOT_PATH", JB_RootPath);
 			envbuf_setenv(&envc, "JB_PINFO_FLAGS", JB_PinfoFlags);
@@ -592,6 +611,7 @@ int spawn_hook_common(pid_t *restrict pid, const char *restrict path,
 				}
 				else {
 					char *newLibraryInsert = malloc(strlen(existingLibraryInserts)+1);
+                    if (!newLibraryInsert) return ENOMEM;
 					newLibraryInsert[0] = '\0';
 
 					__block bool first = true;
@@ -612,6 +632,32 @@ int spawn_hook_common(pid_t *restrict pid, const char *restrict path,
 					free(newLibraryInsert);
 				}
 			}
+            if (librootDirectoryPathAlreadySearched && existingLibrarySearchPaths) {
+                if (!strcmp(existingLibrarySearchPaths, LIBROOT_DYLIB_DIRECTORY_PATH)) {
+                    envbuf_unsetenv(&envc, "DYLD_LIBRARY_PATH");
+                } else {
+                    char* newLibrarySearchPaths = malloc(strlen(existingLibrarySearchPaths)+1);
+                    if (!newLibrarySearchPaths) return ENOMEM;
+                    newLibrarySearchPaths[0] = '\0';
+
+                    __block bool first = true;
+                    enumeratePathString(existingLibraryInserts, ^(const char *existingSearchPath, bool *stop) {
+                        if (strcmp(existingSearchPath, LIBROOT_DYLIB_DIRECTORY_PATH) != 0) {
+                            if (first) {
+                                strcpy(newLibrarySearchPaths, existingSearchPath);
+                                first = false;
+                            }
+                            else {
+                                strcat(newLibrarySearchPaths, ":");
+                                strcat(newLibrarySearchPaths, existingSearchPath);
+                            }
+                        }
+                    });
+                    envbuf_setenv(&envc, "DYLD_LIBRARY_PATH", newLibrarySearchPaths);
+                    free(newLibrarySearchPaths);
+                }
+            }
+
 			envbuf_unsetenv(&envc, "_SafeMode");
 			envbuf_unsetenv(&envc, "_MSSafeMode");
 			envbuf_unsetenv(&envc, "JB_SANDBOX_EXTENSIONS");

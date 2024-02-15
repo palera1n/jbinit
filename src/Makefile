@@ -81,12 +81,13 @@ binpack.dmg: binpack.tar loader.dmg $(patsubst %, %-all, $(SUBDIRS))
 	touch binpack/.installed_overlay
 	tar -C binpack --preserve-permissions -xf binpack.tar
 	rm -rf binpack/usr/share cores
-	ln -sf /cores/payload binpack/usr/sbin/p1ctl
-	ln -sf /cores/payload binpack/usr/sbin/palera1nd
 	mkdir -p binpack/Applications
-	mkdir -p binpack/usr/lib binpack/usr/share
+	mkdir -p binpack/usr/lib binpack/usr/share binpack/usr/lib/libroot
 	mkdir -p binpack/Library/Frameworks/CydiaSubstrate.framework
 	mkdir -p binpack/Library/LaunchDaemons
+	ln -sf ../../../payload binpack/usr/sbin/p1ctl
+	ln -sf ../../../payload binpack/usr/sbin/palera1nd
+	ln -sf ../systemhook.dylib binpack/usr/lib/libroot/libroot.dylib
 	cp -a $(ROOT)/shared/*.plist binpack/Library/LaunchDaemons
 	cp -a $(ROOT)/shared/boot.jp2 binpack/usr/share
 	#cp -a $(ROOT)/shared/RSOD.heic binpack/usr/share

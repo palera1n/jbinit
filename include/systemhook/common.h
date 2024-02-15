@@ -5,7 +5,9 @@
 #include <paleinfo.h>
 
 #define HOOK_DYLIB_PATH "/cores/binpack/usr/lib/systemhook.dylib"
-#define JB_ENV_COUNT 6
+#define LIBROOT_DYLIB_DIRECTORY_PATH "/cores/binpack/usr/lib/libroot"
+
+#define JB_ENV_COUNT 7
 extern char *JB_SandboxExtensions;
 extern char *JB_RootPath;
 extern char *JB_PinfoFlags;
