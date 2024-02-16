@@ -195,18 +195,18 @@ void InitXPCHooks(void) {
     }
 
     uint32_t matches[] = {
-        0x00000008, // mov w8, #0x1 (orr w8, wzr, #1 / movz w8, #0x1)
-        0x39000000, // strb *
-        0x90000000, // adrp *
-        0x39000000, // strb *
-        0x10000001  // adr x1, *
+        0x12000028, // mov w8, #0x1 (orr w8, wzr, #1 / movz w8, #0x1)
+        0x39000200, // strb w8, [x{16-31}, did_enter_server_layer@PAGEOFF]
+        0x90000010, // adrp x{16-31}, did_enter_server_layer@PAGE
+        0x3900021f, // strb wzr, [x{16-31}, reply_include_req_info@PAGEOFF]
+        0x10000001  // adr x1, "mig-request"
     };
 
     uint32_t masks[] = {
-        0x001f7c1f,
-        0xffc00000,
-        0x9f000000,
-        0xffc00000,
+        0x121f7c3f,
+        0xffc00200,
+        0x9f000010,
+        0xffc0021f,
         0x9f00001f
     };
 
