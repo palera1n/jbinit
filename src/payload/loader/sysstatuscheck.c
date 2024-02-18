@@ -10,6 +10,7 @@
 #include <mount_args.h>
 #include <alloca.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include <sys/kern_memorystatus.h>
 
 #define SB_PREF_PLIST_PATH "/var/mobile/Library/Preferences/com.apple.springboard.plist"
 #define CF_STRING_GET_CSTRING_PTR(cfStr, cPtr) do { \
@@ -133,6 +134,13 @@ int remove_jailbreak_files(uint64_t pflags) {
 int fixup_databases(void);
 int sysstatuscheck(uint32_t payload_options, uint64_t pflags) {
     printf("plooshInit sysstatuscheck...\n");
+    int retval;
+    memorystatus_memlimit_properties2_t mmprops;
+    retval = memorystatus_control(MEMORYSTATUS_CMD_GET_MEMLIMIT_PROPERTIES, 1, 0, &mmprops, sizeof(mmprops));
+    if (!retval) {
+        printf("memory limit for launchd: %d MiB\n", mmprops.v1.memlimit_active);
+    }
+
     remount();
     enable_non_default_system_apps();
     if (access("/private/var/dropbear_rsa_host_key", F_OK) != 0) {

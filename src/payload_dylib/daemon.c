@@ -167,7 +167,16 @@ bool hook_xpc_dictionary_get_bool(xpc_object_t dictionary, const char *key) {
   else return xpc_dictionary_get_bool_orig(dictionary, key);
 }
 
+bool (*memorystatus_control_orig)(uint32_t command, int32_t pid, uint32_t flags, void *buffer, size_t buffersize);
+bool hook_memorystatus_control(uint32_t command, int32_t pid, uint32_t flags, void *buffer, size_t buffersize) {
+  if (command == MEMORYSTATUS_CMD_SET_JETSAM_TASK_LIMIT && pid == 1) {
+    flags = 32768;
+  }
+  return memorystatus_control_orig(command, pid, flags, buffer, buffersize);
+}
+
 void InitDaemonHooks(void) {
   MSHookFunction_p(&xpc_dictionary_get_value, (void *)hook_xpc_dictionary_get_value, (void **)&xpc_dictionary_get_value_orig);
   MSHookFunction_p(&xpc_dictionary_get_bool, (void *)hook_xpc_dictionary_get_bool, (void **)&xpc_dictionary_get_bool_orig);
+  MSHookFunction_p(&memorystatus_control, (void*)hook_memorystatus_control, (void**)&memorystatus_control_orig);
 }

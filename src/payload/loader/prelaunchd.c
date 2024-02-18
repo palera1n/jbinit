@@ -31,8 +31,6 @@ int prelaunchd(uint32_t payload_options, struct paleinfo* pinfo_p) {
         CHECK_ERROR(mount_dmg("/cores/binpack/loader.dmg", "hfs", "/cores/binpack/Applications", MNT_RDONLY, 0), 1, "mount loader failed");
     }
 
-    CHECK_ERROR(memorystatus_control(MEMORYSTATUS_CMD_SET_JETSAM_TASK_LIMIT, 1, 4096, NULL, 0), 1, "failed to set launchd memory limit");
-
     char dev_rootdev[32];
     snprintf(dev_rootdev, 32, "/dev/%s", pinfo_p->rootdev);
     if ((pinfo_p->flags & palerain_option_rootful) && ((pinfo_p->flags & palerain_option_force_revert))) {
