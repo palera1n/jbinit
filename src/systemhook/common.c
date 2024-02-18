@@ -375,31 +375,38 @@ typedef enum
 
 kBinaryConfig configForBinary(const char* path, char *const argv[restrict])
 {
-	// Don't do anything for palera1nd because this wanting to launch implies it's not running currently
-	if (stringEndsWith(path, "/palera1nd")) {
-		return (kBinaryConfigDontInject | kBinaryConfigDontProcess);
-	}
+	// we can't use __builtin_available in systemhook because we are hooking it
+	DyldBuildVersion ios16_build_version;
+	ios16_build_version.version = CONSTRUCT_V(16, 0, 0);
+	ios16_build_version.platform = PLATFORM_IOS;
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
 
 	if (!strcmp(path, "/usr/libexec/xpcproxy")) {
-		if (argv) {
-			if (argv[0]) {
-				if (argv[1]) {
-					if (!strcmp(argv[1], "in.palera.palera1nd.systemwide")) {
-						// Don't do anything for xpcproxy if it's called on palera1nd because this also implies jbd is not running currently
+		if (argv && argv[0] && argv[1]) {
+			if (!strcmp(argv[1], "com.apple.ReportCrash")) {
+				// Skip ReportCrash too as it might need to execute while jailbreakd is in a crashed state
+				return (kBinaryConfigDontInject | kBinaryConfigDontProcess);
+			} else if (!strcmp(argv[1], "com.apple.ReportMemoryException")) {
+				// Skip ReportMemoryException too as it might need to execute while jailbreakd is in a crashed state
+				return (kBinaryConfigDontInject | kBinaryConfigDontProcess);
+			} else if (!strcmp(argv[1], "com.apple.logd")   ||
+							 !strcmp(argv[1], "com.apple.notifyd") ||
+							 !strcmp(argv[1], "com.apple.mobile.usermanagerd")) {
+				// These seem to be problematic on iOS 16+ (dyld gets stuck in a weird way)
+				if (_availability_version_check && _availability_version_check_hook(1, &ios16_build_version)) {
+					return (kBinaryConfigDontInject | kBinaryConfigDontProcess);
+				}
+			} else if (stringStartsWith(argv[1], "com.apple.WebKit.WebContent")) {
+				// The most sandboxed process on the system, we can't support it on iOS 16+ for now
+				if (_availability_version_check && _availability_version_check_hook(1, &ios16_build_version)) {
 						return (kBinaryConfigDontInject | kBinaryConfigDontProcess);
-					}
-					else if (!strcmp(argv[1], "com.apple.ReportCrash")) {
-						// Skip ReportCrash too as it might need to execute while palera1nd is in a crashed state
-						return (kBinaryConfigDontInject | kBinaryConfigDontProcess);
-					}
-					else if (!strcmp(argv[1], "com.apple.ReportMemoryException")) {
-						// Skip ReportMemoryException too as it might need to execute while palera1nd is in a crashed state
-						return (kBinaryConfigDontInject | kBinaryConfigDontProcess);
-					}
 				}
 			}
 		}
 	}
+#pragma clang diagnostic pop
 
 	// Blacklist to ensure general system stability
 	// I don't like this but for some processes it seems neccessary
@@ -407,6 +414,7 @@ kBinaryConfig configForBinary(const char* path, char *const argv[restrict])
 		"/System/Library/Frameworks/GSS.framework/Helpers/GSSCred",
 		"/System/Library/PrivateFrameworks/IDSBlastDoorSupport.framework/XPCServices/IDSBlastDoorService.xpc/IDSBlastDoorService",
 		"/System/Library/PrivateFrameworks/MessagesBlastDoorSupport.framework/XPCServices/MessagesBlastDoorService.xpc/MessagesBlastDoorService",
+		"/System/Library/PrivateFrameworks/DataAccess.framework/Support/dataaccessd",
 		"/usr/sbin/wifid"
 	};
 	size_t blacklistCount = sizeof(processBlacklist) / sizeof(processBlacklist[0]);

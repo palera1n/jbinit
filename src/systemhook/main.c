@@ -567,18 +567,7 @@ int64_t jbdswInterceptUserspacePanic(const char *messageString) {
     return 0;
 }
 
-typedef struct {
-    uint32_t platform;
-    uint32_t version;
-} DyldBuildVersion;
-
-__API_AVAILABLE(macos(10.14), ios(12.0), tvos(12.0), bridgeos(3.0))
-uint32_t dyld_get_active_platform(void);
-
 #define CONSTRUCT_V(major, minor, subminor) ((major & 0xffff) << 16) | ((minor & 0xff) << 8) | (subminor & 0xff)
-
-__API_AVAILABLE(macos(10.15), ios(13.0), tvos(13.0), bridgeos(4.0))
-bool _availability_version_check(uint32_t count, DyldBuildVersion versions[]);
 
 // this hook is used to make __builtin_available work normally in platform mismatched binaries
 __API_AVAILABLE(macos(10.15), ios(13.0), tvos(13.0), bridgeos(4.0))
