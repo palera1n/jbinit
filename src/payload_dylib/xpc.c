@@ -40,8 +40,11 @@ void xpc_handler_hook(uint64_t a1, uint64_t a2, xpc_object_t xdict) {
         case LAUNCHD_CMD_RELOAD_JB_ENV: {
             if ((pflags & palerain_option_rootful) == 0) {
                 load_bootstrapped_jailbreak_env();
-                break;
+            } else {
+                xpc_dictionary_set_string(xdict, "errorDescription", "Operation only supported on rootless");
+                xpc_dictionary_set_int64(xreply, "error", ENOTSUP);
             }
+            break;
         }
         case LAUNCHD_CMD_SET_TWEAKLOADER_PATH: {
 #ifdef DEV_BUILD
