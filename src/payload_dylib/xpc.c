@@ -111,6 +111,7 @@ reply:
     free(description);
 #endif
     xpc_pipe_routine_reply(xreply);
+    xpc_release(xreply);
     return;
 
 }
