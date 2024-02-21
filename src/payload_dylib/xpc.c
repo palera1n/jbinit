@@ -101,7 +101,7 @@ void xpc_handler_hook(uint64_t a1, uint64_t a2, xpc_object_t xdict) {
             break;
         default: {
             xpc_dictionary_set_int64(xreply, "error", EINVAL);
-            return;
+            break;
         }
     }
 reply:
@@ -111,6 +111,7 @@ reply:
     free(description);
 #endif
     xpc_pipe_routine_reply(xreply);
+    if (isJailbreakD) xpc_release(isJailbreakD);
     xpc_release(xreply);
     return;
 
