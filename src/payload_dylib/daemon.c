@@ -9,6 +9,9 @@
 #include <libgen.h>
 #include <sys/types.h>
 
+static xpc_object_t sysstatuscheck_task;
+static int platform = 0;
+
 #define PAYLOAD_PLIST "/cores/binpack/Library/LaunchDaemons/payload.plist"
 #define fakePath(x) ({ \
   char basePath[PATH_MAX]; \
@@ -51,15 +54,7 @@ void append_daemon_from_plist(xpc_object_t daemonsDict, const char* path) {
 xpc_object_t (*xpc_dictionary_get_value_orig)(xpc_object_t xdict, const char *key);
 xpc_object_t hook_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
   xpc_object_t retval = xpc_dictionary_get_value_orig(dict,key);
-  if (getpid() != 1) return retval;
   if (!retval) return retval;
-  static int platform = 0;
-  if (!platform) {
-    platform = get_platform();
-#define fd_console STDOUT_FILENO
-    if (platform == -1) spin();
-#undef fd_console
-  }
 
   if (strcmp(key,"LaunchDaemons") == 0 && xpc_get_type(retval) == XPC_TYPE_DICTIONARY) {
     append_daemon_from_plist(retval, PAYLOAD_PLIST);
@@ -76,19 +71,7 @@ xpc_object_t hook_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
       xpc_array_set_string(payloadArgs, XPC_ARRAY_APPEND, "-u");
     }
   } else if (strcmp(key, "sysstatuscheck") == 0 && xpc_get_type(retval) == XPC_TYPE_DICTIONARY) {
-    xpc_object_t programArguments = xpc_array_create(NULL, 0);
-    xpc_array_set_string(programArguments, XPC_ARRAY_APPEND, "/cores/payload");
-    if(getenv("XPC_USERSPACE_REBOOTED") != NULL) {
-      xpc_array_set_string(programArguments, XPC_ARRAY_APPEND, "-u");
-    }
-    xpc_array_set_string(programArguments, XPC_ARRAY_APPEND, "-s");
-    xpc_object_t newTask = xpc_dictionary_create(NULL, NULL, 0);
-    xpc_dictionary_set_bool(newTask, "PerformAfterUserspaceReboot", true);
-    xpc_dictionary_set_bool(newTask, "RebootOnSuccess", true);
-    xpc_dictionary_set_string(newTask, "Program", "/cores/payload");
-    xpc_dictionary_set_value(newTask, "ProgramArguments", programArguments);
-    xpc_release(programArguments);
-    return newTask;
+    return sysstatuscheck_task;
   } else if (strcmp(key, "Paths") == 0 && xpc_get_type(retval) == XPC_TYPE_ARRAY) {
     if ((pflags & palerain_option_safemode) == 0) {
       if (pflags & palerain_option_rootful) {
@@ -127,6 +110,23 @@ bool hook_memorystatus_control(uint32_t command, int32_t pid, uint32_t flags, vo
 }
 
 void InitDaemonHooks(void) {
+  sysstatuscheck_task = xpc_dictionary_create(NULL, NULL, 0);
+  xpc_object_t programArguments = xpc_array_create(NULL, 0);
+  xpc_array_set_string(programArguments, XPC_ARRAY_APPEND, "/cores/payload");
+  if(getenv("XPC_USERSPACE_REBOOTED") != NULL) {
+    xpc_array_set_string(programArguments, XPC_ARRAY_APPEND, "-u");
+  }
+  xpc_dictionary_set_bool(sysstatuscheck_task, "PerformAfterUserspaceReboot", true);
+  xpc_dictionary_set_bool(sysstatuscheck_task, "RebootOnSuccess", true);
+  xpc_dictionary_set_string(sysstatuscheck_task, "Program", "/cores/payload");
+  xpc_dictionary_set_value(sysstatuscheck_task, "ProgramArguments", programArguments);
+  xpc_release(programArguments);
+
+  platform = get_platform();
+#define fd_console STDOUT_FILENO
+  if (platform == -1) spin();
+#undef fd_console
+
   MSHookFunction_p(&xpc_dictionary_get_value, (void *)hook_xpc_dictionary_get_value, (void **)&xpc_dictionary_get_value_orig);
   MSHookFunction_p(&xpc_dictionary_get_bool, (void *)hook_xpc_dictionary_get_bool, (void **)&xpc_dictionary_get_bool_orig);
   MSHookFunction_p(&memorystatus_control, (void*)hook_memorystatus_control, (void**)&memorystatus_control_orig);

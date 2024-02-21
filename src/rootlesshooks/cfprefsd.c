@@ -10,7 +10,18 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <errno.h>
 
-void NSLog(CFStringRef format, ...);
+enum {	// Legal level values for CFLog()
+    kCFLogLevelEmergency = 0,
+    kCFLogLevelAlert = 1,
+    kCFLogLevelCritical = 2,
+    kCFLogLevelError = 3,
+    kCFLogLevelWarning = 4,
+    kCFLogLevelNotice = 5,
+    kCFLogLevelInfo = 6,
+    kCFLogLevelDebug = 7,
+};
+
+CF_EXPORT void CFLog(int32_t level, CFStringRef format, ...);
 
 bool preferencePlistNeedsRedirection(char* plistPath) {
 	if (
@@ -21,7 +32,7 @@ bool preferencePlistNeedsRedirection(char* plistPath) {
 	char plistName[MAXPATHLEN];
 	char* ptr = basename_r(plistPath, plistName);
 	if (ptr == NULL) {
-		NSLog(CFSTR("cfprefsd_hook: basename_r failed: %d (%s)"), errno, strerror(errno));
+		CFLog(kCFLogLevelAlert, CFSTR("cfprefsd_hook: basename_r failed: %d (%s)"), errno, strerror(errno));
 		abort();
 	}
 	if (
@@ -69,7 +80,7 @@ bool new_CFPrefsGetPathForTriplet(CFStringRef bundleIdentifier, CFStringRef user
 	if (orig && buffer) {
 		bool needsRedirection = preferencePlistNeedsRedirection(buffer);
 		if (needsRedirection) {
-			NSLog(CFSTR("cfprefsd_hook: Plist redirected to /var/jb: %s"), buffer);
+			CFLog(kCFLogLevelInfo, CFSTR("cfprefsd_hook: Plist redirected to /var/jb: %s"), buffer);
 			char newPath[MAXPATHLEN];
 			snprintf(newPath, MAXPATHLEN, "/var/jb/%s", buffer);
 			snprintf(buffer, MAXPATHLEN, "%s", newPath);

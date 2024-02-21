@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <unistd.h>
 #include <sys/stat.h>
 
 /* copied from plooshfinder */
@@ -61,6 +62,7 @@ int get_platform(void) {
     uint32_t platform = macho_get_platform(dyld_buf);
     if (!platform) return -1;
     munmap(dyld_buf, st.st_size);
+    close(fd_dyld);
     cached_platform = (int)platform;
     return (int)platform;
 }
