@@ -113,6 +113,7 @@ void InitDaemonHooks(void) {
   sysstatuscheck_task = xpc_dictionary_create(NULL, NULL, 0);
   xpc_object_t programArguments = xpc_array_create(NULL, 0);
   xpc_array_set_string(programArguments, XPC_ARRAY_APPEND, "/cores/payload");
+  xpc_array_set_string(programArguments, XPC_ARRAY_APPEND, "-s");
   if(getenv("XPC_USERSPACE_REBOOTED") != NULL) {
     xpc_array_set_string(programArguments, XPC_ARRAY_APPEND, "-u");
   }

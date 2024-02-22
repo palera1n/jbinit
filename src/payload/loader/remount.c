@@ -41,6 +41,7 @@ int remount(void) {
         return -1;
     }
     if (
+        access("/.installed_palera1n", F_OK) == 0 ||
         access("/.mount_rw", F_OK) == 0 ||
         access("/.procursus_strapped", F_OK) == 0
     )

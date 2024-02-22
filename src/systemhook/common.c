@@ -443,10 +443,10 @@ int spawn_hook_common(pid_t *restrict pid, const char *restrict path,
 	char realPath[PATH_MAX];
 	realpath(path, realPath);
 	if (
-		!strcmp(realPath, "/etc/rc.d/libhooker") ||
-		!strcmp(realPath, "/etc/rc.d/substitute-launcher") ||
+		!strcmp(realPath, "/private/etc/rc.d/libhooker") ||
+		!strcmp(realPath, "/private/etc/rc.d/substitute-launcher") ||
 		!strcmp(realPath, "/usr/libexec/ellekit/loader") ||
-		!strcmp(realPath, "/etc/rc.d/ellekit-loader") ||
+		!strcmp(realPath, "/private/etc/rc.d/ellekit-loader") ||
 		!strcmp(realPath, JB_ROOT_PATH("/usr/libexec/ellekit/loader")) ||
 		!strcmp(realPath, JB_ROOT_PATH("/etc/rc.d/ellekit-loader")) ||
 		!strcmp(realPath, JB_ROOT_PATH("/etc/rc.d/libhooker"))
