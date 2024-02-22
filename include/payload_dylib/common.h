@@ -10,9 +10,12 @@
 
 #define spin() _spin()
 
+#define likely(x)      __builtin_expect(!!(x), 1)
+#define unlikely(x)    __builtin_expect(!!(x), 0)
+
 #define CHECK_ERROR(action, msg) do { \
  ret = action; \
- if (ret) { \
+ if (unlikely(ret)) { \
   dprintf(fd_console, msg ": %d (%s)\n", errno, strerror(errno)); \
   spin(); \
  } \

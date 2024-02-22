@@ -25,6 +25,9 @@ uint64_t lz4dec(const void *src, void *dst, uint64_t srcsz, uint64_t dstsz);
 #define MAX_KVERSION_LEN  256
 #define MAX_OSRELEASE_LEN 16
 
+#define likely(x)      __builtin_expect(!!(x), 1)
+#define unlikely(x)    __builtin_expect(!!(x), 0)
+
 struct systeminfo {
     char bootargs[MAX_BOOTARGS_LEN];
     char kversion[MAX_KVERSION_LEN];
@@ -48,7 +51,7 @@ static inline int p1_log(const char* format, ...) {
 #define LOG(...) p1_log(__VA_ARGS__)
 #define CHECK_ERROR(action, msg, ...) do { \
  int check_error_ret = action; \
- if (check_error_ret) { \
+ if (unlikely(check_error_ret)) { \
   LOG(msg ": %d", ##__VA_ARGS__, errno); \
   spin(); \
  } \

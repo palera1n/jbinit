@@ -454,9 +454,10 @@ int spawn_hook_common(pid_t *restrict pid, const char *restrict path,
 	blacklistedPaths[5] = JB_ROOT_PATH("/etc/rc.d/ellekit-loader");
 	blacklistedPaths[6] = JB_ROOT_PATH("/etc/rc.d/libhooker");
 
+	char exec_realPath[PATH_MAX];
+	realpath(path, exec_realPath);
 	for (uint32_t i = 0; blacklistedPaths[i] != NULL; i++) {
-		char exec_realPath[PATH_MAX], blacklisted_realPath[PATH_MAX];
-		realpath(path, exec_realPath);
+		char blacklisted_realPath[PATH_MAX];
 		realpath(blacklistedPaths[i], blacklisted_realPath);
 		if (!strcmp(blacklisted_realPath, exec_realPath)) {
 			if (access(path, X_OK) == 0) {

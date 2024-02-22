@@ -35,11 +35,11 @@
     return; \
     } while (0)
 
-#define BOOTSTRAP_ASSURE(cond, code, desc, ...) do { if (!(cond)) BOOTSTRAP_ERROR(code, desc, ##__VA_ARGS__); } while(0)
+#define BOOTSTRAP_ASSURE(cond, code, desc, ...) do { if (unlikely(!(cond))) BOOTSTRAP_ERROR(code, desc, ##__VA_ARGS__); } while(0)
 
-#define BOOTSTRAP_ASSURE_CLEANUP(cond, cleanup, code, desc, ...) do { if (!(cond)) { cleanup; BOOTSTRAP_ERROR(code, desc, ##__VA_ARGS__); } } while(0)
+#define BOOTSTRAP_ASSURE_CLEANUP(cond, cleanup, code, desc, ...) do { if (unlikely(!(cond))) { cleanup; BOOTSTRAP_ERROR(code, desc, ##__VA_ARGS__); } } while(0)
 
-#define BOOTSTRAP_ASSURE_F_CLEANUP(cond, cleanup, code, desc, ...) BOOTSTRAP_ASSURE_CLEANUP(!(cond), cleanup, code, desc, ##__VA_ARGS__)
+#define BOOTSTRAP_ASSURE_F_CLEANUP(cond, cleanup, code, desc, ...) BOOTSTRAP_ASSURE_CLEANUP(likely(!(cond)), cleanup, code, desc, ##__VA_ARGS__)
 
 extern char** environ;
 

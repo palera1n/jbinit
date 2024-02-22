@@ -14,9 +14,12 @@
 void NSLog(CFStringRef, ...);
 #endif
 
+#define likely(x)      __builtin_expect(!!(x), 1)
+#define unlikely(x)    __builtin_expect(!!(x), 0)
+
 #define CHECK_ERROR(action, loop, msg, ...) do { \
  {int ___CHECK_ERROR_ret = (action); \
- if (___CHECK_ERROR_ret) { \
+ if (unlikely(___CHECK_ERROR_ret)) { \
   fprintf(stderr, msg ": %d (%s)\n", ##__VA_ARGS__, errno, strerror(errno)); \
   if (loop) spin(); \
  }} \
@@ -24,7 +27,7 @@ void NSLog(CFStringRef, ...);
 
 #define P1CTL_UPCALL_JBD_WITH_ERR_CHECK(varname, cmd) \
     xpc_object_t varname = jailbreak_send_jailbreakd_command_with_reply_sync(cmd); \
-    if (xpc_get_type(varname) == XPC_TYPE_ERROR) { \
+    if (unlikely(xpc_get_type(varname) == XPC_TYPE_ERROR)) { \
         char* desc = xpc_copy_description(varname); \
         fprintf(stderr, "jailbreakd upcall failed: %s\n", desc); \
         fprintf(stderr, "%s\n", desc); \

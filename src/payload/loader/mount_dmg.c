@@ -79,7 +79,7 @@ int mount_dmg_internal(const char *device, const char *fstype, const char *mnt, 
   uint32_t val;
   size_t val_size = sizeof(val);
   kern_return_t stru_ret = IOConnectCallStructMethod(connect, 0, &hdi_stru, sizeof(hdi_stru), &val, &val_size);
-  if (stru_ret != 0)
+  if (unlikely(stru_ret != 0))
   {
     fprintf(stderr, "IOConnectCallStructMethod(connect, 0, &hdi_stru, sizeof(hdi_stru), &val, &val_size) returned %x %s\n", stru_ret, mach_error_string(stru_ret));
     return 1;
@@ -90,14 +90,14 @@ int mount_dmg_internal(const char *device, const char *fstype, const char *mnt, 
   CFMutableDictionaryRef matching = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
   CFDictionarySetValue(matching, CFSTR("IOPropertyMatch"), pmatch);
   hdix_service = IOServiceGetMatchingService(kIOMasterPortDefault, matching);
-  if (hdix_service == 0)
+  if (unlikely(hdix_service == 0))
   {
     fprintf(stderr, "successfully attached, but didn't find top entry in IO registry\n");
     return 1;
   }
   io_iterator_t iter;
   kern_return_t iterator_ret = IORegistryEntryCreateIterator(hdix_service, kIOServicePlane, kIORegistryIterateRecursively, &iter);
-  if (iterator_ret != KERN_SUCCESS)
+  if (unlikely(iterator_ret != KERN_SUCCESS))
   {
     fprintf(stderr, "IORegistryEntryCreateIterator(hdix_service, kIOServicePlane, 1, &iter) returned %x %s\n", iterator_ret, mach_error_string(iterator_ret));
     return 1;
@@ -141,7 +141,7 @@ int mount_dmg_internal(const char *device, const char *fstype, const char *mnt, 
   IOObjectRelease(hdix_service);
   IOObjectRelease(iter);
 #endif
-  if ((not_mount_ret & 1) == 0)
+  if (unlikely((not_mount_ret & 1) == 0))
   {
     fprintf(stderr, "successfully attached, but mounting failed (potentially due to entry not found): %d (%s)\n", errno, strerror(errno));
     return 1;

@@ -11,17 +11,17 @@ int get_pinfo(struct paleinfo* pinfo_p) {
     uint32_t ramdisk_size;
 
     int fd = open("/dev/rmd0", O_RDONLY);
-    if (fd == -1) return -1;
+    if (unlikely(fd == -1)) return -1;
 
     didRead = read(fd, &ramdisk_size, 4);
-    if (didRead == -1) return -1;
+    if (unlikely(didRead == -1)) return -1;
 
     ret = (int)lseek(fd, (off_t)ramdisk_size, SEEK_SET);
-    if (ret == -1) return -1;
+    if (unlikely(ret == -1)) return -1;
 
     didRead = read(fd, pinfo_p, sizeof(struct paleinfo));
 
-    if (didRead == -1) return -1;
+    if (unlikely(didRead == -1)) return -1;
     else if (didRead != sizeof(struct paleinfo)) {
         errno = EAGAIN;
         return -1;
@@ -38,10 +38,10 @@ int set_pinfo(struct paleinfo* pinfo_p) {
     if (fd == -1) return -1;
 
     didRead = read(fd, &ramdisk_size, 4);
-    if (didRead == -1) return -1;
+    if (unlikely(didRead == -1)) return -1;
 
     ret = (int)lseek(fd, (off_t)ramdisk_size, SEEK_SET);
-    if (ret == -1) return -1;
+    if (unlikely(ret == -1)) return -1;
 
     ret = (int)write_fdout(fd, pinfo_p, sizeof(struct paleinfo));
     close(fd);
