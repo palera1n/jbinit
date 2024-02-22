@@ -474,9 +474,9 @@ __attribute__((constructor)) static void initializer(void)
 					/* ellekit */
 					tweakLoaderPath = "/usr/lib/TweakLoader.dylib";
 			
-					/* substitute */
-					if (access(tweakLoaderPath, F_OK) != 0)
-						tweakLoaderPath = "/usr/lib/substitute-loader.dylib";
+					///* substitute */
+					//if (access(tweakLoaderPath, F_OK) != 0)
+					//	tweakLoaderPath = "/usr/lib/tweakloader.dylib";
 			
 					/* libhooker */
 					if (access(tweakLoaderPath, F_OK) != 0)

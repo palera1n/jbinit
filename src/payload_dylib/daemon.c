@@ -8,6 +8,7 @@
 #include <pthread.h>
 #include <libgen.h>
 #include <sys/types.h>
+#include <dlfcn.h>
 
 static xpc_object_t sysstatuscheck_task;
 static int platform = 0;

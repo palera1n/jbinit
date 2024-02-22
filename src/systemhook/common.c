@@ -440,22 +440,31 @@ int spawn_hook_common(pid_t *restrict pid, const char *restrict path,
 		return pspawn_orig(pid, path, file_actions, attrp, argv, envp);
 	}
 
-	char realPath[PATH_MAX];
-	realpath(path, realPath);
-	if (
-		!strcmp(realPath, "/private/etc/rc.d/libhooker") ||
-		!strcmp(realPath, "/private/etc/rc.d/substitute-launcher") ||
-		!strcmp(realPath, "/usr/libexec/ellekit/loader") ||
-		!strcmp(realPath, "/private/etc/rc.d/ellekit-loader") ||
-		!strcmp(realPath, JB_ROOT_PATH("/usr/libexec/ellekit/loader")) ||
-		!strcmp(realPath, JB_ROOT_PATH("/etc/rc.d/ellekit-loader")) ||
-		!strcmp(realPath, JB_ROOT_PATH("/etc/rc.d/libhooker"))
-	) { 
-		if (access(path, X_OK) == 0) {
-			path = "/cores/binpack/usr/bin/true";
-			argv = (char *const []) { "/cores/binpack/usr/bin/true", NULL };
+	const char* blacklistedPaths[] = {
+		"/private/etc/rc.d/libhooker",
+		"/private/etc/rc.d/substitute-launcher",
+		"/usr/libexec/ellekit/loader",
+		"/private/etc/rc.d/ellekit-loader",
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+	};
+	blacklistedPaths[4] = JB_ROOT_PATH("/usr/libexec/ellekit/loader");
+	blacklistedPaths[5] = JB_ROOT_PATH("/etc/rc.d/ellekit-loader");
+	blacklistedPaths[6] = JB_ROOT_PATH("/etc/rc.d/libhooker");
+
+	for (uint32_t i = 0; blacklistedPaths[i] != NULL; i++) {
+		char exec_realPath[PATH_MAX], blacklisted_realPath[PATH_MAX];
+		realpath(path, exec_realPath);
+		realpath(blacklistedPaths[i], blacklisted_realPath);
+		if (!strcmp(blacklisted_realPath, exec_realPath)) {
+			if (access(path, X_OK) == 0) {
+				path = "/cores/binpack/usr/bin/true";
+				argv = (char *const []) { "/cores/binpack/usr/bin/true", NULL };
+			}
+			break;
 		}
-		
 	}
 
 	kBinaryConfig binaryConfig = configForBinary(path, argv);
