@@ -394,6 +394,9 @@ __attribute__((constructor)) static void initializer(void)
 
     unsandbox();
     loadExecutablePath();
+    
+    char* xpc_service_name = getenv("XPC_SERVICE_NAME");
+    if (xpc_service_name) in_jailbreakd = (strcmp(xpc_service_name, "in.palera.palera1nd") == 0);
 
     if (getenv("DYLD_INSERT_LIBRARIES") && !strcmp(getenv("DYLD_INSERT_LIBRARIES"), HOOK_DYLIB_PATH)) {
         // Unset DYLD_INSERT_LIBRARIES, but only if systemhook itself is the only thing contained in it

@@ -18,7 +18,7 @@ int posix_spawnattr_getprocesstype_np(const posix_spawnattr_t * __restrict, int 
 
 char *JB_SandboxExtensions = NULL;
 char *JB_RootPath = NULL;
-char* JB_PinfoFlags = NULL;
+char *JB_PinfoFlags = NULL;
 uint64_t pflags = 0;
 
 #if 0

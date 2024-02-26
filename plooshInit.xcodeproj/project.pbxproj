@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01683B592B8C679900A7A2EA /* crashreporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 01683B582B8C679500A7A2EA /* crashreporter.m */; };
 		019B1B462B5CACA800BABAB5 /* load_etc_rc_d.c in Sources */ = {isa = PBXBuildFile; fileRef = 019B1B452B5CACA800BABAB5 /* load_etc_rc_d.c */; };
 		01B6169D2B720DC70080AB28 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 01B6169C2B720DC70080AB28 /* Makefile */; };
 		01B616A12B720E870080AB28 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B616A02B720E870080AB28 /* main.c */; };
@@ -131,7 +132,6 @@
 		01D3D7CF2B5C80DB007845B6 /* fakedyld.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6902B5C80DA007845B6 /* fakedyld.c */; };
 		01D3D7D02B5C80DB007845B6 /* cores_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6912B5C80DA007845B6 /* cores_init.c */; };
 		01D3D7D12B5C80DB007845B6 /* bootscreend.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6952B5C80DA007845B6 /* bootscreend.c */; };
-		01D3D7D92B5C80DB007845B6 /* crashreporter.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D69E2B5C80DA007845B6 /* crashreporter.c */; };
 		01D3D7DC2B5C80DB007845B6 /* platform.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6A12B5C80DA007845B6 /* platform.c */; };
 		01D3D7DD2B5C80DB007845B6 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6A32B5C80DA007845B6 /* main.c */; };
 		01D3D7DE2B5C80DB007845B6 /* daemon.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6A52B5C80DA007845B6 /* daemon.c */; };
@@ -180,6 +180,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		01683B582B8C679500A7A2EA /* crashreporter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = crashreporter.m; sourceTree = "<group>"; };
 		019B1B452B5CACA800BABAB5 /* load_etc_rc_d.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load_etc_rc_d.c; sourceTree = "<group>"; };
 		01B6169C2B720DC70080AB28 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01B6169F2B720E3F0080AB28 /* hooks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hooks.h; sourceTree = "<group>"; };
@@ -365,7 +366,6 @@
 		01D3D6902B5C80DA007845B6 /* fakedyld.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fakedyld.c; sourceTree = "<group>"; };
 		01D3D6912B5C80DA007845B6 /* cores_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cores_init.c; sourceTree = "<group>"; };
 		01D3D6952B5C80DA007845B6 /* bootscreend.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bootscreend.c; sourceTree = "<group>"; };
-		01D3D69E2B5C80DA007845B6 /* crashreporter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = crashreporter.c; sourceTree = "<group>"; };
 		01D3D6A02B5C80DA007845B6 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01D3D6A12B5C80DA007845B6 /* platform.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = platform.c; sourceTree = "<group>"; };
 		01D3D6A32B5C80DA007845B6 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
@@ -970,9 +970,9 @@
 			isa = PBXGroup;
 			children = (
 				01D3D6952B5C80DA007845B6 /* bootscreend.c */,
-				01D3D69E2B5C80DA007845B6 /* crashreporter.c */,
 				01D3D6A02B5C80DA007845B6 /* Makefile */,
 				01D3D6A12B5C80DA007845B6 /* platform.c */,
+				01683B582B8C679500A7A2EA /* crashreporter.m */,
 				01D3D6A32B5C80DA007845B6 /* main.c */,
 				01D3D6A42B5C80DA007845B6 /* .gitignore */,
 				01D3D6A52B5C80DA007845B6 /* daemon.c */,
@@ -1305,6 +1305,7 @@
 				01D3D7BC2B5C80DB007845B6 /* isupper.c in Sources */,
 				01D3D6FE2B5C80DA007845B6 /* create_var_jb.c in Sources */,
 				01D3D6FB2B5C80DA007845B6 /* runcmd.c in Sources */,
+				01683B592B8C679900A7A2EA /* crashreporter.m in Sources */,
 				01D3D7DD2B5C80DB007845B6 /* main.c in Sources */,
 				01D3D6E92B5C80DA007845B6 /* prelaunchd.c in Sources */,
 				01D3D7932B5C80DA007845B6 /* elf.c in Sources */,
@@ -1320,7 +1321,6 @@
 				01D3D7782B5C80DA007845B6 /* start.S in Sources */,
 				01D3D7702B5C80DA007845B6 /* getusershell.c in Sources */,
 				01D3D70C2B5C80DA007845B6 /* main.c in Sources */,
-				01D3D7D92B5C80DB007845B6 /* crashreporter.c in Sources */,
 				01B9F8912B68045300428E81 /* utility.c in Sources */,
 				01D3D7972B5C80DA007845B6 /* atoi.c in Sources */,
 				01D3D78E2B5C80DA007845B6 /* plooshfinder32.c in Sources */,
@@ -1535,6 +1535,7 @@
 					"DEV_BUILD=1",
 					"HAVE_DEBUG_SHELL=1",
 					"HAVE_DEBUG_JBD_MSG=1",
+					"HAVE_CRASHREPORTER=1",
 				);
 				GCC_USE_STANDARD_INCLUDE_SEARCHING = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;

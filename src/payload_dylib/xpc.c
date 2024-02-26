@@ -11,6 +11,7 @@
 #include <mach-o/loader.h>
 #include <pthread.h>
 #include <errno.h>
+#include <inttypes.h>
 
 #define ENOTDEVELOPMENT 142
 
@@ -73,9 +74,17 @@ void xpc_handler_hook(uint64_t a1, uint64_t a2, xpc_object_t xdict) {
             pflags = flags;
             void *systemhook_handle = dlopen(HOOK_DYLIB_PATH, RTLD_NOW);
             if (systemhook_handle) {
-                uint64_t* pJB_PinfoFlags = dlsym(systemhook_handle, "JB_PinfoFlags");
+                char** pJB_PinfoFlags = dlsym(systemhook_handle, "JB_PinfoFlags");
+                uint64_t* ppflags = dlsym(systemhook_handle, "pflags");
+                if (ppflags) {
+                    *ppflags = flags;
+                }
                 if (pJB_PinfoFlags) {
-                    *pJB_PinfoFlags = flags;
+                    char* new_JB_PinfoFlags = malloc(30);
+                    char* old_JB_PinfoFlags = *pJB_PinfoFlags;
+                    snprintf(new_JB_PinfoFlags, 30, "0x%" PRIx64, pflags);
+                    *pJB_PinfoFlags = new_JB_PinfoFlags;
+                    free(old_JB_PinfoFlags);
                 }
                 dlclose(systemhook_handle);
             }

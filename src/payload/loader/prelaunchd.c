@@ -49,6 +49,9 @@ int prelaunchd(uint32_t payload_options, struct paleinfo* pinfo_p) {
         }
     }
     
+    //runCommand((char*[]){ "/usr/sbin/nvram", "-d", "boot-command", NULL });
+    //host_reboot(mach_host_self(), 0);
+
     if (pinfo_p->flags & palerain_option_setup_rootful) {
         return setup_fakefs(payload_options, pinfo_p);
     }
