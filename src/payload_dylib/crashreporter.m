@@ -178,7 +178,7 @@ FILE *crashreporter_open_outfile(const char *source, char **nameOut)
 
 		CFStringRef deviceVersion = CFCopySystemVersionString();
 		if (deviceVersion) {
-			fprintf(f, "Device Version: %s\n", CFStringGetCStringPtr(deviceVersion, kCFStringEncodingUTF8));
+            crashreporter_write_file(f, "Device Version: %s\n", CFStringGetCStringPtr(deviceVersion, kCFStringEncodingUTF8));
 			CFRelease(deviceVersion);
 		}
 
