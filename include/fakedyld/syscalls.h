@@ -20,6 +20,7 @@
 #define SYS_mknod               14
 #define SYS_chmod               15
 #define SYS_chown               16
+#define SYS_reboot              55
 #define SYS_symlink             57
 #define SYS_execve              59
 #define SYS_chroot              61
@@ -38,6 +39,7 @@
 #define SYS_getdirentries64     344
 #define SYS_statfs64            345
 #define SYS_fs_snapshot         518
+#define SYS_abort_with_payload  521
 
 #ifndef __ASSEMBLER__
 int* __error();
@@ -60,6 +62,7 @@ int fchdir(int fd);
 int mknod(char* path, int mode, int dev);
 int chmod(char* path, int mode);
 int chown(char* path, int uid, int gid);
+int reboot(int opt, char* msg);
 int symlink(char *path, char *link);
 int execve(char* fname, char** argp, char** envp);
 int chroot(char* path);
@@ -77,6 +80,7 @@ ssize_t getdirentries64(int fd, void *buf, size_t bufsize, off_t *position);
 int statfs64(char *path, struct statfs64 *buf);
 int fs_snapshot(uint32_t op, int dirfd, const char* name1, const char* name2, void* data, uint32_t flags);
 int wait4(int pid, int* status, int options, void* rusage);
+_Noreturn void abort_with_payload(uint32_t reason_namespace, uint64_t reason_code, void *payload, uint32_t payload_size, const char *reason_string, uint64_t reason_flags);
 #endif
 
 #endif

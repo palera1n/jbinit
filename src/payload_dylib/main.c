@@ -144,8 +144,8 @@ __attribute__((constructor))void launchd_hook_main(void) {
   }
 
   if ((pflags & palerain_option_setup_rootful)) {
-    int32_t initproc_started = 1;
-    CHECK_ERROR(sysctlbyname("kern.initproc_spawned", NULL, NULL, &initproc_started, 4), "sysctl kern.initproc_spawned=1");
+    int32_t initproc_spawned = 1;
+    CHECK_ERROR(sysctlbyname("kern.initproc_spawned", NULL, NULL, &initproc_spawned, 4), "sysctl kern.initproc_spawned=1");
     CHECK_ERROR(unmount("/cores/binpack/Applications", MNT_FORCE), "unmount(/cores/binpack/Applications)");
     CHECK_ERROR(unmount("/cores/binpack", MNT_FORCE), "unmount(/cores/binpack)");
     printf("Rebooting\n");

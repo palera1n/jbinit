@@ -81,10 +81,12 @@ void xpc_handler_hook(uint64_t a1, uint64_t a2, xpc_object_t xdict) {
                 }
                 if (pJB_PinfoFlags) {
                     char* new_JB_PinfoFlags = malloc(30);
-                    char* old_JB_PinfoFlags = *pJB_PinfoFlags;
-                    snprintf(new_JB_PinfoFlags, 30, "0x%" PRIx64, pflags);
-                    *pJB_PinfoFlags = new_JB_PinfoFlags;
-                    free(old_JB_PinfoFlags);
+                    if (new_JB_PinfoFlags) {
+                        char* old_JB_PinfoFlags = *pJB_PinfoFlags;
+                        snprintf(new_JB_PinfoFlags, 30, "0x%" PRIx64, pflags);
+                        *pJB_PinfoFlags = new_JB_PinfoFlags;
+                        free(old_JB_PinfoFlags);
+                    }
                 }
                 dlclose(systemhook_handle);
             }

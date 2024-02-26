@@ -16,19 +16,16 @@ void platform_check_patch(void* arm64_dyld_buf, int platform) {
 
 void check_dyld(const memory_file_handle_t* dyld_handle) {
     if (!dyld_handle->file_p) {
-        LOG("refusing to patch dyld buf at NULL\n");
-        spin();   
+        panic("refusing to patch dyld buf at NULL");
     }
     uint32_t magic = macho_get_magic(dyld_handle->file_p);
     if (!magic) {
-        LOG("detected corrupted dyld\n");
-        spin();
+        panic("detected corrupted dyld");
     }
     if (magic == 0xbebafeca) {
         void* arm64_dyld_buf = macho_find_arch(dyld_handle->file_p, CPU_TYPE_ARM64);
         if (!arm64_dyld_buf) {
-            LOG("detected unsupported or invalid dyld architecture\n");
-            spin();
+            panic("detected unsupported or invalid dyld architecture\n");
         }
     }
     return;
@@ -37,8 +34,7 @@ void check_dyld(const memory_file_handle_t* dyld_handle) {
 int get_platform(const memory_file_handle_t* dyld_handle) {
     int platform = macho_get_platform(macho_find_arch(dyld_handle->file_p, CPU_TYPE_ARM64));
     if (platform == 0) {
-        LOG("detected unsupported or invalid platform\n");
-        spin();
+        panic("detected unsupported or invalid platform\n");
     }
     return platform;
 }

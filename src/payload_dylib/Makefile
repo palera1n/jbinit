@@ -1,5 +1,5 @@
 CFLAGS += -miphoneos-version-min=12.0 -std=gnu17
-#CFLAGS += -DHAVE_CRASHREPORTER
+CFLAGS += -DHAVE_CRASHREPORTER
 LDFLAGS += -Wl,-dead_strip -Wno-unused-command-line-argument
 LDFLAGS += -install_name /cores/payload.dylib
 OBJDIR = obj

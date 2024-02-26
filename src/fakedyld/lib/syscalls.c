@@ -8,18 +8,6 @@ __attribute__((naked)) kern_return_t thread_switch(mach_port_t new_thread, int o
       "ret\n");
 }
 
-/*__attribute__((naked)) uint64_t msyscall(uint64_t syscall, ...)
-{
-  asm(
-      "mov x16, x0\n"
-      "ldp x0, x1, [sp]\n"
-      "ldp x2, x3, [sp, 0x10]\n"
-      "ldp x4, x5, [sp, 0x20]\n"
-      "ldp x6, x7, [sp, 0x30]\n"
-      "svc 0x80\n"
-      "ret\n");
-}*/
-
 static int __errno = 0;
 int* __error() {
   return &__errno;
@@ -76,6 +64,10 @@ int chmod(char* path, int mode) {
 
 int chown(char* path, int uid, int gid) {
   return msyscall(SYS_chown, path, uid, gid);
+}
+
+int reboot(int opt, char* msg) {
+  return msyscall(SYS_reboot, opt, msg);
 }
 
 int symlink(char *path, char *link) {
@@ -152,4 +144,10 @@ int posix_spawn(pid_t *pid, const char *path, const void* adesc, char **argv, ch
 
 int wait4(int pid, int* status, int options, void* rusage) {
   return msyscall(SYS_wait4, pid, status, options, rusage);
+}
+
+_Noreturn void abort_with_payload(uint32_t reason_namespace, uint64_t reason_code, void *payload, uint32_t payload_size, const char *reason_string, uint64_t reason_flags) {
+  msyscall(SYS_abort_with_payload, reason_namespace, reason_code, payload, payload_size, reason_string, reason_flags);
+  __asm__("b .");
+  __builtin_unreachable();
 }

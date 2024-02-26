@@ -128,4 +128,22 @@
 #define DT_WHT 14
 
 #define STDOUT_FILENO 1
+
+#define RB_AUTOBOOT     0       /* flags for system auto-booting itself */
+
+#define RB_ASKNAME      0x01    /* ask for file name to reboot from */
+#define RB_SINGLE       0x02    /* reboot to single user only */
+#define RB_NOSYNC       0x04    /* dont sync before reboot */
+#define RB_HALT         0x08    /* don't reboot, just halt */
+#define RB_INITNAME     0x10    /* name given for /etc/init */
+#define RB_DFLTROOT     0x20    /* use compiled-in rootdev */
+#define RB_ALTBOOT      0x40    /* use /boot.old vs /boot */
+#define RB_UNIPROC      0x80    /* don't start slaves */
+#define RB_SAFEBOOT     0x100   /* booting safe */
+#define RB_UPSDELAY 0x200   /* Delays restart by 5 minutes */
+#define RB_QUICK        0x400   /* quick and ungraceful reboot with file system caches flushed*/
+#define RB_PANIC        0x800   /* panic the kernel */
+#define RB_PANIC_ZPRINT 0x1000   /* add zprint info to panic string */
+#define RB_PANIC_FORCERESET 0x2000   /* do force-reset panic */
+
 #endif

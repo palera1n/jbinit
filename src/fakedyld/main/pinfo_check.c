@@ -27,8 +27,7 @@ void pinfo_check(struct paleinfo* pinfo_p) {
     };
     for (uint8_t i = 0; disallowed_combinations[i].disallowed_combination != 0; i++) {
         if ((pinfo_p->flags & disallowed_combinations[i].disallowed_combination) == disallowed_combinations[i].disallowed_combination) {
-            LOG(disallowed_combinations[i].message);
-            spin();
+            panic(disallowed_combinations[i].message);
         }
     }
 
@@ -43,13 +42,11 @@ void pinfo_check(struct paleinfo* pinfo_p) {
         palerain_option_enter_recovery |
         palerain_option_device_info
     )) != 0) {
-        LOG("ramdisk should never be booted with the options specified");
-        spin();
+        panic("ramdisk should never be booted with the options specified");
     }
 
     if ((pinfo_p->flags & palerain_option_rootful) && pinfo_p->rootdev[0] == '\0') {
-        LOG("rootful requires rootdev to be set");
-        spin();
+        panic("rootful requires rootdev to be set");
     }
     return;
 }

@@ -52,8 +52,7 @@ static inline int p1_log(const char* format, ...) {
 #define CHECK_ERROR(action, msg, ...) do { \
  int check_error_ret = action; \
  if (unlikely(check_error_ret)) { \
-  LOG(msg ": %d", ##__VA_ARGS__, errno); \
-  spin(); \
+  panic(msg ": %d", ##__VA_ARGS__, errno); \
  } \
 } while (0)
 
@@ -63,12 +62,11 @@ static inline int p1_log(const char* format, ...) {
     int fbi_ret = mount("bindfs", mnt, MNT_RDONLY, dir); \
     if (fbi_ret != 0)                                    \
     {                                                    \
-      LOG("cannot bind %s onto %s, err=%d\n", dir, mnt, errno); \
-      spin();                                            \
+      panic("cannot bind %s onto %s, err=%d", dir, mnt, errno); \
     }                                                    \
     else                                                 \
     {                                                    \
-      LOG("bound %s onto %s\n", dir, mnt);            \
+      panic("bound %s onto %s", dir, mnt);            \
     }                                                    \
   } while (0)
 

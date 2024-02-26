@@ -47,8 +47,7 @@ void mountroot(struct paleinfo* pinfo_p, struct systeminfo* sysinfo_p) {
     }
     /* since realfs had shown up, target fs should be here too if it exists */
     if ((ret = stat64(dev_rootdev, &st))) {
-        LOG("cannot find target fs %s: %d", dev_rootdev, errno);
-        spin();
+        panic("cannot find target fs %s: %d", dev_rootdev, errno);
     }
     int rootopts = MNT_RDONLY;
     if (!(pinfo_p->flags & palerain_option_bind_mount)) {

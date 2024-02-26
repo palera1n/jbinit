@@ -22,8 +22,7 @@ void prepare_rootfs(struct systeminfo* sysinfo_p, struct paleinfo* pinfo_p) {
     };
     ret = mount("apfs", "/cores/fs/real", MNT_RDONLY, &arg);
     if (ret) {
-        LOG("cannot mount %s onto %s, ret=%d\n", real_rootdev, "/cores/fs/real", errno);
-        spin();
+        panic("cannot mount %s onto %s, ret=%d", real_rootdev, "/cores/fs/real", errno);
     }
     fbi("/usr/standalone/update", "/cores/fs/real/usr/standalone/update");
 #ifdef BOOTLOOP_ME

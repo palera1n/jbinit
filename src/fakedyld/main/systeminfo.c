@@ -1,9 +1,11 @@
 #include <fakedyld/fakedyld.h>
 
-
+extern bool has_verbose_boot;
 void systeminfo(struct systeminfo* sysinfo_p) {
     size_t bootargs_len = MAX_BOOTARGS_LEN;
     CHECK_ERROR(sys_sysctlbyname("kern.bootargs", sizeof("kern.bootargs"), sysinfo_p->bootargs, &bootargs_len, NULL, 0), "Unable to read boot-args");
+
+    has_verbose_boot = (strstr(sysinfo_p->bootargs, "serial=") != NULL);
 
     size_t kversion_len = MAX_KVERSION_LEN;
     CHECK_ERROR(sys_sysctlbyname("kern.version", sizeof("kern.version"), sysinfo_p->kversion, &kversion_len, NULL, 0), "Unable to get kernel version");
@@ -59,7 +61,6 @@ void systeminfo(struct systeminfo* sysinfo_p) {
     }
     return;
 kver_fail:
-    LOG("Error parsing kernel version");
-    spin();
+    panic("Error parsing kernel version");
     __builtin_unreachable();
 }

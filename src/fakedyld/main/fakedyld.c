@@ -6,9 +6,11 @@
 #include <fakedyld/fakedyld.h>
 #include <mount_args.h>
 
+bool has_verbose_boot = false;
+
 int main(int argc, char* argv[], char* envp[], char* apple[]) {
     int console_fd = open("/dev/console", O_RDWR | O_CLOEXEC | O_SYNC, 0);
-    if (console_fd == -1) exit(-1);
+    if (console_fd == -1) panic("cannot open /dev/console: %d", errno);
     set_fd_console(console_fd);
     printf("argc: %d\n", argc);
     for (int i = 0; argv[i] != NULL; i++) {
@@ -21,17 +23,6 @@ int main(int argc, char* argv[], char* envp[], char* apple[]) {
         printf("apple[%d]: %s\n", i, apple[i]);
     }
     int ret = 0;
-    struct paleinfo pinfo;
-    get_pinfo(&pinfo);
-    printf(
-        "kbase: 0x%llx\n"
-        "kslide: 0x%llx\n"
-        "flags: 0x%llx\n"
-        "rootdev: %s\n"
-    ,pinfo.kbase,pinfo.kslide,pinfo.flags,pinfo.rootdev
-    );
-
-    pinfo_check(&pinfo);
     struct systeminfo sysinfo;
     systeminfo(&sysinfo);
     LOG("Parsed kernel version: Darwin %d.%d.%d xnu: %d",
@@ -42,6 +33,19 @@ int main(int argc, char* argv[], char* envp[], char* apple[]) {
     );
     LOG("boot-args: %s", sysinfo.bootargs);
     LOG("Kernel version (raw): %s", sysinfo.kversion);
+
+    struct paleinfo pinfo;
+    get_pinfo(&pinfo);
+    printf(
+        "kbase: 0x%llx\n"
+        "kslide: 0x%llx\n"
+        "flags: 0x%llx\n"
+        "rootdev: %s\n"
+    ,pinfo.kbase,pinfo.kslide,pinfo.flags,pinfo.rootdev
+    );
+    has_verbose_boot = has_verbose_boot || (pinfo.flags & palerain_option_verbose_boot);
+
+    pinfo_check(&pinfo);
     memory_file_handle_t payload;
     memory_file_handle_t payload15_dylib;
 #if 0
@@ -75,8 +79,7 @@ int main(int argc, char* argv[], char* envp[], char* apple[]) {
         snprintf(pinfo_buffer, 50, "JB_PINFO_FLAGS=0x%llx", pinfo.flags);
         char* execve_buffer = mmap(NULL, 0x4000, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, 0, 0);
         if (execve_buffer == MAP_FAILED) {
-            printf("mmap for execve failed\n");
-            spin();
+            panic("mmap for execve failed");
         }
         char* launchd_argv0 = execve_buffer;
         char* launchd_envp0 = (execve_buffer + sizeof("/sbin/launchd"));
@@ -107,14 +110,24 @@ int main(int argc, char* argv[], char* envp[], char* apple[]) {
 
         ret = execve(launchd_argv0, launchd_argv, launchd_envp);
     /*}*/
-    LOG("execve failed with error=%d", ret);
-    spin();
+    panic("execve failed with error=%d", ret);
     __builtin_unreachable();
 }
 
-void spin(void) {
+
+_Noreturn void panic(char* fmt, ...) {
+  char reason[1024], reason_real[1024];
+  va_list va;
+  va_start(va, fmt);
+  vsnprintf(reason, 1024, fmt, va);
+  va_end(va);
+  snprintf(reason_real, 1024, "fakedyld: %s", reason);
+  if (has_verbose_boot) {
+    printf("%s\n", reason_real);
     LOG("jbinit DIED!");
-    while(true) {
-        sleep(5);
-    }
+    sleep(60);
+  }
+  abort_with_payload(42, 0x69, NULL, 0, reason_real, 0);
+  __asm__ ("b .");
+  __builtin_unreachable();
 }

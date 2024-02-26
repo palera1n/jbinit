@@ -17,7 +17,5 @@ void start(const struct KernelArgs* kernArgs, void* preDyldMH)  {
     while (*apple != NULL) apple++;
     apple++;
     main(argc, (char**)argv, (char**)envp, (char**)apple);
-    while(1) {
-        sleep(5);
-    }
+    panic("main function returned");
 }

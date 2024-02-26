@@ -14,8 +14,7 @@ void mount_tmpfs_cores() {
     err = sys_sysctlbyname("hw.pagesize", sizeof("hw.pagesize"), &pagesize, &pagesize_len, NULL, 0);
     if (err != 0)
     {
-        LOG("cannot get pagesize, err=%d", errno);
-        spin();
+        panic("cannot get pagesize, err=%d", errno);
     }
     LOG("system page size: %lld", pagesize);
     {
@@ -23,8 +22,7 @@ void mount_tmpfs_cores() {
         err = mount("tmpfs", "/cores", 0, &arg);
         if (err != 0)
         {
-          LOG("cannot mount tmpfs onto /cores, err=%d", errno);
-          spin();
+          panic("cannot mount tmpfs onto /cores, err=%d", errno);
         }
         LOG("mounted tmpfs onto /cores");
     }
@@ -34,14 +32,13 @@ void cores_mkdir(char* path) {
     struct stat64 statbuf;
     int err = mkdir(path, 0755);
     if (err) {
-        LOG("mkdir(%s) FAILED with err %d", path, errno);
+        panic("mkdir(%s) FAILED with err %d", path, errno);
     }
     if (stat64(path, &statbuf)) {
-        LOG("stat %s FAILED with err=%d!", path, errno);
-        spin();
+        panic("stat %s FAILED with err=%d!", path, errno);
     }
     else
-        LOG("created %s", path);
+        panic("created %s", path);
 }
 
 void mount_ramdisk_cores(int platform) {
@@ -53,15 +50,13 @@ void mount_ramdisk_cores(int platform) {
       snprintf(executable, 30, "/mount_cores.%d", platform);
       break;
     default:
-      LOG("mount_cores: unsupported platform");
-      spin();
+      panic("mount_cores: unsupported platform");
   }
   pid_t pid;
   int ret = posix_spawn(&pid, executable, NULL, NULL, NULL);
   printf("spawned pid %d\n", pid);
   if (ret != 0) {
-    LOG("failed to spawn %s: %d", executable, errno);
-    spin();
+    panic("failed to spawn %s: %d", executable, errno);
   }
   ret = wait4(-1, NULL, 0, NULL);
   printf("wait4 retval: %d\n", ret);
