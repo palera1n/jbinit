@@ -86,6 +86,7 @@ xpc_object_t hook_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
   return retval;
 }
 
+#if 0
 bool (*xpc_dictionary_get_bool_orig)(xpc_object_t dictionary, const char *key);
 bool hook_xpc_dictionary_get_bool(xpc_object_t dictionary, const char *key) {
   if (!strcmp(key, "LogPerformanceStatistics")) {
@@ -93,6 +94,7 @@ bool hook_xpc_dictionary_get_bool(xpc_object_t dictionary, const char *key) {
   }
   else return xpc_dictionary_get_bool_orig(dictionary, key);
 }
+#endif
 
 int (*memorystatus_control_orig)(uint32_t command, int32_t pid, uint32_t flags, void *buffer, size_t buffersize);
 int hook_memorystatus_control(uint32_t command, int32_t pid, uint32_t flags, void *buffer, size_t buffersize) {
@@ -128,7 +130,7 @@ void InitDaemonHooks(void) {
 #undef fd_console
 
   MSHookFunction_p(&xpc_dictionary_get_value, (void *)hook_xpc_dictionary_get_value, (void **)&xpc_dictionary_get_value_orig);
-  MSHookFunction_p(&xpc_dictionary_get_bool, (void *)hook_xpc_dictionary_get_bool, (void **)&xpc_dictionary_get_bool_orig);
+  //MSHookFunction_p(&xpc_dictionary_get_bool, (void *)hook_xpc_dictionary_get_bool, (void **)&xpc_dictionary_get_bool_orig);
   MSHookFunction_p(&memorystatus_control, (void*)hook_memorystatus_control, (void**)&memorystatus_control_orig);
   MSHookFunction_p(&isatty, (void*)hook_isatty, (void**)&isatty_orig);
 }
