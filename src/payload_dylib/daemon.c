@@ -89,25 +89,23 @@ xpc_object_t hook_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
 bool (*xpc_dictionary_get_bool_orig)(xpc_object_t dictionary, const char *key);
 bool hook_xpc_dictionary_get_bool(xpc_object_t dictionary, const char *key) {
   if (!strcmp(key, "LogPerformanceStatistics")) {
-    static int console_fd = -1;
-    if (console_fd != -1) return true;
-    console_fd = open("/dev/console", O_RDWR | O_CLOEXEC);
-    if (console_fd != -1) {
-      dup2(console_fd, STDIN_FILENO);
-      dup2(console_fd, STDOUT_FILENO);
-      dup2(console_fd, STDERR_FILENO);
-    }
-    return true;
+      return true;
   }
   else return xpc_dictionary_get_bool_orig(dictionary, key);
 }
 
-bool (*memorystatus_control_orig)(uint32_t command, int32_t pid, uint32_t flags, void *buffer, size_t buffersize);
-bool hook_memorystatus_control(uint32_t command, int32_t pid, uint32_t flags, void *buffer, size_t buffersize) {
+int (*memorystatus_control_orig)(uint32_t command, int32_t pid, uint32_t flags, void *buffer, size_t buffersize);
+int hook_memorystatus_control(uint32_t command, int32_t pid, uint32_t flags, void *buffer, size_t buffersize) {
   if (command == MEMORYSTATUS_CMD_SET_JETSAM_TASK_LIMIT && pid == 1) {
     flags = 32768;
   }
   return memorystatus_control_orig(command, pid, flags, buffer, buffersize);
+}
+
+bool (*isatty_orig)(int fd);
+int hook_isatty(int fd) {
+    if (fd == STDOUT_FILENO) return false;
+    else return isatty_orig(fd);
 }
 
 void InitDaemonHooks(void) {
@@ -132,4 +130,5 @@ void InitDaemonHooks(void) {
   MSHookFunction_p(&xpc_dictionary_get_value, (void *)hook_xpc_dictionary_get_value, (void **)&xpc_dictionary_get_value_orig);
   MSHookFunction_p(&xpc_dictionary_get_bool, (void *)hook_xpc_dictionary_get_bool, (void **)&xpc_dictionary_get_bool_orig);
   MSHookFunction_p(&memorystatus_control, (void*)hook_memorystatus_control, (void**)&memorystatus_control_orig);
+  MSHookFunction_p(&isatty, (void*)hook_isatty, (void**)&isatty_orig);
 }

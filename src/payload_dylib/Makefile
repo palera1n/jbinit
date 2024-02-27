@@ -1,5 +1,5 @@
-CFLAGS += -miphoneos-version-min=12.0 -std=gnu17
-CFLAGS += -DHAVE_CRASHREPORTER
+CFLAGS += -miphoneos-version-min=12.0 -std=gnu17 -fvisibility=hidden
+CFLAGS += #-DHAVE_CRASHREPORTER
 LDFLAGS += -Wl,-dead_strip -Wno-unused-command-line-argument
 LDFLAGS += -install_name /cores/payload.dylib
 OBJDIR = obj
@@ -29,7 +29,9 @@ $(OBJDIR)/%.m.o: %.m $(OBJDIR)
 payload.dylib: $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) $(OBJS) -shared -o $@
 	$(DSYMUTIL) $@
+ifeq ($(DEV_BUILD),1)
 	$(STRIP) -x $@
+endif
 	$(LDID) -S $@
 
 clean:

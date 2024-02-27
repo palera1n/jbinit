@@ -14,7 +14,9 @@ clean: $(patsubst %, %-clean, $(SUBDIRS))
 dyld: $(patsubst %, %-all, $(SUBDIRS))
 	$(CC) $(CFLAGS) $(LDFLAGS) $$(find . -name '*.o' | grep 'obj/.*o') -o dyld
 	$(DSYMUTIL) $@
+ifeq ($(DEV_BUILD),1)
 	$(STRIP) $@
+endif
 	$(LDID) -Icom.apple.dyld -S $@
 
 $(patsubst %, %-all, $(SUBDIRS)):

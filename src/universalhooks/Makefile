@@ -1,4 +1,4 @@
-CFLAGS += -miphoneos-version-min=14.0 -std=gnu17
+CFLAGS += -miphoneos-version-min=14.0 -std=gnu17 -fvisibility=hidden
 LDFLAGS += -Wl,-dead_strip -Wno-unused-command-line-argument
 OBJDIR = obj
 C_SRC = $(wildcard *.c)
@@ -33,7 +33,9 @@ universalhooks.dylib: $(OBJS) $(ELLEKIT)
 		-install_name /cores/binpack/usr/lib/universalhooks.dylib \
 		-o $@
 	$(DSYMUTIL) $@
+ifeq ($(DEV_BUILD),1)
 	$(STRIP) -x $@
+endif
 	$(LDID) -S $@
 
 clean:

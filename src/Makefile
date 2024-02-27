@@ -1,4 +1,4 @@
-CFLAGS += -arch arm64 -I$(ROOT)/include -Wno-deprecated-declarations -g
+CFLAGS += -g -arch arm64 -I$(ROOT)/include -Wno-deprecated-declarations
 SHELL = /usr/bin/env bash
 
 ifneq ($(ASAN),1)
@@ -18,6 +18,8 @@ CFLAGS += -O0 -DDEV_BUILD=1 -DHAVE_DEBUG_SHELL=1 -DHAVE_DEBUG_JBD_MSG=1
 else
 CFLAGS += -Oz -flto=full
 endif
+
+export CFLAGS
 
 CREATE_UDRW_IMAGE = \
 	set -e; \

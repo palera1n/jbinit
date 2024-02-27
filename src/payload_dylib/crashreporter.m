@@ -23,7 +23,7 @@ void abort_with_reason(uint32_t reason_namespace, uint64_t reason_code, const ch
 
 static NSUncaughtExceptionHandler* defaultNSExceptionHandler = NULL;
 #define crashreporter_write_file(f, ...) do { \
-        fprintf(f, __VA_ARGS__); \
+        if (f) fprintf(f, __VA_ARGS__); \
         fprintf(stderr, __VA_ARGS__); \
     } while(0)
 
@@ -132,18 +132,29 @@ const char *crashreporter_string_for_code(int code)
 	return NULL;
 }
 
-void crashreporter_dump_backtrace_line(FILE *f, vm_address_t addr)
+void crashreporter_dump_backtrace_line(FILE *f, vm_address_t addr, int frame)
 {
+    //fprintf(stderr, "meow\n");
 	Dl_info info;
-	dladdr((void *)addr, &info);
+    dladdr((void *)addr, &info);
 
-	const char *sname = info.dli_sname;
-	const char *fname = info.dli_fname;
-	if (!sname) {
-		sname = "<unexported>";
-	}
-
-    crashreporter_write_file(f, "0x%lX: %s (0x%lX + 0x%lX) (%s(0x%lX) + 0x%lX)\n", addr, sname, (vm_address_t)info.dli_saddr, addr - (vm_address_t)info.dli_saddr, fname, (vm_address_t)info.dli_fbase, addr - (vm_address_t)info.dli_fbase);
+    const char *sname = info.dli_sname;
+    const char *fname = info.dli_fname;
+    if (!sname)
+        sname = "<unexported>";
+    
+    if (!fname)
+        fname = "???";
+    
+    if (info.dli_fname) {
+        if (info.dli_sname) {
+            crashreporter_write_file(f, "%-2d %s(0x%lx)\t 0x%lx %s(0x%lx) + %ld\n", frame+1, info.dli_fname, (vm_address_t)info.dli_fbase,addr, info.dli_sname, (vm_address_t)info.dli_saddr, addr - (vm_address_t)info.dli_saddr);
+        } else {
+            crashreporter_write_file(f, "%-2d %s(0x%lx)\t 0x%lx 0x%lx + %ld\n", frame+1, info.dli_fname, (vm_address_t)info.dli_fbase,addr, (vm_address_t)info.dli_fbase, addr - (vm_address_t)info.dli_fbase);
+        }
+    } else {
+        crashreporter_write_file(f, "%-2d %s\t 0x%lx\n", frame+1, "???", addr);
+    }
 }
 
 FILE *crashreporter_open_outfile(const char *source, char **nameOut)
@@ -162,57 +173,65 @@ FILE *crashreporter_open_outfile(const char *source, char **nameOut)
 	strlcpy(dumpPath, "/var/mobile/Library/Logs/CrashReporter/", PATH_MAX);
 	strlcat(dumpPath, name, PATH_MAX);
 
-	if (nameOut) {
-		*nameOut = name;
-	}
-	else {
-		free(name);
-	}
-
 	FILE *f = fopen(dumpPath, "w");
-	if (f) {
-		struct utsname systemInfo;
-		uname(&systemInfo);
+    
+    if (f && nameOut) {
+        *nameOut = name;
+    }
+    else {
+        free(name);
+        *nameOut = NULL;
+    }
 
-        crashreporter_write_file(f, "Device Model:   %s\n", systemInfo.machine);
+    
+    struct utsname systemInfo;
+    uname(&systemInfo);
 
-		CFStringRef deviceVersion = CFCopySystemVersionString();
-		if (deviceVersion) {
-            crashreporter_write_file(f, "Device Version: %s\n", CFStringGetCStringPtr(deviceVersion, kCFStringEncodingUTF8));
-			CFRelease(deviceVersion);
-		}
+    crashreporter_write_file(f, "Device Model:   %s\n", systemInfo.machine);
+
+    CFStringRef deviceVersion = CFCopySystemVersionString();
+    if (deviceVersion) {
+        crashreporter_write_file(f, "Device Version: %s\n", CFStringGetCStringPtr(deviceVersion, kCFStringEncodingUTF8));
+        CFRelease(deviceVersion);
+    }
+    
 
 	#ifdef __arm64e__
-        crashreporter_write_file(f, "Architecture:   arm64e\n");
+    crashreporter_write_file(f, "Architecture:   arm64e\n");
 	#else
-        crashreporter_write_file(f, "Architecture:   arm64\n");
+    crashreporter_write_file(f, "Architecture:   arm64\n");
 	#endif
-        crashreporter_write_file(f, "\n");
-	}
+    
+    if (pflags) {
+        crashreporter_write_file(f, "Palera1n Flags: 0x%llx\n", pflags);
+    }
+
+    crashreporter_write_file(f, "\n");
 
 	return f;
 }
 
 void crashreporter_save_outfile(FILE *f)
 {
-	fflush(f);
-	fchown(fileno(f), 0, 250);
-	fchmod(fileno(f), 00660);
-	if (fcntl(fileno(f), F_FULLFSYNC) != 0) {
-		fsync(fileno(f));
-	}
+    if (f) {
+        fflush(f);
+        fchown(fileno(f), 0, 250);
+        fchmod(fileno(f), 00660);
+        if (fcntl(fileno(f), F_FULLFSYNC) != 0) {
+            fsync(fileno(f));
+        }
+        int dir = open("/var/mobile/Library/Logs/CrashReporter", O_RDONLY | O_DIRECTORY);
+        if (dir >= 0) {
+            if (fcntl(dir, F_FULLFSYNC) != 0) {
+                fsync(dir);
+            }
+            close(dir);
+        }
+        fclose(f);
+    }
 
     fprintf(stderr, "\n");
     fflush(stderr);
-	fclose(f);
-
-	int dir = open("/var/mobile/Library/Logs/CrashReporter", O_RDONLY | O_DIRECTORY);
-	if (dir >= 0) {
-		if (fcntl(dir, F_FULLFSYNC) != 0) {
-			fsync(dir);
-		}
-		close(dir);
-	}
 }
 
 void crashreporter_dump_mach(FILE *f, int code, int subcode, arm_thread_state64_t threadState, arm_exception_state64_t exceptionState, vm_address_t *bt)
@@ -240,12 +259,12 @@ void crashreporter_dump_mach(FILE *f, int code, int subcode, arm_thread_state64_
     crashreporter_write_file(f, " lr = 0x%016llX,  pc = 0x%016llX,  sp = 0x%016llX,  fp = 0x%016llX, cpsr=         0x%08X, far = 0x%016llX\n\n", lr, pc, (uint64_t)__darwin_arm_thread_state64_get_sp(threadState), (uint64_t)__darwin_arm_thread_state64_get_fp(threadState), threadState.__cpsr, exceptionState.__far);
 
     crashreporter_write_file(f, "Backtrace:\n");
-	crashreporter_dump_backtrace_line(f, (vm_address_t)pc);
-	crashreporter_dump_backtrace_line(f, (vm_address_t)lr);
+	crashreporter_dump_backtrace_line(f, (vm_address_t)pc, -1);
+	crashreporter_dump_backtrace_line(f, (vm_address_t)lr, 0);
 	int btIdx = 0;
 	vm_address_t btAddr = bt[btIdx++];
 	while (btAddr != 0) {
-		crashreporter_dump_backtrace_line(f, btAddr);
+		crashreporter_dump_backtrace_line(f, btAddr, btIdx);
 		btAddr = bt[btIdx++];
 	}
     crashreporter_write_file(f, "\n");
@@ -275,10 +294,11 @@ void crashreporter_catch_mach(exception_raise_request *request, exception_raise_
     
 	char *name = NULL;
 	FILE *f = crashreporter_open_outfile("launchd", &name);
-	if (f) {
-		crashreporter_dump_mach(f, request->code, request->subcode, threadState, exceptionState, bt);
-		crashreporter_save_outfile(f);
-	}
+
+    crashreporter_dump_mach(f, request->code, request->subcode, threadState, exceptionState, bt);
+    crashreporter_save_outfile(f);
+    
+    sleep(1);
 
 	if (name) {
 		char msg[1000];
@@ -300,15 +320,17 @@ void crashreporter_dump_objc(FILE *f, NSException *e)
 
 		if (e.callStackReturnAddresses.count) {
             crashreporter_write_file(f, "Backtrace:\n");
+            int i = 0;
 			for (NSNumber *btAddrNum in e.callStackReturnAddresses) {
-				crashreporter_dump_backtrace_line(f, [btAddrNum unsignedLongLongValue]);
+				crashreporter_dump_backtrace_line(f, [btAddrNum unsignedLongLongValue], i);
+                i++;
 			}
             crashreporter_write_file(f, "\n");
 		}
 		else if (e.callStackSymbols.count) {
-			fprintf(f, "Backtrace:\n");
+            crashreporter_write_file(f, "Backtrace:\n");
 			for (NSString *symbol in e.callStackSymbols) {
-				fprintf(f, "%s\n", symbol.UTF8String);
+                crashreporter_write_file(f, "%s\n", symbol.UTF8String);
 			}
             crashreporter_write_file(f, "\n");
 		}
@@ -330,15 +352,17 @@ void crashreporter_catch_objc(NSException *e)
         
 		char *name = NULL;
 		FILE *f = crashreporter_open_outfile("launchd", &name);
-		if (f) {
-			@try {
-				crashreporter_dump_objc(f, e);
-			}
-			@catch (NSException *e2) {
-				exit(187);
-			}
-			crashreporter_save_outfile(f);
-		}
+
+        @try {
+            crashreporter_dump_objc(f, e);
+        }
+        @catch (NSException *e2) {
+            exit(187);
+        }
+        crashreporter_save_outfile(f);
+
+        
+        sleep(1);
 
 		if (name) {
 			char msg[1000];

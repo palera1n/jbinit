@@ -18,8 +18,8 @@ int posix_spawnattr_getprocesstype_np(const posix_spawnattr_t * __restrict, int 
 
 char *JB_SandboxExtensions = NULL;
 char *JB_RootPath = NULL;
-char *JB_PinfoFlags = NULL;
-uint64_t pflags = 0;
+SHOOK_EXPORT char *JB_PinfoFlags = NULL;
+SHOOK_EXPORT uint64_t pflags = 0;
 
 #if 0
 #define JBD_MSG_SETUID_FIX 21
@@ -76,179 +76,6 @@ bool stringEndsWith(const char* str, const char* suffix)
 
 extern char **environ;
 kern_return_t bootstrap_look_up(mach_port_t port, const char *service, mach_port_t *server_port);
-
-#if 0
-bool jbdSystemWideIsReachable(void)
-{
-	int sbc = sandbox_check(getpid(), "mach-lookup", SANDBOX_FILTER_GLOBAL_NAME | SANDBOX_CHECK_NO_REPORT, "in.palera.palera1nd.systemwide");
-	return sbc == 0;
-}
-
-mach_port_t jbdSystemWideMachPort(void)
-{
-	mach_port_t outPort = MACH_PORT_NULL;
-	kern_return_t kr = KERN_SUCCESS;
-
-	if (getpid() == 1) {
-		mach_port_t self_host = mach_host_self();
-		kr = host_get_special_port(self_host, HOST_LOCAL_NODE, 16, &outPort);
-		mach_port_deallocate(mach_task_self(), self_host);
-	}
-	else {
-		kr = bootstrap_look_up(bootstrap_port, "in.palera.palera1nd.systemwide", &outPort);
-	}
-
-	if (kr != KERN_SUCCESS) return MACH_PORT_NULL;
-	return outPort;
-}
-
-xpc_object_t sendLaunchdMessageFallback(xpc_object_t xdict)
-{
-	xpc_dictionary_set_bool(xdict, "jailbreak", true);
-	xpc_dictionary_set_bool(xdict, "jailbreak-systemwide", true);
-
-	void* pipePtr = NULL;
-	if(_os_alloc_once_table[1].once == -1)
-	{
-		pipePtr = _os_alloc_once_table[1].ptr;
-	}
-	else
-	{
-		pipePtr = _os_alloc_once(&_os_alloc_once_table[1], 472, NULL);
-		if (!pipePtr) _os_alloc_once_table[1].once = -1;
-	}
-
-	xpc_object_t xreply = nil;
-	if (pipePtr) {
-		struct xpc_global_data* globalData = pipePtr;
-		xpc_object_t pipe = globalData->xpc_bootstrap_pipe;
-		if (pipe) {
-			int err = xpc_pipe_routine_with_flags(pipe, xdict, &xreply, 0);
-			if (err != 0) {
-				return nil;
-			}
-		}
-	}
-	return xreply;
-}
-
-xpc_object_t sendJBDMessageSystemWide(xpc_object_t xdict)
-{
-	xpc_object_t jbd_xreply = nil;
-	if (jbdSystemWideIsReachable()) {
-		mach_port_t jbdPort = jbdSystemWideMachPort();
-		if (jbdPort != -1) {
-			xpc_object_t pipe = xpc_pipe_create_from_port(jbdPort, 0);
-			if (pipe) {
-				int err = xpc_pipe_routine(pipe, xdict, &jbd_xreply);
-				if (err != 0) jbd_xreply = nil;
-				xpc_release(pipe);
-			}
-			mach_port_deallocate(mach_task_self(), jbdPort);
-		}
-	}
-
-	if (!jbd_xreply && getpid() != 1) {
-		return sendLaunchdMessageFallback(xdict);
-	}
-
-	return jbd_xreply;
-}
-
-int64_t jbdswFixSetuid(void)
-{
-	xpc_object_t message = xpc_dictionary_create_empty();
-	xpc_dictionary_set_uint64(message, "id", JBD_MSG_SETUID_FIX);
-	xpc_object_t reply = sendJBDMessageSystemWide(message);
-	int64_t result = -1;
-	if (reply) {
-		result  = xpc_dictionary_get_int64(reply, "result");
-		xpc_release(reply);
-	}
-	return result;
-}
-
-int64_t jbdswProcessBinary(const char *filePath)
-{
-	// if file doesn't exist, bail out
-	if (access(filePath, F_OK) != 0) return 0;
-
-	// if file is on rootfs mount point, it doesn't need to be
-	// processed as it's guaranteed to be in static trust cache
-	// same goes for our /usr/lib bind mount (which is guaranteed to be in dynamic trust cache)
-	struct statfs fs;
-	int sfsret = statfs(filePath, &fs);
-	if (sfsret == 0) {
-		if (!strcmp(fs.f_mntonname, "/") || !strcmp(fs.f_mntonname, "/usr/lib")) return -1;
-	}
-
-	char absolutePath[PATH_MAX];
-	if (realpath(filePath, absolutePath) == NULL) return -1;
-
-	xpc_object_t message = xpc_dictionary_create_empty();
-	xpc_dictionary_set_uint64(message, "id", JBD_MSG_PROCESS_BINARY);
-	xpc_dictionary_set_string(message, "filePath", absolutePath);
-
-	xpc_object_t reply = sendJBDMessageSystemWide(message);
-	int64_t result = -1;
-	if (reply) {
-		result  = xpc_dictionary_get_int64(reply, "result");
-		xpc_release(reply);
-	}
-	return result;
-}
-
-int64_t jbdswProcessLibrary(const char *filePath)
-{
-	if (_dyld_shared_cache_contains_path(filePath)) return 0;
-	return jbdswProcessBinary(filePath);
-}
-
-int64_t jbdswDebugMe(void)
-{
-	if (swh_is_debugged) return 0;
-	xpc_object_t message = xpc_dictionary_create_empty();
-	xpc_dictionary_set_uint64(message, "id", JBD_MSG_DEBUG_ME);
-	xpc_object_t reply = sendJBDMessageSystemWide(message);
-	int64_t result = -1;
-	if (reply) {
-		result  = xpc_dictionary_get_int64(reply, "result");
-		xpc_release(reply);
-	}
-	if (result == 0) {
-		swh_is_debugged = true;
-	} 
-	return result;
-}
-
-int64_t jbdswForkFix(pid_t childPid)
-{
-	xpc_object_t message = xpc_dictionary_create_empty();
-	xpc_dictionary_set_uint64(message, "id", JBD_MSG_FORK_FIX);
-	xpc_dictionary_set_int64(message, "childPid", childPid);
-	xpc_object_t reply = sendJBDMessageSystemWide(message);
-	int64_t result = -1;
-	if (reply) {
-		result  = xpc_dictionary_get_int64(reply, "result");
-		xpc_release(reply);
-	}
-	return result;
-}
-
-int64_t jbdswInterceptUserspacePanic(const char *messageString)
-{
-	xpc_object_t message = xpc_dictionary_create_empty();
-	xpc_dictionary_set_uint64(message, "id", JBD_MSG_INTERCEPT_USERSPACE_PANIC);
-	xpc_dictionary_set_string(message, "message", messageString);
-	xpc_object_t reply = sendJBDMessageSystemWide(message);
-	int64_t result = -1;
-	if (reply) {
-		result  = xpc_dictionary_get_int64(reply, "result");
-		xpc_release(reply);
-	}
-	return result;
-}
-#endif
 
 // Derived from posix_spawnp in Apple libc
 int resolvePath(const char *file, const char *searchPath, int (^attemptHandler)(char *path))
@@ -428,7 +255,7 @@ kBinaryConfig configForBinary(const char* path, char *const argv[restrict])
 
 // 1. Make sure the about to be spawned binary and all of it's dependencies are trust cached
 // 2. Insert "DYLD_INSERT_LIBRARIES=/usr/lib/systemhook.dylib" into all binaries spawned
-int spawn_hook_common(pid_t *restrict pid, const char *restrict path,
+SHOOK_EXPORT int spawn_hook_common(pid_t *restrict pid, const char *restrict path,
 					   const posix_spawn_file_actions_t *restrict file_actions,
 					   const posix_spawnattr_t *restrict attrp,
 					   char *const argv[restrict],

@@ -47,7 +47,7 @@ int get_libiosexec(void) {
 
 void (*MSHookFunction_p)(void*, void*, void**);
 /* this function will be called by launchd */
-int init_libiosexec_hook_with_ellekit(void) {
+SHOOK_EXPORT int init_libiosexec_hook_with_ellekit(void) {
     if (get_libiosexec()) return -1;
     void* ellekit_handle = dlopen(ELLEKIT_PATH, RTLD_NOW);
     if (!ellekit_handle) return -1;

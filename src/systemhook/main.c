@@ -39,7 +39,7 @@ void unsandbox(void) {
 }
 
 static char *gExecutablePath = NULL;
-char* JB_TweakLoaderPath;
+SHOOK_EXPORT char* JB_TweakLoaderPath;
 static void loadExecutablePath(void)
 {
 	uint32_t bufsize = 0;
@@ -394,7 +394,7 @@ __attribute__((constructor)) static void initializer(void)
 
     unsandbox();
     loadExecutablePath();
-    
+
     char* xpc_service_name = getenv("XPC_SERVICE_NAME");
     if (xpc_service_name) in_jailbreakd = (strcmp(xpc_service_name, "in.palera.palera1nd") == 0);
 
@@ -551,7 +551,7 @@ int reboot3_hook(uint64_t howto, ...)
 	return 0;
 }
 
-int64_t jbdswInterceptUserspacePanic(const char *messageString) {
+SHOOK_EXPORT int64_t jbdswInterceptUserspacePanic(const char *messageString) {
     xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
     xpc_dictionary_set_uint64(xdict, "cmd", JBD_CMD_INTERCEPT_USERSPACE_PANIC);
     xpc_dictionary_set_string(xdict, "message", messageString);
@@ -574,6 +574,7 @@ int64_t jbdswInterceptUserspacePanic(const char *messageString) {
 
 // this hook is used to make __builtin_available work normally in platform mismatched binaries
 __API_AVAILABLE(macos(10.15), ios(13.0), tvos(13.0), bridgeos(4.0))
+__attribute__((visibility ("hidden")))
 bool _availability_version_check_hook(uint32_t count, DyldBuildVersion versions[]) {
     uint32_t current_plat = dyld_get_active_platform();
     for (int i = 0; i < count; i++) {

@@ -1,4 +1,4 @@
-CFLAGS += -miphoneos-version-min=14.0 -std=gnu17
+CFLAGS += -miphoneos-version-min=14.0 -std=gnu17 -fvisibility=hidden
 LDFLAGS += -Wl,-dead_strip -Wno-unused-command-line-argument
 OBJDIR = obj
 C_SRC = $(wildcard *.c)
@@ -33,8 +33,10 @@ rootfulhooks.dylib: $(OBJS) $(ELLEKIT)
 		-install_name /cores/binpack/usr/lib/rootfulhooks.dylib \
 		-o $@
 	$(DSYMUTIL) $@
+ifeq ($(DEV_BUILD),1)
 	$(STRIP) -x $@
-	$(LDID) -S $@ 
+endif
+	$(LDID) -S $@
 
 clean:
 	rm -rf rootfulhooks.dylib* rootfulhooks.dylib.dSYM obj

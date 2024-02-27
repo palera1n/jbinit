@@ -23,19 +23,16 @@ extern bool has_libiosexec;
 	(outPath); \
 })
 
+#define SHOOK_EXPORT __attribute__((visibility ("default")))
+
 bool stringStartsWith(const char *str, const char* prefix);
 bool stringEndsWith(const char* str, const char* suffix);
 
-#if 0
-int64_t jbdswFixSetuid(void);
-int64_t jbdswProcessBinary(const char *filePath);
-int64_t jbdswProcessLibrary(const char *filePath);
-int64_t jbdswDebugMe(void);
-int64_t jbdswInterceptUserspacePanic(const char *messageString);
-#endif
+SHOOK_EXPORT int64_t jbdswInterceptUserspacePanic(const char *messageString);
+
 
 int resolvePath(const char *file, const char *searchPath, int (^attemptHandler)(char *path));
-int spawn_hook_common(pid_t *restrict pid, const char *restrict path,
+SHOOK_EXPORT int spawn_hook_common(pid_t *restrict pid, const char *restrict path,
 					   const posix_spawn_file_actions_t *restrict file_actions,
 					   const posix_spawnattr_t *restrict attrp,
 					   char *const argv[restrict],
@@ -51,6 +48,7 @@ __API_AVAILABLE(macos(10.14), ios(12.0), tvos(12.0), bridgeos(3.0))
 uint32_t dyld_get_active_platform(void);
 
 __API_AVAILABLE(macos(10.15), ios(13.0), tvos(13.0), bridgeos(4.0))
+__attribute__((visibility ("hidden")))
 bool _availability_version_check_hook(uint32_t count, DyldBuildVersion versions[]);
 
 __API_AVAILABLE(macos(10.15), ios(13.0), tvos(13.0), bridgeos(4.0))

@@ -20,7 +20,9 @@ $(OBJDIR)/%.o: %.c $(OBJDIR)
 mount_cores: $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) $(LIBS) -o $@
 	$(DSYMUTIL) $@
+ifeq ($(DEV_BUILD),1)
 	$(STRIP) $@
+endif
 
 mount_cores.%: mount_cores entitlements.xml
 	$(VTOOL) -remove-build-version 2 -output $@ $<

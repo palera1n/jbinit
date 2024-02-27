@@ -112,7 +112,7 @@ uint64_t load_pflags(void) {
 
 __attribute__((constructor))void launchd_hook_main(void) {
   if (getpid() != 1) return;
-  int fd_console = open("/dev/console",O_RDWR|O_SYNC,0);
+  int fd_console = open("/dev/console",O_RDWR|O_SYNC|O_CLOEXEC,0);
   if (fd_console == -1) {
     char errMsg[1024];
     snprintf(errMsg, 1024, "payload.dylib cannot open /dev/console: %d (%s)", errno, strerror(errno));
@@ -183,9 +183,4 @@ __attribute__((constructor))void launchd_hook_main(void) {
   InitXPCHooks();
 
   printf("=========== bye from payload.dylib ===========\n");
-
-  close(fd_console);
-  close(STDIN_FILENO);
-  close(STDOUT_FILENO);
-  close(STDERR_FILENO);
 }

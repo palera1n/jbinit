@@ -1,4 +1,4 @@
-CFLAGS += -miphoneos-version-min=12.0 -std=gnu17
+CFLAGS += -miphoneos-version-min=12.0 -std=gnu17 -fvisibility=hidden
 LDFLAGS += -Wl,-dead_strip -Wno-unused-command-line-argument
 LDFLAGS += -install_name /cores/binpack/usr/lib/systemhook.dylib
 OBJDIR = obj
@@ -23,7 +23,9 @@ $(OBJDIR)/%.c.o: %.c $(OBJDIR)
 $(DYLIB_NAME).dylib: $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) $(OBJS) -shared -o $(DYLIB_NAME).dylib
 	$(DSYMUTIL) $@
+ifeq ($(DEV_BUILD),1)
 	$(STRIP) -x $@
+endif
 	$(LDID) -S $@
 
 clean:

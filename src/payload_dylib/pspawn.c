@@ -16,11 +16,11 @@ bool bound_libiosexec = false;
 
 // #define LOG_PROCESS_LAUNCHES 1
 
-void *posix_spawn_orig;
+static void *posix_spawn_orig;
 
 int (*init_libiosexec_hook_with_ellekit)(void);
 
-int posix_spawn_orig_wrapper(pid_t *restrict pid, const char *restrict path,
+static int posix_spawn_orig_wrapper(pid_t *restrict pid, const char *restrict path,
 					   const posix_spawn_file_actions_t *restrict file_actions,
 					   const posix_spawnattr_t *restrict attrp,
 					   char *const argv[restrict],
@@ -38,7 +38,7 @@ int posix_spawn_orig_wrapper(pid_t *restrict pid, const char *restrict path,
 	return r;
 }
 
-int posix_spawn_hook(pid_t *restrict pid, const char *restrict path,
+static int posix_spawn_hook(pid_t *restrict pid, const char *restrict path,
 					   const posix_spawn_file_actions_t *restrict file_actions,
 					   const posix_spawnattr_t *restrict attrp,
 					   char *const argv[restrict],

@@ -15,8 +15,8 @@
 
 #define ENOTDEVELOPMENT 142
 
-void (*xpc_handler_orig)(uint64_t a1, uint64_t a2, xpc_object_t xdict);
-void xpc_handler_hook(uint64_t a1, uint64_t a2, xpc_object_t xdict) {
+static void (*xpc_handler_orig)(uint64_t a1, uint64_t a2, xpc_object_t xdict);
+static void xpc_handler_hook(uint64_t a1, uint64_t a2, xpc_object_t xdict) {
     if (!xdict || xpc_get_type(xdict) != XPC_TYPE_DICTIONARY || !xpc_dictionary_get_bool(xdict, "jailbreak")) {
         return xpc_handler_orig(a1, a2, xdict);
     }
@@ -128,7 +128,7 @@ reply:
 
 }
 
-uint32_t* find_insn_maskmatch_match(uint8_t* data, size_t size, uint32_t* matches, uint32_t* masks, int count) {
+static uint32_t* find_insn_maskmatch_match(uint8_t* data, size_t size, uint32_t* matches, uint32_t* masks, int count) {
     int found = 0;
     if(sizeof(matches) != sizeof(masks))
         return NULL;
@@ -157,7 +157,7 @@ uint32_t* find_insn_maskmatch_match(uint8_t* data, size_t size, uint32_t* matche
     return retval;
 }
 
-uint32_t* find_prev_insn(uint32_t* from, uint32_t num, uint32_t insn, uint32_t mask) {
+static uint32_t* find_prev_insn(uint32_t* from, uint32_t num, uint32_t insn, uint32_t mask) {
     while(num) {
         if((*from & mask) == (insn & mask)) {
             return from;
