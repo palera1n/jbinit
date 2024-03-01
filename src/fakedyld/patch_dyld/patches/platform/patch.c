@@ -9,6 +9,7 @@
 
 int _internal_platform = 0;
 void *_internal_rbuf;
+bool has_found_platform_patch = false;
 
 bool inject_shc(struct pf_patch32_t *patch, uint32_t *stream) {
     uint32_t *shc_loc = copy_shc(_internal_rbuf, _internal_platform, stream[0]);
@@ -21,6 +22,7 @@ bool inject_shc(struct pf_patch32_t *patch, uint32_t *stream) {
     stream[0] = arm64_branch(stream, shc_loc, !pf_maskmatch32(stream[0], 0xd61f0000, 0xfffffc1f)); // branch to our shellcode to determine if we should change platform or leave it
     printf("%s: Patched platform check (shc b: 0x%x)\n", __FUNCTION__, stream[0]);
 
+    has_found_platform_patch = true;
     return true;
 }
 

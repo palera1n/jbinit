@@ -109,7 +109,7 @@ int setup_fakefs(uint32_t payload_options, struct paleinfo* pinfo_p) {
         fprintf(stderr, "unexpected filesystem type of /\n");
         spin();
     }
-    
+
     char fakefs_mntfromname[50];
     snprintf(fakefs_mntfromname, 50, "/dev/%s", pinfo_p->rootdev);
 
@@ -135,7 +135,7 @@ int setup_fakefs(uint32_t payload_options, struct paleinfo* pinfo_p) {
             spin();
         }
     }
-    
+
     CHECK_ERROR(mount("bindfs", "/cores/fs/real", MNT_RDONLY, "/"), 1, "mount_bindfs(/ -> /cores/fs/real) failed");
 
     CFMutableDictionaryRef dict = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
@@ -187,7 +187,7 @@ int setup_fakefs(uint32_t payload_options, struct paleinfo* pinfo_p) {
     copyfile_state_t state = copyfile_state_alloc();
     copyfile_state_set(state, COPYFILE_STATE_STATUS_CTX, &context);
     copyfile_state_set(state, COPYFILE_STATE_STATUS_CB, &copyfile_fakefs_cb);
-    
+
     CHECK_ERROR(copyfile("/cores/fs/real/.", "/cores/fs/fake", state, COPYFILE_ALL | COPYFILE_RECURSIVE | COPYFILE_NOFOLLOW_SRC | COPYFILE_NOFOLLOW_DST | COPYFILE_DATA_SPARSE | COPYFILE_DATA), 1, "copyfile() failed");
     printf("done copying files to fakefs\n");
     copyfile_state_free(state);

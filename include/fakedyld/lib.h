@@ -11,5 +11,6 @@ int atoi(const char* str);
 void bzero (void *s, size_t n);
 int isupper(int c);
 int isalpha(int c);
+void *memmem(const void *haystack, size_t hlen, const void *needle, size_t nlen);
 
 #endif

@@ -16,9 +16,10 @@ typedef struct {
     size_t file_len;
 } memory_file_handle_t;
 
-void patch_dyld(memory_file_handle_t* dyld_handle, int platform);
-static inline void spin(void) { fprintf(stderr, "spin() called!\n"); exit(1); }
 
-#define LOG(...) printf(__VA_ARGS__)
+void patch_dyld(memory_file_handle_t* dyld_handle, int platform);
+void panic(const char* format, ...);
+
+#define LOG(...) do { printf(__VA_ARGS__); printf("\n"); } while (0)
 
 #endif

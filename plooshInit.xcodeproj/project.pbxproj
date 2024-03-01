@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		012A1FC22B91814F0018CCA2 /* memmem.c in Sources */ = {isa = PBXBuildFile; fileRef = 012A1FC12B91814F0018CCA2 /* memmem.c */; };
 		01683B592B8C679900A7A2EA /* crashreporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 01683B582B8C679500A7A2EA /* crashreporter.m */; };
 		019B1B462B5CACA800BABAB5 /* load_etc_rc_d.c in Sources */ = {isa = PBXBuildFile; fileRef = 019B1B452B5CACA800BABAB5 /* load_etc_rc_d.c */; };
 		01B6169D2B720DC70080AB28 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 01B6169C2B720DC70080AB28 /* Makefile */; };
@@ -180,6 +181,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		012A1FC12B91814F0018CCA2 /* memmem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = memmem.c; sourceTree = "<group>"; };
 		01683B582B8C679500A7A2EA /* crashreporter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = crashreporter.m; sourceTree = "<group>"; };
 		019B1B452B5CACA800BABAB5 /* load_etc_rc_d.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load_etc_rc_d.c; sourceTree = "<group>"; };
 		01B6169C2B720DC70080AB28 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
@@ -945,6 +947,7 @@
 				01D3D67A2B5C80DA007845B6 /* memset.c */,
 				01D3D67B2B5C80DA007845B6 /* isupper.c */,
 				01D3D67C2B5C80DA007845B6 /* isspace.c */,
+				012A1FC12B91814F0018CCA2 /* memmem.c */,
 			);
 			path = lib;
 			sourceTree = "<group>";
@@ -1368,6 +1371,7 @@
 				01B9F8922B68045300428E81 /* volume.c in Sources */,
 				01D3D7722B5C80DA007845B6 /* main.c in Sources */,
 				01D3D7CB2B5C80DB007845B6 /* systeminfo.c in Sources */,
+				012A1FC22B91814F0018CCA2 /* memmem.c in Sources */,
 				01D3D6FD2B5C80DA007845B6 /* mount_dmg.c in Sources */,
 				01B9F88B2B68045300428E81 /* fastunicodecompare.c in Sources */,
 				01B9F8812B68045300428E81 /* io.c in Sources */,

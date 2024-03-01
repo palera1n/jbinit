@@ -1,7 +1,17 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include "include/fakedyld/fakedyld.h"
+
+void panic(const char* format, ...) {
+    va_list va;
+    va_start(va, format);
+    vfprintf(stderr, format, va);
+    va_end(va);
+    fprintf(stderr, "\n");
+    abort();
+}
 
 void *dyld_buf;
 size_t dyld_len;
@@ -39,7 +49,6 @@ int main(int argc, char **argv) {
     handle.file_len = dyld_len;
 
     patch_dyld(&handle, 2);
-    printf("\n");
 
     fp = fopen(argv[2], "wb");
     if(!fp) {
@@ -47,7 +56,7 @@ int main(int argc, char **argv) {
         free(dyld_buf);
         return -1;
     }
-    
+
     fwrite(dyld_buf, 1, dyld_len, fp);
     fflush(fp);
     fclose(fp);
