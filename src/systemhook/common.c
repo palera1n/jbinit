@@ -343,12 +343,6 @@ SHOOK_EXPORT int spawn_hook_common(pid_t *restrict pid, const char *restrict pat
 	if (envbuf_getenv((const char **)envp, "JB_TWEAKLOADER_PATH")) {
 		JBEnvAlreadyInsertedCount++;
 	}
-    
-    // This must be set to 0 because systemhook might not be of the same platform of the binary that will be ran
-    const char* existingDyldInCacheValue = envbuf_getenv((const char **)envp, "DYLD_IN_CACHE");
-    if (existingDyldInCacheValue && strcmp(existingDyldInCacheValue, "0") == 0) {
-        JBEnvAlreadyInsertedCount++;
-    }
 
 	// Check if we can find at least one reason to not insert jailbreak related environment variables
 	// In this case we also need to remove pre existing environment variables if they are already set
@@ -447,7 +441,6 @@ SHOOK_EXPORT int spawn_hook_common(pid_t *restrict pid, const char *restrict pat
 			envbuf_setenv(&envc, "JB_ROOT_PATH", JB_RootPath);
 			envbuf_setenv(&envc, "JB_PINFO_FLAGS", JB_PinfoFlags);
 			envbuf_setenv(&envc, "JB_TWEAKLOADER_PATH", JB_TweakLoaderPath);
-            envbuf_setenv(&envc, "DYLD_IN_CACHE", "0");
 		}
 		else {
 			if (systemHookAlreadyInserted && existingLibraryInserts) {
@@ -508,7 +501,6 @@ SHOOK_EXPORT int spawn_hook_common(pid_t *restrict pid, const char *restrict pat
 			envbuf_unsetenv(&envc, "JB_SANDBOX_EXTENSIONS");
 			envbuf_unsetenv(&envc, "JB_ROOT_PATH");
             envbuf_unsetenv(&envc, "JB_PINFO_FLAGS");
-            envbuf_unsetenv(&envc, "DYLD_IN_CACHE");
 		}
 
 		int retval = pspawn_orig(pid, path, file_actions, attrp, argv, envc);

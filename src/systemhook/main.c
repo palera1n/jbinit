@@ -408,8 +408,6 @@ __attribute__((constructor)) static void initializer(void)
         // Unset DYLD_LIBRARY_PATH, but only if libroot.dylib directory path is the only thing contained in it
         unsetenv("DYLD_LIBRARY_PATH");
     }
-    
-    unsetenv("DYLD_IN_CACHE");
 
 
 #ifdef HAVE_SYSTEMWIDE_IOSEXEC
