@@ -98,7 +98,7 @@ void dyld_proces_config_patch(void* buf) {
     
     uint32_t *func_addr = buf + amfi_flags->offset;
     uint64_t func_len = macho_get_symbol_size(amfi_flags);
-    if (func_len < 12) {
+    if (func_len < 16) {
         dev_panic("%s too small", amfi_check_dyld_policy_self_symbol);
         return;
     }
@@ -106,7 +106,8 @@ void dyld_proces_config_patch(void* buf) {
     // Replace the entire func
     func_addr[0] = 0xd2801fe8; // mov x8, 0xff
     func_addr[1] = 0xf9000028; // str x8, [x1]
-    func_addr[2] = 0xd65f03c0; // ret
+    func_addr[2] = 0xd2800000; // mox x0, #0
+    func_addr[3] = 0xd65f03c0; // ret
     LOG("Patched dyld AMFI process config");
 }
 
