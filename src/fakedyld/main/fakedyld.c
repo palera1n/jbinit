@@ -66,8 +66,7 @@ int main(int argc, char* argv[], char* envp[], char* apple[]) {
 
     #define INSERT_DYLIB "DYLD_INSERT_LIBRARIES=/cores/payload.dylib"
     #define DEFAULT_TWEAKLOADER "JB_TWEAKLOADER_PATH=@default"
-    #define DISABLE_DYLD_IN_CACHE "DYLD_IN_CACHE=0"
-    
+
         char* JBRootPathEnv;
         if (pinfo.flags & palerain_option_rootful) {
             JBRootPathEnv = "JB_ROOT_PATH=/";
@@ -86,14 +85,12 @@ int main(int argc, char* argv[], char* envp[], char* apple[]) {
         char* launchd_envp1 = (launchd_envp0 + sizeof(INSERT_DYLIB));
         char* launchd_envp2 = (launchd_envp1 + strlen(pinfo_buffer) + 1);
         char* launchd_envp3 = (launchd_envp2 + strlen(JBRootPathEnv) + 1);
-        char* launchd_envp4 = (launchd_envp3 + sizeof(DEFAULT_TWEAKLOADER));
         memcpy(launchd_argv0, "/sbin/launchd", sizeof("/sbin/launchd"));
         memcpy(launchd_envp0, INSERT_DYLIB, sizeof(INSERT_DYLIB));
         memcpy(launchd_envp1, pinfo_buffer, strlen(pinfo_buffer) + 1);
         memcpy(launchd_envp2, JBRootPathEnv, strlen(JBRootPathEnv) + 1);
         memcpy(launchd_envp3, DEFAULT_TWEAKLOADER, sizeof(DEFAULT_TWEAKLOADER));
-        memcpy(launchd_envp4, DISABLE_DYLD_IN_CACHE, sizeof(DISABLE_DYLD_IN_CACHE));
-        char** launchd_argv = (char**)((char*)launchd_envp4 + sizeof(DISABLE_DYLD_IN_CACHE));
+        char** launchd_argv = (char**)((char*)launchd_envp3 + sizeof(DEFAULT_TWEAKLOADER));
         char** launchd_envp = (char**)((char*)launchd_argv + (2*sizeof(char*)));
         launchd_argv[0] = launchd_argv0;
         launchd_argv[1] = NULL;
@@ -101,8 +98,7 @@ int main(int argc, char* argv[], char* envp[], char* apple[]) {
         launchd_envp[1] = launchd_envp1;
         launchd_envp[2] = launchd_envp2;
         launchd_envp[3] = launchd_envp3;
-        launchd_envp[4] = launchd_envp4;
-        launchd_envp[5] = NULL;
+        launchd_envp[4] = NULL;
         LOG("launchd environmental variables: ");
         for (int i = 0; launchd_envp[i] != NULL; i++) {
             LOG("%s", launchd_envp[i]);

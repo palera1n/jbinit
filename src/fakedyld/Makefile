@@ -1,6 +1,6 @@
 SUBDIRS = asm lib main patch_dyld
 CFLAGS += -nostdlib -nostdlibinc -fno-stack-protector -fomit-frame-pointer
-CFLAGS += --target=arm64-apple-ios12.0 -std=gnu17 -ffreestanding -U__nonnull
+CFLAGS += --target=arm64-apple-tvos12.0 -std=gnu17 -ffreestanding -U__nonnull
 LDFLAGS += -e__dyld_start -Wl,-dylinker -Wl,-dylinker_install_name,/usr/lib/dyld
 LDFLAGS += -static -Wl,-fatal_warnings -Wl,-dead_strip -Wl,-Z -Wno-unused-command-line-argument
 

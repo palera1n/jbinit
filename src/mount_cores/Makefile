@@ -1,10 +1,10 @@
-CFLAGS += -miphoneos-version-min=12.0 -std=gnu17 -U__nonnull -DMOUNT_CORES
+CFLAGS += -mappletvos-version-min=12.0 -std=gnu17 -U__nonnull -DMOUNT_CORES
 CFLAGS += -isystem $(ROOT)/apple-include
 LDFLAGS += -Wl,-dead_strip -Wno-unused-command-line-argument
 SRC = $(wildcard *.c)
 OBJDIR = obj
 OBJS = $(patsubst %,$(OBJDIR)/%,$(SRC:.c=.o))
-LIBS = -framework CoreFoundation -framework IOKit
+LIBS = -framework CoreFoundation ../libs/IOKit.tbd
 PLATFORMS = 2 3 5
 
 all: $(patsubst %, mount_cores.%, $(PLATFORMS))
@@ -25,7 +25,7 @@ ifeq ($(DEV_BUILD),1)
 endif
 
 mount_cores.%: mount_cores entitlements.xml
-	$(VTOOL) -remove-build-version 2 -output $@ $<
+	$(VTOOL) -remove-build-version 3 -output $@ $<
 	if [ "$@" = "mount_cores.5" ]; then \
 		os=3; \
 	else os=12; \

@@ -1,14 +1,16 @@
 --- !tapi-tbd
 tbd-version:     4
-targets:         [ arm64-ios ]
+targets:         [ arm64-ios, arm64-tvos ]
 uuids:
   - target:          arm64-ios
     value:           847B3DA6-A02C-309E-844B-EF89824075EC
+  - target:          arm64-tvos
+    value:           847B3DA6-A02C-309E-844B-EF89824075EF
 flags:           [ not_app_extension_safe ]
 install-name:    '@rpath/CydiaSubstrate.framework/CydiaSubstrate'
 swift-abi-version: 7
 exports:
-  - targets:         [ arm64-ios ]
+  - targets:         [ arm64-ios, arm64-tvos ]
     symbols:         [ '_$s7ellekit10LHStrErrorySVSgSo13LIBHOOKER_ERRVF', '_$s7ellekit10MSHookIvarySvSgyXlXp_SStF', 
                        '_$s7ellekit10TrampolineV05buildB0Says5UInt8VGSgyF', '_$s7ellekit10TrampolineV05writeB0yyF', 
                        '_$s7ellekit10TrampolineV10trampolineSvvM', '_$s7ellekit10TrampolineV10trampolineSvvg', 

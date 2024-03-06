@@ -4,8 +4,15 @@
 #include "plooshfinder/plooshfinder32.h"
 #include "plooshfinder/plooshfinder.h"
 
+#define amfi_check_dyld_policy_self_symbol "_amfi_check_dyld_policy_self"
 #define platform_check_symbol "____ZNK5dyld39MachOFile24forEachSupportedPlatformEU13block_pointerFvNS_8PlatformEjjE_block_invoke"
 #define start_symbol "start"
+
+#ifdef DEV_BUILD
+#define dev_panic(...) panic(__VA_ARGS__)
+#else
+#define dev_panic(...) LOG(__VA_ARGS__)
+#endif
 
 static void* arm64_dyld_buf = NULL;
 
@@ -82,6 +89,27 @@ void dyld_in_cache_patch(void* buf) {
     LOG("Patched dyld-in-cache");
 }
 
+void dyld_proces_config_patch(void* buf) {
+    struct nlist_64 *amfi_flags = macho_find_symbol(buf, amfi_check_dyld_policy_self_symbol);
+    if (!amfi_flags) {
+        dev_panic("%s not found", amfi_check_dyld_policy_self_symbol);
+        return;
+    }
+    
+    uint32_t *func_addr = buf + amfi_flags->offset;
+    uint64_t func_len = macho_get_symbol_size(amfi_flags);
+    if (func_len < 12) {
+        dev_panic("%s too small", amfi_check_dyld_policy_self_symbol);
+        return;
+    }
+    
+    // Replace the entire func
+    func_addr[0] = 0xd2801fe8; // mov x2, 0xff
+    func_addr[1] = 0xf9000028; // str x8, [x1]
+    func_addr[2] = 0xd65f03c0; // ret
+    LOG("Patched dyld AMFI process config");
+}
+
 void check_dyld(const memory_file_handle_t* dyld_handle) {
     if (!dyld_handle->file_p) {
         panic("refusing to patch dyld buf at NULL");
@@ -111,6 +139,7 @@ void patch_dyld(memory_file_handle_t* dyld_handle, int platform) {
     check_dyld(dyld_handle);
     arm64_dyld_buf = macho_find_arch(dyld_handle->file_p, CPU_TYPE_ARM64);
     platform_check_patch(arm64_dyld_buf, platform);
+    dyld_proces_config_patch(arm64_dyld_buf);
     struct section_64* cstring = macho_find_section(arm64_dyld_buf, "__TEXT", "__cstring");
     if (!cstring) {
         panic("failed to find dyld cstring");

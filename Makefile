@@ -20,22 +20,22 @@ AR = ar
 endif
 ifeq ($(MAC),1)
 MACOSX_SYSROOT != xcrun -sdk macosx --show-sdk-path
-TARGET_SYSROOT != xcrun -sdk iphoneos --show-sdk-path
+TARGET_SYSROOT != xcrun -sdk appletvos --show-sdk-path
 CC != xcrun --find clang
 else ifeq ($(UNAME),Darwin)
 CC = clang
 MACOSX_SYSROOT ?= /usr/share/SDKs/MacOSX.sdk
-TARGET_SYSROOT ?= /usr/share/SDKs/iPhoneOS.sdk
+TARGET_SYSROOT ?= /usr/share/SDKs/AppleTVOS.sdk
 else
 VTOOL = cctools-vtool
 STRIP = cctools-strip
 AR = cctools-ar
 CC = clang
-CFLAGS += -target arm64-apple-ios
+CFLAGS += -target arm64-apple-tvos
 LD != command -v ld64
 LDFLAGS += "-fuse-ld=$(LD)"
 MACOSX_SYSROOT ?= $(HOME)/cctools/SDKs/MacOSX.sdk
-TARGET_SYSROOT ?= $(HOME)/cctools/SDKs/iPhoneOS.sdk
+TARGET_SYSROOT ?= $(HOME)/cctools/SDKs/AppleTVOS.sdk
 endif
 CFLAGS += -isystem $(ROOT)/apple-include -I$(ROOT)/include -isysroot $(TARGET_SYSROOT)
 OBJC = $(CC)
@@ -82,8 +82,11 @@ apple-include: apple-include-private/**
 	$(SED) -E s/'__IOS_PROHIBITED|__TVOS_PROHIBITED|__WATCHOS_PROHIBITED'//g < $(TARGET_SYSROOT)/usr/include/unistd.h > apple-include/unistd.h
 	$(SED) -E s/'__IOS_PROHIBITED|__TVOS_PROHIBITED|__WATCHOS_PROHIBITED'//g < $(TARGET_SYSROOT)/usr/include/mach/task.h > apple-include/mach/task.h
 	$(SED) -E s/'__IOS_PROHIBITED|__TVOS_PROHIBITED|__WATCHOS_PROHIBITED'//g < $(TARGET_SYSROOT)/usr/include/mach/mach_host.h > apple-include/mach/mach_host.h
+	$(SED) -E s/'__IOS_PROHIBITED|__TVOS_PROHIBITED|__WATCHOS_PROHIBITED'//g < $(TARGET_SYSROOT)/usr/include/mach/mach.h > apple-include/mach/mach.h
+	$(SED) -E s/'__IOS_PROHIBITED|__TVOS_PROHIBITED|__WATCHOS_PROHIBITED'//g < $(TARGET_SYSROOT)/usr/include/mach/message.h > apple-include/mach/message.h
 	$(SED) -E s/'__IOS_PROHIBITED|__TVOS_PROHIBITED|__WATCHOS_PROHIBITED'//g < $(TARGET_SYSROOT)/usr/include/ucontext.h > apple-include/ucontext.h
 	$(SED) -E s/'__IOS_PROHIBITED|__TVOS_PROHIBITED|__WATCHOS_PROHIBITED'//g < $(TARGET_SYSROOT)/usr/include/signal.h > apple-include/signal.h
+	$(SED) -E s/'__API_UNAVAILABLE(.*)'/';'/g < $(TARGET_SYSROOT)/usr/include/spawn.h > apple-include/spawn.h
 	$(SED) 's/#ifndef __OPEN_SOURCE__/#if 1\n#if defined(__has_feature) \&\& defined(__has_attribute)\n#if __has_attribute(availability)\n#define __API_AVAILABLE_PLATFORM_bridgeos(x) bridgeos,introduced=x\n#define __API_DEPRECATED_PLATFORM_bridgeos(x,y) bridgeos,introduced=x,deprecated=y\n#define __API_UNAVAILABLE_PLATFORM_bridgeos bridgeos,unavailable\n#endif\n#endif/g' < $(TARGET_SYSROOT)/usr/include/AvailabilityInternal.h > apple-include/AvailabilityInternal.h
 	$(SED) -E /'__API_UNAVAILABLE'/d < $(TARGET_SYSROOT)/usr/include/pthread.h > apple-include/pthread.h
 	@if [ -f $(TARGET_SYSROOT)/System/Library/Frameworks/CoreFoundation.framework/Headers/CFUserNotification.h ]; then $(SED) -E 's/API_UNAVAILABLE\(ios, watchos, tvos\)//g' < $(TARGET_SYSROOT)/System/Library/Frameworks/CoreFoundation.framework/Headers/CFUserNotification.h > apple-include/CoreFoundation/CFUserNotification.h; fi

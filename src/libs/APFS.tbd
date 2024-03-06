@@ -1,9 +1,9 @@
 --- !tapi-tbd
 tbd-version:     4
-targets:         [ arm64-ios, arm64e-ios ]
+targets:         [ arm64-ios, arm64e-ios, arm64-tvos ]
 install-name:    '/System/Library/PrivateFrameworks/APFS.framework/APFS'
 exports:
-  - targets:         [ arm64-ios, arm64e-ios ]
+  - targets:         [ arm64-ios, arm64e-ios, arm64-tvos ]
     symbols:         [ _APFSCancelContainerResize, _APFSContainerDefrag, _APFSContainerEFIEmbed, 
                        _APFSContainerEFIGetVersion, _APFSContainerGetBootDevice, 
                        _APFSContainerGetDefrag, _APFSContainerGetFreeExtentHistogram, 

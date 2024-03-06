@@ -1,7 +1,7 @@
 C_SRC = main.c $(shell find $(ROOT)/src/fakedyld/patch_dyld -name '*.c')
 OBJDIR = obj
 CFLAGS = -Iinclude -I$(ROOT)/include/plooshfinder -I$(ROOT)/include
-CFLAGS += -flto=full
+CFLAGS += -flto=full -DDEV_BUILD=1
 LDFLAGS = -Wl,-dead_strip
 EXE = patch_dyld-test
 
