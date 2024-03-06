@@ -104,7 +104,7 @@ void dyld_proces_config_patch(void* buf) {
     }
     
     // Replace the entire func
-    func_addr[0] = 0xd2801fe8; // mov x8, 0xff
+    func_addr[0] = 0xd2801be8; // mov x8, 0xdf
     func_addr[1] = 0xf9000028; // str x8, [x1]
     func_addr[2] = 0xd2800000; // mov x0, #0
     func_addr[3] = 0xd65f03c0; // ret
