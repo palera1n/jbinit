@@ -20,6 +20,9 @@ extern bool has_found_platform_patch;
 void platform_check_patch(void* arm64_dyld_buf, int platform) {
     // this patch tricks dyld into thinking everything is for the current platform
     struct nlist_64 *forEachSupportedPlatform = macho_find_symbol(arm64_dyld_buf, platform_check_symbol);
+    if (!forEachSupportedPlatform) {
+        panic("failed to find symbol %s", platform_check_symbol);
+    }
 
     void *func_addr = arm64_dyld_buf + forEachSupportedPlatform->offset;
     uint64_t func_len = macho_get_symbol_size(forEachSupportedPlatform);
@@ -140,10 +143,12 @@ void patch_dyld(memory_file_handle_t* dyld_handle, int platform) {
     check_dyld(dyld_handle);
     arm64_dyld_buf = macho_find_arch(dyld_handle->file_p, CPU_TYPE_ARM64);
     platform_check_patch(arm64_dyld_buf, platform);
-    dyld_proces_config_patch(arm64_dyld_buf);
     struct section_64* cstring = macho_find_section(arm64_dyld_buf, "__TEXT", "__cstring");
     if (!cstring) {
         panic("failed to find dyld cstring");
+    }
+    if (memmem(macho_va_to_ptr(arm64_dyld_buf, cstring->addr), cstring->size, "AMFI", sizeof("AMFI"))) {
+        dyld_proces_config_patch(arm64_dyld_buf);
     }
     if (memmem(macho_va_to_ptr(arm64_dyld_buf, cstring->addr), cstring->size, "DYLD_IN_CACHE", sizeof("DYLD_IN_CACHE"))) {
         dyld_in_cache_patch(arm64_dyld_buf);
