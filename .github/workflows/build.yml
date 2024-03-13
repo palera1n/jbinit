@@ -30,7 +30,7 @@ jobs:
           install -m644 binpack.tar palera1nLoader.ipa src
 
       - name: Compile
-        run: xcodebuild -scheme plooshInit build -configuration Release
+        run: gmake -j$(sysctl -n hw.ncpu)
 
       - name: Prepare for upload
         run: |
