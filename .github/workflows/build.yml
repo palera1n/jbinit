@@ -30,7 +30,9 @@ jobs:
           install -m644 binpack.tar palera1nLoader.ipa src
 
       - name: Compile
-        run: gmake -j$(sysctl -n hw.ncpu)
+        run: |
+          gmake -j$(sysctl -n hw.ncpu) tools
+          gmake -j$(sysctl -n hw.ncpu)
 
       - name: Prepare for upload
         run: |
