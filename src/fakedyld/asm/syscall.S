@@ -1,4 +1,5 @@
 .globl _msyscall
+.globl _thread_switch
 .globl ___error
 .align 4
 
@@ -32,4 +33,9 @@ Lbotch:
     ret
 
 Lparent:
+    ret
+
+_thread_switch:
+    movn x16, #0x3c
+    svc 0x80
     ret

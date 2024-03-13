@@ -1,10 +1,6 @@
 #ifndef MOCK_FAKEDYLD_H
 #define MOCK_FAKEDYLD_H
 
-#if __STDC_HOSTED__ != 1
-#error "this file should not be used in the real ramdisk"
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

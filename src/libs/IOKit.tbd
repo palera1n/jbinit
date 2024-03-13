@@ -1,15 +1,19 @@
 --- !tapi-tbd
 tbd-version:     4
-targets:         [ arm64-tvos, arm64e-tvos ]
+targets:         [ arm64-tvos, arm64e-tvos, arm64-ios, arm64e-ios ]
 uuids:
   - target:          arm64-tvos
     value:           B076C6CA-A277-3870-94E5-5C5C984C445E
   - target:          arm64e-tvos
-    value:           B076C7CA-A277-3870-94E5-5C5C984C445E
+    value:           B076C7CA-A277-3870-94E5-5C5C984C4451
+  - target:          arm64e-ios
+    value:           B076C7CA-A277-3870-94E5-5C5C984C4452
+  - target:          arm64e-ios
+    value:           B076C7CA-A277-3870-94E5-5C5C984C4453
 install-name:    '/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit'
 current-version: 275
 exports:
-  - targets:         [ arm64-tvos, arm64e-tvos ]
+  - targets:         [ arm64-tvos, arm64e-tvos, arm64-ios, arm64e-ios ]
     symbols:         [ _IOAVAudioFormatString, _IOAVAudioGetChannelAllocation, _IOAVAudioGetChannelAllocationDefault, 
                        _IOAVAudioGetChannelLayoutData, _IOAVAudioGetSpeakerAllocationMask, 
                        _IOAVAudioInterfaceCopyChannelLayoutElements, _IOAVAudioInterfaceCopyDiagnosticsString, 

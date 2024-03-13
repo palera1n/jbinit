@@ -92,6 +92,7 @@ apple-include: apple-include-private/**
 	@if [ -f $(TARGET_SYSROOT)/System/Library/Frameworks/CoreFoundation.framework/Headers/CFUserNotification.h ]; then $(SED) -E 's/API_UNAVAILABLE\(ios, watchos, tvos\)//g' < $(TARGET_SYSROOT)/System/Library/Frameworks/CoreFoundation.framework/Headers/CFUserNotification.h > apple-include/CoreFoundation/CFUserNotification.h; fi
 	$(SED) -i -E s/'__API_UNAVAILABLE\(.*\)'// apple-include/IOKit/IOKitLib.h
 	$(SED) -E -e s/'API_UNAVAILABLE\(.*\)'// -e 's/API_AVAILABLE\(macos\(10\.7\)\)/__OSX_AVAILABLE_STARTING\(__MAC_10_7, __IPHONE_5_0\)/g' < $(MACOSX_SYSROOT)/usr/include/xpc/connection.h > apple-include/xpc/connection.h
+	$(SED) -i 's|// __BLOCKS__|\n#include "$(TARGET_SYSROOT)/usr/include/bsm/audit.h"|' apple-include/xpc/connection.h
 	cp -a apple-include-private/. apple-include
 
 clean:

@@ -1,12 +1,6 @@
 #include <fakedyld/fakedyld.h>
 
-__attribute__((naked)) kern_return_t thread_switch(mach_port_t new_thread, int option, mach_msg_timeout_t time)
-{
-  __asm__(
-      "movn x16, #0x3c\n"
-      "svc 0x80\n"
-      "ret\n");
-}
+kern_return_t thread_switch(mach_port_t new_thread, int option, mach_msg_timeout_t time);
 
 static int __errno = 0;
 int* __error() {

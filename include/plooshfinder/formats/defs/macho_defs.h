@@ -97,6 +97,7 @@ struct nlist_64 {
     uint64_t offset;
 };
 
+#if 0
 struct kmod_info {
     struct kmod_info *next;
 	int32_t info_version;
@@ -116,6 +117,7 @@ struct kmod_reference {
 	struct kmod_reference *next;
 	struct kmod_info *info;
 };
+#endif
 
 struct fileset_entry_command {
     uint32_t cmd;

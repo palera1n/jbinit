@@ -7,141 +7,145 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		012A1FC22B91814F0018CCA2 /* memmem.c in Sources */ = {isa = PBXBuildFile; fileRef = 012A1FC12B91814F0018CCA2 /* memmem.c */; };
-		01683B592B8C679900A7A2EA /* crashreporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 01683B582B8C679500A7A2EA /* crashreporter.m */; };
-		019B1B462B5CACA800BABAB5 /* load_etc_rc_d.c in Sources */ = {isa = PBXBuildFile; fileRef = 019B1B452B5CACA800BABAB5 /* load_etc_rc_d.c */; };
-		01B6169D2B720DC70080AB28 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 01B6169C2B720DC70080AB28 /* Makefile */; };
-		01B616A12B720E870080AB28 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B616A02B720E870080AB28 /* main.c */; };
-		01B616A32B720ED90080AB28 /* securityd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B616A22B720ED90080AB28 /* securityd.c */; };
-		01B616A52B72106F0080AB28 /* watchdogd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B616A42B72106F0080AB28 /* watchdogd.c */; };
-		01B9F8792B68045300428E81 /* abstractfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7BC2B68045300428E81 /* abstractfile.c */; };
-		01B9F87A2B68045300428E81 /* adc.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7BF2B68045300428E81 /* adc.c */; };
-		01B9F87B2B68045300428E81 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C02B68045300428E81 /* base64.c */; };
-		01B9F87C2B68045300428E81 /* checksum.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C12B68045300428E81 /* checksum.c */; };
-		01B9F87D2B68045300428E81 /* dmg.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C32B68045300428E81 /* dmg.c */; };
-		01B9F87E2B68045300428E81 /* dmgfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C42B68045300428E81 /* dmgfile.c */; };
-		01B9F87F2B68045300428E81 /* dmglib.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C52B68045300428E81 /* dmglib.c */; };
-		01B9F8802B68045300428E81 /* filevault.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C62B68045300428E81 /* filevault.c */; };
-		01B9F8812B68045300428E81 /* io.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C72B68045300428E81 /* io.c */; };
-		01B9F8822B68045300428E81 /* partition.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C82B68045300428E81 /* partition.c */; };
-		01B9F8832B68045300428E81 /* resources.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7C92B68045300428E81 /* resources.c */; };
-		01B9F8842B68045300428E81 /* udif.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7CA2B68045300428E81 /* udif.c */; };
-		01B9F8852B68045300428E81 /* win32test.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7CB2B68045300428E81 /* win32test.c */; };
-		01B9F8862B68045300428E81 /* hdutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7CE2B68045300428E81 /* hdutil.c */; };
-		01B9F8872B68045300428E81 /* win32test.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7CF2B68045300428E81 /* win32test.c */; };
-		01B9F8882B68045300428E81 /* btree.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7D12B68045300428E81 /* btree.c */; };
-		01B9F8892B68045300428E81 /* catalog.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7D22B68045300428E81 /* catalog.c */; };
-		01B9F88A2B68045300428E81 /* extents.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7D42B68045300428E81 /* extents.c */; };
-		01B9F88B2B68045300428E81 /* fastunicodecompare.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7D52B68045300428E81 /* fastunicodecompare.c */; };
-		01B9F88C2B68045300428E81 /* flatfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7D62B68045300428E81 /* flatfile.c */; };
-		01B9F88D2B68045300428E81 /* hfs.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7D72B68045300428E81 /* hfs.c */; };
-		01B9F88E2B68045300428E81 /* hfscompress.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7D82B68045300428E81 /* hfscompress.c */; };
-		01B9F88F2B68045300428E81 /* hfslib.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7D92B68045300428E81 /* hfslib.c */; };
-		01B9F8902B68045300428E81 /* rawfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7DA2B68045300428E81 /* rawfile.c */; };
-		01B9F8912B68045300428E81 /* utility.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7DB2B68045300428E81 /* utility.c */; };
-		01B9F8922B68045300428E81 /* volume.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7DC2B68045300428E81 /* volume.c */; };
-		01B9F8932B68045300428E81 /* xattr.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7DD2B68045300428E81 /* xattr.c */; };
-		01B9F8942B68045300428E81 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F7E32B68045300428E81 /* Makefile */; };
-		01B9F8A42B68045300428E81 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F80E2B68045300428E81 /* main.c */; };
-		01B9F8A52B68045300428E81 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F80F2B68045300428E81 /* Makefile */; };
-		01B9F8A62B68045300428E81 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F8122B68045300428E81 /* Makefile */; };
-		01B9F8AE2B68170D00428E81 /* overwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F8AD2B68170D00428E81 /* overwrite.c */; };
-		01D3D6BC2B5C80DA007845B6 /* pinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4B12B5C80D9007845B6 /* pinfo.c */; };
-		01D3D6E22B5C80DA007845B6 /* overwrite_file.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4EA2B5C80DA007845B6 /* overwrite_file.c */; };
-		01D3D6E32B5C80DA007845B6 /* handler.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4EB2B5C80DA007845B6 /* handler.c */; };
-		01D3D6E42B5C80DA007845B6 /* obliterate.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4EC2B5C80DA007845B6 /* obliterate.c */; };
-		01D3D6E52B5C80DA007845B6 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4ED2B5C80DA007845B6 /* main.c */; };
-		01D3D6E62B5C80DA007845B6 /* reboot3.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4EE2B5C80DA007845B6 /* reboot3.c */; };
-		01D3D6E72B5C80DA007845B6 /* bootstrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4EF2B5C80DA007845B6 /* bootstrap.c */; };
-		01D3D6E82B5C80DA007845B6 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4F22B5C80DA007845B6 /* main.c */; };
-		01D3D6E92B5C80DA007845B6 /* prelaunchd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4F52B5C80DA007845B6 /* prelaunchd.c */; };
-		01D3D6EA2B5C80DA007845B6 /* launchdaemons.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4F62B5C80DA007845B6 /* launchdaemons.c */; };
-		01D3D6F72B5C80DA007845B6 /* fixup_user_groups.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5042B5C80DA007845B6 /* fixup_user_groups.c */; };
-		01D3D6F82B5C80DA007845B6 /* sysstatuscheck.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5052B5C80DA007845B6 /* sysstatuscheck.c */; };
-		01D3D6FB2B5C80DA007845B6 /* runcmd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5082B5C80DA007845B6 /* runcmd.c */; };
-		01D3D6FC2B5C80DA007845B6 /* platform.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5092B5C80DA007845B6 /* platform.c */; };
-		01D3D6FD2B5C80DA007845B6 /* mount_dmg.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D50A2B5C80DA007845B6 /* mount_dmg.c */; };
-		01D3D6FE2B5C80DA007845B6 /* create_var_jb.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D50B2B5C80DA007845B6 /* create_var_jb.c */; };
-		01D3D6FF2B5C80DA007845B6 /* setup_fakefs.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D50C2B5C80DA007845B6 /* setup_fakefs.c */; };
-		01D3D7002B5C80DA007845B6 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D50D2B5C80DA007845B6 /* main.c */; };
-		01D3D7012B5C80DA007845B6 /* remount.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D50E2B5C80DA007845B6 /* remount.c */; };
-		01D3D7082B5C80DA007845B6 /* print_jailbreakd_reply.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5172B5C80DA007845B6 /* print_jailbreakd_reply.c */; };
-		01D3D70A2B5C80DA007845B6 /* palera1n_flags.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5192B5C80DA007845B6 /* palera1n_flags.c */; };
-		01D3D70B2B5C80DA007845B6 /* obliterate.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D51A2B5C80DA007845B6 /* obliterate.c */; };
-		01D3D70C2B5C80DA007845B6 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D51B2B5C80DA007845B6 /* main.c */; };
-		01D3D70D2B5C80DA007845B6 /* preboot_path.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D51C2B5C80DA007845B6 /* preboot_path.c */; };
-		01D3D70E2B5C80DA007845B6 /* bootstrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D51D2B5C80DA007845B6 /* bootstrap.c */; };
-		01D3D7152B5C80DA007845B6 /* bmhash.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5262B5C80DA007845B6 /* bmhash.c */; };
-		01D3D7162B5C80DA007845B6 /* launchd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5282B5C80DA007845B6 /* launchd.c */; };
-		01D3D7172B5C80DA007845B6 /* jbdcall.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5292B5C80DA007845B6 /* jbdcall.c */; };
-		01D3D7182B5C80DA007845B6 /* prebootpath.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D52A2B5C80DA007845B6 /* prebootpath.c */; };
-		01D3D7192B5C80DA007845B6 /* strflags.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D52B2B5C80DA007845B6 /* strflags.c */; };
-		01D3D7552B5C80DA007845B6 /* libellekit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5EC2B5C80DA007845B6 /* libellekit.tbd */; };
-		01D3D7562B5C80DA007845B6 /* APFS.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5ED2B5C80DA007845B6 /* APFS.tbd */; };
-		01D3D7572B5C80DA007845B6 /* IOMobileFramebuffer.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5EE2B5C80DA007845B6 /* IOMobileFramebuffer.tbd */; };
-		01D3D75D2B5C80DA007845B6 /* lsd.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5F62B5C80DA007845B6 /* lsd.m */; };
-		01D3D75F2B5C80DA007845B6 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5F92B5C80DA007845B6 /* main.c */; };
-		01D3D7632B5C80DA007845B6 /* mount_dmg.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6022B5C80DA007845B6 /* mount_dmg.c */; };
-		01D3D7642B5C80DA007845B6 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6032B5C80DA007845B6 /* main.c */; };
-		01D3D7652B5C80DA007845B6 /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D60C2B5C80DA007845B6 /* common.c */; };
-		01D3D76F2B5C80DA007845B6 /* envbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6182B5C80DA007845B6 /* envbuf.c */; };
-		01D3D7702B5C80DA007845B6 /* getusershell.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6192B5C80DA007845B6 /* getusershell.c */; };
-		01D3D7712B5C80DA007845B6 /* get_libiosexec.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D61A2B5C80DA007845B6 /* get_libiosexec.c */; };
-		01D3D7722B5C80DA007845B6 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D61B2B5C80DA007845B6 /* main.c */; };
-		01D3D7732B5C80DA007845B6 /* getgrent.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D61D2B5C80DA007845B6 /* getgrent.c */; };
-		01D3D7742B5C80DA007845B6 /* getpwent.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D61E2B5C80DA007845B6 /* getpwent.c */; };
-		01D3D7782B5C80DA007845B6 /* start.S in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6252B5C80DA007845B6 /* start.S */; };
-		01D3D7792B5C80DA007845B6 /* syscall.S in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6262B5C80DA007845B6 /* syscall.S */; };
-		01D3D77E2B5C80DA007845B6 /* shellcode.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6302B5C80DA007845B6 /* shellcode.c */; };
-		01D3D7812B5C80DA007845B6 /* patch.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6342B5C80DA007845B6 /* patch.c */; };
-		01D3D7832B5C80DA007845B6 /* patcher.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6362B5C80DA007845B6 /* patcher.c */; };
-		01D3D78E2B5C80DA007845B6 /* plooshfinder32.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6482B5C80DA007845B6 /* plooshfinder32.c */; };
-		01D3D78F2B5C80DA007845B6 /* arm64.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64A2B5C80DA007845B6 /* arm64.c */; };
-		01D3D7902B5C80DA007845B6 /* pe.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64C2B5C80DA007845B6 /* pe.c */; };
-		01D3D7912B5C80DA007845B6 /* macho.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64D2B5C80DA007845B6 /* macho.c */; };
-		01D3D7922B5C80DA007845B6 /* multi.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64E2B5C80DA007845B6 /* multi.c */; };
-		01D3D7932B5C80DA007845B6 /* elf.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64F2B5C80DA007845B6 /* elf.c */; };
-		01D3D7942B5C80DA007845B6 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6502B5C80DA007845B6 /* utils.c */; };
-		01D3D7952B5C80DA007845B6 /* plooshfinder.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6512B5C80DA007845B6 /* plooshfinder.c */; };
-		01D3D7962B5C80DA007845B6 /* plooshfinder64.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6522B5C80DA007845B6 /* plooshfinder64.c */; };
-		01D3D7972B5C80DA007845B6 /* atoi.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6552B5C80DA007845B6 /* atoi.c */; };
-		01D3D7982B5C80DA007845B6 /* memcpy.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6562B5C80DA007845B6 /* memcpy.c */; };
-		01D3D7992B5C80DA007845B6 /* strchr.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6572B5C80DA007845B6 /* strchr.c */; };
-		01D3D79A2B5C80DA007845B6 /* printf.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6582B5C80DA007845B6 /* printf.c */; };
-		01D3D79B2B5C80DA007845B6 /* isdigit.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6592B5C80DA007845B6 /* isdigit.c */; };
-		01D3D7AF2B5C80DB007845B6 /* strstr.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D66E2B5C80DA007845B6 /* strstr.c */; };
-		01D3D7B12B5C80DB007845B6 /* syscalls.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6702B5C80DA007845B6 /* syscalls.c */; };
-		01D3D7B22B5C80DB007845B6 /* stroul.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6712B5C80DA007845B6 /* stroul.c */; };
-		01D3D7B32B5C80DB007845B6 /* strlen.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6722B5C80DA007845B6 /* strlen.c */; };
-		01D3D7B42B5C80DB007845B6 /* strncmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6732B5C80DA007845B6 /* strncmp.c */; };
-		01D3D7B52B5C80DB007845B6 /* isalpha.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6742B5C80DA007845B6 /* isalpha.c */; };
-		01D3D7B62B5C80DB007845B6 /* putchar.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6752B5C80DA007845B6 /* putchar.c */; };
-		01D3D7B72B5C80DB007845B6 /* strcmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6762B5C80DA007845B6 /* strcmp.c */; };
-		01D3D7B82B5C80DB007845B6 /* stroull.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6772B5C80DA007845B6 /* stroull.c */; };
-		01D3D7B92B5C80DB007845B6 /* bzero.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6782B5C80DA007845B6 /* bzero.c */; };
-		01D3D7BA2B5C80DB007845B6 /* strerror.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6792B5C80DA007845B6 /* strerror.c */; };
-		01D3D7BB2B5C80DB007845B6 /* memset.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D67A2B5C80DA007845B6 /* memset.c */; };
-		01D3D7BC2B5C80DB007845B6 /* isupper.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D67B2B5C80DA007845B6 /* isupper.c */; };
-		01D3D7BD2B5C80DB007845B6 /* isspace.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D67C2B5C80DA007845B6 /* isspace.c */; };
-		01D3D7C72B5C80DB007845B6 /* pinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6882B5C80DA007845B6 /* pinfo.c */; };
-		01D3D7C92B5C80DB007845B6 /* mountroot.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D68A2B5C80DA007845B6 /* mountroot.c */; };
-		01D3D7CA2B5C80DB007845B6 /* prepare_root.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D68B2B5C80DA007845B6 /* prepare_root.c */; };
-		01D3D7CB2B5C80DB007845B6 /* systeminfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D68C2B5C80DA007845B6 /* systeminfo.c */; };
-		01D3D7CC2B5C80DB007845B6 /* rw_file.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D68D2B5C80DA007845B6 /* rw_file.c */; };
-		01D3D7CD2B5C80DB007845B6 /* pinfo_check.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D68E2B5C80DA007845B6 /* pinfo_check.c */; };
-		01D3D7CE2B5C80DB007845B6 /* start.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D68F2B5C80DA007845B6 /* start.c */; };
-		01D3D7CF2B5C80DB007845B6 /* fakedyld.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6902B5C80DA007845B6 /* fakedyld.c */; };
-		01D3D7D02B5C80DB007845B6 /* cores_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6912B5C80DA007845B6 /* cores_init.c */; };
-		01D3D7D12B5C80DB007845B6 /* bootscreend.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6952B5C80DA007845B6 /* bootscreend.c */; };
-		01D3D7DC2B5C80DB007845B6 /* platform.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6A12B5C80DA007845B6 /* platform.c */; };
-		01D3D7DD2B5C80DB007845B6 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6A32B5C80DA007845B6 /* main.c */; };
-		01D3D7DE2B5C80DB007845B6 /* daemon.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6A52B5C80DA007845B6 /* daemon.c */; };
-		01D3D7DF2B5C80DB007845B6 /* pspawn.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6A62B5C80DA007845B6 /* pspawn.c */; };
-		01D3D7E02B5C80DB007845B6 /* xpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6A72B5C80DA007845B6 /* xpc.c */; };
-		01D3D7E82B5C80DB007845B6 /* lsd.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6B12B5C80DA007845B6 /* lsd.m */; };
-		01D3D7EA2B5C80DB007845B6 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6B32B5C80DA007845B6 /* main.c */; };
-		01D3D7EB2B5C80DB007845B6 /* sb.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6B52B5C80DA007845B6 /* sb.m */; };
-		01D3D7EC2B5C80DB007845B6 /* cfprefsd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6B72B5C80DA007845B6 /* cfprefsd.c */; };
+		01E426E42BA1DF91008BC989 /* start.S in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6252B5C80DA007845B6 /* start.S */; };
+		01E426E52BA1DF94008BC989 /* syscall.S in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6262B5C80DA007845B6 /* syscall.S */; };
+		01E426E62BA1DF9B008BC989 /* shellcode.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6302B5C80DA007845B6 /* shellcode.c */; };
+		01E426E72BA1DF9F008BC989 /* patch.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6342B5C80DA007845B6 /* patch.c */; };
+		01E426E82BA1DFA3008BC989 /* patcher.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6362B5C80DA007845B6 /* patcher.c */; };
+		01E426E92BA1DFA8008BC989 /* plooshfinder32.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6482B5C80DA007845B6 /* plooshfinder32.c */; };
+		01E426EA2BA1E002008BC989 /* pinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6882B5C80DA007845B6 /* pinfo.c */; };
+		01E426EB2BA1E006008BC989 /* mountroot.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D68A2B5C80DA007845B6 /* mountroot.c */; };
+		01E426EC2BA1E008008BC989 /* prepare_root.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D68B2B5C80DA007845B6 /* prepare_root.c */; };
+		01E426ED2BA1E00A008BC989 /* systeminfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D68C2B5C80DA007845B6 /* systeminfo.c */; };
+		01E426EE2BA1E00C008BC989 /* rw_file.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D68D2B5C80DA007845B6 /* rw_file.c */; };
+		01E426EF2BA1E00F008BC989 /* pinfo_check.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D68E2B5C80DA007845B6 /* pinfo_check.c */; };
+		01E426F02BA1E011008BC989 /* start.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D68F2B5C80DA007845B6 /* start.c */; };
+		01E426F12BA1E013008BC989 /* fakedyld.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6902B5C80DA007845B6 /* fakedyld.c */; };
+		01E426F22BA1E016008BC989 /* cores_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6912B5C80DA007845B6 /* cores_init.c */; };
+		01E426F32BA1E018008BC989 /* memmem.c in Sources */ = {isa = PBXBuildFile; fileRef = 012A1FC12B91814F0018CCA2 /* memmem.c */; };
+		01E426F42BA1E01B008BC989 /* isspace.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D67C2B5C80DA007845B6 /* isspace.c */; };
+		01E426F52BA1E01E008BC989 /* isupper.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D67B2B5C80DA007845B6 /* isupper.c */; };
+		01E426F62BA1E021008BC989 /* memset.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D67A2B5C80DA007845B6 /* memset.c */; };
+		01E426F72BA1E023008BC989 /* strerror.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6792B5C80DA007845B6 /* strerror.c */; };
+		01E426F82BA1E026008BC989 /* bzero.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6782B5C80DA007845B6 /* bzero.c */; };
+		01E426F92BA1E029008BC989 /* stroull.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6772B5C80DA007845B6 /* stroull.c */; };
+		01E426FA2BA1E02B008BC989 /* strcmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6762B5C80DA007845B6 /* strcmp.c */; };
+		01E426FB2BA1E02E008BC989 /* putchar.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6752B5C80DA007845B6 /* putchar.c */; };
+		01E426FC2BA1E030008BC989 /* isalpha.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6742B5C80DA007845B6 /* isalpha.c */; };
+		01E426FD2BA1E033008BC989 /* strncmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6732B5C80DA007845B6 /* strncmp.c */; };
+		01E426FE2BA1E035008BC989 /* strlen.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6722B5C80DA007845B6 /* strlen.c */; };
+		01E426FF2BA1E037008BC989 /* stroul.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6712B5C80DA007845B6 /* stroul.c */; };
+		01E427002BA1E039008BC989 /* syscalls.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6702B5C80DA007845B6 /* syscalls.c */; };
+		01E427012BA1E03C008BC989 /* strstr.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D66E2B5C80DA007845B6 /* strstr.c */; };
+		01E427022BA1E03E008BC989 /* isdigit.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6592B5C80DA007845B6 /* isdigit.c */; };
+		01E427032BA1E040008BC989 /* printf.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6582B5C80DA007845B6 /* printf.c */; };
+		01E427042BA1E043008BC989 /* strchr.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6572B5C80DA007845B6 /* strchr.c */; };
+		01E427052BA1E045008BC989 /* memcpy.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6562B5C80DA007845B6 /* memcpy.c */; };
+		01E427062BA1E047008BC989 /* atoi.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6552B5C80DA007845B6 /* atoi.c */; };
+		01E427072BA1E102008BC989 /* arm64.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64A2B5C80DA007845B6 /* arm64.c */; };
+		01E427082BA1E104008BC989 /* plooshfinder64.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6522B5C80DA007845B6 /* plooshfinder64.c */; };
+		01E427092BA1E107008BC989 /* plooshfinder.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6512B5C80DA007845B6 /* plooshfinder.c */; };
+		01E4270A2BA1E109008BC989 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6502B5C80DA007845B6 /* utils.c */; };
+		01E4270B2BA1E26A008BC989 /* pe.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64C2B5C80DA007845B6 /* pe.c */; };
+		01E4270C2BA1E26C008BC989 /* macho.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64D2B5C80DA007845B6 /* macho.c */; };
+		01E4270D2BA1E26E008BC989 /* elf.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64F2B5C80DA007845B6 /* elf.c */; };
+		01E4270E2BA1E271008BC989 /* multi.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64E2B5C80DA007845B6 /* multi.c */; };
+		01E4271C2BA1E38F008BC989 /* IOKit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4271B2BA1E38F008BC989 /* IOKit.tbd */; };
+		01E4271D2BA1E395008BC989 /* mount_dmg.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6022B5C80DA007845B6 /* mount_dmg.c */; };
+		01E4271E2BA1E397008BC989 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6032B5C80DA007845B6 /* main.c */; };
+		01E427412BA1E8A2008BC989 /* bmhash.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5262B5C80DA007845B6 /* bmhash.c */; };
+		01E427422BA1E8A5008BC989 /* launchd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5282B5C80DA007845B6 /* launchd.c */; };
+		01E427432BA1E8A7008BC989 /* jbdcall.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5292B5C80DA007845B6 /* jbdcall.c */; };
+		01E427442BA1E8A9008BC989 /* prebootpath.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D52A2B5C80DA007845B6 /* prebootpath.c */; };
+		01E427452BA1E8AB008BC989 /* strflags.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D52B2B5C80DA007845B6 /* strflags.c */; };
+		01E427462BA1E8DB008BC989 /* liblibjailbreak.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4273D2BA1E848008BC989 /* liblibjailbreak.a */; };
+		01E427472BA1E8F2008BC989 /* bootscreend.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6952B5C80DA007845B6 /* bootscreend.c */; };
+		01E427482BA1E8F6008BC989 /* platform.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6A12B5C80DA007845B6 /* platform.c */; };
+		01E427492BA1E8F9008BC989 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6A32B5C80DA007845B6 /* main.c */; };
+		01E4274A2BA1E8FD008BC989 /* crashreporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 01683B582B8C679500A7A2EA /* crashreporter.m */; };
+		01E4274B2BA1E901008BC989 /* daemon.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6A52B5C80DA007845B6 /* daemon.c */; };
+		01E4274C2BA1E903008BC989 /* pspawn.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6A62B5C80DA007845B6 /* pspawn.c */; };
+		01E4274D2BA1E906008BC989 /* xpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6A72B5C80DA007845B6 /* xpc.c */; };
+		01E4274E2BA1E921008BC989 /* IOMobileFramebuffer.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5EE2B5C80DA007845B6 /* IOMobileFramebuffer.tbd */; };
+		01E4274F2BA1E933008BC989 /* IOKit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4271B2BA1E38F008BC989 /* IOKit.tbd */; };
+		01E427512BA1EACF008BC989 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E427502BA1EACF008BC989 /* IOSurface.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
+		01E4275E2BA1EB29008BC989 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4275D2BA1EB29008BC989 /* Foundation.framework */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
+		01E427602BA1EB2E008BC989 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4275F2BA1EB2E008BC989 /* CoreFoundation.framework */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
+		01E427612BA1EB3A008BC989 /* IOKit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4271B2BA1E38F008BC989 /* IOKit.tbd */; };
+		01E427632BA1EB4F008BC989 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E427622BA1EB4F008BC989 /* Security.framework */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
+		01E427642BA1EB59008BC989 /* APFS.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5ED2B5C80DA007845B6 /* APFS.tbd */; };
+		01E427652BA1EB6E008BC989 /* pinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4B12B5C80D9007845B6 /* pinfo.c */; };
+		01E427662BA1EB70008BC989 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4F22B5C80DA007845B6 /* main.c */; };
+		01E427672BA1EB7A008BC989 /* liblibjailbreak.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4273D2BA1E848008BC989 /* liblibjailbreak.a */; };
+		01E427682BA1EC03008BC989 /* overwrite_file.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4EA2B5C80DA007845B6 /* overwrite_file.c */; };
+		01E427692BA1EC05008BC989 /* handler.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4EB2B5C80DA007845B6 /* handler.c */; };
+		01E4276A2BA1EC07008BC989 /* obliterate.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4EC2B5C80DA007845B6 /* obliterate.c */; };
+		01E4276B2BA1EC09008BC989 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4ED2B5C80DA007845B6 /* main.c */; };
+		01E4276C2BA1EC0C008BC989 /* reboot3.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4EE2B5C80DA007845B6 /* reboot3.c */; };
+		01E4276D2BA1EC0E008BC989 /* bootstrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4EF2B5C80DA007845B6 /* bootstrap.c */; };
+		01E4276E2BA1EC11008BC989 /* prelaunchd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4F52B5C80DA007845B6 /* prelaunchd.c */; };
+		01E4276F2BA1EC13008BC989 /* launchdaemons.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D4F62B5C80DA007845B6 /* launchdaemons.c */; };
+		01E427702BA1EC15008BC989 /* fixup_user_groups.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5042B5C80DA007845B6 /* fixup_user_groups.c */; };
+		01E427712BA1EC18008BC989 /* sysstatuscheck.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5052B5C80DA007845B6 /* sysstatuscheck.c */; };
+		01E427722BA1EC1B008BC989 /* runcmd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5082B5C80DA007845B6 /* runcmd.c */; };
+		01E427732BA1EC1D008BC989 /* platform.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5092B5C80DA007845B6 /* platform.c */; };
+		01E427742BA1EC20008BC989 /* mount_dmg.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D50A2B5C80DA007845B6 /* mount_dmg.c */; };
+		01E427752BA1EC23008BC989 /* create_var_jb.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D50B2B5C80DA007845B6 /* create_var_jb.c */; };
+		01E427762BA1EC2C008BC989 /* setup_fakefs.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D50C2B5C80DA007845B6 /* setup_fakefs.c */; };
+		01E427772BA1EC2F008BC989 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D50D2B5C80DA007845B6 /* main.c */; };
+		01E427782BA1EC31008BC989 /* load_etc_rc_d.c in Sources */ = {isa = PBXBuildFile; fileRef = 019B1B452B5CACA800BABAB5 /* load_etc_rc_d.c */; };
+		01E427792BA1EC34008BC989 /* remount.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D50E2B5C80DA007845B6 /* remount.c */; };
+		01E4277A2BA1EC3A008BC989 /* print_jailbreakd_reply.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5172B5C80DA007845B6 /* print_jailbreakd_reply.c */; };
+		01E4277B2BA1EC3D008BC989 /* palera1n_flags.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5192B5C80DA007845B6 /* palera1n_flags.c */; };
+		01E4277C2BA1EC3F008BC989 /* obliterate.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D51A2B5C80DA007845B6 /* obliterate.c */; };
+		01E4277D2BA1EC41008BC989 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D51B2B5C80DA007845B6 /* main.c */; };
+		01E4277E2BA1EC43008BC989 /* preboot_path.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D51C2B5C80DA007845B6 /* preboot_path.c */; };
+		01E4277F2BA1EC45008BC989 /* bootstrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D51D2B5C80DA007845B6 /* bootstrap.c */; };
+		01E427802BA1EC49008BC989 /* overwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F8AD2B68170D00428E81 /* overwrite.c */; };
+		01E427892BA1ED5C008BC989 /* bootstrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 01E427882BA1ED5C008BC989 /* bootstrap.c */; };
+		01E4278E2BA1ED8F008BC989 /* load.c in Sources */ = {isa = PBXBuildFile; fileRef = 01E4278D2BA1ED8F008BC989 /* load.c */; };
+		01E427902BA1ED91008BC989 /* xpc_helper.c in Sources */ = {isa = PBXBuildFile; fileRef = 01E4278F2BA1ED91008BC989 /* xpc_helper.c */; };
+		01E427B12BA1EEE2008BC989 /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D60C2B5C80DA007845B6 /* common.c */; };
+		01E427B22BA1EEEB008BC989 /* envbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6182B5C80DA007845B6 /* envbuf.c */; };
+		01E427B32BA1EEED008BC989 /* getusershell.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6192B5C80DA007845B6 /* getusershell.c */; };
+		01E427B42BA1EEEF008BC989 /* get_libiosexec.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D61A2B5C80DA007845B6 /* get_libiosexec.c */; };
+		01E427B52BA1EEF2008BC989 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D61B2B5C80DA007845B6 /* main.c */; };
+		01E427B62BA1EEF5008BC989 /* getgrent.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D61D2B5C80DA007845B6 /* getgrent.c */; };
+		01E427B72BA1EEF7008BC989 /* getpwent.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D61E2B5C80DA007845B6 /* getpwent.c */; };
+		01E427BA2BA1EF0C008BC989 /* lsd.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5F62B5C80DA007845B6 /* lsd.m */; };
+		01E427BB2BA1EF0F008BC989 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5F92B5C80DA007845B6 /* main.c */; };
+		01E427BC2BA1EF1A008BC989 /* lsd.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6B12B5C80DA007845B6 /* lsd.m */; };
+		01E427BD2BA1EF1D008BC989 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6B32B5C80DA007845B6 /* main.c */; };
+		01E427BE2BA1EF1F008BC989 /* sb.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6B52B5C80DA007845B6 /* sb.m */; };
+		01E427BF2BA1EF22008BC989 /* cfprefsd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6B72B5C80DA007845B6 /* cfprefsd.c */; };
+		01E427C02BA1EF29008BC989 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B616A02B720E870080AB28 /* main.c */; };
+		01E427C12BA1EF2B008BC989 /* securityd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B616A22B720ED90080AB28 /* securityd.c */; };
+		01E427C22BA1EF2E008BC989 /* watchdogd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B616A42B72106F0080AB28 /* watchdogd.c */; };
+		01E427C32BA1EFEF008BC989 /* libellekit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5EC2B5C80DA007845B6 /* libellekit.tbd */; };
+		01E427C42BA1EFF9008BC989 /* libellekit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5EC2B5C80DA007845B6 /* libellekit.tbd */; };
+		01E427C52BA1F003008BC989 /* libellekit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5EC2B5C80DA007845B6 /* libellekit.tbd */; };
+		01E427C62BA1F028008BC989 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4275D2BA1EB29008BC989 /* Foundation.framework */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
+		01E427C72BA1F02D008BC989 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4275F2BA1EB2E008BC989 /* CoreFoundation.framework */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
+		01E427C82BA1F042008BC989 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4275D2BA1EB29008BC989 /* Foundation.framework */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
+		01E427C92BA1F047008BC989 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4275F2BA1EB2E008BC989 /* CoreFoundation.framework */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
+		01E427CA2BA1F051008BC989 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E427622BA1EB4F008BC989 /* Security.framework */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
+		01E427CB2BA1F07D008BC989 /* IOKit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4271B2BA1E38F008BC989 /* IOKit.tbd */; };
+		01E427CC2BA1F086008BC989 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4275F2BA1EB2E008BC989 /* CoreFoundation.framework */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
+		01E427CD2BA1F08C008BC989 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E427622BA1EB4F008BC989 /* Security.framework */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
+		01E427CE2BA1F0F8008BC989 /* liblibjailbreak.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4273D2BA1E848008BC989 /* liblibjailbreak.a */; };
+		01E427DA2BA1F2E1008BC989 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F80E2B68045300428E81 /* main.c */; };
+		01E427DB2BA1F3AA008BC989 /* shellcode.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6302B5C80DA007845B6 /* shellcode.c */; };
+		01E427DC2BA1F3AD008BC989 /* patch.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6342B5C80DA007845B6 /* patch.c */; };
+		01E427DD2BA1F3B2008BC989 /* patcher.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6362B5C80DA007845B6 /* patcher.c */; };
+		01E427DE2BA1F3B4008BC989 /* plooshfinder32.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6482B5C80DA007845B6 /* plooshfinder32.c */; };
+		01E427DF2BA1F3DF008BC989 /* arm64.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64A2B5C80DA007845B6 /* arm64.c */; };
+		01E427E02BA1F419008BC989 /* plooshfinder64.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6522B5C80DA007845B6 /* plooshfinder64.c */; };
+		01E427E12BA1F41B008BC989 /* plooshfinder.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6512B5C80DA007845B6 /* plooshfinder.c */; };
+		01E427E22BA1F41E008BC989 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6502B5C80DA007845B6 /* utils.c */; };
+		01E427E32BA1F420008BC989 /* elf.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64F2B5C80DA007845B6 /* elf.c */; };
+		01E427E42BA1F421008BC989 /* multi.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64E2B5C80DA007845B6 /* multi.c */; };
+		01E427E52BA1F423008BC989 /* macho.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64D2B5C80DA007845B6 /* macho.c */; };
+		01E427E62BA1F426008BC989 /* pe.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64C2B5C80DA007845B6 /* pe.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -169,7 +173,34 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		01D3D4872B5C7F95007845B6 /* CopyFiles */ = {
+		01E426D72BA1DDDC008BC989 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		01E427112BA1E364008BC989 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		01E427542BA1EB06008BC989 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		01E427D12BA1F29F008BC989 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -249,7 +280,6 @@
 		01D3D47F2B5C7DDE007845B6 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01D3D4812B5C7DDE007845B6 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		01D3D4832B5C7DDE007845B6 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		01D3D4892B5C7F95007845B6 /* dummy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dummy; sourceTree = BUILT_PRODUCTS_DIR; };
 		01D3D4A92B5C80D9007845B6 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01D3D4B02B5C80D9007845B6 /* entitlements.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = entitlements.xml; sourceTree = "<group>"; };
 		01D3D4B12B5C80D9007845B6 /* pinfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pinfo.c; sourceTree = "<group>"; };
@@ -422,16 +452,117 @@
 		01D3DA542B5C83B7007845B6 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		01D3DA552B5C83B7007845B6 /* crashreporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crashreporter.h; sourceTree = "<group>"; };
 		01D3DA572B5C83B7007845B6 /* hooks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hooks.h; sourceTree = "<group>"; };
+		01E426D92BA1DDDC008BC989 /* fakedyld */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fakedyld; sourceTree = BUILT_PRODUCTS_DIR; };
+		01E427132BA1E364008BC989 /* mount_cores */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mount_cores; sourceTree = BUILT_PRODUCTS_DIR; };
+		01E4271B2BA1E38F008BC989 /* IOKit.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = IOKit.tbd; path = src/libs/IOKit.tbd; sourceTree = "<group>"; };
+		01E427352BA1E829008BC989 /* libpayload_dylib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libpayload_dylib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		01E4273D2BA1E848008BC989 /* liblibjailbreak.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibjailbreak.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		01E427502BA1EACF008BC989 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/System/Library/Frameworks/IOSurface.framework; sourceTree = DEVELOPER_DIR; };
+		01E427562BA1EB06008BC989 /* payload */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = payload; sourceTree = BUILT_PRODUCTS_DIR; };
+		01E4275D2BA1EB29008BC989 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		01E4275F2BA1EB2E008BC989 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		01E427622BA1EB4F008BC989 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
+		01E427882BA1ED5C008BC989 /* bootstrap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bootstrap.c; sourceTree = "<group>"; };
+		01E4278D2BA1ED8F008BC989 /* load.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load.c; sourceTree = "<group>"; };
+		01E4278F2BA1ED91008BC989 /* xpc_helper.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = xpc_helper.c; sourceTree = "<group>"; };
+		01E427952BA1EE94008BC989 /* libsystemhook.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libsystemhook.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		01E4279D2BA1EEA8008BC989 /* librootfulhooks.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = librootfulhooks.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		01E427A52BA1EEB4008BC989 /* librootlesshooks.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = librootlesshooks.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		01E427AD2BA1EECA008BC989 /* libuniversalhooks.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libuniversalhooks.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		01E427D32BA1F29F008BC989 /* patch_dyld-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "patch_dyld-test"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		01D3D4862B5C7F95007845B6 /* Frameworks */ = {
+		01E426D62BA1DDDC008BC989 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01D3D7572B5C80DA007845B6 /* IOMobileFramebuffer.tbd in Frameworks */,
-				01D3D7552B5C80DA007845B6 /* libellekit.tbd in Frameworks */,
-				01D3D7562B5C80DA007845B6 /* APFS.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E427102BA1E364008BC989 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01E4271C2BA1E38F008BC989 /* IOKit.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E427332BA1E828008BC989 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01E427512BA1EACF008BC989 /* IOSurface.framework in Frameworks */,
+				01E4274F2BA1E933008BC989 /* IOKit.tbd in Frameworks */,
+				01E4274E2BA1E921008BC989 /* IOMobileFramebuffer.tbd in Frameworks */,
+				01E427462BA1E8DB008BC989 /* liblibjailbreak.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E4273B2BA1E848008BC989 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E427532BA1EB06008BC989 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01E427672BA1EB7A008BC989 /* liblibjailbreak.a in Frameworks */,
+				01E427642BA1EB59008BC989 /* APFS.tbd in Frameworks */,
+				01E427632BA1EB4F008BC989 /* Security.framework in Frameworks */,
+				01E427612BA1EB3A008BC989 /* IOKit.tbd in Frameworks */,
+				01E427602BA1EB2E008BC989 /* CoreFoundation.framework in Frameworks */,
+				01E4275E2BA1EB29008BC989 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E427932BA1EE94008BC989 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01E427CE2BA1F0F8008BC989 /* liblibjailbreak.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E4279B2BA1EEA8008BC989 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01E427CA2BA1F051008BC989 /* Security.framework in Frameworks */,
+				01E427C92BA1F047008BC989 /* CoreFoundation.framework in Frameworks */,
+				01E427C82BA1F042008BC989 /* Foundation.framework in Frameworks */,
+				01E427C32BA1EFEF008BC989 /* libellekit.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E427A32BA1EEB4008BC989 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01E427C72BA1F02D008BC989 /* CoreFoundation.framework in Frameworks */,
+				01E427C62BA1F028008BC989 /* Foundation.framework in Frameworks */,
+				01E427C42BA1EFF9008BC989 /* libellekit.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E427AB2BA1EECA008BC989 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01E427CD2BA1F08C008BC989 /* Security.framework in Frameworks */,
+				01E427CC2BA1F086008BC989 /* CoreFoundation.framework in Frameworks */,
+				01E427CB2BA1F07D008BC989 /* IOKit.tbd in Frameworks */,
+				01E427C52BA1F003008BC989 /* libellekit.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E427D02BA1F29F008BC989 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -448,6 +579,7 @@
 				01D3D4832B5C7DDE007845B6 /* README.md */,
 				01D3D4932B5C80D9007845B6 /* src */,
 				01D3D48A2B5C7F95007845B6 /* Products */,
+				01E4271A2BA1E38F008BC989 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -665,7 +797,16 @@
 		01D3D48A2B5C7F95007845B6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				01D3D4892B5C7F95007845B6 /* dummy */,
+				01E426D92BA1DDDC008BC989 /* fakedyld */,
+				01E427132BA1E364008BC989 /* mount_cores */,
+				01E427352BA1E829008BC989 /* libpayload_dylib.dylib */,
+				01E4273D2BA1E848008BC989 /* liblibjailbreak.a */,
+				01E427562BA1EB06008BC989 /* payload */,
+				01E427952BA1EE94008BC989 /* libsystemhook.dylib */,
+				01E4279D2BA1EEA8008BC989 /* librootfulhooks.dylib */,
+				01E427A52BA1EEB4008BC989 /* librootlesshooks.dylib */,
+				01E427AD2BA1EECA008BC989 /* libuniversalhooks.dylib */,
+				01E427D32BA1F29F008BC989 /* patch_dyld-test */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -693,6 +834,7 @@
 		01D3D4AC2B5C80D9007845B6 /* payload */ = {
 			isa = PBXGroup;
 			children = (
+				01E4278C2BA1ED83008BC989 /* launchctl */,
 				01D3D4B02B5C80D9007845B6 /* entitlements.xml */,
 				01D3D4B12B5C80D9007845B6 /* pinfo.c */,
 				01D3D4E02B5C80D9007845B6 /* Makefile */,
@@ -1151,7 +1293,74 @@
 			path = rootlesshooks;
 			sourceTree = "<group>";
 		};
+		01E4271A2BA1E38F008BC989 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				01E427622BA1EB4F008BC989 /* Security.framework */,
+				01E4275F2BA1EB2E008BC989 /* CoreFoundation.framework */,
+				01E4275D2BA1EB29008BC989 /* Foundation.framework */,
+				01E427502BA1EACF008BC989 /* IOSurface.framework */,
+				01E4271B2BA1E38F008BC989 /* IOKit.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		01E4278C2BA1ED83008BC989 /* launchctl */ = {
+			isa = PBXGroup;
+			children = (
+				01E4278F2BA1ED91008BC989 /* xpc_helper.c */,
+				01E4278D2BA1ED8F008BC989 /* load.c */,
+				01E427882BA1ED5C008BC989 /* bootstrap.c */,
+			);
+			name = launchctl;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		01E427312BA1E828008BC989 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E427392BA1E848008BC989 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E427912BA1EE94008BC989 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E427992BA1EEA8008BC989 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E427A12BA1EEB4008BC989 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E427A92BA1EECA008BC989 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXLegacyTarget section */
 		01D3DA582B5C8519007845B6 /* plooshInit */ = {
@@ -1171,21 +1380,174 @@
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
-		01D3D4882B5C7F95007845B6 /* dummy */ = {
+		01E426D82BA1DDDC008BC989 /* fakedyld */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 01D3D48E2B5C7F95007845B6 /* Build configuration list for PBXNativeTarget "dummy" */;
+			buildConfigurationList = 01E426E32BA1DDDD008BC989 /* Build configuration list for PBXNativeTarget "fakedyld" */;
 			buildPhases = (
-				01D3D4852B5C7F95007845B6 /* Sources */,
-				01D3D4862B5C7F95007845B6 /* Frameworks */,
-				01D3D4872B5C7F95007845B6 /* CopyFiles */,
+				01E426D52BA1DDDC008BC989 /* Sources */,
+				01E426D62BA1DDDC008BC989 /* Frameworks */,
+				01E426D72BA1DDDC008BC989 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = dummy;
-			productName = dummy;
-			productReference = 01D3D4892B5C7F95007845B6 /* dummy */;
+			name = fakedyld;
+			productName = fakedyld;
+			productReference = 01E426D92BA1DDDC008BC989 /* fakedyld */;
+			productType = "com.apple.product-type.tool";
+		};
+		01E427122BA1E364008BC989 /* mount_cores */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 01E427172BA1E364008BC989 /* Build configuration list for PBXNativeTarget "mount_cores" */;
+			buildPhases = (
+				01E4270F2BA1E364008BC989 /* Sources */,
+				01E427102BA1E364008BC989 /* Frameworks */,
+				01E427112BA1E364008BC989 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = mount_cores;
+			productName = mount_cores;
+			productReference = 01E427132BA1E364008BC989 /* mount_cores */;
+			productType = "com.apple.product-type.tool";
+		};
+		01E427342BA1E828008BC989 /* payload_dylib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 01E427362BA1E829008BC989 /* Build configuration list for PBXNativeTarget "payload_dylib" */;
+			buildPhases = (
+				01E427312BA1E828008BC989 /* Headers */,
+				01E427322BA1E828008BC989 /* Sources */,
+				01E427332BA1E828008BC989 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = payload_dylib;
+			productName = payload_dylib;
+			productReference = 01E427352BA1E829008BC989 /* libpayload_dylib.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		01E4273C2BA1E848008BC989 /* libjailbreak */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 01E4273E2BA1E848008BC989 /* Build configuration list for PBXNativeTarget "libjailbreak" */;
+			buildPhases = (
+				01E427392BA1E848008BC989 /* Headers */,
+				01E4273A2BA1E848008BC989 /* Sources */,
+				01E4273B2BA1E848008BC989 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = libjailbreak;
+			productName = libjailbreak;
+			productReference = 01E4273D2BA1E848008BC989 /* liblibjailbreak.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		01E427552BA1EB06008BC989 /* payload */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 01E4275A2BA1EB06008BC989 /* Build configuration list for PBXNativeTarget "payload" */;
+			buildPhases = (
+				01E427522BA1EB06008BC989 /* Sources */,
+				01E427532BA1EB06008BC989 /* Frameworks */,
+				01E427542BA1EB06008BC989 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = payload;
+			productName = payload;
+			productReference = 01E427562BA1EB06008BC989 /* payload */;
+			productType = "com.apple.product-type.tool";
+		};
+		01E427942BA1EE94008BC989 /* systemhook */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 01E427962BA1EE94008BC989 /* Build configuration list for PBXNativeTarget "systemhook" */;
+			buildPhases = (
+				01E427912BA1EE94008BC989 /* Headers */,
+				01E427922BA1EE94008BC989 /* Sources */,
+				01E427932BA1EE94008BC989 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = systemhook;
+			productName = systemhook;
+			productReference = 01E427952BA1EE94008BC989 /* libsystemhook.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		01E4279C2BA1EEA8008BC989 /* rootfulhooks */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 01E4279E2BA1EEA8008BC989 /* Build configuration list for PBXNativeTarget "rootfulhooks" */;
+			buildPhases = (
+				01E427992BA1EEA8008BC989 /* Headers */,
+				01E4279A2BA1EEA8008BC989 /* Sources */,
+				01E4279B2BA1EEA8008BC989 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = rootfulhooks;
+			productName = rootfulhooks;
+			productReference = 01E4279D2BA1EEA8008BC989 /* librootfulhooks.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		01E427A42BA1EEB4008BC989 /* rootlesshooks */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 01E427A62BA1EEB4008BC989 /* Build configuration list for PBXNativeTarget "rootlesshooks" */;
+			buildPhases = (
+				01E427A12BA1EEB4008BC989 /* Headers */,
+				01E427A22BA1EEB4008BC989 /* Sources */,
+				01E427A32BA1EEB4008BC989 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = rootlesshooks;
+			productName = rootlesshooks;
+			productReference = 01E427A52BA1EEB4008BC989 /* librootlesshooks.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		01E427AC2BA1EECA008BC989 /* universalhooks */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 01E427AE2BA1EECA008BC989 /* Build configuration list for PBXNativeTarget "universalhooks" */;
+			buildPhases = (
+				01E427A92BA1EECA008BC989 /* Headers */,
+				01E427AA2BA1EECA008BC989 /* Sources */,
+				01E427AB2BA1EECA008BC989 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = universalhooks;
+			productName = universalhooks;
+			productReference = 01E427AD2BA1EECA008BC989 /* libuniversalhooks.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		01E427D22BA1F29F008BC989 /* patch_dyld-test */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 01E427D72BA1F29F008BC989 /* Build configuration list for PBXNativeTarget "patch_dyld-test" */;
+			buildPhases = (
+				01E427CF2BA1F29F008BC989 /* Sources */,
+				01E427D02BA1F29F008BC989 /* Frameworks */,
+				01E427D12BA1F29F008BC989 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "patch_dyld-test";
+			productName = "patch_dyld-test";
+			productReference = 01E427D32BA1F29F008BC989 /* patch_dyld-test */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -1198,10 +1560,37 @@
 				LastSwiftUpdateCheck = 1520;
 				LastUpgradeCheck = 1520;
 				TargetAttributes = {
-					01D3D4882B5C7F95007845B6 = {
+					01D3DA582B5C8519007845B6 = {
 						CreatedOnToolsVersion = 15.2;
 					};
-					01D3DA582B5C8519007845B6 = {
+					01E426D82BA1DDDC008BC989 = {
+						CreatedOnToolsVersion = 15.2;
+					};
+					01E427122BA1E364008BC989 = {
+						CreatedOnToolsVersion = 15.2;
+					};
+					01E427342BA1E828008BC989 = {
+						CreatedOnToolsVersion = 15.2;
+					};
+					01E4273C2BA1E848008BC989 = {
+						CreatedOnToolsVersion = 15.2;
+					};
+					01E427552BA1EB06008BC989 = {
+						CreatedOnToolsVersion = 15.2;
+					};
+					01E427942BA1EE94008BC989 = {
+						CreatedOnToolsVersion = 15.2;
+					};
+					01E4279C2BA1EEA8008BC989 = {
+						CreatedOnToolsVersion = 15.2;
+					};
+					01E427A42BA1EEB4008BC989 = {
+						CreatedOnToolsVersion = 15.2;
+					};
+					01E427AC2BA1EECA008BC989 = {
+						CreatedOnToolsVersion = 15.2;
+					};
+					01E427D22BA1F29F008BC989 = {
 						CreatedOnToolsVersion = 15.2;
 					};
 				};
@@ -1225,8 +1614,17 @@
 			);
 			projectRoot = "";
 			targets = (
-				01D3D4882B5C7F95007845B6 /* dummy */,
 				01D3DA582B5C8519007845B6 /* plooshInit */,
+				01E426D82BA1DDDC008BC989 /* fakedyld */,
+				01E427122BA1E364008BC989 /* mount_cores */,
+				01E427552BA1EB06008BC989 /* payload */,
+				01E427342BA1E828008BC989 /* payload_dylib */,
+				01E427942BA1EE94008BC989 /* systemhook */,
+				01E4279C2BA1EEA8008BC989 /* rootfulhooks */,
+				01E427A42BA1EEB4008BC989 /* rootlesshooks */,
+				01E427AC2BA1EECA008BC989 /* universalhooks */,
+				01E4273C2BA1E848008BC989 /* libjailbreak */,
+				01E427D22BA1F29F008BC989 /* patch_dyld-test */,
 			);
 		};
 /* End PBXProject section */
@@ -1256,142 +1654,189 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
-		01D3D4852B5C7F95007845B6 /* Sources */ = {
+		01E426D52BA1DDDC008BC989 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01D3D7E82B5C80DB007845B6 /* lsd.m in Sources */,
-				01D3D7902B5C80DA007845B6 /* pe.c in Sources */,
-				01D3D7B52B5C80DB007845B6 /* isalpha.c in Sources */,
-				01D3D7992B5C80DA007845B6 /* strchr.c in Sources */,
-				01D3D6E22B5C80DA007845B6 /* overwrite_file.c in Sources */,
-				01B9F87E2B68045300428E81 /* dmgfile.c in Sources */,
-				01B9F8A42B68045300428E81 /* main.c in Sources */,
-				01D3D7712B5C80DA007845B6 /* get_libiosexec.c in Sources */,
-				01D3D6E72B5C80DA007845B6 /* bootstrap.c in Sources */,
-				01D3D7CD2B5C80DB007845B6 /* pinfo_check.c in Sources */,
-				01B6169D2B720DC70080AB28 /* Makefile in Sources */,
-				01D3D70B2B5C80DA007845B6 /* obliterate.c in Sources */,
-				01D3D7EB2B5C80DB007845B6 /* sb.m in Sources */,
-				01D3D7CE2B5C80DB007845B6 /* start.c in Sources */,
-				01D3D70A2B5C80DA007845B6 /* palera1n_flags.c in Sources */,
-				01D3D79A2B5C80DA007845B6 /* printf.c in Sources */,
-				01B9F87F2B68045300428E81 /* dmglib.c in Sources */,
-				01B9F8932B68045300428E81 /* xattr.c in Sources */,
-				01B9F8842B68045300428E81 /* udif.c in Sources */,
-				01D3D6E62B5C80DA007845B6 /* reboot3.c in Sources */,
-				01D3D6E52B5C80DA007845B6 /* main.c in Sources */,
-				01D3D7AF2B5C80DB007845B6 /* strstr.c in Sources */,
-				01D3D7B12B5C80DB007845B6 /* syscalls.c in Sources */,
-				01B9F8882B68045300428E81 /* btree.c in Sources */,
-				01D3D6FC2B5C80DA007845B6 /* platform.c in Sources */,
-				01D3D7012B5C80DA007845B6 /* remount.c in Sources */,
-				01B9F8892B68045300428E81 /* catalog.c in Sources */,
-				01D3D7BD2B5C80DB007845B6 /* isspace.c in Sources */,
-				01D3D7B42B5C80DB007845B6 /* strncmp.c in Sources */,
-				01D3D7C72B5C80DB007845B6 /* pinfo.c in Sources */,
-				01D3D7B92B5C80DB007845B6 /* bzero.c in Sources */,
-				01B9F8832B68045300428E81 /* resources.c in Sources */,
-				01D3D7922B5C80DA007845B6 /* multi.c in Sources */,
-				01D3D7652B5C80DA007845B6 /* common.c in Sources */,
-				01D3D7DF2B5C80DB007845B6 /* pspawn.c in Sources */,
-				01D3D7E02B5C80DB007845B6 /* xpc.c in Sources */,
-				01B9F8862B68045300428E81 /* hdutil.c in Sources */,
-				01D3D7B22B5C80DB007845B6 /* stroul.c in Sources */,
-				01D3D7BA2B5C80DB007845B6 /* strerror.c in Sources */,
-				01D3D7812B5C80DA007845B6 /* patch.c in Sources */,
-				01D3D7DE2B5C80DB007845B6 /* daemon.c in Sources */,
-				01D3D7DC2B5C80DB007845B6 /* platform.c in Sources */,
-				01D3D70D2B5C80DA007845B6 /* preboot_path.c in Sources */,
-				01D3D6EA2B5C80DA007845B6 /* launchdaemons.c in Sources */,
-				01B9F87A2B68045300428E81 /* adc.c in Sources */,
-				01D3D7BC2B5C80DB007845B6 /* isupper.c in Sources */,
-				01D3D6FE2B5C80DA007845B6 /* create_var_jb.c in Sources */,
-				01D3D6FB2B5C80DA007845B6 /* runcmd.c in Sources */,
-				01683B592B8C679900A7A2EA /* crashreporter.m in Sources */,
-				01D3D7DD2B5C80DB007845B6 /* main.c in Sources */,
-				01D3D6E92B5C80DA007845B6 /* prelaunchd.c in Sources */,
-				01D3D7932B5C80DA007845B6 /* elf.c in Sources */,
-				01D3D7942B5C80DA007845B6 /* utils.c in Sources */,
-				01D3D7832B5C80DA007845B6 /* patcher.c in Sources */,
-				01B9F8942B68045300428E81 /* Makefile in Sources */,
-				01D3D7082B5C80DA007845B6 /* print_jailbreakd_reply.c in Sources */,
-				01D3D76F2B5C80DA007845B6 /* envbuf.c in Sources */,
-				01B9F8822B68045300428E81 /* partition.c in Sources */,
-				01D3D7912B5C80DA007845B6 /* macho.c in Sources */,
-				01D3D7632B5C80DA007845B6 /* mount_dmg.c in Sources */,
-				01D3D7CC2B5C80DB007845B6 /* rw_file.c in Sources */,
-				01D3D7782B5C80DA007845B6 /* start.S in Sources */,
-				01D3D7702B5C80DA007845B6 /* getusershell.c in Sources */,
-				01D3D70C2B5C80DA007845B6 /* main.c in Sources */,
-				01B9F8912B68045300428E81 /* utility.c in Sources */,
-				01D3D7972B5C80DA007845B6 /* atoi.c in Sources */,
-				01D3D78E2B5C80DA007845B6 /* plooshfinder32.c in Sources */,
-				01D3D7EA2B5C80DB007845B6 /* main.c in Sources */,
-				01B616A52B72106F0080AB28 /* watchdogd.c in Sources */,
-				01D3D75D2B5C80DA007845B6 /* lsd.m in Sources */,
-				01D3D6F82B5C80DA007845B6 /* sysstatuscheck.c in Sources */,
-				01B616A32B720ED90080AB28 /* securityd.c in Sources */,
-				01D3D7962B5C80DA007845B6 /* plooshfinder64.c in Sources */,
-				01B9F87C2B68045300428E81 /* checksum.c in Sources */,
-				01D3D7192B5C80DA007845B6 /* strflags.c in Sources */,
-				01B9F8902B68045300428E81 /* rawfile.c in Sources */,
-				01D3D70E2B5C80DA007845B6 /* bootstrap.c in Sources */,
-				01B9F8872B68045300428E81 /* win32test.c in Sources */,
-				01D3D7C92B5C80DB007845B6 /* mountroot.c in Sources */,
-				01D3D6BC2B5C80DA007845B6 /* pinfo.c in Sources */,
-				01D3D7952B5C80DA007845B6 /* plooshfinder.c in Sources */,
-				01D3D7EC2B5C80DB007845B6 /* cfprefsd.c in Sources */,
-				01B9F88C2B68045300428E81 /* flatfile.c in Sources */,
-				01B9F8852B68045300428E81 /* win32test.c in Sources */,
-				01D3D79B2B5C80DA007845B6 /* isdigit.c in Sources */,
-				01D3D7732B5C80DA007845B6 /* getgrent.c in Sources */,
-				01D3D7B32B5C80DB007845B6 /* strlen.c in Sources */,
-				01D3D7D12B5C80DB007845B6 /* bootscreend.c in Sources */,
-				01D3D6FF2B5C80DA007845B6 /* setup_fakefs.c in Sources */,
-				01D3D7BB2B5C80DB007845B6 /* memset.c in Sources */,
-				01B9F88A2B68045300428E81 /* extents.c in Sources */,
-				01D3D7162B5C80DA007845B6 /* launchd.c in Sources */,
-				01D3D78F2B5C80DA007845B6 /* arm64.c in Sources */,
-				01B9F87D2B68045300428E81 /* dmg.c in Sources */,
-				01B9F88E2B68045300428E81 /* hfscompress.c in Sources */,
-				01D3D7D02B5C80DB007845B6 /* cores_init.c in Sources */,
-				01B9F8A52B68045300428E81 /* Makefile in Sources */,
-				01D3D7B82B5C80DB007845B6 /* stroull.c in Sources */,
-				01B9F88D2B68045300428E81 /* hfs.c in Sources */,
-				01D3D7CA2B5C80DB007845B6 /* prepare_root.c in Sources */,
-				01D3D7CF2B5C80DB007845B6 /* fakedyld.c in Sources */,
-				01D3D7B62B5C80DB007845B6 /* putchar.c in Sources */,
-				01D3D7152B5C80DA007845B6 /* bmhash.c in Sources */,
-				01D3D6F72B5C80DA007845B6 /* fixup_user_groups.c in Sources */,
-				01D3D6E32B5C80DA007845B6 /* handler.c in Sources */,
-				019B1B462B5CACA800BABAB5 /* load_etc_rc_d.c in Sources */,
-				01D3D7172B5C80DA007845B6 /* jbdcall.c in Sources */,
-				01D3D7002B5C80DA007845B6 /* main.c in Sources */,
-				01B9F8922B68045300428E81 /* volume.c in Sources */,
-				01D3D7722B5C80DA007845B6 /* main.c in Sources */,
-				01D3D7CB2B5C80DB007845B6 /* systeminfo.c in Sources */,
-				012A1FC22B91814F0018CCA2 /* memmem.c in Sources */,
-				01D3D6FD2B5C80DA007845B6 /* mount_dmg.c in Sources */,
-				01B9F88B2B68045300428E81 /* fastunicodecompare.c in Sources */,
-				01B9F8812B68045300428E81 /* io.c in Sources */,
-				01D3D7642B5C80DA007845B6 /* main.c in Sources */,
-				01B9F8AE2B68170D00428E81 /* overwrite.c in Sources */,
-				01B9F8802B68045300428E81 /* filevault.c in Sources */,
-				01D3D6E42B5C80DA007845B6 /* obliterate.c in Sources */,
-				01D3D7982B5C80DA007845B6 /* memcpy.c in Sources */,
-				01D3D77E2B5C80DA007845B6 /* shellcode.c in Sources */,
-				01D3D7182B5C80DA007845B6 /* prebootpath.c in Sources */,
-				01D3D7B72B5C80DB007845B6 /* strcmp.c in Sources */,
-				01B9F88F2B68045300428E81 /* hfslib.c in Sources */,
-				01B9F8A62B68045300428E81 /* Makefile in Sources */,
-				01D3D75F2B5C80DA007845B6 /* main.c in Sources */,
-				01D3D7742B5C80DA007845B6 /* getpwent.c in Sources */,
-				01B616A12B720E870080AB28 /* main.c in Sources */,
-				01D3D6E82B5C80DA007845B6 /* main.c in Sources */,
-				01B9F87B2B68045300428E81 /* base64.c in Sources */,
-				01B9F8792B68045300428E81 /* abstractfile.c in Sources */,
-				01D3D7792B5C80DA007845B6 /* syscall.S in Sources */,
+				01E4270E2BA1E271008BC989 /* multi.c in Sources */,
+				01E427062BA1E047008BC989 /* atoi.c in Sources */,
+				01E426FF2BA1E037008BC989 /* stroul.c in Sources */,
+				01E4270B2BA1E26A008BC989 /* pe.c in Sources */,
+				01E427042BA1E043008BC989 /* strchr.c in Sources */,
+				01E427002BA1E039008BC989 /* syscalls.c in Sources */,
+				01E427092BA1E107008BC989 /* plooshfinder.c in Sources */,
+				01E426F82BA1E026008BC989 /* bzero.c in Sources */,
+				01E426EF2BA1E00F008BC989 /* pinfo_check.c in Sources */,
+				01E427082BA1E104008BC989 /* plooshfinder64.c in Sources */,
+				01E427072BA1E102008BC989 /* arm64.c in Sources */,
+				01E426FA2BA1E02B008BC989 /* strcmp.c in Sources */,
+				01E426E42BA1DF91008BC989 /* start.S in Sources */,
+				01E426EC2BA1E008008BC989 /* prepare_root.c in Sources */,
+				01E427022BA1E03E008BC989 /* isdigit.c in Sources */,
+				01E426F12BA1E013008BC989 /* fakedyld.c in Sources */,
+				01E426FC2BA1E030008BC989 /* isalpha.c in Sources */,
+				01E426F62BA1E021008BC989 /* memset.c in Sources */,
+				01E427012BA1E03C008BC989 /* strstr.c in Sources */,
+				01E426E52BA1DF94008BC989 /* syscall.S in Sources */,
+				01E426FE2BA1E035008BC989 /* strlen.c in Sources */,
+				01E426F32BA1E018008BC989 /* memmem.c in Sources */,
+				01E426F02BA1E011008BC989 /* start.c in Sources */,
+				01E427032BA1E040008BC989 /* printf.c in Sources */,
+				01E426F92BA1E029008BC989 /* stroull.c in Sources */,
+				01E426F42BA1E01B008BC989 /* isspace.c in Sources */,
+				01E426ED2BA1E00A008BC989 /* systeminfo.c in Sources */,
+				01E426E72BA1DF9F008BC989 /* patch.c in Sources */,
+				01E4270D2BA1E26E008BC989 /* elf.c in Sources */,
+				01E426EE2BA1E00C008BC989 /* rw_file.c in Sources */,
+				01E426EA2BA1E002008BC989 /* pinfo.c in Sources */,
+				01E427052BA1E045008BC989 /* memcpy.c in Sources */,
+				01E426FB2BA1E02E008BC989 /* putchar.c in Sources */,
+				01E426FD2BA1E033008BC989 /* strncmp.c in Sources */,
+				01E426F52BA1E01E008BC989 /* isupper.c in Sources */,
+				01E426E62BA1DF9B008BC989 /* shellcode.c in Sources */,
+				01E4270A2BA1E109008BC989 /* utils.c in Sources */,
+				01E4270C2BA1E26C008BC989 /* macho.c in Sources */,
+				01E426F22BA1E016008BC989 /* cores_init.c in Sources */,
+				01E426E92BA1DFA8008BC989 /* plooshfinder32.c in Sources */,
+				01E426EB2BA1E006008BC989 /* mountroot.c in Sources */,
+				01E426E82BA1DFA3008BC989 /* patcher.c in Sources */,
+				01E426F72BA1E023008BC989 /* strerror.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E4270F2BA1E364008BC989 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01E4271D2BA1E395008BC989 /* mount_dmg.c in Sources */,
+				01E4271E2BA1E397008BC989 /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E427322BA1E828008BC989 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01E427482BA1E8F6008BC989 /* platform.c in Sources */,
+				01E4274B2BA1E901008BC989 /* daemon.c in Sources */,
+				01E4274C2BA1E903008BC989 /* pspawn.c in Sources */,
+				01E427472BA1E8F2008BC989 /* bootscreend.c in Sources */,
+				01E4274D2BA1E906008BC989 /* xpc.c in Sources */,
+				01E4274A2BA1E8FD008BC989 /* crashreporter.m in Sources */,
+				01E427492BA1E8F9008BC989 /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E4273A2BA1E848008BC989 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01E427432BA1E8A7008BC989 /* jbdcall.c in Sources */,
+				01E427412BA1E8A2008BC989 /* bmhash.c in Sources */,
+				01E427442BA1E8A9008BC989 /* prebootpath.c in Sources */,
+				01E427452BA1E8AB008BC989 /* strflags.c in Sources */,
+				01E427422BA1E8A5008BC989 /* launchd.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E427522BA1EB06008BC989 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01E427802BA1EC49008BC989 /* overwrite.c in Sources */,
+				01E427692BA1EC05008BC989 /* handler.c in Sources */,
+				01E4276C2BA1EC0C008BC989 /* reboot3.c in Sources */,
+				01E427712BA1EC18008BC989 /* sysstatuscheck.c in Sources */,
+				01E427892BA1ED5C008BC989 /* bootstrap.c in Sources */,
+				01E4276D2BA1EC0E008BC989 /* bootstrap.c in Sources */,
+				01E427742BA1EC20008BC989 /* mount_dmg.c in Sources */,
+				01E4277E2BA1EC43008BC989 /* preboot_path.c in Sources */,
+				01E4277B2BA1EC3D008BC989 /* palera1n_flags.c in Sources */,
+				01E427662BA1EB70008BC989 /* main.c in Sources */,
+				01E4277A2BA1EC3A008BC989 /* print_jailbreakd_reply.c in Sources */,
+				01E4276B2BA1EC09008BC989 /* main.c in Sources */,
+				01E427782BA1EC31008BC989 /* load_etc_rc_d.c in Sources */,
+				01E427752BA1EC23008BC989 /* create_var_jb.c in Sources */,
+				01E427652BA1EB6E008BC989 /* pinfo.c in Sources */,
+				01E4276E2BA1EC11008BC989 /* prelaunchd.c in Sources */,
+				01E427902BA1ED91008BC989 /* xpc_helper.c in Sources */,
+				01E427682BA1EC03008BC989 /* overwrite_file.c in Sources */,
+				01E427792BA1EC34008BC989 /* remount.c in Sources */,
+				01E427702BA1EC15008BC989 /* fixup_user_groups.c in Sources */,
+				01E4276F2BA1EC13008BC989 /* launchdaemons.c in Sources */,
+				01E427762BA1EC2C008BC989 /* setup_fakefs.c in Sources */,
+				01E4278E2BA1ED8F008BC989 /* load.c in Sources */,
+				01E4277C2BA1EC3F008BC989 /* obliterate.c in Sources */,
+				01E427772BA1EC2F008BC989 /* main.c in Sources */,
+				01E4277D2BA1EC41008BC989 /* main.c in Sources */,
+				01E427722BA1EC1B008BC989 /* runcmd.c in Sources */,
+				01E427732BA1EC1D008BC989 /* platform.c in Sources */,
+				01E4277F2BA1EC45008BC989 /* bootstrap.c in Sources */,
+				01E4276A2BA1EC07008BC989 /* obliterate.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E427922BA1EE94008BC989 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01E427B52BA1EEF2008BC989 /* main.c in Sources */,
+				01E427B32BA1EEED008BC989 /* getusershell.c in Sources */,
+				01E427B12BA1EEE2008BC989 /* common.c in Sources */,
+				01E427B62BA1EEF5008BC989 /* getgrent.c in Sources */,
+				01E427B22BA1EEEB008BC989 /* envbuf.c in Sources */,
+				01E427B42BA1EEEF008BC989 /* get_libiosexec.c in Sources */,
+				01E427B72BA1EEF7008BC989 /* getpwent.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E4279A2BA1EEA8008BC989 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01E427BB2BA1EF0F008BC989 /* main.c in Sources */,
+				01E427BA2BA1EF0C008BC989 /* lsd.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E427A22BA1EEB4008BC989 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01E427BF2BA1EF22008BC989 /* cfprefsd.c in Sources */,
+				01E427BD2BA1EF1D008BC989 /* main.c in Sources */,
+				01E427BC2BA1EF1A008BC989 /* lsd.m in Sources */,
+				01E427BE2BA1EF1F008BC989 /* sb.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E427AA2BA1EECA008BC989 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01E427C12BA1EF2B008BC989 /* securityd.c in Sources */,
+				01E427C02BA1EF29008BC989 /* main.c in Sources */,
+				01E427C22BA1EF2E008BC989 /* watchdogd.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01E427CF2BA1F29F008BC989 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01E427E52BA1F423008BC989 /* macho.c in Sources */,
+				01E427DF2BA1F3DF008BC989 /* arm64.c in Sources */,
+				01E427DC2BA1F3AD008BC989 /* patch.c in Sources */,
+				01E427DD2BA1F3B2008BC989 /* patcher.c in Sources */,
+				01E427E22BA1F41E008BC989 /* utils.c in Sources */,
+				01E427DA2BA1F2E1008BC989 /* main.c in Sources */,
+				01E427E12BA1F41B008BC989 /* plooshfinder.c in Sources */,
+				01E427DE2BA1F3B4008BC989 /* plooshfinder32.c in Sources */,
+				01E427E32BA1F420008BC989 /* elf.c in Sources */,
+				01E427DB2BA1F3AA008BC989 /* shellcode.c in Sources */,
+				01E427E02BA1F419008BC989 /* plooshfinder64.c in Sources */,
+				01E427E62BA1F426008BC989 /* pe.c in Sources */,
+				01E427E42BA1F421008BC989 /* multi.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1401,8 +1846,10 @@
 		013372242B5C7CFB00D035BB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				AD_HOC_CODE_SIGNING_ALLOWED = YES;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1432,6 +1879,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1451,12 +1899,17 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/apple-include",
+					"$(PROJECT_DIR)/include",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-Wno-nullability-completeness";
 				SDKROOT = appletvos;
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
@@ -1469,8 +1922,10 @@
 		013372252B5C7CFB00D035BB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				AD_HOC_CODE_SIGNING_ALLOWED = YES;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1500,6 +1955,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1513,117 +1969,22 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/apple-include",
+					"$(PROJECT_DIR)/include",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "-Wno-nullability-completeness";
 				SDKROOT = appletvos;
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				WATCHOS_DEPLOYMENT_TARGET = 3.0;
 				XROS_DEPLOYMENT_TARGET = 1.0;
-			};
-			name = Release;
-		};
-		01D3D48F2B5C7F95007845B6 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
-				FRAMEWORK_SEARCH_PATHS = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEV_BUILD=1",
-					"HAVE_DEBUG_SHELL=1",
-					"HAVE_DEBUG_JBD_MSG=1",
-					"HAVE_CRASHREPORTER=1",
-				);
-				GCC_USE_STANDARD_INCLUDE_SEARCHING = YES;
-				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/apple-include",
-					"$(PROJECT_DIR)/include",
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/src/ramdisk",
-					"$(PROJECT_DIR)/src/libjailbreak",
-					"$(PROJECT_DIR)/src/ellekit/ellekit_build/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos",
-					"$(PROJECT_DIR)/src/ellekit/ellekit_build/Build/Products/Release-iphoneos",
-					"$(PROJECT_DIR)/src/libs",
-					"$(PROJECT_DIR)/src/rootfulhooks",
-					"$(PROJECT_DIR)/src/systemhook",
-					"$(PROJECT_DIR)/src/payload_dylib",
-					"$(PROJECT_DIR)/src/rootlesshooks",
-					"$(PROJECT_DIR)/tools/libdmg-hfsplus/build/common",
-					"$(PROJECT_DIR)/tools/libdmg-hfsplus/build/dmg",
-					"$(PROJECT_DIR)/tools/libdmg-hfsplus/build/hfs",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				SYSTEM_FRAMEWORK_SEARCH_PATHS = "";
-				SYSTEM_HEADER_SEARCH_PATHS = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				USE_HEADERMAP = YES;
-			};
-			name = Debug;
-		};
-		01D3D4902B5C7F95007845B6 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
-				FRAMEWORK_SEARCH_PATHS = "";
-				GCC_PREPROCESSOR_DEFINITIONS = "";
-				GCC_USE_STANDARD_INCLUDE_SEARCHING = YES;
-				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/apple-include",
-					"$(PROJECT_DIR)/include",
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/src/ramdisk",
-					"$(PROJECT_DIR)/src/libjailbreak",
-					"$(PROJECT_DIR)/src/ellekit/ellekit_build/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos",
-					"$(PROJECT_DIR)/src/ellekit/ellekit_build/Build/Products/Release-iphoneos",
-					"$(PROJECT_DIR)/src/libs",
-					"$(PROJECT_DIR)/src/rootfulhooks",
-					"$(PROJECT_DIR)/src/systemhook",
-					"$(PROJECT_DIR)/src/payload_dylib",
-					"$(PROJECT_DIR)/src/rootlesshooks",
-					"$(PROJECT_DIR)/tools/libdmg-hfsplus/build/common",
-					"$(PROJECT_DIR)/tools/libdmg-hfsplus/build/dmg",
-					"$(PROJECT_DIR)/tools/libdmg-hfsplus/build/hfs",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_VERSION = 5.0;
-				SYSTEM_FRAMEWORK_SEARCH_PATHS = "";
-				SYSTEM_HEADER_SEARCH_PATHS = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				USE_HEADERMAP = YES;
 			};
 			name = Release;
 		};
@@ -1656,6 +2017,392 @@
 			};
 			name = Release;
 		};
+		01E426DD2BA1DDDD008BC989 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GCC_USE_STANDARD_INCLUDE_SEARCHING = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/apple-include",
+					"$(PROJECT_DIR)/include",
+					"$(PROJECT_DIR)/include/plooshfinder",
+				);
+				LINK_WITH_STANDARD_LIBRARIES = NO;
+				MACH_O_TYPE = mh_dylinker;
+				OTHER_CFLAGS = (
+					"-ffreestanding",
+					"-nostdlibinc",
+					"-fno-stack-protector",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-dylinker",
+					"-Wl,-dylinker_install_name,/usr/lib/dyld",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+			};
+			name = Debug;
+		};
+		01E426DE2BA1DDDD008BC989 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GCC_USE_STANDARD_INCLUDE_SEARCHING = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/apple-include",
+					"$(PROJECT_DIR)/include",
+					"$(PROJECT_DIR)/include/plooshfinder",
+				);
+				LINK_WITH_STANDARD_LIBRARIES = NO;
+				MACH_O_TYPE = mh_dylinker;
+				OTHER_CFLAGS = (
+					"-ffreestanding",
+					"-nostdlibinc",
+					"-fno-stack-protector",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-dylinker",
+					"-Wl,-dylinker_install_name,/usr/lib/dyld",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+			};
+			name = Release;
+		};
+		01E427182BA1E364008BC989 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/src/mount_cores/entitlements.xml";
+				CODE_SIGN_STYLE = Automatic;
+				GCC_PREPROCESSOR_DEFINITIONS = "MOUNT_CORES=1";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/libs",
+				);
+				OTHER_CFLAGS = (
+					"-U__IOS_PROHIBITED",
+					"-U__TVOS_PROHIBITED",
+					"-U__WATCHOS_PROHIBITED",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+			};
+			name = Debug;
+		};
+		01E427192BA1E364008BC989 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/src/mount_cores/entitlements.xml";
+				CODE_SIGN_STYLE = Automatic;
+				GCC_PREPROCESSOR_DEFINITIONS = "MOUNT_CORES=1";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/libs",
+				);
+				OTHER_CFLAGS = (
+					"-U__IOS_PROHIBITED",
+					"-U__TVOS_PROHIBITED",
+					"-U__WATCHOS_PROHIBITED",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+			};
+			name = Release;
+		};
+		01E427372BA1E829008BC989 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				LD_DYLIB_INSTALL_NAME = /cores/payload.dylib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/libs",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		01E427382BA1E829008BC989 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				LD_DYLIB_INSTALL_NAME = /cores/payload.dylib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/libs",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		01E4273F2BA1E848008BC989 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		01E427402BA1E848008BC989 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		01E4275B2BA1EB06008BC989 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/src/payload/entitlements.xml";
+				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/apple-include",
+					"$(PROJECT_DIR)/include",
+					"$(PROJECT_DIR)/src/payload/launchctl",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/src/payload/Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/libs",
+				);
+				OTHER_CFLAGS = "\"-U__IOS_PROHIBITED -U__TVOS_PROHIBITED -U__WATCHOS_PROHIBITED\"";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		01E4275C2BA1EB06008BC989 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/src/payload/entitlements.xml";
+				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/apple-include",
+					"$(PROJECT_DIR)/include",
+					"$(PROJECT_DIR)/src/payload/launchctl",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/src/payload/Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/libs",
+				);
+				OTHER_CFLAGS = "\"-U__IOS_PROHIBITED -U__TVOS_PROHIBITED -U__WATCHOS_PROHIBITED\"";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		01E427972BA1EE94008BC989 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				LD_DYLIB_INSTALL_NAME = /cores/binpack/usr/lib/systemhook.dylib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		01E427982BA1EE94008BC989 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				LD_DYLIB_INSTALL_NAME = /cores/binpack/usr/lib/systemhook.dylib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		01E4279F2BA1EEA8008BC989 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_DYLIB_INSTALL_NAME = /cores/binpack/usr/lib/rootfulhooks.dylib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/libs",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				TVOS_DEPLOYMENT_TARGET = 14.0;
+				WATCHOS_DEPLOYMENT_TARGET = 5.0;
+			};
+			name = Debug;
+		};
+		01E427A02BA1EEA8008BC989 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_DYLIB_INSTALL_NAME = /cores/binpack/usr/lib/rootfulhooks.dylib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/libs",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				TVOS_DEPLOYMENT_TARGET = 14.0;
+				WATCHOS_DEPLOYMENT_TARGET = 5.0;
+			};
+			name = Release;
+		};
+		01E427A72BA1EEB4008BC989 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_DYLIB_INSTALL_NAME = /cores/binpack/usr/lib/rootlesshooks.dylib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/libs",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				TVOS_DEPLOYMENT_TARGET = 14.0;
+				WATCHOS_DEPLOYMENT_TARGET = 5.0;
+			};
+			name = Debug;
+		};
+		01E427A82BA1EEB4008BC989 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_DYLIB_INSTALL_NAME = /cores/binpack/usr/lib/rootlesshooks.dylib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/libs",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				TVOS_DEPLOYMENT_TARGET = 14.0;
+				WATCHOS_DEPLOYMENT_TARGET = 5.0;
+			};
+			name = Release;
+		};
+		01E427AF2BA1EECA008BC989 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_DYLIB_INSTALL_NAME = /cores/binpack/usr/lib/universalhooks.dylib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/libs",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				TVOS_DEPLOYMENT_TARGET = 14.0;
+				WATCHOS_DEPLOYMENT_TARGET = 5.0;
+			};
+			name = Debug;
+		};
+		01E427B02BA1EECA008BC989 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_DYLIB_INSTALL_NAME = /cores/binpack/usr/lib/universalhooks.dylib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/libs",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				TVOS_DEPLOYMENT_TARGET = 14.0;
+				WATCHOS_DEPLOYMENT_TARGET = 5.0;
+			};
+			name = Release;
+		};
+		01E427D82BA1F29F008BC989 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CODE_SIGN_STYLE = Automatic;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/tools/patch_dyld-test/include",
+					"$(PROJECT_DIR)/tools/patch_dyld-test/include/plooshfinder",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				OTHER_CFLAGS = "-Wno-nullability-completeness";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		01E427D92BA1F29F008BC989 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CODE_SIGN_STYLE = Automatic;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/tools/patch_dyld-test/include",
+					"$(PROJECT_DIR)/tools/patch_dyld-test/include/plooshfinder",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				OTHER_CFLAGS = "-Wno-nullability-completeness";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1668,20 +2415,101 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		01D3D48E2B5C7F95007845B6 /* Build configuration list for PBXNativeTarget "dummy" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				01D3D48F2B5C7F95007845B6 /* Debug */,
-				01D3D4902B5C7F95007845B6 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		01D3DA592B5C8519007845B6 /* Build configuration list for PBXLegacyTarget "plooshInit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				01D3DA5A2B5C8519007845B6 /* Debug */,
 				01D3DA5B2B5C8519007845B6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		01E426E32BA1DDDD008BC989 /* Build configuration list for PBXNativeTarget "fakedyld" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				01E426DD2BA1DDDD008BC989 /* Debug */,
+				01E426DE2BA1DDDD008BC989 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		01E427172BA1E364008BC989 /* Build configuration list for PBXNativeTarget "mount_cores" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				01E427182BA1E364008BC989 /* Debug */,
+				01E427192BA1E364008BC989 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		01E427362BA1E829008BC989 /* Build configuration list for PBXNativeTarget "payload_dylib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				01E427372BA1E829008BC989 /* Debug */,
+				01E427382BA1E829008BC989 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		01E4273E2BA1E848008BC989 /* Build configuration list for PBXNativeTarget "libjailbreak" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				01E4273F2BA1E848008BC989 /* Debug */,
+				01E427402BA1E848008BC989 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		01E4275A2BA1EB06008BC989 /* Build configuration list for PBXNativeTarget "payload" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				01E4275B2BA1EB06008BC989 /* Debug */,
+				01E4275C2BA1EB06008BC989 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		01E427962BA1EE94008BC989 /* Build configuration list for PBXNativeTarget "systemhook" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				01E427972BA1EE94008BC989 /* Debug */,
+				01E427982BA1EE94008BC989 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		01E4279E2BA1EEA8008BC989 /* Build configuration list for PBXNativeTarget "rootfulhooks" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				01E4279F2BA1EEA8008BC989 /* Debug */,
+				01E427A02BA1EEA8008BC989 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		01E427A62BA1EEB4008BC989 /* Build configuration list for PBXNativeTarget "rootlesshooks" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				01E427A72BA1EEB4008BC989 /* Debug */,
+				01E427A82BA1EEB4008BC989 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		01E427AE2BA1EECA008BC989 /* Build configuration list for PBXNativeTarget "universalhooks" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				01E427AF2BA1EECA008BC989 /* Debug */,
+				01E427B02BA1EECA008BC989 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		01E427D72BA1F29F008BC989 /* Build configuration list for PBXNativeTarget "patch_dyld-test" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				01E427D82BA1F29F008BC989 /* Debug */,
+				01E427D92BA1F29F008BC989 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -464,7 +464,7 @@ uint64_t macho_xnu_untag_va(uint64_t addr) {
         return addr;
     }
 }
-
+#if 0
 struct mach_header_64 *macho_parse_kmod_info(void *buf, struct section_64 *kmod_info, struct section_64 *kmod_start, char *bundle_name) {\
     if (!macho_check(buf)) {
         return NULL;
@@ -535,6 +535,7 @@ void macho_run_each_kext(void *buf, void (*function)(void *real_buf, void *kextb
         }
     }
 }
+#endif
 
 void *fileset_va_to_ptr(void *buf, void *kext, uint64_t addr) {
     if (!macho_check(buf)) {
