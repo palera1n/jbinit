@@ -470,7 +470,6 @@
 		01E427A52BA1EEB4008BC989 /* librootlesshooks.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = librootlesshooks.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E427AD2BA1EECA008BC989 /* libuniversalhooks.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libuniversalhooks.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E427D32BA1F29F008BC989 /* patch_dyld-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "patch_dyld-test"; sourceTree = BUILT_PRODUCTS_DIR; };
-		01E427EC2BA1FE3E008BC989 /* fakedyld.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = fakedyld.entitlements; path = fakedyld/fakedyld.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -573,7 +572,6 @@
 		0133721E2B5C7CFB00D035BB = {
 			isa = PBXGroup;
 			children = (
-				01E427EC2BA1FE3E008BC989 /* fakedyld.entitlements */,
 				01B9F8132B68045300428E81 /* tools */,
 				01D3DA212B5C83B7007845B6 /* include */,
 				01D3D4812B5C7DDE007845B6 /* LICENSE */,
