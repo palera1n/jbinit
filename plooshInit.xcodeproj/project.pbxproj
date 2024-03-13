@@ -281,7 +281,7 @@
 		01D3D4812B5C7DDE007845B6 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		01D3D4832B5C7DDE007845B6 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		01D3D4A92B5C80D9007845B6 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		01D3D4B02B5C80D9007845B6 /* entitlements.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = entitlements.xml; sourceTree = "<group>"; };
+		01D3D4B02B5C80D9007845B6 /* entitlements.xml */ = {isa = PBXFileReference; explicitFileType = text.plist.entitlements; fileEncoding = 4; path = entitlements.xml; sourceTree = "<group>"; };
 		01D3D4B12B5C80D9007845B6 /* pinfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pinfo.c; sourceTree = "<group>"; };
 		01D3D4E02B5C80D9007845B6 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01D3D4E92B5C80DA007845B6 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
@@ -328,8 +328,7 @@
 		01D3D5F62B5C80DA007845B6 /* lsd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = lsd.m; sourceTree = "<group>"; };
 		01D3D5F92B5C80DA007845B6 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		01D3D5FA2B5C80DA007845B6 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		01D3D5FF2B5C80DA007845B6 /* entitlements.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = entitlements.xml; sourceTree = "<group>"; };
-		01D3D6002B5C80DA007845B6 /* mount_cores.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = mount_cores.dSYM; sourceTree = "<group>"; };
+		01D3D5FF2B5C80DA007845B6 /* entitlements.xml */ = {isa = PBXFileReference; explicitFileType = text.plist.entitlements; fileEncoding = 4; path = entitlements.xml; sourceTree = "<group>"; };
 		01D3D6012B5C80DA007845B6 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01D3D6022B5C80DA007845B6 /* mount_dmg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mount_dmg.c; sourceTree = "<group>"; };
 		01D3D6032B5C80DA007845B6 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
@@ -945,7 +944,6 @@
 			isa = PBXGroup;
 			children = (
 				01D3D5FF2B5C80DA007845B6 /* entitlements.xml */,
-				01D3D6002B5C80DA007845B6 /* mount_cores.dSYM */,
 				01D3D6012B5C80DA007845B6 /* Makefile */,
 				01D3D6022B5C80DA007845B6 /* mount_dmg.c */,
 				01D3D6032B5C80DA007845B6 /* main.c */,
