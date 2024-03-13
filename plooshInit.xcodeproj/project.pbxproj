@@ -470,6 +470,7 @@
 		01E427A52BA1EEB4008BC989 /* librootlesshooks.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = librootlesshooks.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E427AD2BA1EECA008BC989 /* libuniversalhooks.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libuniversalhooks.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E427D32BA1F29F008BC989 /* patch_dyld-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "patch_dyld-test"; sourceTree = BUILT_PRODUCTS_DIR; };
+		01E427EC2BA1FE3E008BC989 /* fakedyld.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = fakedyld.entitlements; path = fakedyld/fakedyld.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -572,6 +573,7 @@
 		0133721E2B5C7CFB00D035BB = {
 			isa = PBXGroup;
 			children = (
+				01E427EC2BA1FE3E008BC989 /* fakedyld.entitlements */,
 				01B9F8132B68045300428E81 /* tools */,
 				01D3DA212B5C83B7007845B6 /* include */,
 				01D3D4812B5C7DDE007845B6 /* LICENSE */,
@@ -2020,7 +2022,12 @@
 		01E426DD2BA1DDDD008BC989 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
 				GCC_USE_STANDARD_INCLUDE_SEARCHING = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/apple-include",
@@ -2028,7 +2035,7 @@
 					"$(PROJECT_DIR)/include/plooshfinder",
 				);
 				LINK_WITH_STANDARD_LIBRARIES = NO;
-				MACH_O_TYPE = mh_dylinker;
+				MACH_O_TYPE = mh_dylib;
 				OTHER_CFLAGS = (
 					"-ffreestanding",
 					"-nostdlibinc",
@@ -2038,7 +2045,9 @@
 					"-Wl,-dylinker",
 					"-Wl,-dylinker_install_name,/usr/lib/dyld",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.apple.dyld;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 			};
 			name = Debug;
@@ -2046,7 +2055,12 @@
 		01E426DE2BA1DDDD008BC989 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
 				GCC_USE_STANDARD_INCLUDE_SEARCHING = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/apple-include",
@@ -2054,7 +2068,7 @@
 					"$(PROJECT_DIR)/include/plooshfinder",
 				);
 				LINK_WITH_STANDARD_LIBRARIES = NO;
-				MACH_O_TYPE = mh_dylinker;
+				MACH_O_TYPE = mh_dylib;
 				OTHER_CFLAGS = (
 					"-ffreestanding",
 					"-nostdlibinc",
@@ -2064,7 +2078,9 @@
 					"-Wl,-dylinker",
 					"-Wl,-dylinker_install_name,/usr/lib/dyld",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.apple.dyld;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 			};
 			name = Release;
@@ -2073,7 +2089,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/src/mount_cores/entitlements.xml";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = "MOUNT_CORES=1";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2084,7 +2103,9 @@
 					"-U__TVOS_PROHIBITED",
 					"-U__WATCHOS_PROHIBITED",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.apple.mount-cores";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 			};
 			name = Debug;
@@ -2093,7 +2114,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/src/mount_cores/entitlements.xml";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = "MOUNT_CORES=1";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2104,7 +2128,9 @@
 					"-U__TVOS_PROHIBITED",
 					"-U__WATCHOS_PROHIBITED",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.apple.mount-cores";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 			};
 			name = Release;
@@ -2171,7 +2197,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/src/payload/entitlements.xml";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/apple-include",
 					"$(PROJECT_DIR)/include",
@@ -2184,6 +2212,7 @@
 				);
 				OTHER_CFLAGS = "\"-U__IOS_PROHIBITED -U__TVOS_PROHIBITED -U__WATCHOS_PROHIBITED\"";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -2192,7 +2221,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/src/payload/entitlements.xml";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/apple-include",
 					"$(PROJECT_DIR)/include",
@@ -2205,6 +2236,7 @@
 				);
 				OTHER_CFLAGS = "\"-U__IOS_PROHIBITED -U__TVOS_PROHIBITED -U__WATCHOS_PROHIBITED\"";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -2373,7 +2405,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/tools/patch_dyld-test/include",
@@ -2382,6 +2415,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CFLAGS = "-Wno-nullability-completeness";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -2390,7 +2424,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/tools/patch_dyld-test/include",
@@ -2399,6 +2434,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CFLAGS = "-Wno-nullability-completeness";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
 			name = Release;
