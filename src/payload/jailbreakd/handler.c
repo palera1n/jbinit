@@ -177,10 +177,9 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
                 xpc_dictionary_set_int64(xreply, "error", EPERM);
                 break;
             }
-            int ret = 0;
             xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
             pinfo_p->flags |= (palerain_option_safemode | palerain_option_failure);
-            ret = set_pinfo(pinfo_p);
+            set_pinfo(pinfo_p);
             xpc_dictionary_set_uint64(xdict, "cmd", LAUNCHD_CMD_SET_PINFO_FLAGS);
             xpc_dictionary_set_uint64(xdict, "flags", pinfo_p->flags);
             xpc_object_t lreply;
@@ -227,10 +226,9 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
                 xpc_dictionary_set_int64(xreply, "error", ENOENTITLEMENT);
                 break;
             }
-            int ret = 0;
             xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
             pinfo_p->flags &= ~(palerain_option_safemode | palerain_option_failure);
-            ret = set_pinfo(pinfo_p);
+            set_pinfo(pinfo_p);
             xpc_dictionary_set_uint64(xdict, "flags", pinfo_p->flags);
             xpc_dictionary_set_uint64(xdict, "cmd", LAUNCHD_CMD_SET_PINFO_FLAGS);
             xpc_object_t lreply;

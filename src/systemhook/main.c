@@ -169,8 +169,8 @@ int execle_hook(const char *path, const char *arg0, ... /*, (char *)0, char *con
 	}
 	argv[arg_count] = NULL;
 
-	char *nullChar = va_arg(args, char*);
-
+	__unused char* nullChar = va_arg(args, char*);
+    
 	char **envp = va_arg(args, char**);
 	return execve_hook(path, argv, envp);
 }
@@ -575,7 +575,7 @@ __API_AVAILABLE(macos(10.15), ios(13.0), tvos(13.0), bridgeos(4.0))
 __attribute__((visibility ("hidden")))
 bool _availability_version_check_hook(uint32_t count, DyldBuildVersion versions[]) {
     uint32_t current_plat = dyld_get_active_platform();
-    for (int i = 0; i < count; i++) {
+    for (uint32_t i = 0; i < count; i++) {
         DyldBuildVersion* version = &versions[i];
         if (current_plat == version->platform) continue;
         uint32_t major = (version->version >> 16) & 0xffff;

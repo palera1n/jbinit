@@ -34,7 +34,7 @@ void platform_check_patch(void* arm64_dyld_buf, int platform) {
 }
 
 bool has_found_dyld_in_cache = false;
-bool patch_dyld_in_cache(struct pf_patch_t *patch, uint32_t *stream) {
+bool patch_dyld_in_cache(struct pf_patch_t __attribute__((unused)) *patch, uint32_t *stream) {
     char* env_name = pf_follow_xref(arm64_dyld_buf, &stream[2]);
     char* env_value = pf_follow_xref(arm64_dyld_buf, &stream[6]);
 
@@ -49,8 +49,6 @@ bool patch_dyld_in_cache(struct pf_patch_t *patch, uint32_t *stream) {
 }
 
 void dyld_in_cache_patch(void* buf) {
-    struct mach_header_64 *header = buf;
-
     uint32_t matches[] = {
         0xaa1303e0, // mov x0, x19
         0x94000000, // bl dyld4::KernelArgs::findEnvp

@@ -42,7 +42,7 @@ void notch_clear(char* machine) {
     }
 }
 
-int copyfile_fakefs_cb(int what, int stage, copyfile_state_t state, const char * src, const char * dst, void * ctx) {
+int copyfile_fakefs_cb(int what, int __unused stage, copyfile_state_t __unused state, const char * src, const char * __unused dst, void * ctx) {
     char basename_buf[PATH_MAX];
     struct paleinfo* pinfo_p = ((struct cb_context*)ctx)->pinfo_p;
     switch (what) {
@@ -100,7 +100,7 @@ int copyfile_fakefs_cb(int what, int stage, copyfile_state_t state, const char *
 
 }
 
-int setup_fakefs(uint32_t payload_options, struct paleinfo* pinfo_p) {
+int setup_fakefs(uint32_t __unused payload_options, struct paleinfo* pinfo_p) {
     CHECK_ERROR(runCommand((char*[]){ "/sbin/fsck", "-qL", NULL }), 1, "fsck failed");
 
     struct statfs rootfs_st;
@@ -166,8 +166,7 @@ int setup_fakefs(uint32_t payload_options, struct paleinfo* pinfo_p) {
     }
     sleep(2);
     struct apfs_mount_args args = {
-        fakefs_mntfromname, 0, APFS_MOUNT_FILESYSTEM, 0
-    };
+        fakefs_mntfromname, 0, APFS_MOUNT_FILESYSTEM, 0, 0, { "" }, NULL, 0, 0, NULL, 0, 0, 0, 0, 0, 0 };
     CHECK_ERROR(mount("apfs", "/cores/fs/fake", 0, &args), 1, "mount fakefs failed");
 
     struct utsname name;

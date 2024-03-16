@@ -45,7 +45,7 @@ void pf_disable_patch(struct pf_patch_t *patch) {
 uint32_t *pf_find_next(uint32_t *stream, uint32_t count, uint32_t match, uint32_t mask) {
     uint32_t *find_stream = 0;
     
-    for (int i = 0; i < count; i++) {
+    for (uint32_t i = 0; i < count; i++) {
         if (pf_maskmatch32(stream[i], match, mask)) {
             find_stream = stream + i;
             break;

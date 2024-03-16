@@ -18,7 +18,8 @@ void prepare_rootfs(struct systeminfo* sysinfo_p, struct paleinfo* pinfo_p) {
     LOG("mounting realfs %s\n", real_rootdev);
     struct apfs_mount_args arg = {
         real_rootdev,
-        MNT_RDONLY, APFS_MOUNT_FILESYSTEM /* "bdevvp failed: open" kernel panic when mount snapshot */, 0
+        MNT_RDONLY, APFS_MOUNT_FILESYSTEM /* "bdevvp failed: open" kernel panic when mount snapshot */
+        , 0, 0, { "" }, NULL, 0, 0, NULL, 0, 0, 0, 0, 0, 0
     };
     ret = mount("apfs", "/cores/fs/real", MNT_RDONLY, &arg);
     if (ret) {

@@ -1,4 +1,6 @@
 CFLAGS += -g -arch arm64 -I$(ROOT)/include -Wno-deprecated-declarations
+CFLAGS += -Wall -Wextra
+
 SHELL = /usr/bin/env bash
 
 ifneq ($(ASAN),1)

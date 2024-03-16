@@ -65,7 +65,7 @@ void mount_ramdisk_cores(int platform) {
   }
 }
 
-void init_cores(struct systeminfo* sysinfo_p, int platform) {
+void init_cores(struct systeminfo* sysinfo_p, int __attribute__((unused)) platform) {
   if (sysinfo_p->osrelease.darwinMajor > 20) {
     tmpfs_mount_args_t args = { .case_insensitive = 0, .max_pages = 1, .max_nodes = 1 };
     int ret = mount("tmpfs", "/System/Library/PrivateFrameworks/ProgressUI.framework", MNT_DONTBROWSE, &args);

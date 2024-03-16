@@ -18,17 +18,17 @@ int remount_rootfs(struct utsname* name_p) {
     if (ret) return ret;
     int mntflags = MNT_UPDATE;
     if (atoi(name_p->release) < 21) mntflags |= MNT_UNION;
-    apfs_mount_args_t arg = { fs.f_mntfromname, 0, 1, 0 };
+    apfs_mount_args_t arg = { fs.f_mntfromname, 0, APFS_MOUNT_FILESYSTEM, 0, 0, { "" }, NULL, 0, 0, NULL, 0, 0, 0, 0, 0, 0 };
     return mount(fs.f_fstypename, fs.f_mntonname, mntflags, &arg);
 }
 
-int remount_preboot(struct utsname* name_p) {
+int remount_preboot(struct utsname* __unused name_p) {
     struct statfs fs;
     int ret = statfs("/private/preboot", &fs);
     if (ret == ENOENT) return 0;
     if (ret) return ret;
     int mntflags = MNT_UPDATE;
-    apfs_mount_args_t arg = { fs.f_mntfromname, 0, 1, 0 };
+    apfs_mount_args_t arg = { fs.f_mntfromname, 0, APFS_MOUNT_FILESYSTEM, 0, 0, { "" }, NULL, 0, 0, NULL, 0, 0, 0, 0, 0, 0 };
     return mount(fs.f_fstypename, fs.f_mntonname, mntflags, &arg);
 }
 

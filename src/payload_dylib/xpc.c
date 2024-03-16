@@ -177,7 +177,7 @@ void InitXPCHooks(void) {
         fprintf(stderr, "_NSGetExecutablePath() failed\n");
         spin();
     }
-	for (int i = 0; i < _dyld_image_count(); i++) {
+	for (uint32_t i = 0; i < _dyld_image_count(); i++) {
 		if(!strcmp(_dyld_get_image_name(i), launchd_path)) {
 			launchd_image_index = i;
 			break;
@@ -191,7 +191,7 @@ void InitXPCHooks(void) {
 
     uint32_t* text_start = NULL;
     size_t text_size = 0;
-    for (int i = 0; i < mach_header->ncmds && cmd_current <= cmd_end; i++) {
+    for (uint32_t i = 0; i < mach_header->ncmds && cmd_current <= cmd_end; i++) {
         const struct segment_command_64 *cmd;
 
         cmd = (struct segment_command_64*)cmd_current;

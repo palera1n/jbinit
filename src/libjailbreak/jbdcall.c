@@ -7,7 +7,7 @@ xpc_object_t jailbreak_send_jailbreakd_message_with_reply_sync(xpc_object_t xdic
     if (xpc_get_type(connection) == XPC_TYPE_ERROR) {
         return connection;
     }
-    xpc_connection_set_event_handler(connection, ^(xpc_object_t _) {});
+    xpc_connection_set_event_handler(connection, ^(xpc_object_t __unused _) {});
     xpc_connection_activate(connection);
     xpc_object_t xreply = xpc_connection_send_message_with_reply_sync(connection, xdict);
     xpc_connection_cancel(connection);

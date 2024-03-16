@@ -102,9 +102,6 @@
 		01E4277E2BA1EC43008BC989 /* preboot_path.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D51C2B5C80DA007845B6 /* preboot_path.c */; };
 		01E4277F2BA1EC45008BC989 /* bootstrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D51D2B5C80DA007845B6 /* bootstrap.c */; };
 		01E427802BA1EC49008BC989 /* overwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B9F8AD2B68170D00428E81 /* overwrite.c */; };
-		01E427892BA1ED5C008BC989 /* bootstrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 01E427882BA1ED5C008BC989 /* bootstrap.c */; };
-		01E4278E2BA1ED8F008BC989 /* load.c in Sources */ = {isa = PBXBuildFile; fileRef = 01E4278D2BA1ED8F008BC989 /* load.c */; };
-		01E427902BA1ED91008BC989 /* xpc_helper.c in Sources */ = {isa = PBXBuildFile; fileRef = 01E4278F2BA1ED91008BC989 /* xpc_helper.c */; };
 		01E427B12BA1EEE2008BC989 /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D60C2B5C80DA007845B6 /* common.c */; };
 		01E427B22BA1EEEB008BC989 /* envbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6182B5C80DA007845B6 /* envbuf.c */; };
 		01E427B32BA1EEED008BC989 /* getusershell.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6192B5C80DA007845B6 /* getusershell.c */; };
@@ -213,6 +210,9 @@
 
 /* Begin PBXFileReference section */
 		012A1FC12B91814F0018CCA2 /* memmem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = memmem.c; sourceTree = "<group>"; };
+		015DD6BE2BA5992E003E3587 /* load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = load.c; path = launchctl/load.c; sourceTree = "<group>"; };
+		015DD6BF2BA5992E003E3587 /* xpc_helper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xpc_helper.c; path = launchctl/xpc_helper.c; sourceTree = "<group>"; };
+		015DD6C02BA5992E003E3587 /* bootstrap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bootstrap.c; path = launchctl/bootstrap.c; sourceTree = "<group>"; };
 		01683B582B8C679500A7A2EA /* crashreporter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = crashreporter.m; sourceTree = "<group>"; };
 		019B1B452B5CACA800BABAB5 /* load_etc_rc_d.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load_etc_rc_d.c; sourceTree = "<group>"; };
 		01B6169C2B720DC70080AB28 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
@@ -461,9 +461,6 @@
 		01E4275D2BA1EB29008BC989 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		01E4275F2BA1EB2E008BC989 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		01E427622BA1EB4F008BC989 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
-		01E427882BA1ED5C008BC989 /* bootstrap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bootstrap.c; sourceTree = "<group>"; };
-		01E4278D2BA1ED8F008BC989 /* load.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load.c; sourceTree = "<group>"; };
-		01E4278F2BA1ED91008BC989 /* xpc_helper.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = xpc_helper.c; sourceTree = "<group>"; };
 		01E427952BA1EE94008BC989 /* libsystemhook.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libsystemhook.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E4279D2BA1EEA8008BC989 /* librootfulhooks.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = librootfulhooks.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E427A52BA1EEB4008BC989 /* librootlesshooks.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = librootlesshooks.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1306,9 +1303,9 @@
 		01E4278C2BA1ED83008BC989 /* launchctl */ = {
 			isa = PBXGroup;
 			children = (
-				01E4278F2BA1ED91008BC989 /* xpc_helper.c */,
-				01E4278D2BA1ED8F008BC989 /* load.c */,
-				01E427882BA1ED5C008BC989 /* bootstrap.c */,
+				015DD6C02BA5992E003E3587 /* bootstrap.c */,
+				015DD6BE2BA5992E003E3587 /* load.c */,
+				015DD6BF2BA5992E003E3587 /* xpc_helper.c */,
 			);
 			name = launchctl;
 			sourceTree = "<group>";
@@ -1745,7 +1742,6 @@
 				01E427692BA1EC05008BC989 /* handler.c in Sources */,
 				01E4276C2BA1EC0C008BC989 /* reboot3.c in Sources */,
 				01E427712BA1EC18008BC989 /* sysstatuscheck.c in Sources */,
-				01E427892BA1ED5C008BC989 /* bootstrap.c in Sources */,
 				01E4276D2BA1EC0E008BC989 /* bootstrap.c in Sources */,
 				01E427742BA1EC20008BC989 /* mount_dmg.c in Sources */,
 				01E4277E2BA1EC43008BC989 /* preboot_path.c in Sources */,
@@ -1757,13 +1753,11 @@
 				01E427752BA1EC23008BC989 /* create_var_jb.c in Sources */,
 				01E427652BA1EB6E008BC989 /* pinfo.c in Sources */,
 				01E4276E2BA1EC11008BC989 /* prelaunchd.c in Sources */,
-				01E427902BA1ED91008BC989 /* xpc_helper.c in Sources */,
 				01E427682BA1EC03008BC989 /* overwrite_file.c in Sources */,
 				01E427792BA1EC34008BC989 /* remount.c in Sources */,
 				01E427702BA1EC15008BC989 /* fixup_user_groups.c in Sources */,
 				01E4276F2BA1EC13008BC989 /* launchdaemons.c in Sources */,
 				01E427762BA1EC2C008BC989 /* setup_fakefs.c in Sources */,
-				01E4278E2BA1ED8F008BC989 /* load.c in Sources */,
 				01E4277C2BA1EC3F008BC989 /* obliterate.c in Sources */,
 				01E427772BA1EC2F008BC989 /* main.c in Sources */,
 				01E4277D2BA1EC41008BC989 /* main.c in Sources */,
@@ -2196,6 +2190,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = NO;
+				GCC_WARN_PEDANTIC = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/apple-include",
 					"$(PROJECT_DIR)/include",
@@ -2220,6 +2215,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = NO;
+				GCC_WARN_PEDANTIC = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/apple-include",
 					"$(PROJECT_DIR)/include",

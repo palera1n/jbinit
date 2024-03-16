@@ -10,12 +10,12 @@
 mach_port_t (*SBSSpringBoardServerPort)(void);
 static CFRunLoopRef loop;
 
-void sb_launched(CFNotificationCenterRef center, void *observer,
-				 CFStringRef name, const void *object, CFDictionaryRef info) {
+void sb_launched(CFNotificationCenterRef __unused center, void __unused *observer,
+				 CFStringRef __unused name, const void __unused *object, CFDictionaryRef __unused info) {
     CFRunLoopStop(loop);
 }
 
-int launchdaemons(uint32_t payload_options, uint64_t pflags) {
+int launchdaemons(uint32_t __unused payload_options, uint64_t pflags) {
     printf("plooshInit launchdaemons...\n");
     int platform = get_platform();
     if (platform == -1) {

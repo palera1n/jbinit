@@ -375,7 +375,7 @@ void crashreporter_catch_objc(NSException *e)
 	}
 }
 
-void *crashreporter_listen(void *arg)
+void *crashreporter_listen(void* __unused arg)
 {
 	while (true) {
 		mach_msg_header_t msg;

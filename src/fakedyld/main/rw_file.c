@@ -29,9 +29,8 @@ void write_file(char* path, memory_file_handle_t* handle) {
     if (fd == -1) {
         panic("open file %s failed", path);
     }
-    int ret;
     ssize_t didWrite = write(fd, handle->file_p, handle->file_len);;
-    if (didWrite != handle->file_len) {
+    if ((size_t)didWrite != handle->file_len) {
         panic("unexpected data size %llu while writing file %s of size %llu (fd: %d)", didWrite, path, handle->file_len, fd);
     }
     // munmap(handle->file_p, ((handle->file_len & ~0x3fff) + 0x4000));

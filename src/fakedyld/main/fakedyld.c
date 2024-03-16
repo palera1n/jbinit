@@ -46,9 +46,9 @@ int main(int argc, char* argv[], char* envp[], char* apple[]) {
     has_verbose_boot = has_verbose_boot || (pinfo.flags & palerain_option_verbose_boot);
 
     pinfo_check(&pinfo);
+#if 0
     memory_file_handle_t payload;
     memory_file_handle_t payload15_dylib;
-#if 0
     if (pinfo.flags & palerain_option_bind_mount) {
         read_file("/payload.dylib", &payload15_dylib);
         read_file("/payload", &payload);

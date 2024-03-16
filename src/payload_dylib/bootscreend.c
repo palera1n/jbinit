@@ -59,7 +59,7 @@ int init_display(void) {
 
     int token;
     IOMobileFramebufferSwapBegin(display, &token);
-    IOMobileFramebufferSwapSetLayer(display, 0, buffer, (CGRect){ 0, 0, width, height }, (CGRect){ 0, 0, width, height }, 0);
+    IOMobileFramebufferSwapSetLayer(display, 0, buffer, (CGRect){ { 0, 0 }, { width, height } }, (CGRect){ { 0, 0 }, { width, height } }, 0);
     IOMobileFramebufferSwapEnd(display);
     return 0;
 }

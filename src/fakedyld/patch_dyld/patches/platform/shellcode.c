@@ -66,7 +66,7 @@ uint32_t *copy_shc(void *buf, int platform, uint32_t jmp) {
         return NULL;
     }
 
-    for (int i = 0; i < shc_size; i++) {
+    for (size_t i = 0; i < shc_size; i++) {
         shc_loc[i] = shellcode[i];
     }
 

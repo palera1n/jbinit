@@ -4,7 +4,7 @@
 #include <xpc/private.h>
 #include <libjailbreak/libjailbreak.h>
 
-int preboot_path_main(int argc, char* argv[]) {
+int preboot_path_main(int __unused argc, char* __unused argv[]) {
     int retval = 0;
     P1CTL_UPCALL_JBD_WITH_ERR_CHECK(xreply, JBD_CMD_GET_PINFO_FLAGS);
     const char* path = NULL;

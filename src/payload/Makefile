@@ -28,7 +28,7 @@ $(OBJDIR)/%.c.o: %.c $(OBJDIR)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(patsubst %.o, launchctl/%.o, $(LAUNCHCTL_OBJ)): $(patsubst %.o, launchctl/%.c, $(LAUNCHCTL_OBJ)) 
-	$(MAKE) -C launchctl $(shell echo $@ | cut -d/ -f2)
+	CFLAGS="$(CFLAGS) -Wno-unused-parameter" $(MAKE) -C launchctl $(shell echo $@ | cut -d/ -f2)
 
 payload: $(patsubst %, %-all, $(SUBDIRS)) $(OBJS) $(patsubst %.o, launchctl/%.o, $(LAUNCHCTL_OBJ))
 	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) $(patsubst %.o, launchctl/%.o, $(LAUNCHCTL_OBJ)) $$(find . -name '*.o' | grep 'obj/.*o') -o payload

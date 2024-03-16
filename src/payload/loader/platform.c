@@ -30,7 +30,7 @@ uint32_t macho_get_platform(const void *buf) {
     const struct load_command *after_header = buf + sizeof(struct mach_header_64);
     const struct mach_header_64 *header = buf;
 
-    for (int i = 0; i < header->ncmds; i++) {
+    for (uint32_t i = 0; i < header->ncmds; i++) {
         if (after_header->cmd == LC_BUILD_VERSION) {
             const struct build_version_command *cmd = (const struct build_version_command *) after_header;
 

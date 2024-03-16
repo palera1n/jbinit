@@ -37,7 +37,6 @@ int prelaunchd(uint32_t payload_options, struct paleinfo* pinfo_p) {
         printf("will delete %s\n", dev_rootdev);
         if (access(dev_rootdev, F_OK) == 0) {
             int16_t role = 0;
-            kern_return_t ret;
             CHECK_ERROR(APFSVolumeRole(dev_rootdev, &role, NULL), 0, "APFSVolumeRole(%s) Failed", dev_rootdev);
             printf("found apfs volume role: 0x%04x\n", role);
             if (role != APFS_VOL_ROLE_RECOVERY) {

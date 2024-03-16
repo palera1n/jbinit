@@ -23,7 +23,7 @@
 
 extern char** environ;
 
-void obliterate(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinfo) {
+void obliterate(xpc_object_t __unused xrequest, xpc_object_t xreply, struct paleinfo* __unused pinfo) {
     if (pinfo->flags & palerain_option_rootful) {
         xpc_dictionary_set_string(xreply, "errorDescription", "oblierating jailbreak while booted is not supported on rootful");
         xpc_dictionary_set_int64(xreply, "error", ENOTSUP);

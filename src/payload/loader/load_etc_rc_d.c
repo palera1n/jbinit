@@ -45,7 +45,6 @@ int load_etc_rc_d(uint64_t pflags) {
         if (!strcmp(d->d_name, ".") || !strcmp(d->d_name, "..")) continue;
         char path[PATH_MAX];
         snprintf(path, PATH_MAX, "%s/%s", etcRcD, d->d_name);
-        struct stat st;
         pid_t pid;
         int status;
         int ret = posix_spawn(&pid, path, NULL, NULL, (char*[]){ path, NULL }, environ);

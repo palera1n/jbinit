@@ -152,7 +152,7 @@ struct Symbol_Header *pe_find_symbol(void *buf, char *name) {
     void *symtab = pe_get_symtab(buf);
     void *strtab = pe_get_strtab(buf);
 
-    for (int i = 0; i < pe_hdr->numberOfSymbols; i++) {
+    for (uint32_t i = 0; i < pe_hdr->numberOfSymbols; i++) {
         struct Symbol_Header *symbol = symtab + (i * 18); // 18 is the correct size, but struct alignment makes it 20.
         char *real_name = symbol->name.name;
 

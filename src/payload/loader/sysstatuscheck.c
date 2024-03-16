@@ -132,7 +132,7 @@ int remove_jailbreak_files(uint64_t pflags) {
 }
 
 int fixup_databases(void);
-int sysstatuscheck(uint32_t payload_options, uint64_t pflags) {
+int sysstatuscheck(uint32_t __unused payload_options, uint64_t pflags) {
     printf("plooshInit sysstatuscheck...\n");
     int retval;
     memorystatus_memlimit_properties2_t mmprops;

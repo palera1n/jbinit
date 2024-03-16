@@ -121,7 +121,7 @@ int mount_dmg_internal(const char *device, const char *fstype, const char *mnt, 
     bzero(&diskdev_name_buf, sizeof(diskdev_name_buf));
     snprintf(diskdev_name_buf, sizeof(diskdev_name_buf), "/dev/%s", buf);
     char *dev2 = strdup(diskdev_name_buf);
-    hfs_mount_args_t args = { dev2 };
+    hfs_mount_args_t args = { dev2, 0, 0, 0, 0, { 0, 0 }, 0, 0, 0, 0 };
     printf("calling mount(fstype=%s, mnt=%s, mntopts=%d, data=%p)\n", fstype, mnt, mntopts, &args);
     int mount_ret = mount(fstype, mnt, mntopts, &args);
     if (mount_ret == 0)

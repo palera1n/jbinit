@@ -34,7 +34,7 @@ void *macho_find_arch(void *buf, uint32_t arch) {
         struct fat_header *header = (struct fat_header *) buf;
         struct fat_arch *farch = (struct fat_arch *) ((char *) buf + sizeof(struct fat_header));
 
-        for (int i = 0; i < convert_endianness32(header->nfat_arch); i++) {
+        for (uint32_t i = 0; i < convert_endianness32(header->nfat_arch); i++) {
             if (farch->cputype == arch) {
                 return buf + convert_endianness32(farch->offset);
             }
@@ -56,7 +56,7 @@ uint32_t macho_get_platform(void *buf) {
     struct load_command_64 *after_header = buf + sizeof(struct mach_header_64);
     struct mach_header_64 *header = buf;
 
-    for (int i = 0; i < header->ncmds; i++) {
+    for (uint32_t i = 0; i < header->ncmds; i++) {
         if (after_header->cmd == LC_BUILD_VERSION) {
             struct build_version_command *cmd = (struct build_version_command *) after_header;
 
@@ -83,7 +83,7 @@ struct segment_command_64 *macho_get_segment(void *buf, char *name) {
     struct load_command_64 *after_header = buf + sizeof(struct mach_header_64);
     struct mach_header_64 *header = buf;
 
-    for (int i = 0; i < header->ncmds; i++) {
+    for (uint32_t i = 0; i < header->ncmds; i++) {
         if (after_header->cmd == LC_SEGMENT_64) {
             struct segment_command_64 *segment = (struct segment_command_64 *) after_header;
             if (strcmp(segment->segname, name) == 0) {
@@ -106,7 +106,7 @@ struct section_64 *macho_get_section(void *buf, struct segment_command_64 *segme
 
     struct section_64 *section = (struct section_64 *) ((char *) segment + sizeof(struct segment_command_64));
 
-    for (int i = 0; i < segment->nsects; i++) {
+    for (uint32_t i = 0; i < segment->nsects; i++) {
         if (strcmp(section->sectname, name) == 0) {
             return section;
         }
@@ -150,7 +150,7 @@ struct fileset_entry_command *macho_get_fileset(void *buf, char *name) {
     struct load_command_64 *after_header = buf + sizeof(struct mach_header_64);
     struct mach_header_64 *header = buf;
 
-    for (int i = 0; i < header->ncmds; i++) {
+    for (uint32_t i = 0; i < header->ncmds; i++) {
         if (after_header->cmd == LC_FILESET_ENTRY) {
             struct fileset_entry_command *entry = (struct fileset_entry_command *) after_header;
             char *entry_name = (void *) entry + entry->entry_id;
@@ -175,7 +175,7 @@ struct segment_command_64 *macho_get_segment_for_va(void *buf, uint64_t addr) {
     struct mach_header_64 *header = buf;
     struct segment_command_64 *segment = NULL;
 
-    for (int i = 0; i < header->ncmds; i++) {
+    for (uint32_t i = 0; i < header->ncmds; i++) {
         if (after_header->cmd == LC_SEGMENT_64) {
             segment = (struct segment_command_64 *) after_header;
             uint64_t segment_start = segment->vmaddr;
@@ -197,7 +197,7 @@ struct segment_command_64 *macho_get_segment_for_va(void *buf, uint64_t addr) {
 struct section_64 *macho_get_section_for_va(struct segment_command_64 *segment, uint64_t addr) {
     struct section_64 *section = (struct section_64 *) ((char *) segment + sizeof(struct segment_command_64));
 
-    for (int i = 0; i < segment->nsects; i++) {
+    for (uint32_t i = 0; i < segment->nsects; i++) {
         uint64_t section_start = section->addr;
         uint64_t section_end = section_start + section->size;
 
@@ -260,7 +260,7 @@ struct segment_command_64 *macho_get_segment_for_ptr(void *buf, void *ptr) {
     struct segment_command_64 *segment = NULL;
     uint64_t ptr_addr = (uint64_t) ptr;
 
-    for (int i = 0; i < header->ncmds; i++) {
+    for (uint32_t i = 0; i < header->ncmds; i++) {
         if (after_header->cmd == LC_SEGMENT_64) {
             segment = (struct segment_command_64 *) after_header;
             uint64_t segment_start = (uint64_t) buf + segment->fileoff;
@@ -283,7 +283,7 @@ struct section_64 *macho_get_section_for_ptr(struct segment_command_64 *segment,
     struct section_64 *section = (struct section_64 *) ((char *) segment + sizeof(struct segment_command_64));
     uint64_t ptr_addr = (uint64_t) ptr;
 
-    for (int i = 0; i < segment->nsects; i++) {
+    for (uint32_t i = 0; i < segment->nsects; i++) {
         uint64_t section_start = (uint64_t) buf + section->offset;
         uint64_t section_end = section_start + section->size;
 
@@ -336,9 +336,9 @@ struct nlist_64 *macho_find_symbol(void *buf, char *name) {
 
     struct load_command_64 *after_header = buf + sizeof(struct mach_header_64);
     struct mach_header_64 *header = buf;
-    struct symtab_command *symtab_cmd;
+    struct symtab_command *symtab_cmd = NULL;
 
-    for (int i = 0; i < header->ncmds; i++) {
+    for (uint32_t i = 0; i < header->ncmds; i++) {
         if (after_header->cmd == LC_SYMTAB) {
             symtab_cmd = (struct symtab_command *) after_header;
 
@@ -566,7 +566,7 @@ struct segment_command_64 *fileset_get_segment_for_ptr(void *buf, void *kext, vo
     struct segment_command_64 *segment = NULL;
     uint64_t ptr_addr = (uint64_t) ptr;
 
-    for (int i = 0; i < header->ncmds; i++) {
+    for (uint32_t i = 0; i < header->ncmds; i++) {
         if (after_header->cmd == LC_SEGMENT_64) {
             segment = (struct segment_command_64 *) after_header;
             uint64_t segment_start = (uint64_t) buf + segment->fileoff;
@@ -623,9 +623,9 @@ struct nlist_64 *fileset_find_symbol(void *buf, void *kext, char *name) {
 
     struct load_command_64 *after_header = kext + sizeof(struct mach_header_64);
     struct mach_header_64 *header = kext;
-    struct symtab_command *symtab_cmd;
+    struct symtab_command *symtab_cmd = NULL;
 
-    for (int i = 0; i < header->ncmds; i++) {
+    for (uint32_t i = 0; i < header->ncmds; i++) {
         if (after_header->cmd == LC_SYMTAB) {
             symtab_cmd = (struct symtab_command *) after_header;
 

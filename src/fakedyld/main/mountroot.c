@@ -53,7 +53,7 @@ void mountroot(struct paleinfo* pinfo_p, struct systeminfo* sysinfo_p) {
     if (!(pinfo_p->flags & palerain_option_bind_mount)) {
         rootopts |= MNT_UNION;
     }
-    apfs_mount_args_t rootargs = { dev_rootdev, rootopts, APFS_MOUNT_FILESYSTEM };
+    apfs_mount_args_t rootargs = { dev_rootdev, rootopts, APFS_MOUNT_FILESYSTEM , 0, 0, { "" }, NULL, 0, 0, NULL, 0, 0, 0, 0, 0, 0 };
 retry_rootfs_mount:
     ret = mount("apfs", "/", rootopts, &rootargs);
     if (ret) {

@@ -11,7 +11,7 @@ int _internal_platform = 0;
 void *_internal_rbuf;
 bool has_found_platform_patch = false;
 
-bool inject_shc(struct pf_patch32_t *patch, uint32_t *stream) {
+bool inject_shc(struct pf_patch32_t __attribute__((unused)) *patch, uint32_t *stream) {
     uint32_t *shc_loc = copy_shc(_internal_rbuf, _internal_platform, stream[0]);
     
     if (!shc_loc) {

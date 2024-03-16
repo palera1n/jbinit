@@ -30,7 +30,7 @@
 #define ITHINK_PURPOSE (0x0100000000000000llu)
 int reboot3(uint64_t howto, ...);
 
-void perform_reboot3(xpc_object_t peer, xpc_object_t xreply, xpc_object_t request, struct paleinfo* pinfo_p) {
+void perform_reboot3(xpc_object_t peer, xpc_object_t xreply, xpc_object_t request, struct paleinfo* __unused pinfo_p) {
     audit_token_t token;
     xpc_connection_get_audit_token(peer, &token);
     pid_t pid = xpc_connection_get_pid(peer);

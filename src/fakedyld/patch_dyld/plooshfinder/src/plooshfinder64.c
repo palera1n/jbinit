@@ -12,7 +12,7 @@ void pf_find_maskmatch64(void *buf, size_t size, struct pf_patchset64_t patchset
     uint64_t uint_count = size >> 3;
     
     for (uint64_t i = 0; i < uint_count; i++) {
-        for (int p = 0; p < patchset.count; p++) {
+        for (uint32_t p = 0; p < patchset.count; p++) {
             struct pf_patch64_t *patch = patchset.patches + p;
             if (patch->disabled) continue;
 

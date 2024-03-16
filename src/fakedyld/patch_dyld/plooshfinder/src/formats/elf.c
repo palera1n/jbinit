@@ -128,7 +128,7 @@ struct elf_symbol_64 *elf_find_symbol_stype(void *buf, char *name, uint32_t type
     char *strtab = buf + strtab_sect->offset;
     uint64_t count = sect->size / sizeof(struct elf_symbol_64);
 
-    for (int i = 0; i < count; i++) {
+    for (uint64_t i = 0; i < count; i++) {
         struct elf_symbol_64 *symbol = symtab + i;
         char *sym_name = strtab + symbol->name;
 

@@ -41,11 +41,11 @@ static struct subcommand commands[] = {
     {"rsod", "\t\tRSOD", NULL, "RSOD!!!!!", rsod_main},
     {"crash", "\t\tCrash", NULL, "crash initproc", crash_main},
 #endif
-    {NULL, NULL, NULL, NULL}
+    {NULL, NULL, NULL, NULL, NULL}
 };
 
 #ifdef DEV_BUILD
-int crash_main(int argc, char* argv[]) {
+int crash_main(int __unused argc, char* argv[]) {
     xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
     xpc_object_t xreply;
     xpc_dictionary_set_uint64(xdict, "cmd", LAUNCHD_CMD_CRASH);
@@ -56,7 +56,7 @@ int crash_main(int argc, char* argv[]) {
     return retval;
 }
 
-int rsod_main(int argc, char* argv[]) {
+int rsod_main(int __unused argc, char* argv[]) {
     xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
     xpc_dictionary_set_uint64(xdict, "cmd", JBD_CMD_INTERCEPT_USERSPACE_PANIC);
     xpc_dictionary_set_bool(xdict, "simulated", true);
@@ -95,7 +95,7 @@ int tweakloader_main(int argc, char* argv[]) {
 }
 #endif
 
-int exitsafe_main(int argc, char* argv[]) {
+int exitsafe_main(int __unused argc, char* __unused argv[]) {
     P1CTL_UPCALL_JBD_WITH_ERR_CHECK(xreply, JBD_CMD_EXIT_SAFE_MODE);
 
     int retval = print_jailbreakd_reply(xreply);
@@ -103,7 +103,7 @@ int exitsafe_main(int argc, char* argv[]) {
     return retval;
 }
 
-int reload_main(int argc, char* argv[]) {
+int reload_main(int __unused argc, char* __unused argv[]) {
     xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
     xpc_object_t xreply;
     xpc_dictionary_set_uint64(xdict, "cmd", LAUNCHD_CMD_RELOAD_JB_ENV);
@@ -120,7 +120,7 @@ int reload_main(int argc, char* argv[]) {
 
 #define RB2_USERREBOOT (0x2000000000000000llu)
 
-int reboot_userspace_main(int argc, char* argv[]) {
+int reboot_userspace_main(int __unused argc, char* __unused argv[]) {
     xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
     xpc_dictionary_set_uint64(xdict, "cmd", JBD_CMD_PERFORM_REBOOT3);
     xpc_dictionary_set_uint64(xdict, "howto", RB2_USERREBOOT);
@@ -155,7 +155,7 @@ static int help_cmd(int argc, char* argv[]) {
     return 0;
 }
 
-static int kbase_cmd(int argc, char* argv[]) {
+static int kbase_cmd(int __unused argc, char* argv[]) {
     P1CTL_UPCALL_JBD_WITH_ERR_CHECK(xreply, JBD_CMD_GET_PINFO_KERNEL_INFO);
     int retval = 0;
     uint64_t kbase;

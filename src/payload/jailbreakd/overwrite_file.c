@@ -21,7 +21,7 @@
 
 #include <sys/stat.h>
 
-void overwrite_file(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinfo) {
+void overwrite_file(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* __unused pinfo) {
     size_t data_size;
     const char* path = xpc_dictionary_get_string(xrequest, "path");
     xpc_object_t xpc_mode = xpc_dictionary_get_value(xrequest, "mode");

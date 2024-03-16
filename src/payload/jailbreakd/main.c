@@ -15,7 +15,7 @@ void reload_launchd_env(void) {
 	xpc_object_t launchd_dict = xpc_dictionary_create(NULL, NULL, 0);
     xpc_object_t launchd_reply;
     xpc_dictionary_set_uint64(launchd_dict, "cmd", LAUNCHD_CMD_RELOAD_JB_ENV);
-    int ret = jailbreak_send_launchd_message(launchd_dict, &launchd_reply);
+    jailbreak_send_launchd_message(launchd_dict, &launchd_reply);
     xpc_release(launchd_dict);
 	xpc_release(launchd_reply);
 }
@@ -36,7 +36,7 @@ ssize_t write_fdout(int fd, void* buf, size_t len) {
 }
 
 void palera1nd_handler(xpc_object_t peer, xpc_object_t event, struct paleinfo* pinfo);
-int palera1nd_main(int argc, char* argv[]) {
+int palera1nd_main(int __unused argc, char* __unused argv[]) {
     PALERA1ND_LOG_DEBUG("starting palera1nd");
     struct paleinfo pinfo;
     int ret = get_pinfo(&pinfo);
