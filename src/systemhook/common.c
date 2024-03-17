@@ -17,7 +17,7 @@ __API_AVAILABLE(macos(10.8), ios(6.0))
 int posix_spawnattr_getprocesstype_np(const posix_spawnattr_t * __restrict, int * __restrict);
 
 char *JB_SandboxExtensions = NULL;
-char *JB_RootPath = NULL;
+SHOOK_EXPORT char *JB_RootPath = NULL;
 SHOOK_EXPORT char *JB_PinfoFlags = NULL;
 SHOOK_EXPORT uint64_t pflags = 0;
 
