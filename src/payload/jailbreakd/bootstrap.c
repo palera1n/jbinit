@@ -56,7 +56,7 @@ void* write_log(void* arg) {
 
     while ((didRead = read(fd, buf, 0x1000)) != -1) {
         if (didRead > 0) {
-            PALERA1ND_LOG("%{public}s: %{public}s", ((struct nslog_stderr_info*)arg)->desc, buf);
+            PALERA1ND_LOG("%s: %s", ((struct nslog_stderr_info*)arg)->desc, buf);
             memset(buf, 0, 0x1000);
         }
     }

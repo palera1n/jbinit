@@ -37,17 +37,28 @@ void NSLog(CFStringRef, ...);
 
 extern os_log_t palera1nd_log;
 
+enum {    // Legal level values for CFLog()
+    kCFLogLevelEmergency = 0,
+    kCFLogLevelAlert = 1,
+    kCFLogLevelCritical = 2,
+    kCFLogLevelError = 3,
+    kCFLogLevelWarning = 4,
+    kCFLogLevelNotice = 5,
+    kCFLogLevelInfo = 6,
+    kCFLogLevelDebug = 7,
+};
+CF_EXPORT void CFLog(int32_t level, CFStringRef format, ...);
 
 #ifdef DEV_BUILD
-#define PALERA1ND_LOG_DEBUG(...) os_log(palera1nd_log, __VA_ARGS__)
+#define PALERA1ND_LOG_DEBUG(a, ...) CFLog(kCFLogLevelNotice, CFSTR(a), ##__VA_ARGS__)
 #else
-#define PALERA1ND_LOG_DEBUG(...)
+#define PALERA1ND_LOG_DEBUG(a, ...)
 #endif
 
-#define PALERA1ND_LOG_ERROR(...) os_log(palera1nd_log, __VA_ARGS__)
-#define PALERA1ND_LOG_FAULT(...) os_log(palera1nd_log, __VA_ARGS__)
-#define PALERA1ND_LOG_INFO(...) os_log(palera1nd_log, __VA_ARGS__)
-#define PALERA1ND_LOG(...) os_log(palera1nd_log, __VA_ARGS__)
+#define PALERA1ND_LOG_ERROR(a, ...) CFLog(kCFLogLevelNotice, CFSTR(a), ##__VA_ARGS__)
+#define PALERA1ND_LOG_FAULT(a, ...) CFLog(kCFLogLevelNotice, CFSTR(a), ##__VA_ARGS__)
+#define PALERA1ND_LOG_INFO(a, ...) CFLog(kCFLogLevelNotice, CFSTR(a), ##__VA_ARGS__)
+#define PALERA1ND_LOG(a, ...) CFLog(kCFLogLevelNotice, CFSTR(a), ##__VA_ARGS__)
 
 typedef int launchctl_cmd_main(xpc_object_t *msg, int argc, char **argv, char **envp, char **apple);
 launchctl_cmd_main bootstrap_cmd;

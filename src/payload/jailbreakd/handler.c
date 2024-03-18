@@ -22,7 +22,7 @@
 #define RB2_USERREBOOT (0x2000000000000000llu)
 
 #ifdef HAVE_DEBUG_JBD_MSG
-#define STR_FORMAT "%{public}s"
+#define STR_FORMAT "%s"
 #else
 #define STR_FORMAT "%s"
 #endif
@@ -66,7 +66,7 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
     SecTaskRef task = SecTaskCreateWithAuditToken(kCFAllocatorDefault, token);
     if (task) {
         CFStringRef signingIdentifier = SecTaskCopySigningIdentifier(task, NULL);
-        PALERA1ND_LOG("received dictionary from client %{public}@(%d): " STR_FORMAT, signingIdentifier ? signingIdentifier : CFSTR("unknown"), pid, xrequeststr);
+        PALERA1ND_LOG("received dictionary from client %@(%d): " STR_FORMAT, signingIdentifier ? signingIdentifier : CFSTR("unknown"), pid, xrequeststr);
         if (signingIdentifier) CFRelease(signingIdentifier);
         if (task) CFRelease(task);
     }
