@@ -4,12 +4,14 @@
 #include <spawn.h>
 #include <string.h>
 #include <errno.h>
+#include <unistd.h>
 #include <mach-o/dyld.h>
 #include <systemhook/common.h>
 #include <dlfcn.h>
 #include <sys/utsname.h>
 #include <substrate.h>
 #include <sys/mount.h>
+#include <sys/stat.h>
 #include <sys/sysctl.h>
 
 bool bound_libiosexec = false;
@@ -112,7 +114,49 @@ static int posix_spawn_hook(pid_t *restrict pid, const char *restrict path,
 	return spawn_hook_common_p(pid, path, file_actions, attrp, argv, envp, posix_spawn_orig_wrapper);
 }
 
+#ifdef ENABLE_CONSOLE_HOOK
+dev_t dev_console_d = 0;
+
+ssize_t (*write_orig)(int fildes, const void *buf, size_t nbyte);
+ssize_t write_hook(int fildes, const void *buf, size_t nbyte) {
+    ssize_t retval = write_orig(fildes, buf, nbyte);
+    if (retval == -1) return retval;
+    
+    struct stat st;
+    int ret = fstat(fildes, &st);
+    if (retval == -1) return retval;
+    if (dev_console_d && (st.st_dev == dev_console_d)) {
+        int fd = open("/cores/log.txt", O_WRONLY | O_CREAT | O_APPEND, 0644);
+        if (fd != -1) {
+            write_orig(fd, buf, nbyte);
+            close(fd);
+        }
+    }
+    return retval;
+}
+
+int (*posix_spawn_file_actions_addopen_orig)(posix_spawn_file_actions_t * __restrict actions, int fd, const char * __restrict path, int oflag, mode_t mode);
+
+int posix_spawn_file_actions_addopen_hook(posix_spawn_file_actions_t * __restrict actions, int fd, const char * __restrict path, int oflag, mode_t mode) {
+    if (path) {
+        if (strcmp(path, "/dev/console") == 0) {
+            return posix_spawn_file_actions_addopen_orig(actions, fd, "/cores/log.txt", O_RDWR | O_CREAT | O_APPEND, 0644);
+        }
+    }
+    
+    return posix_spawn_file_actions_addopen_orig(actions, fd, path, oflag, mode);
+}
+#endif
+
 void initSpawnHooks(void)
 {
-	MSHookFunction_p(&posix_spawn, (void *)posix_spawn_hook, &posix_spawn_orig);
+#ifdef ENABLE_CONSOLE_HOOK
+    struct stat st;
+    stat("/dev/console", &st);
+    dev_console_d = st.st_dev;
+   
+    MSHookFunction_p(&posix_spawn_file_actions_addopen, (void *)posix_spawn_file_actions_addopen_hook, (void**)&posix_spawn_file_actions_addopen_orig);
+    MSHookFunction_p(&write, (void *)write_hook, (void**)&write_orig);
+#endif
+	MSHookFunction_p(&posix_spawn, (void *)posix_spawn_hook, (void**)&posix_spawn_orig);
 }
