@@ -36,6 +36,8 @@ int launchdaemons(uint32_t __unused payload_options, uint64_t pflags) {
         } else {
             fprintf(stderr, "failed to dlopen springboardservices\n");
         }
+    } else if (platform == PLATFORM_TVOS) {
+        sleep(15); // ???
     }
 
     if (pflags & palerain_option_safemode) {
