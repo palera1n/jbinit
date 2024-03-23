@@ -14,10 +14,12 @@
 #include <sys/wait.h>
 #include <errno.h>
 #include <string.h>
+#include <libjailbreak/libjailbreak.h>
 #include <APFS/APFS.h>
 #include <IOKit/IOKitLib.h>
 #include <sys/kern_memorystatus.h>
 #include <mount_args.h>
+#include <sys/snapshot.h>
 
 int prelaunchd(uint32_t payload_options, struct paleinfo* pinfo_p) {
     setvbuf(stderr, NULL, _IONBF, 0);
@@ -33,17 +35,19 @@ int prelaunchd(uint32_t payload_options, struct paleinfo* pinfo_p) {
 
     char dev_rootdev[32];
     snprintf(dev_rootdev, 32, "/dev/%s", pinfo_p->rootdev);
-    if ((pinfo_p->flags & palerain_option_rootful) && ((pinfo_p->flags & palerain_option_force_revert))) {
-        printf("will delete %s\n", dev_rootdev);
-        if (access(dev_rootdev, F_OK) == 0) {
-            int16_t role = 0;
-            CHECK_ERROR(APFSVolumeRole(dev_rootdev, &role, NULL), 0, "APFSVolumeRole(%s) Failed", dev_rootdev);
-            printf("found apfs volume role: 0x%04x\n", role);
-            if (role != APFS_VOL_ROLE_RECOVERY) {
-                fprintf(stderr, "BUG: SAFETY: deleting non-recovery volume is not allowed\n");
-                spin();
-            } else {
-                CHECK_ERROR(errno = APFSVolumeDelete(pinfo_p->rootdev), 1, "failed to delete fakefs");
+    if ((pinfo_p->flags & (palerain_option_rootful | palerain_option_force_revert)) == (palerain_option_rootful | palerain_option_force_revert)) {
+        if (pinfo_p->flags & palerain_option_ssv) {
+            printf("will delete %s\n", dev_rootdev);
+            if (access(dev_rootdev, F_OK) == 0) {
+                int16_t role = 0;
+                CHECK_ERROR(APFSVolumeRole(dev_rootdev, &role, NULL), 0, "APFSVolumeRole(%s) Failed", dev_rootdev);
+                printf("found apfs volume role: 0x%04x\n", role);
+                if (role != APFS_VOL_ROLE_RECOVERY) {
+                    fprintf(stderr, "BUG: SAFETY: deleting non-recovery volume is not allowed\n");
+                    spin();
+                } else {
+                    CHECK_ERROR(errno = APFSVolumeDelete(pinfo_p->rootdev), 1, "failed to delete fakefs");
+                }
             }
         }
     }

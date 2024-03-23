@@ -17,6 +17,7 @@
 #include <sys/kern_memorystatus.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <removefile.h>
+#include <sys/snapshot.h>
 #include <copyfile.h>
 
 #include <sys/stat.h>
@@ -104,6 +105,18 @@ void bootstrap(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinf
     
     ret = remount_func(&name);
     BOOTSTRAP_ASSURE(ret == 0, errno, "remount failed");
+    
+    if ((pinfo->flags & palerain_option_ssv) == 0) {
+        char hash[97], snapshotName[150];
+        BOOTSTRAP_ASSURE(jailbreak_get_bmhash(hash) == 0, errno, "could not get boot-manifest-hash");
+        snprintf(snapshotName, 150, "com.apple.os.update-%s", hash);
+        int dirfd = open("/", O_RDONLY, 0);
+        ret = fs_snapshot_rename(dirfd, snapshotName, "orig-fs", 0);
+        if (ret != 0) {
+            BOOTSTRAP_ASSURE(errno == 2, errno, "fs_snapshot_rename failed");
+        }
+        close(dirfd);
+    }
     
     char tarPath[150];
     if (pinfo->flags & palerain_option_rootful) {

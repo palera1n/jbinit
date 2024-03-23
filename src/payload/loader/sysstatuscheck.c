@@ -11,6 +11,7 @@
 #include <alloca.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <sys/kern_memorystatus.h>
+#include <sys/snapshot.h>
 
 #define SB_PREF_PLIST_PATH "/var/mobile/Library/Preferences/com.apple.springboard.plist"
 #define CF_STRING_GET_CSTRING_PTR(cfStr, cPtr) do { \
@@ -147,7 +148,37 @@ int sysstatuscheck(uint32_t __unused payload_options, uint64_t pflags) {
         printf("generating ssh host key...\n");
         runCommand((char*[]){ "/cores/binpack/usr/bin/dropbearkey", "-f",  "/private/var/dropbear_rsa_host_key", "-t", "rsa", "-s", "4096", NULL });
     }
-    if ((pflags & palerain_option_force_revert)) remove_jailbreak_files(pflags);
+    if ((pflags & palerain_option_force_revert)) {
+        remove_jailbreak_files(pflags);
+        if ((pflags & (palerain_option_rootful | palerain_option_force_revert)) == (palerain_option_rootful | palerain_option_force_revert)) {
+            if ((pflags & (palerain_option_ssv)) == 0) {
+                struct utsname name;
+                uname(&name);
+                remount_rootfs(&name);
+                char hash[97], snapshotName[150];
+                int ret = jailbreak_get_bmhash(hash);
+                if (ret) {
+                    fprintf(stderr, "failed to get boot-manifest-hash\n");
+                    spin();
+                }
+                snprintf(snapshotName, 150, "com.apple.os.update-%s", hash);
+                int dirfd = open("/", O_RDONLY, 0);
+                ret = fs_snapshot_rename(dirfd, "orig-fs", snapshotName, 0);
+                if (ret != 0) {
+                    fprintf(stderr, "could not rename snapshot: %d: %s\n", errno, strerror(errno));
+                } else {
+                    printf("");
+                }
+                ret = fs_snapshot_revert(dirfd, snapshotName, 0);
+                if (ret != 0) {
+                    fprintf(stderr, "could not revert snapshot: %d: %s\n", errno, strerror(errno));
+                }
+                close(dirfd);
+                sync();
+                host_reboot(mach_host_self(), 0x1000);
+            }
+        }
+    }
     if (pflags & palerain_option_rootful) {
         remove_bogus_var_jb();
         unlink("/var/jb");
