@@ -427,14 +427,6 @@ __attribute__((constructor)) static void initializer(void)
 	}
 
 	if (gExecutablePath) {
-#if 0
-		else if (strcmp(gExecutablePath, "/usr/libexec/watchdogd") == 0) {
-			int64_t debugErr = 0;
-			if (debugErr == 0) {
-				dlopen_hook("/cores/binpack/usr/lib/rootlesshooks.dylib", RTLD_NOW);
-			}
-		}
-#endif
         static struct utsname name;
         static int release = 0;
         if (!release) {
@@ -442,25 +434,14 @@ __attribute__((constructor)) static void initializer(void)
             if (!ret) release = atoi(name.release);
         }
 		
-		if (pflags & palerain_option_rootless) {
-			if (
-				strcmp(gExecutablePath, "/usr/sbin/cfprefsd") == 0 || 
-				strcmp(gExecutablePath, "/System/Library/CoreServices/SpringBoard.app/SpringBoard") == 0
-				) {
-				dlopen_hook("/cores/binpack/usr/lib/rootlesshooks.dylib", RTLD_NOW);
-			}
-		} else {
-        	if (release >= 20) {
-				if (strcmp(gExecutablePath, "/usr/libexec/lsd") == 0) {
-					dlopen_hook("/cores/binpack/usr/lib/rootfulhooks.dylib", RTLD_NOW);
-				}
-			}
-		}
         if (release >= 20) {
             if (
                 strcmp(gExecutablePath, "/usr/libexec/securityd") == 0 ||
                 strcmp(gExecutablePath, "/usr/libexec/trustd") == 0 ||
-                strcmp(gExecutablePath, "/usr/libexec/watchdogd") == 0) {
+                strcmp(gExecutablePath, "/usr/libexec/watchdogd") == 0 ||
+                strcmp(gExecutablePath, "/usr/libexec/lsd") == 0 ||
+                strcmp(gExecutablePath, "/System/Library/CoreServices/SpringBoard.app/SpringBoard") == 0 ||
+                strcmp(gExecutablePath, "/usr/sbin/cfprefsd") == 0 ) {
                 dlopen_hook("/cores/binpack/usr/lib/universalhooks.dylib", RTLD_NOW);
             }
         }

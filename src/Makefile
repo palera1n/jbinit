@@ -98,8 +98,6 @@ binpack.dmg: binpack.tar loader.dmg $(patsubst %, %-all, $(SUBDIRS))
 	cp -a $(ROOT)/shared/copyright binpack/usr/share
 	cp -a $(ROOT)/LICENSE binpack/usr/share/copyright/Licnese-plinit.txt
 	chmod 644 binpack/Library/LaunchDaemons/*.plist
-	cp rootlesshooks/rootlesshooks.dylib binpack/usr/lib
-	cp rootfulhooks/rootfulhooks.dylib binpack/usr/lib
 	cp systemhook/systemhook.dylib binpack/usr/lib
 	cp universalhooks/universalhooks.dylib binpack/usr/lib
 	cp loader.dmg binpack
