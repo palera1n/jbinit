@@ -113,9 +113,9 @@ static int posix_spawn_hook(pid_t *restrict pid, const char *restrict path,
 
 	return spawn_hook_common_p(pid, path, file_actions, attrp, argv, envp, posix_spawn_orig_wrapper);
 }
-#define ENABLE_CONSOLE_HOOK
+//#define ENABLE_CONSOLE_HOOK
 
-//#ifdef ENABLE_CONSOLE_HOOK
+#ifdef ENABLE_CONSOLE_HOOK
 dev_t dev_console_d = 0;
 
 ssize_t (*write_orig)(int fildes, const void *buf, size_t nbyte);
