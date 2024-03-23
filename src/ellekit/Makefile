@@ -10,6 +10,9 @@ ifeq ($(MAC),1)
 		APPLETVOS_DEPLOYMENT_TARGET=14.0 \
 		CODE_SIGNING_ALLOWED=NO \
 		LD_DYLIB_INSTALL_NAME="@rpath/CydiaSubstrate.framework/CydiaSubstrate"
+ifneq ($(DEV_BUILD),1)
+	$(STRIP) -x $(ELLEKIT)
+endif
 	$(LDID) -S $(ELLEKIT);
 else
 	@echo "ElleKit cannot be built on this machine"
