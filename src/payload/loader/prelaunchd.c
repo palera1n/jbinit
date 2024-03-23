@@ -25,12 +25,21 @@ int prelaunchd(uint32_t payload_options, struct paleinfo* pinfo_p) {
     setvbuf(stderr, NULL, _IONBF, 0);
     setvbuf(stdout, NULL, _IONBF, 0);
     printf("plooshInit prelaunchd...\n");
+    int platform = get_platform();
+    if (platform == -1) {
+        fprintf(stderr, "failed to determine current platform\n");
+        spin();
+    }
 
     if ((payload_options & payload_option_userspace_rebooted) == 0) {
         printf("mount binpack\n");
         CHECK_ERROR(mount_dmg("ramfile://checkra1n", "hfs", "/cores/binpack", MNT_RDONLY, 1), 1, "mount binpack failed");
         printf("mount loader\n");
-        CHECK_ERROR(mount_dmg("/cores/binpack/loader.dmg", "hfs", "/cores/binpack/Applications", MNT_RDONLY, 0), 1, "mount loader failed");
+        if (platform == PLATFORM_IOS) {
+            CHECK_ERROR(mount_dmg("/cores/binpack/loader.dmg", "hfs", "/cores/binpack/Applications", MNT_RDONLY, 0), 1, "mount loader failed");
+        } else if (platform == PLATFORM_TVOS) {
+            CHECK_ERROR(mount_dmg("/cores/binpack/tvloader.dmg", "hfs", "/cores/binpack/Applications", MNT_RDONLY, 0), 1, "mount loader failed");
+        }
     }
 
     char dev_rootdev[32];

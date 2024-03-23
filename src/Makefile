@@ -79,7 +79,19 @@ else
 endif
 	rm -rf palera1nLoader
 
-binpack.dmg: binpack.tar loader.dmg $(patsubst %, %-all, $(SUBDIRS))
+tvloader.dmg: palera1nLoaderTV.ipa
+	rm -rf loader.dmg palera1nLoaderTV
+	mkdir palera1nLoaderTV
+	cd palera1nLoaderTV && unzip ../palera1nLoaderTV.ipa
+	$(call CREATE_UDRW_IMAGE,tvloader.img,2,palera1nLoaderTV,palera1nLoaderTV/Payload)
+ifeq ($(MAC),1)
+	hdiutil convert -format ULFO tvloader.img -o tvloader.dmg
+else
+	$(DMG) dmg tvloader.img tvloader.dmg -zlib-level 9
+endif
+	rm -rf palera1nLoaderTV
+
+binpack.dmg: binpack.tar loader.dmg tvloader.dmg $(patsubst %, %-all, $(SUBDIRS))
 	rm -rf binpack.dmg binpack.img binpack
 	mkdir binpack
 	touch binpack/.installed_overlay
@@ -101,6 +113,7 @@ binpack.dmg: binpack.tar loader.dmg $(patsubst %, %-all, $(SUBDIRS))
 	cp systemhook/systemhook.dylib binpack/usr/lib
 	cp universalhooks/universalhooks.dylib binpack/usr/lib
 	cp loader.dmg binpack
+	cp tvloader.dmg binpack
 	cp ellekit/ellekit_build/Build/Products/Release-iphoneos/libellekit.dylib binpack/usr/lib
 	ln -s ../../../usr/lib/libellekit.dylib binpack/Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate
 	$(call CREATE_UDRW_IMAGE,binpack.img,10,plooshra1nfs,binpack)

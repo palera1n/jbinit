@@ -65,6 +65,7 @@ int launchdaemons(uint32_t __unused payload_options, uint64_t pflags) {
             runCommand((char*[]){ "/cores/binpack/usr/bin/uicache", "-p", "/cores/binpack/Applications/palera1nLoader.app", NULL });
             break;
         case PLATFORM_TVOS:
+            runCommand((char*[]){ "/cores/binpack/usr/bin/uicache", "-p", "/cores/binpack/Applications/palera1nLoaderTV.app", NULL });
         case PLATFORM_BRIDGEOS:
             break;
         default:
