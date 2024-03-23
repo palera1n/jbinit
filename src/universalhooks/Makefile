@@ -33,7 +33,7 @@ universalhooks.dylib: $(OBJS) $(ELLEKIT)
 		-install_name /cores/binpack/usr/lib/universalhooks.dylib \
 		-o $@
 	$(DSYMUTIL) $@
-ifeq ($(DEV_BUILD),1)
+ifneq ($(DEV_BUILD),1)
 	$(STRIP) -x $@
 endif
 	$(LDID) -S $@
