@@ -20,6 +20,7 @@ struct hook_info info[] = {
     { "/System/Library/CoreServices/SpringBoard.app/SpringBoard", springboardInit, NULL, NULL },
     { "/usr/libexec/lsd", lsdRootlessInit, lsdRootfulInit, NULL },
     { "/usr/sbin/cfprefsd", cfprefsdInit, NULL, NULL },
+    { "/Applications/PineBoard.app/PineBoard", NULL, NULL, pineboardInit },
 };
 
 __attribute__((constructor))void universalhooks_main(void) {

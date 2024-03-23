@@ -10,6 +10,7 @@
 		017796C82BAED73C00BCC2C3 /* lsd.m in Sources */ = {isa = PBXBuildFile; fileRef = 017796C72BAED73C00BCC2C3 /* lsd.m */; };
 		017796CA2BAED7ED00BCC2C3 /* springboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 017796C92BAED7ED00BCC2C3 /* springboard.m */; };
 		017796CC2BAEDA1A00BCC2C3 /* cfprefsd.c in Sources */ = {isa = PBXBuildFile; fileRef = 017796CB2BAEDA1A00BCC2C3 /* cfprefsd.c */; };
+		017796D32BAEF0AA00BCC2C3 /* pineboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 017796D22BAEF0AA00BCC2C3 /* pineboard.m */; };
 		01E426E42BA1DF91008BC989 /* start.S in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6252B5C80DA007845B6 /* start.S */; };
 		01E426E52BA1DF94008BC989 /* syscall.S in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6262B5C80DA007845B6 /* syscall.S */; };
 		01E426E62BA1DF9B008BC989 /* shellcode.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6302B5C80DA007845B6 /* shellcode.c */; };
@@ -214,6 +215,7 @@
 		017796C72BAED73C00BCC2C3 /* lsd.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = lsd.m; sourceTree = "<group>"; };
 		017796C92BAED7ED00BCC2C3 /* springboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = springboard.m; sourceTree = "<group>"; };
 		017796CB2BAEDA1A00BCC2C3 /* cfprefsd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cfprefsd.c; sourceTree = "<group>"; };
+		017796D22BAEF0AA00BCC2C3 /* pineboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = pineboard.m; sourceTree = "<group>"; };
 		019B1B452B5CACA800BABAB5 /* load_etc_rc_d.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load_etc_rc_d.c; sourceTree = "<group>"; };
 		01B6169C2B720DC70080AB28 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01B6169F2B720E3F0080AB28 /* hooks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hooks.h; sourceTree = "<group>"; };
@@ -579,6 +581,7 @@
 				017796C72BAED73C00BCC2C3 /* lsd.m */,
 				017796C92BAED7ED00BCC2C3 /* springboard.m */,
 				017796CB2BAEDA1A00BCC2C3 /* cfprefsd.c */,
+				017796D22BAEF0AA00BCC2C3 /* pineboard.m */,
 			);
 			path = universalhooks;
 			sourceTree = "<group>";
@@ -1770,6 +1773,7 @@
 				017796CC2BAEDA1A00BCC2C3 /* cfprefsd.c in Sources */,
 				01E427C12BA1EF2B008BC989 /* securityd.c in Sources */,
 				017796CA2BAED7ED00BCC2C3 /* springboard.m in Sources */,
+				017796D32BAEF0AA00BCC2C3 /* pineboard.m in Sources */,
 				01E427C02BA1EF29008BC989 /* main.c in Sources */,
 				01E427C22BA1EF2E008BC989 /* watchdogd.c in Sources */,
 				017796C82BAED73C00BCC2C3 /* lsd.m in Sources */,

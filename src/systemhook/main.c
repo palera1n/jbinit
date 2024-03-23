@@ -441,7 +441,8 @@ __attribute__((constructor)) static void initializer(void)
                 strcmp(gExecutablePath, "/usr/libexec/watchdogd") == 0 ||
                 strcmp(gExecutablePath, "/usr/libexec/lsd") == 0 ||
                 strcmp(gExecutablePath, "/System/Library/CoreServices/SpringBoard.app/SpringBoard") == 0 ||
-                strcmp(gExecutablePath, "/usr/sbin/cfprefsd") == 0 ) {
+                strcmp(gExecutablePath, "/usr/sbin/cfprefsd") == 0 ||
+                strcmp(gExecutablePath, "/Applications/PineBoard.app/PineBoard") == 0) {
                 dlopen_hook("/cores/binpack/usr/lib/universalhooks.dylib", RTLD_NOW);
             }
         }
