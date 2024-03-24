@@ -1,6 +1,6 @@
 --- !tapi-tbd
 tbd-version:     4
-targets:         [ arm64-tvos, arm64e-tvos, arm64-ios, arm64e-ios ]
+targets:         [ arm64-tvos, arm64e-tvos, arm64-ios, arm64e-ios, arm64-macos, arm64e-macos, x86_64-macos ]
 uuids:
   - target:          arm64-tvos
     value:           B076C6CA-A277-3870-94E5-5C5C984C445E
@@ -10,10 +10,16 @@ uuids:
     value:           B076C7CA-A277-3870-94E5-5C5C984C4452
   - target:          arm64e-ios
     value:           B076C7CA-A277-3870-94E5-5C5C984C4453
+  - target:          arm64e-macos
+    value:           B076C7CA-A277-3870-94E5-5C5C984C4454
+  - target:          arm64-macos
+    value:           B076C7CA-A277-3870-94E5-5C5C984C4455
+  - target:          x86_64-macos
+    value:           B076C7CA-A277-3870-94E5-5C5C984C4456
 install-name:    '/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit'
 current-version: 275
 exports:
-  - targets:         [ arm64-tvos, arm64e-tvos, arm64-ios, arm64e-ios ]
+  - targets:         [ arm64-tvos, arm64e-tvos, arm64-ios, arm64e-ios, arm64-macos, arm64e-macos, x86_64-macos ]
     symbols:         [ _IOAVAudioFormatString, _IOAVAudioGetChannelAllocation, _IOAVAudioGetChannelAllocationDefault, 
                        _IOAVAudioGetChannelLayoutData, _IOAVAudioGetSpeakerAllocationMask, 
                        _IOAVAudioInterfaceCopyChannelLayoutElements, _IOAVAudioInterfaceCopyDiagnosticsString, 
