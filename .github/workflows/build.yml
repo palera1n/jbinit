@@ -27,7 +27,7 @@ jobs:
         run: |
           curl -LOO https://static.palera.in/artifacts/loader/universal_lite/palera1nLoader{TV,}.ipa
           curl -LO https://static.palera.in/binpack.tar
-          install -m644 binpack.tar palera1nLoader.ipa src
+          install -m644 binpack.tar palera1nLoader{TV,}.ipa src
 
       - name: Compile
         run: |
