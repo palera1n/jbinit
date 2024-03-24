@@ -97,7 +97,7 @@ int enable_non_default_system_apps(void) {
 
 }
 
-int remove_jailbreak_files(uint64_t pflags) {
+int  remove_jailbreak_files(uint64_t pflags) {
     removefile_state_t state = removefile_state_alloc();
     if (pflags & palerain_option_rootful) {
         printf("delete /var/lib\n");
@@ -133,6 +133,32 @@ int remove_jailbreak_files(uint64_t pflags) {
 }
 
 int fixup_databases(void);
+void revert_snapshot(void) {
+    struct utsname name;
+    uname(&name);
+    remount_rootfs(&name);
+    char hash[97], snapshotName[150];
+    int ret = jailbreak_get_bmhash(hash);
+    if (ret) {
+        fprintf(stderr, "failed to get boot-manifest-hash\n");
+        spin();
+    }
+    snprintf(snapshotName, 150, "com.apple.os.update-%s", hash);
+    int dirfd = open("/", O_RDONLY, 0);
+    ret = fs_snapshot_rename(dirfd, "orig-fs", snapshotName, 0);
+    if (ret != 0) {
+        fprintf(stderr, "could not rename snapshot: %d: %s\n", errno, strerror(errno));
+    } else {
+        printf("");
+    }
+    ret = fs_snapshot_revert(dirfd, snapshotName, 0);
+    if (ret != 0) {
+        fprintf(stderr, "could not revert snapshot: %d: %s\n", errno, strerror(errno));
+    }
+    close(dirfd);
+    sync();
+}
+
 int sysstatuscheck(uint32_t __unused payload_options, uint64_t pflags) {
     printf("plooshInit sysstatuscheck...\n");
     int retval;
@@ -152,29 +178,7 @@ int sysstatuscheck(uint32_t __unused payload_options, uint64_t pflags) {
         remove_jailbreak_files(pflags);
         if ((pflags & (palerain_option_rootful | palerain_option_force_revert)) == (palerain_option_rootful | palerain_option_force_revert)) {
             if ((pflags & (palerain_option_ssv)) == 0) {
-                struct utsname name;
-                uname(&name);
-                remount_rootfs(&name);
-                char hash[97], snapshotName[150];
-                int ret = jailbreak_get_bmhash(hash);
-                if (ret) {
-                    fprintf(stderr, "failed to get boot-manifest-hash\n");
-                    spin();
-                }
-                snprintf(snapshotName, 150, "com.apple.os.update-%s", hash);
-                int dirfd = open("/", O_RDONLY, 0);
-                ret = fs_snapshot_rename(dirfd, "orig-fs", snapshotName, 0);
-                if (ret != 0) {
-                    fprintf(stderr, "could not rename snapshot: %d: %s\n", errno, strerror(errno));
-                } else {
-                    printf("");
-                }
-                ret = fs_snapshot_revert(dirfd, snapshotName, 0);
-                if (ret != 0) {
-                    fprintf(stderr, "could not revert snapshot: %d: %s\n", errno, strerror(errno));
-                }
-                close(dirfd);
-                sync();
+                revert_snapshot();
                 host_reboot(mach_host_self(), 0x1000);
             }
         }

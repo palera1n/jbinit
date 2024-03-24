@@ -31,7 +31,7 @@ static struct subcommand commands[] = {
     {"kbase", "\t\tPrint kernel base", NULL, "Get a hexadecimal representation of the kernel base", kbase_cmd},
     {"kslide", "\t\tPrint kernel slide", NULL, "Get a hexadecimal representation of the kernel slide", kbase_cmd},
     {"bootstrap", "\tDeploy bootstrap", "[-s|-S <password>] <bootstrap path>", "The <bootstrap path> argument should be a path to a zstd-compressed tar archive bootstrap matching the current jailbreak type\nOptions:\n\n\t-s\t\tWhen this option is specified, the terminal password will not be set\n\t-S <password>\tThis option allows supplying the terminal password without responding to prompts", bootstrap_main},
-    {"revert-install", "\tRemove bootstrap (Rootless)", NULL, "Remove the installed bootstrap. This operation is only supported on rootless.", obliterate_main},
+    {"revert-install", "\tRemove bootstrap (Realfs)", NULL, "Remove the installed bootstrap. This operation is only supported on rootless.", obliterate_main},
     {"reboot-userspace", "Reboot userspace", NULL, "Unmount /Developer and reboot userspace", reboot_userspace_main},
     {"reload", "\t\tReload launchd jailbreak state", NULL, "Reload launchd's jailbreak state, such as the JB_ROOT_PATH variable", reload_main},
     {"exitsafe", "\tExit safe mode", NULL, "Exit safe mode", exitsafe_main},
