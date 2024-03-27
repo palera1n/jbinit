@@ -52,7 +52,7 @@ ramdisk.dmg: $(patsubst %, %-all, $(SUBDIRS))
 	rm -rf ramdisk.dmg ramdisk
 	mkdir -p ramdisk/{sbin,usr/lib,dev,binpack,fs/{real,fake},cores}
 	install -m755 fakedyld/dyld ramdisk/
-	install -m755 mount_cores/mount_cores.[0-9] ramdisk/
+	#install -m755 mount_cores/mount_cores.[0-9] ramdisk/
 	install -m755 payload_dylib/payload.dylib ramdisk/
 	install -m755 payload/payload ramdisk/
 ifeq ($(INCLUDE_ASAN),1)
