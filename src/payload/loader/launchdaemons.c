@@ -59,7 +59,15 @@ int launchdaemons(uint32_t __unused payload_options, uint64_t pflags) {
             if (notif) CFRelease(notif);
         }
     }
+    
+    if (access("/usr/bin/uicache", F_OK) == 0)
+        runCommand((char*[]){ "/usr/bin/uicache", "-a", NULL });
+    else if (access("/var/jb/usr/bin/uicache", F_OK) == 0)
+        runCommand((char*[]){ "/var/jb/usr/bin/uicache", "-a", NULL });
+    else if (platform != PLATFORM_BRIDGEOS)
+        runCommand((char*[]){ "/cores/binpack/usr/bin/uicache", "-a", NULL });
 
+    /* just in case the above commands are bad, we run them last so the user can still get the loader */
     switch (platform) {
         case PLATFORM_IOS:
             runCommand((char*[]){ "/cores/binpack/usr/bin/uicache", "-p", "/cores/binpack/Applications/palera1nLoader.app", NULL });
@@ -71,12 +79,6 @@ int launchdaemons(uint32_t __unused payload_options, uint64_t pflags) {
         default:
             fprintf(stderr, "uicache_loader: unsupported platform\n");
     }
-
-    /* just in case these commands are bad, we run them last so the user can still get the loader */
-    if (access("/usr/bin/uicache", F_OK) == 0)
-        runCommand((char*[]){ "/usr/bin/uicache", "-a", NULL });
-    else if (access("/var/jb/usr/bin/uicache", F_OK) == 0)
-        runCommand((char*[]){ "/var/jb/usr/bin/uicache", "-a", NULL });
 
 
     printf("plooshInit launchdaemons: Goodbye!\n");
