@@ -143,7 +143,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
     init_display();
-    int retval = bootscreend_main(argv[1]);
+    int retval = bootscreend_draw_image(argv[1]);
     sleep(1);
     return retval;
 }
