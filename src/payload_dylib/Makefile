@@ -29,7 +29,7 @@ $(OBJDIR)/%.m.o: %.m $(OBJDIR)
 payload.dylib: $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) $(OBJS) -shared -o $@
 	$(DSYMUTIL) $@
-ifeq ($(DEV_BUILD),1)
+ifneq ($(DEV_BUILD),1)
 	$(STRIP) -x $@
 endif
 	$(LDID) -S $@

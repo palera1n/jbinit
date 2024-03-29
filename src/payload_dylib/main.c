@@ -18,7 +18,7 @@
 #include <dlfcn.h>
 
 #define HOOK_DYLIB_PATH "/cores/binpack/usr/lib/systemhook.dylib"
-#define ELLEKIT_PATH "/cores/binpack/usr/lib/libellekit.dylib"
+#define ELLEKIT_PATH "/cores/binpack/Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate"
 
 uint64_t pflags;
 void (*MSHookFunction_p)(void *symbol, void *replace, void **result) = NULL;

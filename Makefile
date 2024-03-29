@@ -22,8 +22,10 @@ ifeq ($(MAC),1)
 MACOSX_SYSROOT != xcrun -sdk macosx --show-sdk-path
 TARGET_SYSROOT != xcrun -sdk appletvos --show-sdk-path
 CC != xcrun --find clang
+CXX != xcrun --find clang++
 else ifeq ($(UNAME),Darwin)
 CC = clang
+CXX = clang++
 MACOSX_SYSROOT ?= /usr/share/SDKs/MacOSX.sdk
 TARGET_SYSROOT ?= /usr/share/SDKs/AppleTVOS.sdk
 else
@@ -48,9 +50,9 @@ else
 SED = sed
 endif
 
-SUBDIRS = fakedyld payload_dylib payload systemhook universalhooks mount_cores ellekit
+SUBDIRS = fakedyld payload_dylib payload systemhook universalhooks mount_cores ellekit bridgehook
 
-export ROOT CC OBJC CFLAGS CC_FOR_BUILD HFSPLUS DMG NEWFS_HFS MAC UNAME SED SHELL LDFLAGS VTOOL STRIP DSYMUTIL LDID AR SUBDIRS
+export ROOT CC CXX OBJC CFLAGS CC_FOR_BUILD HFSPLUS DMG NEWFS_HFS MAC UNAME SED SHELL LDFLAGS VTOOL STRIP DSYMUTIL LDID AR SUBDIRS TARGET_SYSROOT
 
 all: binaries tools
 	$(MAKE) -C $(ROOT)/src ramdisk.dmg binpack.dmg

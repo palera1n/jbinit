@@ -100,6 +100,7 @@ binpack.dmg: binpack.tar loader.dmg tvloader.dmg $(patsubst %, %-all, $(SUBDIRS)
 	mkdir -p binpack/Applications
 	mkdir -p binpack/usr/lib binpack/usr/share binpack/usr/lib/libroot
 	mkdir -p binpack/Library/Frameworks/CydiaSubstrate.framework
+	mkdir -p binpack/Library/Frameworks/CydiaSubstrateBridgeOS.framework
 	mkdir -p binpack/Library/LaunchDaemons
 	ln -sf ../../../payload binpack/usr/sbin/p1ctl
 	ln -sf ../../../payload binpack/usr/sbin/palera1nd
@@ -112,10 +113,12 @@ binpack.dmg: binpack.tar loader.dmg tvloader.dmg $(patsubst %, %-all, $(SUBDIRS)
 	chmod 644 binpack/Library/LaunchDaemons/*.plist
 	cp systemhook/systemhook.dylib binpack/usr/lib
 	cp universalhooks/universalhooks.dylib binpack/usr/lib
+	cp bridgehook/bridgehook.dylib binpack/usr/lib
 	cp loader.dmg binpack
 	cp tvloader.dmg binpack
 	cp ellekit/ellekit_build/Build/Products/Release-iphoneos/libellekit.dylib binpack/usr/lib
 	ln -s ../../../usr/lib/libellekit.dylib binpack/Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate
+	ln -s ../../../usr/lib/bridgehook.dylib binpack/Library/Frameworks/CydiaSubstrateBridgeOS.framework/CydiaSubstrate
 	$(call CREATE_UDRW_IMAGE,binpack.img,10,plooshra1nfs,binpack)
 ifeq ($(MAC),1)
 	hdiutil convert -format UDZO -imagekey zlib-level=9 binpack.img -o binpack.dmg

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0173A0A32BB6FBCA00E28C83 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 0173A0922BB6FB5600E28C83 /* main.c */; };
 		017796C82BAED73C00BCC2C3 /* lsd.m in Sources */ = {isa = PBXBuildFile; fileRef = 017796C72BAED73C00BCC2C3 /* lsd.m */; };
 		017796CA2BAED7ED00BCC2C3 /* springboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 017796C92BAED7ED00BCC2C3 /* springboard.m */; };
 		017796CC2BAEDA1A00BCC2C3 /* cfprefsd.c in Sources */ = {isa = PBXBuildFile; fileRef = 017796CB2BAEDA1A00BCC2C3 /* cfprefsd.c */; };
@@ -168,6 +169,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		0173A0982BB6FBAD00E28C83 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		01E426D72BA1DDDC008BC989 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -212,6 +222,72 @@
 		015DD6BF2BA5992E003E3587 /* xpc_helper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xpc_helper.c; path = launchctl/xpc_helper.c; sourceTree = "<group>"; };
 		015DD6C02BA5992E003E3587 /* bootstrap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bootstrap.c; path = launchctl/bootstrap.c; sourceTree = "<group>"; };
 		01683B582B8C679500A7A2EA /* crashreporter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = crashreporter.m; sourceTree = "<group>"; };
+		01739E562BB6FB5500E28C83 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		0173A0922BB6FB5600E28C83 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		0173A0932BB6FB5600E28C83 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		0173A09A2BB6FBAD00E28C83 /* libbridgehook.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libbridgehook.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		0173A0A62BB7016600E28C83 /* dropbear-3.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "dropbear-3.plist"; sourceTree = "<group>"; };
+		0173A0A72BB7016600E28C83 /* dropbear-5.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "dropbear-5.plist"; sourceTree = "<group>"; };
+		0173A0A82BB7016600E28C83 /* boot.jp2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = boot.jp2; sourceTree = "<group>"; };
+		0173A0A92BB7016600E28C83 /* dropbear-2.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "dropbear-2.plist"; sourceTree = "<group>"; };
+		0173A0AA2BB7016600E28C83 /* payload.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = payload.plist; sourceTree = "<group>"; };
+		0173A0AB2BB7016600E28C83 /* palera1nd.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = palera1nd.plist; sourceTree = "<group>"; };
+		0173A0AD2BB7016600E28C83 /* License-zstd.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "License-zstd.txt"; sourceTree = "<group>"; };
+		0173A0AE2BB7016600E28C83 /* License-ellekit2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "License-ellekit2.txt"; sourceTree = "<group>"; };
+		0173A0AF2BB7016600E28C83 /* agpl-3.0.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "agpl-3.0.txt"; sourceTree = "<group>"; };
+		0173A0B02BB7016600E28C83 /* License-ellekit3.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "License-ellekit3.txt"; sourceTree = "<group>"; };
+		0173A0B12BB7016600E28C83 /* gpl-2.0.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "gpl-2.0.txt"; sourceTree = "<group>"; };
+		0173A0B22BB7016600E28C83 /* License-curl.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "License-curl.txt"; sourceTree = "<group>"; };
+		0173A0B32BB7016600E28C83 /* License-dropbear.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "License-dropbear.txt"; sourceTree = "<group>"; };
+		0173A0B42BB7016600E28C83 /* License-ldid.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "License-ldid.txt"; sourceTree = "<group>"; };
+		0173A0B52BB7016600E28C83 /* lgpl-2.1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "lgpl-2.1.txt"; sourceTree = "<group>"; };
+		0173A0B62BB7016600E28C83 /* License-ellekit.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "License-ellekit.txt"; sourceTree = "<group>"; };
+		0173A0B72BB7016600E28C83 /* License-vim.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "License-vim.txt"; sourceTree = "<group>"; };
+		0173A0B82BB7016600E28C83 /* License-xz.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "License-xz.txt"; sourceTree = "<group>"; };
+		0173A0B92BB7016600E28C83 /* gpl-3.0.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "gpl-3.0.txt"; sourceTree = "<group>"; };
+		0173A0BA2BB7016600E28C83 /* License-mksh.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "License-mksh.txt"; sourceTree = "<group>"; };
+		0173A0BB2BB7016600E28C83 /* APSL-2.0.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "APSL-2.0.txt"; sourceTree = "<group>"; };
+		0173A0BC2BB7016600E28C83 /* License-Dopamine.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "License-Dopamine.txt"; sourceTree = "<group>"; };
+		0173A0BD2BB7016600E28C83 /* License-uikittools.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "License-uikittools.txt"; sourceTree = "<group>"; };
+		0173A0BE2BB7016600E28C83 /* License-trustcache.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "License-trustcache.txt"; sourceTree = "<group>"; };
+		0173A0BF2BB7016600E28C83 /* License-ncurses.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "License-ncurses.txt"; sourceTree = "<group>"; };
+		0173A0C02BB7016600E28C83 /* License-launchctl.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "License-launchctl.txt"; sourceTree = "<group>"; };
+		0173A0C12BB7016600E28C83 /* License-less.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "License-less.txt"; sourceTree = "<group>"; };
+		0173A0C22BB7016600E28C83 /* Apache-2.0.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Apache-2.0.txt"; sourceTree = "<group>"; };
+		0173A0C32BB7016600E28C83 /* License-snaputil.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "License-snaputil.txt"; sourceTree = "<group>"; };
+		0173A0C42BB7016600E28C83 /* RSOD.heic */ = {isa = PBXFileReference; lastKnownFileType = file; path = RSOD.heic; sourceTree = "<group>"; };
+		0173A0C52BB7016600E28C83 /* debug-shell.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "debug-shell.plist"; sourceTree = "<group>"; };
+		0173A0C72BB7018A00E28C83 /* dropbear-3.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "dropbear-3.plist"; sourceTree = "<group>"; };
+		0173A0C82BB7018A00E28C83 /* dropbear-5.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "dropbear-5.plist"; sourceTree = "<group>"; };
+		0173A0C92BB7018A00E28C83 /* boot.jp2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = boot.jp2; sourceTree = "<group>"; };
+		0173A0CA2BB7018A00E28C83 /* dropbear-2.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "dropbear-2.plist"; sourceTree = "<group>"; };
+		0173A0CB2BB7018A00E28C83 /* payload.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = payload.plist; sourceTree = "<group>"; };
+		0173A0CC2BB7018A00E28C83 /* palera1nd.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = palera1nd.plist; sourceTree = "<group>"; };
+		0173A0CE2BB7018A00E28C83 /* License-zstd.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "License-zstd.txt"; sourceTree = "<group>"; };
+		0173A0CF2BB7018A00E28C83 /* License-ellekit2.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "License-ellekit2.txt"; sourceTree = "<group>"; };
+		0173A0D02BB7018A00E28C83 /* agpl-3.0.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "agpl-3.0.txt"; sourceTree = "<group>"; };
+		0173A0D12BB7018A00E28C83 /* License-ellekit3.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "License-ellekit3.txt"; sourceTree = "<group>"; };
+		0173A0D22BB7018A00E28C83 /* gpl-2.0.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "gpl-2.0.txt"; sourceTree = "<group>"; };
+		0173A0D32BB7018A00E28C83 /* License-curl.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "License-curl.txt"; sourceTree = "<group>"; };
+		0173A0D42BB7018A00E28C83 /* License-dropbear.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "License-dropbear.txt"; sourceTree = "<group>"; };
+		0173A0D52BB7018A00E28C83 /* License-ldid.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "License-ldid.txt"; sourceTree = "<group>"; };
+		0173A0D62BB7018A00E28C83 /* lgpl-2.1.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "lgpl-2.1.txt"; sourceTree = "<group>"; };
+		0173A0D72BB7018A00E28C83 /* License-ellekit.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "License-ellekit.txt"; sourceTree = "<group>"; };
+		0173A0D82BB7018A00E28C83 /* License-vim.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "License-vim.txt"; sourceTree = "<group>"; };
+		0173A0D92BB7018A00E28C83 /* License-xz.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "License-xz.txt"; sourceTree = "<group>"; };
+		0173A0DA2BB7018A00E28C83 /* gpl-3.0.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "gpl-3.0.txt"; sourceTree = "<group>"; };
+		0173A0DB2BB7018A00E28C83 /* License-mksh.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "License-mksh.txt"; sourceTree = "<group>"; };
+		0173A0DC2BB7018A00E28C83 /* APSL-2.0.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "APSL-2.0.txt"; sourceTree = "<group>"; };
+		0173A0DD2BB7018A00E28C83 /* License-Dopamine.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "License-Dopamine.txt"; sourceTree = "<group>"; };
+		0173A0DE2BB7018A00E28C83 /* License-uikittools.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "License-uikittools.txt"; sourceTree = "<group>"; };
+		0173A0DF2BB7018A00E28C83 /* License-trustcache.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "License-trustcache.txt"; sourceTree = "<group>"; };
+		0173A0E02BB7018A00E28C83 /* License-ncurses.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "License-ncurses.txt"; sourceTree = "<group>"; };
+		0173A0E12BB7018A00E28C83 /* License-launchctl.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "License-launchctl.txt"; sourceTree = "<group>"; };
+		0173A0E22BB7018A00E28C83 /* License-less.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "License-less.txt"; sourceTree = "<group>"; };
+		0173A0E32BB7018A00E28C83 /* Apache-2.0.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Apache-2.0.txt"; sourceTree = "<group>"; };
+		0173A0E42BB7018A00E28C83 /* License-snaputil.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "License-snaputil.txt"; sourceTree = "<group>"; };
+		0173A0E52BB7018A00E28C83 /* RSOD.heic */ = {isa = PBXFileReference; lastKnownFileType = file; path = RSOD.heic; sourceTree = "<group>"; };
+		0173A0E62BB7018A00E28C83 /* debug-shell.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "debug-shell.plist"; sourceTree = "<group>"; };
 		017796C72BAED73C00BCC2C3 /* lsd.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = lsd.m; sourceTree = "<group>"; };
 		017796C92BAED7ED00BCC2C3 /* springboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = springboard.m; sourceTree = "<group>"; };
 		017796CB2BAEDA1A00BCC2C3 /* cfprefsd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cfprefsd.c; sourceTree = "<group>"; };
@@ -461,6 +537,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0173A0972BB6FBAD00E28C83 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		01E426D62BA1DDDC008BC989 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -560,6 +643,7 @@
 		0133721E2B5C7CFB00D035BB = {
 			isa = PBXGroup;
 			children = (
+				0173A0C62BB7018A00E28C83 /* shared */,
 				01B9F8132B68045300428E81 /* tools */,
 				01D3DA212B5C83B7007845B6 /* include */,
 				01D3D4812B5C7DDE007845B6 /* LICENSE */,
@@ -569,6 +653,108 @@
 				01D3D48A2B5C7F95007845B6 /* Products */,
 				01E4271A2BA1E38F008BC989 /* Frameworks */,
 			);
+			sourceTree = "<group>";
+		};
+		01739E532BB6FB5500E28C83 /* bridgehook */ = {
+			isa = PBXGroup;
+			children = (
+				01739E562BB6FB5500E28C83 /* Makefile */,
+				0173A0922BB6FB5600E28C83 /* main.c */,
+				0173A0932BB6FB5600E28C83 /* .gitignore */,
+			);
+			path = bridgehook;
+			sourceTree = "<group>";
+		};
+		0173A0A52BB7016600E28C83 /* shared */ = {
+			isa = PBXGroup;
+			children = (
+				0173A0A62BB7016600E28C83 /* dropbear-3.plist */,
+				0173A0A72BB7016600E28C83 /* dropbear-5.plist */,
+				0173A0A82BB7016600E28C83 /* boot.jp2 */,
+				0173A0A92BB7016600E28C83 /* dropbear-2.plist */,
+				0173A0AA2BB7016600E28C83 /* payload.plist */,
+				0173A0AB2BB7016600E28C83 /* palera1nd.plist */,
+				0173A0AC2BB7016600E28C83 /* copyright */,
+				0173A0C42BB7016600E28C83 /* RSOD.heic */,
+				0173A0C52BB7016600E28C83 /* debug-shell.plist */,
+			);
+			path = shared;
+			sourceTree = SOURCE_ROOT;
+		};
+		0173A0AC2BB7016600E28C83 /* copyright */ = {
+			isa = PBXGroup;
+			children = (
+				0173A0AD2BB7016600E28C83 /* License-zstd.txt */,
+				0173A0AE2BB7016600E28C83 /* License-ellekit2.txt */,
+				0173A0AF2BB7016600E28C83 /* agpl-3.0.txt */,
+				0173A0B02BB7016600E28C83 /* License-ellekit3.txt */,
+				0173A0B12BB7016600E28C83 /* gpl-2.0.txt */,
+				0173A0B22BB7016600E28C83 /* License-curl.txt */,
+				0173A0B32BB7016600E28C83 /* License-dropbear.txt */,
+				0173A0B42BB7016600E28C83 /* License-ldid.txt */,
+				0173A0B52BB7016600E28C83 /* lgpl-2.1.txt */,
+				0173A0B62BB7016600E28C83 /* License-ellekit.txt */,
+				0173A0B72BB7016600E28C83 /* License-vim.txt */,
+				0173A0B82BB7016600E28C83 /* License-xz.txt */,
+				0173A0B92BB7016600E28C83 /* gpl-3.0.txt */,
+				0173A0BA2BB7016600E28C83 /* License-mksh.txt */,
+				0173A0BB2BB7016600E28C83 /* APSL-2.0.txt */,
+				0173A0BC2BB7016600E28C83 /* License-Dopamine.txt */,
+				0173A0BD2BB7016600E28C83 /* License-uikittools.txt */,
+				0173A0BE2BB7016600E28C83 /* License-trustcache.txt */,
+				0173A0BF2BB7016600E28C83 /* License-ncurses.txt */,
+				0173A0C02BB7016600E28C83 /* License-launchctl.txt */,
+				0173A0C12BB7016600E28C83 /* License-less.txt */,
+				0173A0C22BB7016600E28C83 /* Apache-2.0.txt */,
+				0173A0C32BB7016600E28C83 /* License-snaputil.txt */,
+			);
+			path = copyright;
+			sourceTree = "<group>";
+		};
+		0173A0C62BB7018A00E28C83 /* shared */ = {
+			isa = PBXGroup;
+			children = (
+				0173A0C72BB7018A00E28C83 /* dropbear-3.plist */,
+				0173A0C82BB7018A00E28C83 /* dropbear-5.plist */,
+				0173A0C92BB7018A00E28C83 /* boot.jp2 */,
+				0173A0CA2BB7018A00E28C83 /* dropbear-2.plist */,
+				0173A0CB2BB7018A00E28C83 /* payload.plist */,
+				0173A0CC2BB7018A00E28C83 /* palera1nd.plist */,
+				0173A0CD2BB7018A00E28C83 /* copyright */,
+				0173A0E52BB7018A00E28C83 /* RSOD.heic */,
+				0173A0E62BB7018A00E28C83 /* debug-shell.plist */,
+			);
+			path = shared;
+			sourceTree = "<group>";
+		};
+		0173A0CD2BB7018A00E28C83 /* copyright */ = {
+			isa = PBXGroup;
+			children = (
+				0173A0CE2BB7018A00E28C83 /* License-zstd.txt */,
+				0173A0CF2BB7018A00E28C83 /* License-ellekit2.txt */,
+				0173A0D02BB7018A00E28C83 /* agpl-3.0.txt */,
+				0173A0D12BB7018A00E28C83 /* License-ellekit3.txt */,
+				0173A0D22BB7018A00E28C83 /* gpl-2.0.txt */,
+				0173A0D32BB7018A00E28C83 /* License-curl.txt */,
+				0173A0D42BB7018A00E28C83 /* License-dropbear.txt */,
+				0173A0D52BB7018A00E28C83 /* License-ldid.txt */,
+				0173A0D62BB7018A00E28C83 /* lgpl-2.1.txt */,
+				0173A0D72BB7018A00E28C83 /* License-ellekit.txt */,
+				0173A0D82BB7018A00E28C83 /* License-vim.txt */,
+				0173A0D92BB7018A00E28C83 /* License-xz.txt */,
+				0173A0DA2BB7018A00E28C83 /* gpl-3.0.txt */,
+				0173A0DB2BB7018A00E28C83 /* License-mksh.txt */,
+				0173A0DC2BB7018A00E28C83 /* APSL-2.0.txt */,
+				0173A0DD2BB7018A00E28C83 /* License-Dopamine.txt */,
+				0173A0DE2BB7018A00E28C83 /* License-uikittools.txt */,
+				0173A0DF2BB7018A00E28C83 /* License-trustcache.txt */,
+				0173A0E02BB7018A00E28C83 /* License-ncurses.txt */,
+				0173A0E12BB7018A00E28C83 /* License-launchctl.txt */,
+				0173A0E22BB7018A00E28C83 /* License-less.txt */,
+				0173A0E32BB7018A00E28C83 /* Apache-2.0.txt */,
+				0173A0E42BB7018A00E28C83 /* License-snaputil.txt */,
+			);
+			path = copyright;
 			sourceTree = "<group>";
 		};
 		01B6169B2B720D150080AB28 /* universalhooks */ = {
@@ -799,6 +985,7 @@
 				01E427A52BA1EEB4008BC989 /* librootlesshooks.dylib */,
 				01E427AD2BA1EECA008BC989 /* libuniversalhooks.dylib */,
 				01E427D32BA1F29F008BC989 /* patch_dyld-test */,
+				0173A09A2BB6FBAD00E28C83 /* libbridgehook.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -806,6 +993,7 @@
 		01D3D4932B5C80D9007845B6 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				01739E532BB6FB5500E28C83 /* bridgehook */,
 				01B6169B2B720D150080AB28 /* universalhooks */,
 				01D3D4A92B5C80D9007845B6 /* Makefile */,
 				01D3D4AC2B5C80D9007845B6 /* payload */,
@@ -1099,6 +1287,7 @@
 				01D3D6A32B5C80DA007845B6 /* main.c */,
 				01D3D6A42B5C80DA007845B6 /* .gitignore */,
 				01D3D6A52B5C80DA007845B6 /* daemon.c */,
+				0173A0A52BB7016600E28C83 /* shared */,
 				01D3D6A62B5C80DA007845B6 /* pspawn.c */,
 				01D3D6A72B5C80DA007845B6 /* xpc.c */,
 			);
@@ -1345,6 +1534,23 @@
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
+		0173A0992BB6FBAD00E28C83 /* bridgehook */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0173A0A02BB6FBAD00E28C83 /* Build configuration list for PBXNativeTarget "bridgehook" */;
+			buildPhases = (
+				0173A0962BB6FBAD00E28C83 /* Sources */,
+				0173A0972BB6FBAD00E28C83 /* Frameworks */,
+				0173A0982BB6FBAD00E28C83 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = bridgehook;
+			productName = bridgehook;
+			productReference = 0173A09A2BB6FBAD00E28C83 /* libbridgehook.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		01E426D82BA1DDDC008BC989 /* fakedyld */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 01E426E32BA1DDDD008BC989 /* Build configuration list for PBXNativeTarget "fakedyld" */;
@@ -1525,6 +1731,9 @@
 				LastSwiftUpdateCheck = 1520;
 				LastUpgradeCheck = 1520;
 				TargetAttributes = {
+					0173A0992BB6FBAD00E28C83 = {
+						CreatedOnToolsVersion = 15.2;
+					};
 					01D3DA582B5C8519007845B6 = {
 						CreatedOnToolsVersion = 15.2;
 					};
@@ -1590,6 +1799,7 @@
 				01E427AC2BA1EECA008BC989 /* universalhooks */,
 				01E4273C2BA1E848008BC989 /* libjailbreak */,
 				01E427D22BA1F29F008BC989 /* patch_dyld-test */,
+				0173A0992BB6FBAD00E28C83 /* bridgehook */,
 			);
 		};
 /* End PBXProject section */
@@ -1619,6 +1829,14 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0173A0962BB6FBAD00E28C83 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0173A0A32BB6FBCA00E28C83 /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		01E426D52BA1DDDC008BC989 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1945,6 +2163,41 @@
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				WATCHOS_DEPLOYMENT_TARGET = 3.0;
 				XROS_DEPLOYMENT_TARGET = 1.0;
+			};
+			name = Release;
+		};
+		0173A0A12BB6FBAD00E28C83 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/bridgehook/dobby/build",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0173A0A22BB6FBAD00E28C83 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/bridgehook/dobby/build",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -2407,6 +2660,15 @@
 			buildConfigurations = (
 				013372242B5C7CFB00D035BB /* Debug */,
 				013372252B5C7CFB00D035BB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0173A0A02BB6FBAD00E28C83 /* Build configuration list for PBXNativeTarget "bridgehook" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0173A0A12BB6FBAD00E28C83 /* Debug */,
+				0173A0A22BB6FBAD00E28C83 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

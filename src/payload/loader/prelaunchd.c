@@ -61,8 +61,10 @@ int prelaunchd(uint32_t payload_options, struct paleinfo* pinfo_p) {
         }
     }
     
-    //runCommand((char*[]){ "/usr/sbin/nvram", "-d", "boot-command", NULL });
-    //host_reboot(mach_host_self(), 0);
+    uint32_t dyld_get_active_platform(void);
+    if (dyld_get_active_platform() == PLATFORM_BRIDGEOS) {
+        CHECK_ERROR(mount("bindfs", "/cores/binpack/Library/Frameworks/CydiaSubstrate.framework", MNT_RDONLY, "/cores/binpack/Library/Frameworks/CydiaSubstrateBridgeOS.framework"), 1, "failed to bindfs /cores/binpack/Library/Frameworks/CydiaSubstrateBridgeOS.framework -> /cores/binpack/Library/Frameworks/CydiaSubstrate.framework");
+    }
 
     if (pinfo_p->flags & palerain_option_setup_rootful) {
         return setup_fakefs(payload_options, pinfo_p);

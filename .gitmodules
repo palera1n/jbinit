@@ -7,3 +7,6 @@
 [submodule "tools/libdmg-hfsplus"]
 	path = tools/libdmg-hfsplus
 	url = git@github.com:palera1n/libdmg-hfsplus.git
+[submodule "src/bridgehook/dobby"]
+	path = src/bridgehook/dobby
+	url = git@github.com:jmpews/Dobby.git
