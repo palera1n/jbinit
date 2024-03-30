@@ -17,7 +17,6 @@ int remount_rootfs(struct utsname* name_p) {
     int ret = statfs("/", &fs);
     if (ret) return ret;
     int mntflags = MNT_UPDATE;
-    if (atoi(name_p->release) < 21) mntflags |= MNT_UNION;
     apfs_mount_args_t arg = { fs.f_mntfromname, 0, APFS_MOUNT_FILESYSTEM, 0, 0, { "" }, NULL, 0, 0, NULL, 0, 0, 0, 0, 0, 0 };
     return mount(fs.f_fstypename, fs.f_mntonname, mntflags, &arg);
 }

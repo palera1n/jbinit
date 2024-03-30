@@ -67,6 +67,7 @@ int main(int argc, char* argv[], char* envp[], char* apple[]) {
     int platform = get_platform(&dyld_handle);
     init_cores(&sysinfo, platform);
     patch_dyld(&dyld_handle, platform);
+    unlink("/cores/usr/lib/dyld");
     write_file("/cores/usr/lib/dyld", &dyld_handle);
 
     #define INSERT_DYLIB "DYLD_INSERT_LIBRARIES=/cores/payload.dylib"
@@ -110,7 +111,8 @@ int main(int argc, char* argv[], char* envp[], char* apple[]) {
         }
 
         ret = execve(launchd_argv0, launchd_argv, launchd_envp);
-    /*}*/
+    
+    sleep(1);
     panic("execve failed with error=%d", ret);
     __builtin_unreachable();
 }
