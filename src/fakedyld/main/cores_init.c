@@ -66,7 +66,7 @@ void mount_ramdisk_cores(int platform) {
 }
 
 void init_cores(struct systeminfo* sysinfo_p, int __attribute__((unused)) platform) {
-  if (sysinfo_p->osrelease.darwinMajor > 20) {
+  if (sysinfo_p->osrelease.darwinMajor > 19) {
     tmpfs_mount_args_t args = { .case_insensitive = 0, .max_pages = 1, .max_nodes = 1 };
     int ret = mount("tmpfs", "/System/Library/PrivateFrameworks/ProgressUI.framework", MNT_DONTBROWSE, &args);
     if (ret) {
@@ -83,22 +83,7 @@ void init_cores(struct systeminfo* sysinfo_p, int __attribute__((unused)) platfo
     }
   }
 
-  if (sysinfo_p->osrelease.darwinMajor < 20) {
-    return;
-  } else if (sysinfo_p->osrelease.darwinMajor < 21) {
-    mount_tmpfs_cores();
-    cores_mkdir("/cores/binpack");
-    cores_mkdir("/cores/fs");
-    cores_mkdir("/cores/fs/real");
-    cores_mkdir("/cores/fs/fake");
-    cores_mkdir("/cores/usr");
-    cores_mkdir("/cores/usr/lib");
-    symlink("/payload", "/cores/payload");
-    symlink("/payload.dylib", "/cores/payload.dylib");
-    symlink("/mount_cores.2", "/cores/mount_cores.2");
-    symlink("/mount_cores.3", "/cores/mount_cores.3");
-    symlink("/mount_cores.5", "/cores/mount_cores.5");
-  } else {
+  if (sysinfo_p->osrelease.darwinMajor > 19) {
     char device_path[] = "/dev/md0";
     struct hfs_mount_args cores_mountarg = { device_path, 0, 0, 0, 0, { 0, 0 }, HFSFSMNT_EXTENDED_ARGS, 0, 0, 1 };
     if (sysinfo_p->xnuMajor < 7938) {

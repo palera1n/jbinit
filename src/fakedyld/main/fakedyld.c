@@ -44,6 +44,11 @@ int main(int argc, char* argv[], char* envp[], char* apple[]) {
     ,pinfo.kbase,pinfo.kslide,pinfo.flags,pinfo.rootdev
     );
     has_verbose_boot = has_verbose_boot || (pinfo.flags & palerain_option_verbose_boot);
+    bool ramdisk_boot = false;
+    struct statfs64 fst;
+    ret = statfs64("/", &fst);
+    if (ret) panic("statfs64 failed: %d", errno);
+    if (strcmp(fst.f_fstypename, "hfs") == 0) ramdisk_boot = true;
 
     pinfo_check(&pinfo);
 #if 0
@@ -54,7 +59,7 @@ int main(int argc, char* argv[], char* envp[], char* apple[]) {
         read_file("/payload", &payload);
     }
 #endif
-    if (sysinfo.xnuMajor < 7938) mountroot(&pinfo, &sysinfo);
+    if (ramdisk_boot) mountroot(&pinfo, &sysinfo);
     prepare_rootfs(&sysinfo, &pinfo);
     memory_file_handle_t dyld_handle;
     read_file("/usr/lib/dyld", &dyld_handle);
