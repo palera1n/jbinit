@@ -33,7 +33,9 @@ $(patsubst %.o, launchctl/%.o, $(LAUNCHCTL_OBJ)): $(patsubst %.o, launchctl/%.c,
 payload: $(patsubst %, %-all, $(SUBDIRS)) $(OBJS) $(patsubst %.o, launchctl/%.o, $(LAUNCHCTL_OBJ))
 	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) $(patsubst %.o, launchctl/%.o, $(LAUNCHCTL_OBJ)) $$(find . -name '*.o' | grep 'obj/.*o') -o payload
 	$(DSYMUTIL) payload
+ifneq ($(DEV_BUILD),1)
 	$(STRIP) payload
+endif
 	$(LDID) -Sentitlements.xml -Icom.apple.payload payload
 
 $(patsubst %, %-all, $(SUBDIRS)):

@@ -31,14 +31,25 @@ jobs:
 
       - name: Compile
         run: |
-          gmake -j$(sysctl -n hw.ncpu) tools
+          gmake -j1 tools
           gmake -j$(sysctl -n hw.ncpu)
 
-      - name: Prepare for upload
+      - name: Prepare for upload (RELEASE)
         run: |
           mkdir dist
           cp src/ramdisk.dmg dist/ramdisk.dmg
           cp src/binpack.dmg dist/binpack.dmg
+
+      - name: Compile DEVELOPMENT
+        run: |
+          gmake clean
+          gmake -j$(sysctl -n hw.ncpu) DEV_BUILD=1
+
+
+      - name: Prepare for upload (DEVELOPMENT)
+        run: |
+          cp src/ramdisk.dmg dist/ramdisk.development.dmg
+          cp src/binpack.dmg dist/binpack.development.dmg
 
       - name: Upload artifact
         uses: wangyucode/sftp-upload-action@v1.4.8

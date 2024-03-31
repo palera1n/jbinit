@@ -20,6 +20,7 @@
 #include <sys/kern_memorystatus.h>
 #include <mount_args.h>
 #include <sys/snapshot.h>
+#include <dlfcn.h>
 
 int prelaunchd(uint32_t payload_options, struct paleinfo* pinfo_p) {
     setvbuf(stderr, NULL, _IONBF, 0);
@@ -61,9 +62,13 @@ int prelaunchd(uint32_t payload_options, struct paleinfo* pinfo_p) {
         }
     }
     
-    uint32_t dyld_get_active_platform(void);
-    if (dyld_get_active_platform() == PLATFORM_BRIDGEOS) {
+    #define ELLEKIT_ACTUAL_PATH "/cores/binpack/usr/lib/libellekit.dylib"
+    void* ellekit_handle = dlopen(ELLEKIT_ACTUAL_PATH, RTLD_NOW);
+    
+    if (ellekit_handle == NULL) {
         CHECK_ERROR(mount("bindfs", "/cores/binpack/Library/Frameworks/CydiaSubstrate.framework", MNT_RDONLY, "/cores/binpack/Library/Frameworks/CydiaSubstrateBridgeOS.framework"), 1, "failed to bindfs /cores/binpack/Library/Frameworks/CydiaSubstrateBridgeOS.framework -> /cores/binpack/Library/Frameworks/CydiaSubstrate.framework");
+    } else {
+        dlclose(ellekit_handle);
     }
 
     if (pinfo_p->flags & palerain_option_setup_rootful) {
