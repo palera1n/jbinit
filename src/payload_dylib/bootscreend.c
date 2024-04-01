@@ -10,6 +10,7 @@
 #include <ImageIO/CGImageSource.h>
 #include <IOMobileFramebuffer/IOMobileframebuffer.h>
 #include <IOSurface/IOSurface.h>
+#include <IOSurface/IOSurfaceRef.h>
 #include <sys/stat.h>
 
 #define WHITE 0xffffffff
@@ -20,9 +21,19 @@ static int height = 0;
 static int width = 0;
 
 int init_display(void) {
+    IOMobileFramebufferReturn retval = 0;
     if (base) return 0;
-    IOMobileFramebufferRef display;
-    IOMobileFramebufferGetMainDisplay(&display);
+    IOMobileFramebufferRef display = NULL;
+    retval = IOMobileFramebufferGetMainDisplay(&display);
+    if (retval) {
+        fprintf(stderr, "IOMobileFramebufferGetMainDisplay: %s\n", mach_error_string(retval));
+        printf("trying IOMobileFramebufferGetSecondaryDisplay instead\n");
+        retval = IOMobileFramebufferGetSecondaryDisplay(&display);
+        if (retval) {
+            fprintf(stderr, "IOMobileFramebufferGetSecondaryDisplay: %s\n", mach_error_string(retval));
+            return -1;
+        }
+    }
     IOMobileFramebufferDisplaySize size;
     IOMobileFramebufferGetDisplaySize(display, &size);
     IOSurfaceRef buffer;
@@ -65,7 +76,18 @@ int init_display(void) {
 }
 
 int bootscreend_draw_image(const char* image_path) {
-    init_display();
+    int retval = -1;
+    CFURLRef imageURL = NULL;
+    CGImageSourceRef cgImageSource = NULL;
+    CGImageRef cgImage = NULL;
+    CGContextRef context = NULL;
+    CFStringRef bootImageCfString = NULL;
+    
+    retval = init_display();
+    if (retval) {
+        fprintf(stderr, "could not init display\n");
+        goto finish;
+    }
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             int offset = i * bytesPerRow + j * 4;
@@ -73,13 +95,7 @@ int bootscreend_draw_image(const char* image_path) {
         }
     }
 
-    CFURLRef imageURL = NULL;
-    CGImageSourceRef cgImageSource = NULL;
-    CGImageRef cgImage = NULL;
-    CGContextRef context = NULL;
-    int retval = -1;
-    
-    CFStringRef bootImageCfString = CFStringCreateWithCString(kCFAllocatorDefault, image_path, kCFStringEncodingUTF8);
+    bootImageCfString = CFStringCreateWithCString(kCFAllocatorDefault, image_path, kCFStringEncodingUTF8);
     if (!bootImageCfString) {
         fprintf(stderr, "could not create boot image cfstring\n");
         goto finish;

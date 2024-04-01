@@ -1,6 +1,6 @@
 --- !tapi-tbd
 tbd-version:     4
-targets:         [ arm64-ios, arm64-tvos ]
+targets:         [ arm64-ios, arm64-tvos, arm64-bridgeos ]
 uuids:
   - target:          arm64e-ios
     value:           D2CCE008-351E-3781-8774-0ED863D941E7
@@ -8,7 +8,7 @@ uuids:
     value:           D2CCE008-351E-3781-8774-0ED863D941E8
 install-name:    '/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/IOMobileFramebuffer'
 exports:
-  - targets:         [ arm64-ios, arm64-tvos ]
+  - targets:         [ arm64-ios, arm64-tvos, arm64-bridgeos ]
     symbols:         [ _IOMFBGainEncoderCreate, _IOMFBGainEncoderDestroy, _IOMFBGainEncoderEmitEmptyRows, 
                        _IOMFBGainEncoderEmitRun, _IOMFBGainEncoderFinishEncoding, 
                        _IOMFBGainEncoderStartRow, _IOMFBGainMapRelease, _IOMFBGainMapRetain, 

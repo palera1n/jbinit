@@ -154,7 +154,7 @@ __attribute__((constructor))void launchd_hook_main(void) {
     spin();
   }
 
-  // if ((pflags & palerain_option_verbose_boot) == 0) bootscreend_main();
+  if ((pflags & palerain_option_verbose_boot) == 0) bootscreend_main();
   void* systemhook_handle = dlopen(HOOK_DYLIB_PATH, RTLD_NOW);
   if (!systemhook_handle) {
     fprintf(stderr, "dlopen systemhook failed: %s\n", dlerror());

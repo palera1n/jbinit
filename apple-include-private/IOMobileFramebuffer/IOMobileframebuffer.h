@@ -16,6 +16,9 @@ IOMobileFramebufferReturn
 IOMobileFramebufferGetMainDisplay(IOMobileFramebufferRef *pointer);
 
 IOMobileFramebufferReturn
+IOMobileFramebufferGetSecondaryDisplay(IOMobileFramebufferRef *pointer);
+
+IOMobileFramebufferReturn
 IOMobileFramebufferGetDisplaySize(IOMobileFramebufferRef pointer, IOMobileFramebufferDisplaySize *size);
 
 IOMobileFramebufferReturn
