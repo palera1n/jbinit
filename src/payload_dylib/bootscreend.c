@@ -6,12 +6,17 @@
 #include <IOKit/IOKitLib.h>
 #include <IOKit/IOTypes.h>
 #include <dlfcn.h>
-#include <CoreGraphics/CoreGraphics.h>
-#include <ImageIO/CGImageSource.h>
 #include <IOMobileFramebuffer/IOMobileframebuffer.h>
 #include <IOSurface/IOSurface.h>
 #include <IOSurface/IOSurfaceRef.h>
 #include <sys/stat.h>
+#include <mach-o/dyld.h>
+#include <mach-o/loader.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/param.h>
+#include <CoreGraphics/CoreGraphics.h>
+#include <ImageIO/ImageIO.h>
 
 #define WHITE 0xffffffff
 #define BLACK 0x00000000
@@ -20,7 +25,7 @@ static int bytesPerRow = 0;
 static int height = 0;
 static int width = 0;
 
-int init_display(void) {
+static int init_display(void) {
     IOMobileFramebufferReturn retval = 0;
     if (base) return 0;
     IOMobileFramebufferRef display = NULL;
@@ -61,7 +66,7 @@ int init_display(void) {
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             int offset = i * bytesPerRow + j * 4;
-            *(int *)(base + offset) = 0xFFFFFFFF;
+            *(int *)(base + offset) = 0x00000000;
         }
     }
     printf("wrote to buffer\n");
@@ -75,13 +80,14 @@ int init_display(void) {
     return 0;
 }
 
-int bootscreend_draw_image(const char* image_path) {
+int bootscreend_draw_cgimage(const char* image_path) {
     int retval = -1;
     CFURLRef imageURL = NULL;
     CGImageSourceRef cgImageSource = NULL;
     CGImageRef cgImage = NULL;
     CGContextRef context = NULL;
     CFStringRef bootImageCfString = NULL;
+    CGColorSpaceRef rgbColorSpace = NULL;
     
     retval = init_display();
     if (retval) {
@@ -116,6 +122,11 @@ int bootscreend_draw_image(const char* image_path) {
         fprintf(stderr, "could not create image\n");
         goto finish;
     }
+    rgbColorSpace = CGColorSpaceCreateDeviceRGB();
+    if (!rgbColorSpace) {
+        fprintf(stderr, "could not create device RGB color space\n");
+        goto finish;
+    }
 
     CGRect destinationRect = CGRectZero;
     CGFloat imageAspectRatio = (CGFloat)CGImageGetWidth(cgImage) / CGImageGetHeight(cgImage);
@@ -131,7 +142,7 @@ int bootscreend_draw_image(const char* image_path) {
     destinationRect.origin.x = (width - CGRectGetWidth(destinationRect)) / 2;
     destinationRect.origin.y = (height - CGRectGetHeight(destinationRect)) / 2;
 
-    context = CGBitmapContextCreate(base, width, height, 8, bytesPerRow, CGColorSpaceCreateDeviceRGB(), kCGImageAlphaPremultipliedFirst | kCGImageByteOrder32Little);
+    context = CGBitmapContextCreate(base, width, height, 8, bytesPerRow, rgbColorSpace, kCGImageAlphaPremultipliedFirst | kCGImageByteOrder32Little);
     if (!context) {
         fprintf(stderr, "could not create context\n");
         goto finish;
@@ -148,24 +159,98 @@ finish:
     if (cgImage) CGImageRelease(cgImage);
     if (cgImageSource) CFRelease(cgImageSource);
     if (imageURL) CFRelease(imageURL);
+    if (rgbColorSpace) CGColorSpaceRelease(rgbColorSpace);
 
     return retval;
 }
 
-#ifdef TESTMAIN
-int main(int argc, char* argv[]) {
-    if (argc < 2) {
-        fprintf(stderr, "usage: bootscreend <image path>\n");
-        return -1;
+static int bootscreend_draw_gradient(void) {
+    int retval = -1;
+    retval = init_display();
+    if (retval) {
+        fprintf(stderr, "could not init display\n");
+        goto finish_;
     }
-    init_display();
-    int retval = bootscreend_draw_image(argv[1]);
-    sleep(1);
+    
+    static uint8_t start_a = 0x70;
+    static uint8_t start_r = 0xb2;
+    static uint8_t start_g = 0x86;
+    static uint8_t start_b = 0x84;
+
+    static uint8_t mid_a = 0xff;
+    static uint8_t mid_r = 0xd4;
+    static uint8_t mid_g = 0xd4;
+    static uint8_t mid_b = 0xd1;
+
+    static uint8_t end_a = 0xff;
+    static uint8_t end_r = 0x87;
+    static uint8_t end_g = 0xa8;
+    static uint8_t end_b = 0xaf;
+    
+    float step1_a = (float)(mid_a - start_a) / (float)(height / 2);
+    float step1_r = (float)(mid_r - start_r) / (float)(height / 2);
+    float step1_g = (float)(mid_g - start_g) / (float)(height / 2);
+    float step1_b = (float)(mid_b - start_b) / (float)(height / 2);
+    
+    float step2_a = (float)(end_a - mid_a) / (float)(height / 2);
+    float step2_r = (float)(end_r - mid_r) / (float)(height / 2);
+    float step2_g = (float)(end_g - mid_g) / (float)(height / 2);
+    float step2_b = (float)(end_b - mid_b) / (float)(height / 2);
+    
+    for (int i = 0; i < (height / 2); i++) {
+        uint32_t color = 0 |
+            ((int)(start_a + i * step1_a) & 0xFF) << 24 |
+            ((int)(start_r + i * step1_r) & 0xFF) << 16 |
+            ((int)(start_g + i * step1_g) & 0xFF) << 8 |
+            ((int)(start_b + i * step1_b) & 0xFF) << 0;
+        for (int j = 0; j < width; j++) {
+            int offset = i * bytesPerRow + j * 4;
+            *(int *)(base + offset) ^= color;
+        }
+    }
+    
+    for (int i = (height / 2); i < height; i++) {
+        uint32_t color = 0 |
+            ((int)(mid_a + (i - (height / 2)) * step2_a) & 0xFF) << 24 |
+            ((int)(mid_r + (i - (height / 2)) * step2_r) & 0xFF) << 16 |
+            ((int)(mid_g + (i - (height / 2)) * step2_g) & 0xFF) << 8 |
+            ((int)(mid_b + (i - (height / 2)) * step2_b) & 0xFF) << 0;
+        for (int j = 0; j < width; j++) {
+            int offset = i * bytesPerRow + j * 4;
+            *(int *)(base + offset) ^= color;
+        }
+    }
+    
+    retval = 0;
+    
+finish_:
     return retval;
 }
+uint32_t dyld_get_active_platform(void);
+
+static int bootscreend_draw_image(const char* image_path) {
+    return bootscreend_draw_cgimage(image_path);
+}
+
+#if defined(TESTMAIN)
+int main(int argc, char* argv[]) {
+    int retval = -1;
+    if (argc < 2) {
+        retval = bootscreend_draw_gradient();
+    } else {
+        retval = bootscreend_draw_image(argv[1]);
+    }
+    sleep(2);
+    return retval;
+}
+#elif defined(TESTBRIDGE_MAIN)
 #else
 #define BOOT_IMAGE_PATH "/cores/binpack/usr/share/boot.jp2"
 int bootscreend_main(void) {
-    return bootscreend_draw_image(BOOT_IMAGE_PATH);
+    if (dyld_get_active_platform() != PLATFORM_BRIDGEOS) {
+        return bootscreend_draw_image(BOOT_IMAGE_PATH);
+    } else {
+        return bootscreend_draw_gradient();
+    }
 }
 #endif
