@@ -172,30 +172,30 @@ static int bootscreend_draw_gradient(void) {
         goto finish_;
     }
     
-    static uint8_t start_a = 0x70;
-    static uint8_t start_r = 0xb2;
-    static uint8_t start_g = 0x86;
-    static uint8_t start_b = 0x84;
+    const uint8_t start_a = 0x70;
+    const uint8_t start_r = 0xb2;
+    const uint8_t start_g = 0x86;
+    const uint8_t start_b = 0x84;
 
-    static uint8_t mid_a = 0xff;
-    static uint8_t mid_r = 0xd4;
-    static uint8_t mid_g = 0xd4;
-    static uint8_t mid_b = 0xd1;
+    const uint8_t mid_a = 0xff;
+    const uint8_t mid_r = 0xd4;
+    const uint8_t mid_g = 0xd4;
+    const uint8_t mid_b = 0xd1;
 
-    static uint8_t end_a = 0xff;
-    static uint8_t end_r = 0x87;
-    static uint8_t end_g = 0xa8;
-    static uint8_t end_b = 0xaf;
+    const uint8_t end_a = 0xff;
+    const uint8_t end_r = 0x87;
+    const uint8_t end_g = 0xa8;
+    const uint8_t end_b = 0xaf;
     
-    float step1_a = (float)(mid_a - start_a) / (float)(height / 2);
-    float step1_r = (float)(mid_r - start_r) / (float)(height / 2);
-    float step1_g = (float)(mid_g - start_g) / (float)(height / 2);
-    float step1_b = (float)(mid_b - start_b) / (float)(height / 2);
+    const float step1_a = (float)(mid_a - start_a) / (float)(height / 2);
+    const float step1_r = (float)(mid_r - start_r) / (float)(height / 2);
+    const float step1_g = (float)(mid_g - start_g) / (float)(height / 2);
+    const float step1_b = (float)(mid_b - start_b) / (float)(height / 2);
     
-    float step2_a = (float)(end_a - mid_a) / (float)(height / 2);
-    float step2_r = (float)(end_r - mid_r) / (float)(height / 2);
-    float step2_g = (float)(end_g - mid_g) / (float)(height / 2);
-    float step2_b = (float)(end_b - mid_b) / (float)(height / 2);
+    const float step2_a = (float)(end_a - mid_a) / (float)(height / 2);
+    const float step2_r = (float)(end_r - mid_r) / (float)(height / 2);
+    const float step2_g = (float)(end_g - mid_g) / (float)(height / 2);
+    const float step2_b = (float)(end_b - mid_b) / (float)(height / 2);
     
     for (int i = 0; i < (height / 2); i++) {
         uint32_t color = 0 |
