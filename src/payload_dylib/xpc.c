@@ -110,6 +110,9 @@ static void xpc_handler_hook(uint64_t a1, uint64_t a2, xpc_object_t xdict) {
             xpc_dictionary_set_int64(xreply, "error", ENOTDEVELOPMENT);
 #endif
             break;
+        case LAUNCHD_CMD_RUN_BOOTSCREEND:
+            bootscreend_main();
+            break;
         default: {
             xpc_dictionary_set_int64(xreply, "error", EINVAL);
             break;
@@ -174,8 +177,7 @@ void InitXPCHooks(void) {
     int launchd_image_index = 0;
     int ret = _NSGetExecutablePath(launchd_path, &bufsize);
     if (ret) {
-        fprintf(stderr, "_NSGetExecutablePath() failed\n");
-        spin();
+        _panic("_NSGetExecutablePath() failed\n");
     }
 	for (uint32_t i = 0; i < _dyld_image_count(); i++) {
 		if(!strcmp(_dyld_get_image_name(i), launchd_path)) {
@@ -206,8 +208,7 @@ void InitXPCHooks(void) {
     }
 
     if (!text_size) {
-        fprintf(stderr, "failed to find launchd __TEXT segment");
-        spin();
+        _panic("failed to find launchd __TEXT segment");
     }
 
     uint32_t matches[] = {
@@ -240,7 +241,6 @@ void InitXPCHooks(void) {
     if (xpc_handler) {
         MSHookFunction_p(xpc_handler, (void*)xpc_handler_hook, (void**)&xpc_handler_orig);
     } else {
-        fprintf(stderr, "patchfind launchd failed\n");
-        spin();
+        _panic("patchfind launchd failed\n");
     }
 }

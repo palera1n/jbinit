@@ -24,6 +24,28 @@ static void *base = NULL;
 static int bytesPerRow = 0;
 static int height = 0;
 static int width = 0;
+#define BSD_LOG_TO_FILE
+
+#if !defined(TESTMAIN)
+static int bsd_printf(const char* fmt, ...) {
+    va_list va;
+    va_start(va, fmt);
+    int retval = vfprintf(stderr, fmt, va);
+    va_end(va);
+#if defined(BSD_LOG_TO_FILE)
+    int fd = open("/cores/bootscreend.txt", O_CREAT | O_WRONLY | O_APPEND, 0644);
+    if (fd != -1) {
+        va_start(va, fmt);
+        vdprintf(fd, fmt, va);
+        va_end(va);
+        close(fd);
+    }
+#endif
+    return retval;
+}
+#else
+#define bsd_printf(__VA_ARGS__) printf(__VA_ARGS__);
+#endif
 
 static int init_display(void) {
     IOMobileFramebufferReturn retval = 0;
@@ -31,11 +53,11 @@ static int init_display(void) {
     IOMobileFramebufferRef display = NULL;
     retval = IOMobileFramebufferGetMainDisplay(&display);
     if (retval) {
-        fprintf(stderr, "IOMobileFramebufferGetMainDisplay: %s\n", mach_error_string(retval));
-        printf("trying IOMobileFramebufferGetSecondaryDisplay instead\n");
+        bsd_printf("IOMobileFramebufferGetMainDisplay: %s\n", mach_error_string(retval));
+        bsd_printf("trying IOMobileFramebufferGetSecondaryDisplay instead\n");
         retval = IOMobileFramebufferGetSecondaryDisplay(&display);
         if (retval) {
-            fprintf(stderr, "IOMobileFramebufferGetSecondaryDisplay: %s\n", mach_error_string(retval));
+            bsd_printf("IOMobileFramebufferGetSecondaryDisplay: %s\n", mach_error_string(retval));
             return -1;
         }
     }
@@ -43,10 +65,10 @@ static int init_display(void) {
     IOMobileFramebufferGetDisplaySize(display, &size);
     IOSurfaceRef buffer;
     IOMobileFramebufferGetLayerDefaultSurface(display, 0, &buffer);
-    printf("got display %p\n", display);
+    bsd_printf("got display %p\n", display);
     width = size.width;
     height = size.height;
-    printf("width: %d, height: %d\n", width, height);
+    bsd_printf("width: %d, height: %d\n", width, height);
 
     // create buffer
     CFMutableDictionaryRef properties = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
@@ -56,22 +78,22 @@ static int init_display(void) {
     CFDictionarySetValue(properties, CFSTR("IOSurfacePixelFormat"), CFNumberCreate(NULL, kCFNumberIntType, &(int){ 0x42475241 }));
     CFDictionarySetValue(properties, CFSTR("IOSurfaceBytesPerElement"), CFNumberCreate(NULL, kCFNumberIntType, &(int){ 4 }));
     buffer = IOSurfaceCreate(properties);
-    printf("created buffer at: %p\n", buffer);
+    bsd_printf("created buffer at: %p\n", buffer);
     IOSurfaceLock(buffer, 0, 0);
-    printf("locked buffer\n");
+    bsd_printf("locked buffer\n");
     base = IOSurfaceGetBaseAddress(buffer);
-    printf("got base address at: %p\n", base);
+    bsd_printf("got base address at: %p\n", base);
     bytesPerRow = IOSurfaceGetBytesPerRow(buffer);
-    printf("got bytes per row: %d\n", bytesPerRow);
+    bsd_printf("got bytes per row: %d\n", bytesPerRow);
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             int offset = i * bytesPerRow + j * 4;
             *(int *)(base + offset) = 0x00000000;
         }
     }
-    printf("wrote to buffer\n");
+    bsd_printf("wrote to buffer\n");
     IOSurfaceUnlock(buffer, 0, 0);
-    printf("unlocked buffer\n");
+    bsd_printf("unlocked buffer\n");
 
     int token;
     IOMobileFramebufferSwapBegin(display, &token);
@@ -91,7 +113,7 @@ int bootscreend_draw_cgimage(const char* image_path) {
     
     retval = init_display();
     if (retval) {
-        fprintf(stderr, "could not init display\n");
+        bsd_printf("could not init display\n");
         goto finish;
     }
     for (int i = 0; i < height; i++) {
@@ -103,28 +125,28 @@ int bootscreend_draw_cgimage(const char* image_path) {
 
     bootImageCfString = CFStringCreateWithCString(kCFAllocatorDefault, image_path, kCFStringEncodingUTF8);
     if (!bootImageCfString) {
-        fprintf(stderr, "could not create boot image cfstring\n");
+        bsd_printf("could not create boot image cfstring\n");
         goto finish;
     }
 
     imageURL = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, bootImageCfString, kCFURLPOSIXPathStyle, false);
     if (!imageURL) {
-        fprintf(stderr, "could not create image URL\n");
+        bsd_printf("could not create image URL\n");
         goto finish;
     }
     cgImageSource = CGImageSourceCreateWithURL(imageURL, NULL);
     if (!cgImageSource) {
-        fprintf(stderr, "could not create image source\n");
+        bsd_printf("could not create image source\n");
         goto finish;
     }
     cgImage = CGImageSourceCreateImageAtIndex(cgImageSource, 0, NULL);
     if (!cgImage) {
-        fprintf(stderr, "could not create image\n");
+        bsd_printf("could not create image\n");
         goto finish;
     }
     rgbColorSpace = CGColorSpaceCreateDeviceRGB();
     if (!rgbColorSpace) {
-        fprintf(stderr, "could not create device RGB color space\n");
+        bsd_printf("could not create device RGB color space\n");
         goto finish;
     }
 
@@ -149,14 +171,14 @@ int bootscreend_draw_cgimage(const char* image_path) {
 
     context = CGBitmapContextCreate(base, width, height, 8, bytesPerRow, rgbColorSpace, kCGImageAlphaPremultipliedFirst | kCGImageByteOrder32Little);
     if (!context) {
-        fprintf(stderr, "could not create context\n");
+        bsd_printf("could not create context\n");
         goto finish;
     }
 
     CGContextDrawImage(context, destinationRect, cgImage);
 
     retval = 0;
-    fprintf(stderr, "bootscreend: done\n");
+    bsd_printf("bootscreend: done\n");
 
 finish:
     if (bootImageCfString) CFRelease(bootImageCfString);
@@ -173,7 +195,7 @@ static int bootscreend_draw_gradient(void) {
     int retval = -1;
     retval = init_display();
     if (retval) {
-        fprintf(stderr, "could not init display\n");
+        bsd_printf("could not init display\n");
         goto finish_;
     }
     

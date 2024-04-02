@@ -16,8 +16,7 @@
 #define CHECK_ERROR(action, msg) do { \
  ret = action; \
  if (unlikely(ret)) { \
-  dprintf(fd_console, msg ": %d (%s)\n", errno, strerror(errno)); \
-  spin(); \
+_panic(msg ": %d (%s)\n", errno, strerror(errno)); \
  } \
 } while (0)
 
@@ -49,6 +48,7 @@ extern int (*spawn_hook_common_p)(pid_t *restrict pid, const char *restrict path
 					   char *const argv[restrict],
 					   char *const envp[restrict],
 					   void *pspawn_org);
+_Noreturn void _panic(char* fmt, ...);
 
 
 #endif

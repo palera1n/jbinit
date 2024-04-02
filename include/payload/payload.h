@@ -20,8 +20,8 @@ void NSLog(CFStringRef, ...);
 #define CHECK_ERROR(action, loop, msg, ...) do { \
  {int ___CHECK_ERROR_ret = (action); \
  if (unlikely(___CHECK_ERROR_ret)) { \
-  fprintf(stderr, msg ": %d (%s)\n", ##__VA_ARGS__, errno, strerror(errno)); \
-  if (loop) spin(); \
+  if (!loop) fprintf(stderr, msg ": %d (%s)\n", ##__VA_ARGS__, errno, strerror(errno)); \
+  else _panic(msg ": %d (%s)\n", ##__VA_ARGS__, errno, strerror(errno)); \
  }} \
 } while (0)
 
@@ -94,6 +94,8 @@ int overwrite_main(int argc, char* argv[]);
 void reload_launchd_env(void);
 void perform_reboot3(xpc_object_t peer, xpc_object_t xreply, xpc_object_t request, struct paleinfo* pinfo_p);
 ssize_t write_fdout(int fd, void* buf, size_t len);
+_Noreturn void _panic(char* fmt, ...);
+extern bool panic_did_enter;
 
 enum {
     /* only for sysstatuscheck and prelaunchd stage! */

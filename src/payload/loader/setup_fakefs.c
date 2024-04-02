@@ -106,16 +106,14 @@ int setup_fakefs(uint32_t __unused payload_options, struct paleinfo* pinfo_p) {
     struct statfs rootfs_st;
     CHECK_ERROR(statfs("/", &rootfs_st), 1, "statfs / failed");
     if (strcmp(rootfs_st.f_fstypename, "apfs")) {
-        fprintf(stderr, "unexpected filesystem type of /\n");
-        spin();
+        panic("unexpected filesystem type of /");
     }
 
     char fakefs_mntfromname[50];
     snprintf(fakefs_mntfromname, 50, "/dev/%s", pinfo_p->rootdev);
 
     if (access(fakefs_mntfromname, F_OK) == 0) {
-        fprintf(stderr, "fakefs already exists\n");
-        spin();
+        panic("fakefs already exists");
     }
 
     struct cb_context context = { .pinfo_p = pinfo_p, .bytesToCopy = 0 };
@@ -131,8 +129,7 @@ int setup_fakefs(uint32_t __unused payload_options, struct paleinfo* pinfo_p) {
 
         context.bytesToCopy = attrbuf.spaceused;
         if ((attrbuf.spaceused + MINIMUM_EXTRA_SPACE) > (rootfs_st.f_bavail * rootfs_st.f_bsize)) {
-            fprintf(stderr, "Not enough space! need %lld bytes (%d bytes buffer), have %lld bytes.\n", (attrbuf.spaceused + MINIMUM_EXTRA_SPACE), MINIMUM_EXTRA_SPACE, (rootfs_st.f_bavail * rootfs_st.f_bsize));
-            spin();
+            panic("Not enough space! need %lld bytes (%d bytes buffer), have %lld bytes.`", (attrbuf.spaceused + MINIMUM_EXTRA_SPACE), MINIMUM_EXTRA_SPACE, (rootfs_st.f_bavail * rootfs_st.f_bsize));
         }
     }
 
@@ -154,8 +151,7 @@ int setup_fakefs(uint32_t __unused payload_options, struct paleinfo* pinfo_p) {
 
     int retval = APFSVolumeCreate(container, dict);
     if (retval) {
-        fprintf(stderr, "APFSVolumeCreate failed: %d: %s\n", retval, mach_error_string(retval));
-        spin();
+        panic("APFSVolumeCreate failed: %d: %s\n", retval, mach_error_string(retval));
     }
 
     char actual_fakefs_mntfromname[50];
@@ -169,12 +165,10 @@ int setup_fakefs(uint32_t __unused payload_options, struct paleinfo* pinfo_p) {
     } else if (strstr(rootfs_st.f_mntfromname, "/dev/disk1s") != NULL) {
         snprintf(actual_fakefs_mntfromname, 50, "/dev/disk1s%d", fsindex+1);
     } else {
-        fprintf(stderr, "unexpected rootfs f_mntfromname %s\n", rootfs_st.f_mntfromname);
-        spin();
+        panic("unexpected rootfs f_mntfromname %s", rootfs_st.f_mntfromname);
     }
     if (strcmp(actual_fakefs_mntfromname, fakefs_mntfromname)) {
-        fprintf(stderr, "unexpected fakefs name %s (expected %s)\n", actual_fakefs_mntfromname, fakefs_mntfromname);
-        spin();
+        panic("unexpected fakefs name %s (expected %s)", actual_fakefs_mntfromname, fakefs_mntfromname);
     }
     sleep(2);
     struct apfs_mount_args args = {
@@ -205,8 +199,7 @@ int setup_fakefs(uint32_t __unused payload_options, struct paleinfo* pinfo_p) {
 
     int fd_fakefs = open("/cores/fs/fake", O_RDONLY | O_DIRECTORY);
     if (fd_fakefs == -1) {
-        fprintf(stderr, "cannot open fakefs fd\n");
-        spin();
+        panic("cannot open fakefs fd");
     }
 
     CHECK_ERROR(fs_snapshot_create(fd_fakefs, "orig-fs", 0), 1, "cannot create orig-fs snapshot on fakefs");

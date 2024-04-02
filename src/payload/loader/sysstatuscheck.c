@@ -13,6 +13,8 @@
 #include <sys/kern_memorystatus.h>
 #include <sys/snapshot.h>
 
+uint32_t dyld_get_active_platform(void);
+
 #define SB_PREF_PLIST_PATH "/var/mobile/Library/Preferences/com.apple.springboard.plist"
 #define CF_STRING_GET_CSTRING_PTR(cfStr, cPtr) do { \
     cPtr = (char*)CFStringGetCStringPtr(cfStr, kCFStringEncodingUTF8); \
@@ -169,7 +171,6 @@ int sysstatuscheck(uint32_t __unused payload_options, uint64_t pflags) {
     }
 
     remount();
-    uint32_t dyld_get_active_platform(void);
     if (dyld_get_active_platform() == PLATFORM_IOS) enable_non_default_system_apps();
     if (access("/private/var/dropbear_rsa_host_key", F_OK) != 0) {
         printf("generating ssh host key...\n");

@@ -5,6 +5,7 @@
 #include <mach-o/loader.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <pthread.h>
+#include <libjailbreak/libjailbreak.h>
 #include <dlfcn.h>
 
 mach_port_t (*SBSSpringBoardServerPort)(void);
@@ -15,7 +16,7 @@ void sb_launched(CFNotificationCenterRef __unused center, void __unused *observe
     CFRunLoopStop(loop);
 }
 
-int launchdaemons(uint32_t __unused payload_options, uint64_t pflags) {
+int launchdaemons(uint32_t payload_options, uint64_t pflags) {
     printf("plooshInit launchdaemons...\n");
     int platform = get_platform();
     if (platform == -1) {
@@ -37,7 +38,22 @@ int launchdaemons(uint32_t __unused payload_options, uint64_t pflags) {
             fprintf(stderr, "failed to dlopen springboardservices\n");
         }
     } else if (platform == PLATFORM_TVOS) {
-        sleep(15); // ???
+#if 0
+        sleep(10);
+        if ((payload_options & payload_option_userspace_rebooted) == 0) {
+            xpc_object_t xdict, xreply;
+            xdict = xpc_dictionary_create(NULL, NULL, 0);
+            xpc_dictionary_set_uint64(xdict, "cmd", LAUNCHD_CMD_RUN_BOOTSCREEND);
+            int ret = jailbreak_send_launchd_message(xdict, &xreply);
+            if (ret) {
+                print_jailbreakd_reply(xreply);
+            }
+            xpc_release(xdict);
+            xpc_release(xreply);
+        }
+        sleep(5); // ???
+#endif
+        sleep(15);
     }
 
     if (pflags & palerain_option_safemode) {

@@ -16,10 +16,13 @@
 #include <payload_dylib/crashreporter.h>
 #include <sandbox/private.h>
 #include <dlfcn.h>
+#include <mach-o/dyld.h>
+#include <mach-o/loader.h>
 
 #define HOOK_DYLIB_PATH "/cores/binpack/usr/lib/systemhook.dylib"
 #define ELLEKIT_PATH "/cores/binpack/Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate"
 
+bool has_verbose_boot;
 uint64_t pflags;
 void (*MSHookFunction_p)(void *symbol, void *replace, void **result) = NULL;
 int (*spawn_hook_common_p)(pid_t *restrict pid, const char *restrict path,
@@ -110,14 +113,28 @@ uint64_t load_pflags(void) {
   return pflags;
 }
 
+void _panic_on_signal(int signal) {
+    char panicBuffer[1024];
+    panicBuffer[1023] = '\0';
+    FILE* f = fopen("/cores/panic.txt", "r");
+    if (!f) {
+        _panic("payload_dylib: panic signal received but could not open panic file");
+    }
+    fread(panicBuffer, 1023, 1, f);
+    fclose(f);
+    _panic("%s", panicBuffer);
+}
+
 __attribute__((constructor))void launchd_hook_main(void) {
   if (getpid() != 1) return;
+    signal(SIGUSR1, _panic_on_signal);
+    has_verbose_boot = (strcmp(getenv("JB_HAS_VERBOSE_BOOT"), "1") == 0);
+  
   int fd_console = open("/dev/console",O_RDWR|O_SYNC|O_CLOEXEC,0);
   if (fd_console == -1) {
-    char errMsg[1024];
-    snprintf(errMsg, 1024, "payload.dylib cannot open /dev/console: %d (%s)", errno, strerror(errno));
-    reboot_np(RB_PANIC, errMsg);
+    _panic("payload.dylib cannot open /dev/console: %d (%s)", errno, strerror(errno));
   }
+    
   
   dup2(fd_console, STDIN_FILENO);
   dup2(fd_console, STDOUT_FILENO);
@@ -133,14 +150,12 @@ __attribute__((constructor))void launchd_hook_main(void) {
   waitpid(pid, &status, 0);
   if (WIFEXITED(status)) {
     if (WEXITSTATUS(status) != 0) {
-      fprintf(stderr, "/cores/payload exited with status code %d\n", WEXITSTATUS(status));
-      spin();
+      _panic("/cores/payload exited with status code %d\n", WEXITSTATUS(status));
     }
   } else if (WIFSIGNALED(status)) {
-    fprintf(stderr, "/cores/payload exited abnormally: signal %d\n", WTERMSIG(status));
-    spin();
+      _panic("/cores/payload exited abnormally: signal %d\n", WTERMSIG(status));
   } else {
-    spin();
+      _panic("/cores/payload exited abnormally");
   }
 
   if ((pflags & palerain_option_setup_rootful)) {
@@ -150,37 +165,59 @@ __attribute__((constructor))void launchd_hook_main(void) {
     CHECK_ERROR(unmount("/cores/binpack", MNT_FORCE), "unmount(/cores/binpack)");
     printf("Rebooting\n");
     kern_return_t failed = host_reboot(mach_host_self(), 0x1000);
-    fprintf(stderr, "reboot failed: %d (%s)\n", failed, mach_error_string(failed));
-    spin();
+    _panic("reboot failed: %d (%s)\n", failed, mach_error_string(failed));
   }
 
-  if ((pflags & palerain_option_verbose_boot) == 0) bootscreend_main();
+   uint32_t dyld_get_active_platform(void);
+  if (
+      ((pflags & palerain_option_verbose_boot) == 0)
+      && (dyld_get_active_platform() != PLATFORM_TVOS || getenv("XPC_USERSPACE_REBOOTED"))
+      ) bootscreend_main();
+
   void* systemhook_handle = dlopen(HOOK_DYLIB_PATH, RTLD_NOW);
   if (!systemhook_handle) {
-    fprintf(stderr, "dlopen systemhook failed: %s\n", dlerror());
-    spin();
+    _panic("dlopen systemhook failed: %s\n", dlerror());
   }
   spawn_hook_common_p = dlsym(systemhook_handle, "spawn_hook_common");
   if (!spawn_hook_common_p) {
-    fprintf(stderr, "symbol spawn_hook_common not found in " HOOK_DYLIB_PATH ": %s\n", dlerror());
-    spin();
+    _panic("symbol spawn_hook_common not found in " HOOK_DYLIB_PATH ": %s\n", dlerror());
   }
 
   void* ellekit_handle = dlopen(ELLEKIT_PATH, RTLD_NOW);
   if (!ellekit_handle) {
-    fprintf(stderr, "dlopen ellekit failed: %s\n", dlerror());
-    spin();
+    _panic("dlopen ellekit failed: %s\n", dlerror());
   }
 
   MSHookFunction_p = dlsym(ellekit_handle, "MSHookFunction");
   if (!MSHookFunction_p) {
-    fprintf(stderr, "symbol MSHookFunction not found in " ELLEKIT_PATH ": %s\n", dlerror());
-    spin();
+    _panic("symbol MSHookFunction not found in " ELLEKIT_PATH ": %s\n", dlerror());
   }
 
   initSpawnHooks();
   InitDaemonHooks();
   InitXPCHooks();
-
+    
+    signal(SIGUSR1, SIG_DFL);
   printf("=========== bye from payload.dylib ===========\n");
+}
+
+_Noreturn
+void
+abort_with_payload(uint32_t reason_namespace, uint64_t reason_code, void *payload,
+            uint32_t payload_size, const char *reason_string,
+                   uint64_t reason_flags);
+
+_Noreturn void _panic(char* fmt, ...) {
+  char reason[1024], reason_real[1024];
+  va_list va;
+  va_start(va, fmt);
+  vsnprintf(reason, 1024, fmt, va);
+  va_end(va);
+  snprintf(reason_real, 1024, "payload_dylib: %s", reason);
+  if (has_verbose_boot) {
+    printf("%s\n", reason_real);
+    printf("jbinit DIED!\n");
+    sleep(60);
+  }
+  abort_with_payload(42, 0x69, NULL, 0, reason_real, 0);
 }

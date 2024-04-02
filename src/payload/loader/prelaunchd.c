@@ -22,14 +22,17 @@
 #include <sys/snapshot.h>
 #include <dlfcn.h>
 
+bool has_verbose_boot;
+bool panic_did_enter = false;
+
 int prelaunchd(uint32_t payload_options, struct paleinfo* pinfo_p) {
+    has_verbose_boot = (strcmp(getenv("JB_HAS_VERBOSE_BOOT"), "1") == 0);
     setvbuf(stderr, NULL, _IONBF, 0);
     setvbuf(stdout, NULL, _IONBF, 0);
     printf("plooshInit prelaunchd...\n");
     int platform = get_platform();
     if (platform == -1) {
-        fprintf(stderr, "failed to determine current platform\n");
-        spin();
+        _panic("failed to determine current platform\n");
     }
 
     if ((payload_options & payload_option_userspace_rebooted) == 0) {
@@ -53,8 +56,7 @@ int prelaunchd(uint32_t payload_options, struct paleinfo* pinfo_p) {
                 CHECK_ERROR(APFSVolumeRole(dev_rootdev, &role, NULL), 0, "APFSVolumeRole(%s) Failed", dev_rootdev);
                 printf("found apfs volume role: 0x%04x\n", role);
                 if (role != APFS_VOL_ROLE_RECOVERY) {
-                    fprintf(stderr, "BUG: SAFETY: deleting non-recovery volume is not allowed\n");
-                    spin();
+                    _panic("BUG: SAFETY: deleting non-recovery volume is not allowed\n");
                 } else {
                     CHECK_ERROR(errno = APFSVolumeDelete(pinfo_p->rootdev), 1, "failed to delete fakefs");
                 }
@@ -76,4 +78,21 @@ int prelaunchd(uint32_t payload_options, struct paleinfo* pinfo_p) {
     }
 
     return 0;
+}
+
+_Noreturn void _panic(char* fmt, ...) {
+    panic_did_enter = true;
+  char reason[1024], reason_real[1024];
+  va_list va;
+  va_start(va, fmt);
+  vsnprintf(reason, 1024, fmt, va);
+  va_end(va);
+  snprintf(reason_real, 1024, "payload: %s", reason);
+  int fd = open("/cores/panic.txt", O_WRONLY | O_CREAT, 0644);
+  if (fd != -1) {
+    write(fd, reason_real, 1024);
+    close(fd);
+  }
+  kill(1, SIGUSR1);
+    while (1) sleep (86400);
 }
