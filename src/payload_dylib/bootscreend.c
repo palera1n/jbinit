@@ -24,7 +24,7 @@ static void *base = NULL;
 static int bytesPerRow = 0;
 static int height = 0;
 static int width = 0;
-#define BSD_LOG_TO_FILE
+//#define BSD_LOG_TO_FILE
 
 #if !defined(TESTMAIN)
 static int bsd_printf(const char* fmt, ...) {
