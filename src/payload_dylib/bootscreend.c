@@ -129,18 +129,23 @@ int bootscreend_draw_cgimage(const char* image_path) {
     }
 
     CGRect destinationRect = CGRectZero;
-    CGFloat imageAspectRatio = (CGFloat)CGImageGetWidth(cgImage) / CGImageGetHeight(cgImage);
-
-    if (width / height > imageAspectRatio) {
-        destinationRect.size.width = width;
-        destinationRect.size.height = width / imageAspectRatio;
-    } else {
-        destinationRect.size.width = height * imageAspectRatio;
-        destinationRect.size.height = height;
-    }
+    CGFloat imageWidth = CGImageGetWidth(cgImage);
+    CGFloat imageHeight = CGImageGetHeight(cgImage);
     
-    destinationRect.origin.x = (width - CGRectGetWidth(destinationRect)) / 2;
-    destinationRect.origin.y = (height - CGRectGetHeight(destinationRect)) / 2;
+    CGFloat widthFactor = width / imageWidth;
+    CGFloat heightFactor = height / imageHeight;
+    CGFloat scaleFactor = widthFactor > heightFactor ? widthFactor : heightFactor;
+    CGFloat scaledWidth  = imageWidth * scaleFactor;
+    CGFloat scaledHeight = imageHeight * scaleFactor;
+
+    destinationRect.size.width = scaledWidth;
+    destinationRect.size.height = scaledHeight;
+    
+    if (widthFactor > heightFactor) {
+        destinationRect.origin.y = (height - scaledHeight) / 2;
+    } else {
+        destinationRect.origin.x = (width - scaledWidth) / 2;
+    }
 
     context = CGBitmapContextCreate(base, width, height, 8, bytesPerRow, rgbColorSpace, kCGImageAlphaPremultipliedFirst | kCGImageByteOrder32Little);
     if (!context) {
