@@ -152,18 +152,24 @@ void revert_snapshot(void) {
     
     char* at_symbol = strstr(fs.f_mntfromname, "@");
     char* device_name = at_symbol ? at_symbol + 1 : fs.f_mntfromname;
+    char* dirFdPath;
     printf("device_name: %s\n", device_name);
-    
-    // cba to look at the apfs unk_flags stuff
-    // It is known that unk_flags is set to 0x32000001 though
-    ret = runCommand((char*[]){ "/sbin/mount_apfs", "-o", "rw", device_name, "/cores/fs/real", NULL });
+    if (at_symbol) {
+        // cba to look at the apfs unk_flags stuff
+        // It is known that unk_flags is set to 0x32000001 though
+        ret = runCommand((char*[]){ "/sbin/mount_apfs", "-o", "rw", device_name, "/cores/fs/real", NULL });
 
-    if (ret) {
-        fprintf(stderr, "mount_apfs failed: %d\n", ret);
-        return;
+        if (ret) {
+            fprintf(stderr, "mount_apfs failed: %d\n", ret);
+            return;
+        }
+        dirFdPath = "/cores/fs/real";
+    } else {
+        dirFdPath = "/";
     }
+
     snprintf(snapshotName, 150, "com.apple.os.update-%s", hash);
-    int dirfd = open("/cores/fs/real", O_RDONLY, 0);
+    int dirfd = open(dirFdPath, O_RDONLY, 0);
     ret = fs_snapshot_rename(dirfd, "orig-fs", snapshotName, 0);
     if (ret != 0) {
         fprintf(stderr, "could not rename snapshot: %d: (%s)\n", errno, strerror(errno));
@@ -176,10 +182,12 @@ void revert_snapshot(void) {
     }
     close(dirfd);
     sync();
-    ret = unmount("/cores/fs/real", MNT_FORCE);
-    if (ret) {
-        fprintf(stderr, "unmount root live fs failed: %d (%s)\n", errno, strerror(errno));
-        return;
+    if (at_symbol) {
+        ret = unmount("/cores/fs/real", MNT_FORCE);
+        if (ret) {
+            fprintf(stderr, "unmount root live fs failed: %d (%s)\n", errno, strerror(errno));
+            return;
+        }
     }
     
 }
