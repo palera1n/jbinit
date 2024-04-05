@@ -12,6 +12,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <sys/kern_memorystatus.h>
 #include <sys/snapshot.h>
+#include <sys/mount.h>
 
 uint32_t dyld_get_active_platform(void);
 
@@ -136,29 +137,51 @@ int  remove_jailbreak_files(uint64_t pflags) {
 
 int fixup_databases(void);
 void revert_snapshot(void) {
-    struct utsname name;
-    uname(&name);
-    remount_rootfs(&name);
     char hash[97], snapshotName[150];
     int ret = jailbreak_get_bmhash(hash);
     if (ret) {
         fprintf(stderr, "failed to get boot-manifest-hash\n");
-        spin();
+        return;
+    }
+    struct statfs fs;
+    ret = statfs("/", &fs);
+    if (ret) {
+        fprintf(stderr, "failed to stat root fs\n");
+        return;
+    }
+    
+    char* at_symbol = strstr(fs.f_mntfromname, "@");
+    char* device_name = at_symbol ? at_symbol + 1 : fs.f_mntfromname;
+    printf("device_name: %s\n", device_name);
+    
+    // cba to look at the apfs unk_flags stuff
+    // It is known that unk_flags is set to 0x32000001 though
+    ret = runCommand((char*[]){ "/sbin/mount_apfs", "-o", "rw", device_name, "/cores/fs/real", NULL });
+
+    if (ret) {
+        fprintf(stderr, "mount_apfs failed: %d\n", ret);
+        return;
     }
     snprintf(snapshotName, 150, "com.apple.os.update-%s", hash);
-    int dirfd = open("/", O_RDONLY, 0);
+    int dirfd = open("/cores/fs/real", O_RDONLY, 0);
     ret = fs_snapshot_rename(dirfd, "orig-fs", snapshotName, 0);
     if (ret != 0) {
-        fprintf(stderr, "could not rename snapshot: %d: %s\n", errno, strerror(errno));
+        fprintf(stderr, "could not rename snapshot: %d: (%s)\n", errno, strerror(errno));
     } else {
-        printf("");
+        printf("renamed snapshot\n");
     }
     ret = fs_snapshot_revert(dirfd, snapshotName, 0);
     if (ret != 0) {
-        fprintf(stderr, "could not revert snapshot: %d: %s\n", errno, strerror(errno));
+        fprintf(stderr, "could not revert snapshot: %d: (%s)\n", errno, strerror(errno));
     }
     close(dirfd);
     sync();
+    ret = unmount("/cores/fs/real", MNT_FORCE);
+    if (ret) {
+        fprintf(stderr, "unmount root live fs failed: %d (%s)\n", errno, strerror(errno));
+        return;
+    }
+    
 }
 
 int sysstatuscheck(uint32_t __unused payload_options, uint64_t pflags) {
@@ -181,7 +204,6 @@ int sysstatuscheck(uint32_t __unused payload_options, uint64_t pflags) {
         if ((pflags & (palerain_option_rootful | palerain_option_force_revert)) == (palerain_option_rootful | palerain_option_force_revert)) {
             if ((pflags & (palerain_option_ssv)) == 0) {
                 revert_snapshot();
-                host_reboot(mach_host_self(), 0x1000);
             }
         }
     }

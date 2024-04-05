@@ -23,6 +23,7 @@ void pinfo_check(struct paleinfo* pinfo_p) {
         {palerain_option_clean_fakefs | palerain_option_force_revert, "cannot force revert and clean fakefs at the same time"},
         {palerain_option_rootless_livefs | palerain_option_rootful, "cannot use rootless livefs option on rootful"},
         {palerain_option_clean_fakefs | palerain_option_setup_rootful, "canoot setup fakefs whlist cleaning fakefs"},
+        {palerain_option_ssv | palerain_option_setup_rootful, "canoot setup fakefs because this system uses realfs for rootful"},
         {0, NULL}
     };
     for (uint8_t i = 0; disallowed_combinations[i].disallowed_combination != 0; i++) {
