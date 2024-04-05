@@ -49,6 +49,8 @@ const char* jailbreak_str_pinfo_flag(uint64_t flag) {
             return "palerain_option_safemode";
         case palerain_option_verbose_boot:
             return "palerain_option_verbose_boot";
+        case palerain_option_cli:
+            return "palerain_option_cli";
         case palerain_option_jbinit_log_to_file:
             return "palerain_option_jbinit_log_to_file";
         case palerain_option_setup_rootful_forced:

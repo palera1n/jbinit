@@ -42,6 +42,11 @@ typedef uint64_t palerain_option_t;
 #define palerain_option_force_revert         (UINT64_C(1) << 24) /* Unjailbreak */
 #define palerain_option_safemode             (UINT64_C(1) << 25) /* Enter safe mode */
 #define palerain_option_verbose_boot         (UINT64_C(1) << 26) /* verbose boot */
+// #define palerain_option_sf_ssh            (UINT64_C(1) << 27) /* safe mode with bootstrap ssh */
+// #define palerain_option_sf_launchdaemons  (UINT64_C(1) << 28) /* safe mode with launchdaemons */
+// #define palerain_option_emerg_mode        (UINT64_C(1) << 29) /* emergency mode (early boot usb shell) */
+// #define palerain_option_jbinit_log_to_file   (UINT64_C(1) << 30) /* deprecated (kept for compatibility) */
+#define palerain_option_cli                  (UINT64_C(1) << 31) /* CLI mode */
 
 #define palerain_option_jbinit_log_to_file   (UINT64_C(1) << 50) /* make ramdisk log to file (jbinit2) */
 #define palerain_option_setup_rootful_forced (UINT64_C(1) << 51) /* create fakefs over an existing one (jbinit2) */
