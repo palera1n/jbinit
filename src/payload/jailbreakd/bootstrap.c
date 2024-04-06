@@ -248,7 +248,7 @@ pthread_join(tarLogThread, NULL); \
     JOIN_TAR_ZSTD;
     
 #define REMOVE_TPATH do { \
-if ((pinfo->flags & palerain_option_rootless) && strlen(tarPath) > 118); \
+if ((pinfo->flags & palerain_option_rootless) && strstr(tarPath, "/jb-")); \
 removefile(tarPath, NULL, REMOVEFILE_RECURSIVE);\
 } while(0)
     
@@ -269,7 +269,7 @@ removefile(tarPath, NULL, REMOVEFILE_RECURSIVE);\
         ret = rename(bootstrapExtractedPath, finalBootstrapPath);
         PALERA1ND_LOG_INFO("rename %s -> %s", bootstrapExtractedPath, finalBootstrapPath);
         
-        if (strlen(tarPath) > 118)
+        if (strstr(tarPath, "/jb-"))
             rmdir(extrationVarPath);
         
         BOOTSTRAP_ASSURE_F_CLEANUP(ret, REMOVE_TPATH, errno, "rename %s -> %s failed", bootstrapExtractedPath, finalBootstrapPath);
