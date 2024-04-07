@@ -192,6 +192,16 @@ void revert_snapshot(void) {
     
 }
 
+void clean_fakefs(void) {
+    int dirfd = open("/", O_RDONLY);
+    int ret = fs_snapshot_revert(dirfd, "orig-fs", 0);
+    if (ret) {
+        fprintf(stderr, "could not revert snapshot: %d: (%s)\n", errno, strerror(errno));
+    }
+    close(dirfd);
+    return;
+}
+
 int sysstatuscheck(uint32_t __unused payload_options, uint64_t pflags) {
     printf("plooshInit sysstatuscheck...\n");
     int retval;

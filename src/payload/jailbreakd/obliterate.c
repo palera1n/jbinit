@@ -25,6 +25,7 @@
 extern char** environ;
 
 void revert_snapshot(void);
+void clean_fakefs(void);
 int reboot3(uint64_t howto, ...);
 
 int revert_rootful(xpc_object_t xreply, struct paleinfo* pinfo) {
@@ -33,7 +34,11 @@ int revert_rootful(xpc_object_t xreply, struct paleinfo* pinfo) {
     unload_cmd_ret = load_cmd(&msg, 2, (char*[]){ "unload", "/Library/LaunchDaemons", NULL }, environ, (char*[]){ NULL });
     remove_ret = remove_jailbreak_files(pinfo->flags);
     
-    revert_snapshot();
+    /* if force revert is set then do not anything to the root fs */
+    if ((pinfo->flags & palerain_option_force_revert) == 0) {
+        if (pinfo->flags & palerain_option_ssv) clean_fakefs();
+        else revert_snapshot();
+    }
     
     xpc_dictionary_set_int64(xreply, "unload_cmd_ret", (int64_t)unload_cmd_ret);
     xpc_dictionary_set_int64(xreply, "remove_ret", (int64_t)remove_ret);
@@ -51,11 +56,13 @@ int revert_rootless(xpc_object_t xreply, struct paleinfo* pinfo) {
     return remove_ret;
 }
 
-void obliterate(xpc_object_t __unused xrequest, xpc_object_t xreply, struct paleinfo* pinfo) {
+void obliterate(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinfo) {
     if ((pinfo->flags & (palerain_option_rootful | palerain_option_ssv)) == (palerain_option_rootful | palerain_option_ssv)) {
-        xpc_dictionary_set_string(xreply, "errorDescription", "oblierating jailbreak while booted is not supported on rootful fakefs");
-        xpc_dictionary_set_int64(xreply, "error", ENOTSUP);
-        return;
+        if (!xpc_dictionary_get_bool(xrequest, "keep-fakefs")) {
+            xpc_dictionary_set_string(xreply, "errorDescription", "oblierating jailbreak while booted is not supported on rootful fakefs");
+            xpc_dictionary_set_int64(xreply, "error", ENOTSUP);
+            return;
+        }
     }
     int remove_ret;
     if (pinfo->flags & palerain_option_rootful)
