@@ -78,7 +78,7 @@ void bootstrap(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinf
     if (pinfo->flags & palerain_option_rootful) {
         BOOTSTRAP_ASSURE(access("/.procursus_strapped", F_OK) != 0, EEXIST, "Already Bootstrapped");
         struct statfs fs;
-        BOOTSTRAP_ASSURE(statfs("/", &fs), errno, "statfs(/) failed");
+        BOOTSTRAP_ASSURE(statfs("/", &fs) == 0, errno, "statfs(/) failed");
         BOOTSTRAP_ASSURE(strstr(fs.f_mntfromname, "@/dev") == NULL, ENOTSUP, "cannot bootstrap since we rooted from snapshot %s", fs.f_mntfromname);
     } else {
         char existingPath[150] = {'\0'};
