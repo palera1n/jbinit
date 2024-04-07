@@ -4,6 +4,7 @@
 
 @interface XBSnapshotContainerIdentity : NSObject <NSCopying>
 @property (nonatomic, readonly, copy) NSString* bundleIdentifier;
+- (NSString*) snapshotContainerPath;
 @end
 
 @class XBSnapshotContainerIdentity;

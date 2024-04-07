@@ -3,6 +3,18 @@
 #include <objc/runtime.h>
 #include <substrate.h>
 
+@interface PBAppInfo : NSObject <NSCopying>
+- (BOOL) isEnabled;
+@end
+
+@interface PBAppState : NSObject <NSCopying>
+- (BOOL) isEnabledForApplicationWithIdentifier;
+@end
+
+@interface PBSMutableAppState : NSObject <NSCopying>
+- (BOOL) isEnabled;
+@end
+
 void* PBAppInfo_isEnabled_orig;
 void* PBAppState_isEnabledForApplicationWithIdentifier_orig;
 void* PBSMutableAppState_isEnabled_orig;
