@@ -96,7 +96,7 @@ binpack.dmg: binpack.tar loader.dmg tvloader.dmg $(patsubst %, %-all, $(SUBDIRS)
 	mkdir binpack
 	touch binpack/.installed_overlay
 	tar -C binpack --preserve-permissions -xf binpack.tar
-	rm -rf binpack/usr/share cores
+	rm -rf binpack/usr/share binpack/private cores
 	mkdir -p binpack/Applications
 	mkdir -p binpack/usr/lib binpack/usr/share binpack/usr/lib/libroot
 	mkdir -p binpack/Library/Frameworks/CydiaSubstrate.framework
