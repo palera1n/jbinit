@@ -47,6 +47,7 @@ typedef uint64_t palerain_option_t;
 // #define palerain_option_emerg_mode        (UINT64_C(1) << 29) /* emergency mode (early boot usb shell) */
 // #define palerain_option_jbinit_log_to_file   (UINT64_C(1) << 30) /* deprecated (kept for compatibility) */
 #define palerain_option_cli                  (UINT64_C(1) << 31) /* CLI mode */
+#define palerain_option_telnetd              (UINT64_C(1) << 32) /* Enable TELNET daemon (insecure) */
 
 #define palerain_option_jbinit_log_to_file   (UINT64_C(1) << 50) /* make ramdisk log to file (jbinit2) */
 #define palerain_option_setup_rootful_forced (UINT64_C(1) << 51) /* create fakefs over an existing one (jbinit2) */

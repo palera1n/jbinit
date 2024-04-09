@@ -66,6 +66,7 @@ xpc_object_t hook_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
     char dropbearBuf[150];
     snprintf(dropbearBuf, 150, "/cores/binpack/Library/LaunchDaemons/dropbear-%d.plist", platform);
     append_daemon_from_plist(retval, dropbearBuf);
+      if (pflags & palerain_option_telnetd) append_daemon_from_plist(retval, "/cores/binpack/Library/LaunchDaemons/telnetd.plist");
     if (getenv("XPC_USERSPACE_REBOOTED") != NULL) {
       xpc_object_t payloadDict = xpc_dictionary_get_dictionary(retval, fakePath(PAYLOAD_PLIST));
       xpc_object_t payloadArgs = xpc_dictionary_get_array(payloadDict, "ProgramArguments");

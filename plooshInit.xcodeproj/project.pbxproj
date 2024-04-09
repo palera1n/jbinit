@@ -218,6 +218,7 @@
 
 /* Begin PBXFileReference section */
 		012A1FC12B91814F0018CCA2 /* memmem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = memmem.c; sourceTree = "<group>"; };
+		0132ED772BC52144006A24F9 /* telnetd.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = telnetd.plist; sourceTree = "<group>"; };
 		015DD6BE2BA5992E003E3587 /* load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = load.c; path = launchctl/load.c; sourceTree = "<group>"; };
 		015DD6BF2BA5992E003E3587 /* xpc_helper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xpc_helper.c; path = launchctl/xpc_helper.c; sourceTree = "<group>"; };
 		015DD6C02BA5992E003E3587 /* bootstrap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bootstrap.c; path = launchctl/bootstrap.c; sourceTree = "<group>"; };
@@ -723,6 +724,7 @@
 				0173A0CD2BB7018A00E28C83 /* copyright */,
 				0173A0E52BB7018A00E28C83 /* RSOD.heic */,
 				0173A0E62BB7018A00E28C83 /* debug-shell.plist */,
+				0132ED772BC52144006A24F9 /* telnetd.plist */,
 			);
 			path = shared;
 			sourceTree = "<group>";
