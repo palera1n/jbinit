@@ -36,7 +36,7 @@ __attribute__((constructor))void universalhooks_main(void) {
     for (size_t i = 0; i < (sizeof(info) / sizeof(struct hook_info)); i++) {
         if (strcmp(path, info[i].executablePath)) continue;
         if (rootful && info[i].rootfulInit) info[i].rootfulInit();
-        else if (info[i].rootlessInit) info[i].rootlessInit();
+        else if (info[i].rootlessInit && !rootful) info[i].rootlessInit();
         
         if (info[i].universalInit) info[i].universalInit();
     }
