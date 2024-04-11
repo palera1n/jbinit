@@ -7,7 +7,7 @@ how to compile on macos:
     (`brew install gnu-sed make ldid-procursus`)
 3. get the two dependency files, they are the palera1n loader
     ipa and the procursus binpack.
-    get [palera1nLoader.ipa](https://static.palera.in/artifacts/loader/universal_lite/palera1nLoader.ipa) and place it into the src directory.
+    get [palera1nLoader.ipa](https://static.palera.in/artifacts/loader/universal_lite/palera1nLoader.ipa), [palera1nLoaderTV.ipa](https://static.palera.in/artifacts/loader/universal_lite/palera1nLoaderTV.ipa) and place it into the src directory.
     get [binpack.tar](https://static.palera.in/binpack.tar) and also place it in the src directory
 4. `gmake -j$(sysctl -n hw.ncpu)`
 
