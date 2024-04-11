@@ -17,6 +17,7 @@
 #include <sys/param.h>
 #include <CoreGraphics/CoreGraphics.h>
 #include <ImageIO/ImageIO.h>
+#include <time.h>
 
 #define WHITE 0xffffffff
 #define BLACK 0x00000000
@@ -253,6 +254,71 @@ static int bootscreend_draw_gradient(void) {
 finish_:
     return retval;
 }
+
+uint32_t current_alt_color(uint32_t current, uint32_t total) {
+    uint32_t retval = 0xff000000;
+    const uint8_t color1_r = 0xf5, color1_g = 0xa9, color1_b = 0xb8;
+    const uint8_t color2_r = 0x5b, color2_g = 0xce, color2_b = 0xfa;
+    const uint8_t color3_r = 0xff, color3_g = 0xff, color3_b = 0xff;
+    const uint8_t color4_r = 0x5b, color4_g = 0xce, color4_b = 0xfa;
+    const uint8_t color5_r = 0xf5, color5_g = 0xa9, color5_b = 0xb8;
+
+    const float step_1_2_r = (float)(color2_r - color1_r) / ((float)total / 4);
+    const float step_1_2_g = (float)(color2_g - color1_g) / ((float)total / 4);
+    const float step_1_2_b = (float)(color2_b - color1_b) / ((float)total / 4);
+
+    const float step_2_3_r = (float)(color3_r - color2_r) / ((float)total / 4);
+    const float step_2_3_g = (float)(color3_g - color2_g) / ((float)total / 4);
+    const float step_2_3_b = (float)(color3_b - color2_b) / ((float)total / 4);
+
+    const float step_3_4_r = (float)(color4_r - color3_r) / ((float)total / 4);
+    const float step_3_4_g = (float)(color4_g - color3_g) / ((float)total / 4);
+    const float step_3_4_b = (float)(color4_b - color3_b) / ((float)total / 4);
+
+    const float step_4_5_r = (float)(color5_r - color4_r) / ((float)total / 4);
+    const float step_4_5_g = (float)(color5_g - color4_g) / ((float)total / 4);
+    const float step_4_5_b = (float)(color5_b - color4_b) / ((float)total / 4);
+
+    if (current < (total/4)) {
+        return retval |
+        ((uint32_t)(color1_r + current * step_1_2_r) & 0xff) << 16 |
+        ((uint32_t)(color1_g + current * step_1_2_g) & 0xff) << 8 |
+        ((uint32_t)(color1_b + current * step_1_2_b) & 0xff) << 0;
+    } else if (current < (total/2)) {
+        return retval |
+        ((uint32_t)(color2_r + (current - ((float)total/4)) * step_2_3_r) & 0xff) << 16 |
+        ((uint32_t)(color2_g + (current - ((float)total/4)) * step_2_3_g) & 0xff) << 8 |
+        ((uint32_t)(color2_b + (current - ((float)total/4)) * step_2_3_b) & 0xff) << 0;
+    } else if (current < ((total/4) * 3)) {
+        return retval |
+        ((uint32_t)(color3_r + (current - ((float)total/2)) * step_3_4_r) & 0xff) << 16 |
+        ((uint32_t)(color3_g + (current - ((float)total/2)) * step_3_4_g) & 0xff) << 8 |
+        ((uint32_t)(color3_b + (current - ((float)total/2)) * step_3_4_b) & 0xff) << 0;
+    } else {
+        return retval |
+        ((uint32_t)(color4_r + (current - (((float)total/4) * 3)) * step_4_5_r) & 0xff) << 16 |
+        ((uint32_t)(color4_g + (current - (((float)total/4) * 3)) * step_4_5_g) & 0xff) << 8 |
+        ((uint32_t)(color4_b + (current - (((float)total/4) * 3)) * step_4_5_b) & 0xff) << 0;
+    }
+
+}
+
+static int bootscreend_draw_alt_gradient(void) {
+    int retval = -1;
+    retval = init_display();
+    if (retval) {
+        bsd_printf("could not init display\n");
+        goto finish__;
+    }
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            int offset = i * bytesPerRow + j * 4;
+            *(int *)(base + offset) ^= current_alt_color(i, height);
+        }
+    }
+finish__:
+    return retval;
+}
 uint32_t dyld_get_active_platform(void);
 
 static int bootscreend_draw_image(const char* image_path) {
@@ -274,6 +340,11 @@ int main(int argc, char* argv[]) {
 #else
 #define BOOT_IMAGE_PATH "/cores/binpack/usr/share/boot.jp2"
 int bootscreend_main(void) {
+    time_t t = time(NULL);
+    struct tm* tm = localtime(&t);
+    if (tm && (tm->tm_mon == 3 && tm->tm_mday == 1)) {
+        return bootscreend_draw_alt_gradient();
+    }
     if (dyld_get_active_platform() != PLATFORM_BRIDGEOS) {
         return bootscreend_draw_image(BOOT_IMAGE_PATH);
     } else {
