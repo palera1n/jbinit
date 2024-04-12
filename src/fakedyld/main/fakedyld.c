@@ -49,7 +49,6 @@ int main(int argc, char* argv[], char* envp[], char* apple[]) {
     ret = statfs64("/", &fst);
     if (ret) panic("statfs64 failed: %d", errno);
     if (strcmp(fst.f_fstypename, "hfs") == 0) ramdisk_boot = true;
-
     pinfo_check(&pinfo);
 #if 0
     memory_file_handle_t payload;
