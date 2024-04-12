@@ -66,7 +66,7 @@ static inline int p1_log(const char* format, ...) {
     }                                                    \
     else                                                 \
     {                                                    \
-      panic("bound %s onto %s", dir, mnt);            \
+      LOG("bound %s onto %s", dir, mnt);                 \
     }                                                    \
   } while (0)
 
