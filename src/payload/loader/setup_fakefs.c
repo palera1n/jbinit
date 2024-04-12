@@ -143,8 +143,11 @@ int setup_fakefs(uint32_t __unused payload_options, struct paleinfo* pinfo_p) {
     CFDictionaryAddValue(dict, kAPFSVolumeCaseSensitiveKey, kCFBooleanTrue);
 
     const char* container = "disk0s1";
-    if (strncmp(pinfo_p->rootdev, "disk1s", 6) == 0) {
-        container = "disk1";
+    char container_impl[16];
+    if (strncmp(pinfo_p->rootdev, "disk0", 5) != 0) {
+        strncpy(container_impl, pinfo_p->rootdev, 5);
+        container_impl[5] = '\0';
+        container = container_impl;
     }
 
     printf("container=%s\n", container);
