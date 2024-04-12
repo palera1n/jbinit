@@ -33,6 +33,7 @@ void prepare_rootfs(struct systeminfo* sysinfo_p, struct paleinfo* pinfo_p) {
     fbi("/System/Library/Assistant", "/cores/fs/real/System/Library/Assistant");
     fbi("/System/Library/Audio", "/cores/fs/real/System/Library/Audio");
     fbi("/System/Library/Fonts", "/cores/fs/real/System/Library/Fonts");
+    fbi("/System/Library/Frameworks", "/cores/fs/real/System/Library/Frameworks");
     fbi("/System/Library/Health", "/cores/fs/real/System/Library/Health");
     fbi("/System/Library/LinguisticData", "/cores/fs/real/System/Library/LinguisticData");
     fbi("/System/Library/OnBoardingBundles", "/cores/fs/real/System/Library/OnBoardingBundles");
