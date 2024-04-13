@@ -38,6 +38,7 @@ void systeminfo(struct systeminfo* sysinfo_p);
 void set_fd_console(int fd_console);
 void clean_fakefs(char* rootdev);
 _Noreturn void panic(char* fmt, ...);
+const char* find_realfs(void);
 #ifdef FAKEDYLD_ENABLE_LOGGING
 #else
 #define panic(...) panic("");

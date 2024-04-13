@@ -1,6 +1,20 @@
 #include <fakedyld/fakedyld.h>
 #include <mount_args.h>
 
+const char* find_realfs(void) {
+    struct stat64 st;
+    while (stat64("/dev/disk0s1", &st) == -1) {
+        sleep(1);
+    }
+    if (stat64("/dev/disk2s1", &st) == 0) {
+        return "/dev/disk2s1";
+    } else if (stat64("/dev/disk1s1", &st) == 0) {
+        return "/dev/disk1s1";
+    } else {
+        return "/dec/disk0s1s1";
+    }
+}
+
 /*
  * If the current platform has SSV, palerain_option_ssv
  * will be set by PongoOS in pinfo->flags
@@ -26,18 +40,12 @@ void mountroot(struct paleinfo* pinfo_p, struct systeminfo* sysinfo_p) {
     char dev_realfs[32];
     if ((pinfo_p->flags & palerain_option_setup_rootful) == 0) {
         snprintf(dev_rootdev, 32, "/dev/%s", pinfo_p->rootdev);
-    } else if (sysinfo_p->osrelease.darwinMajor < 22) {
-        snprintf(dev_rootdev, 32, "/dev/%s", DARWIN21_ROOTDEV);
     } else {
-        snprintf(dev_rootdev, 32, "/dev/%s", DARWIN22_ROOTDEV);
+        snprintf(dev_rootdev, 32, "%s", find_realfs());
     }
     LOG("waiting for roots...");
     /* wait for realfs */
-    if (sysinfo_p->osrelease.darwinMajor < 22) {
-        snprintf(dev_realfs, 32, "/dev/%s", DARWIN21_ROOTDEV);
-    } else {
-        snprintf(dev_realfs, 32, "/dev/%s", DARWIN22_ROOTDEV);
-    }
+    snprintf(dev_realfs, 32, "%s", find_realfs());
     struct stat64 st;
     while ((ret = stat64(dev_realfs, &st))) {
         if (errno != ENOENT) {
