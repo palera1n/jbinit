@@ -21,6 +21,8 @@ else
 CFLAGS += -Oz -flto=full
 endif
 
+CFLAGS += -DFAKEDYLD_ENABLE_LOGGING
+
 export CFLAGS
 
 CREATE_UDRW_IMAGE = \

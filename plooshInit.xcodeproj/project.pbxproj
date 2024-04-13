@@ -12,6 +12,8 @@
 		017796CA2BAED7ED00BCC2C3 /* springboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 017796C92BAED7ED00BCC2C3 /* springboard.m */; };
 		017796CC2BAEDA1A00BCC2C3 /* cfprefsd.c in Sources */ = {isa = PBXBuildFile; fileRef = 017796CB2BAEDA1A00BCC2C3 /* cfprefsd.c */; };
 		017796D32BAEF0AA00BCC2C3 /* pineboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 017796D22BAEF0AA00BCC2C3 /* pineboard.m */; };
+		0191817C2BCA5C8100688E3A /* fs_snapshot.c in Sources */ = {isa = PBXBuildFile; fileRef = 0191817B2BCA5C8100688E3A /* fs_snapshot.c */; };
+		0191817E2BCA5D8500688E3A /* clean_fakefs.c in Sources */ = {isa = PBXBuildFile; fileRef = 0191817D2BCA5D8500688E3A /* clean_fakefs.c */; };
 		01E426E42BA1DF91008BC989 /* start.S in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6252B5C80DA007845B6 /* start.S */; };
 		01E426E52BA1DF94008BC989 /* syscall.S in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6262B5C80DA007845B6 /* syscall.S */; };
 		01E426E62BA1DF9B008BC989 /* shellcode.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6302B5C80DA007845B6 /* shellcode.c */; };
@@ -293,6 +295,8 @@
 		017796C92BAED7ED00BCC2C3 /* springboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = springboard.m; sourceTree = "<group>"; };
 		017796CB2BAEDA1A00BCC2C3 /* cfprefsd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cfprefsd.c; sourceTree = "<group>"; };
 		017796D22BAEF0AA00BCC2C3 /* pineboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = pineboard.m; sourceTree = "<group>"; };
+		0191817B2BCA5C8100688E3A /* fs_snapshot.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fs_snapshot.c; sourceTree = "<group>"; };
+		0191817D2BCA5D8500688E3A /* clean_fakefs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = clean_fakefs.c; sourceTree = "<group>"; };
 		019B1B452B5CACA800BABAB5 /* load_etc_rc_d.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load_etc_rc_d.c; sourceTree = "<group>"; };
 		01B6169C2B720DC70080AB28 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01B6169F2B720E3F0080AB28 /* hooks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hooks.h; sourceTree = "<group>"; };
@@ -1258,6 +1262,7 @@
 				01D3D67B2B5C80DA007845B6 /* isupper.c */,
 				01D3D67C2B5C80DA007845B6 /* isspace.c */,
 				012A1FC12B91814F0018CCA2 /* memmem.c */,
+				0191817B2BCA5C8100688E3A /* fs_snapshot.c */,
 			);
 			path = lib;
 			sourceTree = "<group>";
@@ -1275,6 +1280,7 @@
 				01D3D68F2B5C80DA007845B6 /* start.c */,
 				01D3D6902B5C80DA007845B6 /* fakedyld.c */,
 				01D3D6912B5C80DA007845B6 /* cores_init.c */,
+				0191817D2BCA5D8500688E3A /* clean_fakefs.c */,
 			);
 			path = main;
 			sourceTree = "<group>";
@@ -1845,12 +1851,14 @@
 			files = (
 				01E4270E2BA1E271008BC989 /* multi.c in Sources */,
 				01E427062BA1E047008BC989 /* atoi.c in Sources */,
+				0191817C2BCA5C8100688E3A /* fs_snapshot.c in Sources */,
 				01E426FF2BA1E037008BC989 /* stroul.c in Sources */,
 				01E4270B2BA1E26A008BC989 /* pe.c in Sources */,
 				01E427042BA1E043008BC989 /* strchr.c in Sources */,
 				01E427002BA1E039008BC989 /* syscalls.c in Sources */,
 				01E427092BA1E107008BC989 /* plooshfinder.c in Sources */,
 				01E426F82BA1E026008BC989 /* bzero.c in Sources */,
+				0191817E2BCA5D8500688E3A /* clean_fakefs.c in Sources */,
 				01E426EF2BA1E00F008BC989 /* pinfo_check.c in Sources */,
 				01E427082BA1E104008BC989 /* plooshfinder64.c in Sources */,
 				01E427072BA1E102008BC989 /* arm64.c in Sources */,
@@ -2243,6 +2251,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = FAKEDYLD_ENABLE_LOGGING;
 				GCC_USE_STANDARD_INCLUDE_SEARCHING = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/apple-include",
@@ -2276,6 +2285,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = FAKEDYLD_ENABLE_LOGGING;
 				GCC_USE_STANDARD_INCLUDE_SEARCHING = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/apple-include",

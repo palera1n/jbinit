@@ -40,7 +40,7 @@ void mountroot(struct paleinfo* pinfo_p, struct systeminfo* sysinfo_p) {
     }
     struct stat64 st;
     while ((ret = stat64(dev_realfs, &st))) {
-        if (ret != 2) {
+        if (errno != ENOENT) {
             LOG("wait realfs error: %d", errno);
         }
         sleep(1);
@@ -68,4 +68,5 @@ retry_rootfs_mount:
     } else {
       LOG("stat %s OK\n", "/private/");
     }
+    CHECK_ERROR(mount("devfs", "/dev", 0, "devfs"), "failed to mount devfs");
 }

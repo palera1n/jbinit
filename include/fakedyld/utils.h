@@ -4,7 +4,7 @@
 #include <paleinfo.h>
 #include <stdarg.h>
 
-void spin();
+void spin(void);
 void get_pinfo(struct paleinfo* pinfo_p);
 void pinfo_check(struct paleinfo* pinfo_p);
 /* declared in assembly */
@@ -48,7 +48,11 @@ static inline int p1_log(const char* format, ...) {
     printf("\n");
     return ret;
 }
+#ifdef FAKEDYLD_ENABLE_LOGGING
 #define LOG(...) p1_log(__VA_ARGS__)
+#else
+#define LOG(...)
+#endif
 #define CHECK_ERROR(action, msg, ...) do { \
  int check_error_ret = action; \
  if (unlikely(check_error_ret)) { \

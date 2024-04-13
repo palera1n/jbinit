@@ -38,11 +38,12 @@
 #define SYS_stat64              338
 #define SYS_getdirentries64     344
 #define SYS_statfs64            345
+#define SYS_getattrlistbulk     461
 #define SYS_fs_snapshot         518
 #define SYS_abort_with_payload  521
 
 #ifndef __ASSEMBLER__
-int* __error();
+int* __error(void);
 #define errno (*__error())
 
 uint64_t msyscall(uint64_t syscall, ...);
@@ -50,7 +51,7 @@ uint64_t msyscall(uint64_t syscall, ...);
 void sleep(int secs);
 /* keep this list in order of syscall numbers */
 void exit(int rval);
-int fork();
+int fork(void);
 ssize_t read(int fd, void *cbuf, size_t nbyte);
 ssize_t write(int fd, void *cbuf, size_t nbyte);
 int open(char* path, int flags, int mode);
@@ -77,6 +78,7 @@ void *mmap(void *addr, size_t length, int prot, int flags, int fd, uint64_t offs
 uint64_t lseek(int fildes, int32_t offset, int whence);
 int sys_sysctlbyname(const char *name, size_t namelen, void *old, size_t *oldlenp, void *new_, size_t newlen);
 ssize_t getdirentries64(int fd, void *buf, size_t bufsize, off_t *position);
+int getattrlistbulk(int dirfd, struct attrlist *alist, void *attributeBuffer, size_t bufferSize, uint64_t options);
 int statfs64(char *path, struct statfs64 *buf);
 int fs_snapshot(uint32_t op, int dirfd, const char* name1, const char* name2, void* data, uint32_t flags);
 int wait4(int pid, int* status, int options, void* rusage);

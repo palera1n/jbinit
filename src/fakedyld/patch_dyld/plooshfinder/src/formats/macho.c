@@ -1,8 +1,8 @@
 #include <stdbool.h>
 #include <stdint.h>
-#include <fakedyld/fakedyld.h>
 #include "formats/macho.h"
 #include "utils.h"
+#include <fakedyld/fakedyld.h>
 
 uint32_t macho_get_magic(void *buf) {
     uint32_t *buf_ptr = (uint32_t *) buf;

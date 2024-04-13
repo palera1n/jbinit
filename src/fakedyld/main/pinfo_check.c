@@ -1,6 +1,12 @@
 #include <fakedyld/fakedyld.h>
 
-/* 
+#ifdef FAKEDYLD_ENABLE_LOGGING
+#define COMBINATION(opt, msg) {opt, msg}
+#else
+#define COMBINATION(opt, msg) {opt, ""}
+#endif
+
+/*
  * The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
  * NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
  * "OPTIONAL" in this document are to be interpreted as described in
@@ -19,10 +25,10 @@ void pinfo_check(struct paleinfo* pinfo_p) {
         uint64_t disallowed_combination;
         char* message;
     } disallowed_combinations[] = {
-        {palerain_option_rootless | palerain_option_rootful, "cannot rootless and rootful at the same time"},
-        {palerain_option_clean_fakefs | palerain_option_force_revert, "cannot force revert and clean fakefs at the same time"},
-        {palerain_option_rootless_livefs | palerain_option_rootful, "cannot use rootless livefs option on rootful"},
-        {palerain_option_clean_fakefs | palerain_option_setup_rootful, "canoot setup fakefs whlist cleaning fakefs"},
+        COMBINATION(palerain_option_rootless | palerain_option_rootful, "cannot rootless and rootful at the same time"),
+        COMBINATION(palerain_option_clean_fakefs | palerain_option_force_revert, "cannot force revert and clean fakefs at the same time"),
+        COMBINATION(palerain_option_rootless_livefs | palerain_option_rootful, "cannot use rootless livefs option on rootful"),
+        COMBINATION(palerain_option_clean_fakefs | palerain_option_setup_rootful, "canoot setup fakefs whlist cleaning fakefs"),
         {0, NULL}
     };
     for (uint8_t i = 0; disallowed_combinations[i].disallowed_combination != 0; i++) {

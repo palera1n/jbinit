@@ -29,12 +29,19 @@ extern void* gPreDyldMH;
 #define PRIx64 "llx"
 
 void mountroot(struct paleinfo* pinfo_p, struct systeminfo* sysinfo_p);
-void init_cores(struct systeminfo* sysinfo_p, int platform);
+void init_cores(struct systeminfo* sysinfo_p, int platform, bool ramdisk_boot);
 void patch_dyld(memory_file_handle_t* dyld_handle, int platform);
 void check_dyld(const memory_file_handle_t* dyld_handle);
 int get_platform(const memory_file_handle_t* dyld_handle);
 void prepare_rootfs(struct systeminfo* sysinfo_p, struct paleinfo* pinfo_p);
 void systeminfo(struct systeminfo* sysinfo_p);
 void set_fd_console(int fd_console);
+void clean_fakefs(char* rootdev);
 _Noreturn void panic(char* fmt, ...);
+#ifdef FAKEDYLD_ENABLE_LOGGING
+#else
+#define panic(...) panic("");
+#undef printf
+#define printf(...)
+#endif
 #endif

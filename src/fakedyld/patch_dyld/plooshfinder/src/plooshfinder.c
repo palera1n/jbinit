@@ -3,11 +3,13 @@
 // Made by Ploosh
 
 #include <stdint.h>
-#include <fakedyld/fakedyld.h>
 #include "formats/macho.h"
 #include "plooshfinder.h"
 #include "plooshfinder32.h"
 #include "plooshfinder64.h"
+#undef ret
+#include <fakedyld/fakedyld.h>
+#define ret 0xd65f03c0
 
 void *pf_zero_buf;
 
