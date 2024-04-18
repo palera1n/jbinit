@@ -44,6 +44,12 @@ int prelaunchd(uint32_t payload_options, struct paleinfo* pinfo_p) {
         } else if (platform == PLATFORM_TVOS) {
             CHECK_ERROR(mount_dmg("/cores/binpack/tvloader.dmg", "hfs", "/cores/binpack/Applications", MNT_RDONLY, 0), 1, "mount loader failed");
         }
+        if (platform == PLATFORM_BRIDGEOS) {
+            printf("mount strap\n");
+            if (access("/usr/share/palera1n-strap", F_OK) == 0 && access("/usr/share/palera1n-strap.dmg", F_OK) == 0) {
+                CHECK_ERROR(mount_dmg("/usr/share/palera1n-strap.dmg", "hfs", "/usr/share/palera1n-strap", MNT_RDONLY, 0), 0, "mount strap failed");
+            }
+        }
     }
 
     char dev_rootdev[32];
