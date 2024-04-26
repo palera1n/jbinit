@@ -552,6 +552,19 @@ SHOOK_EXPORT int64_t jbdswInterceptUserspacePanic(const char *messageString) {
 
 #define CONSTRUCT_V(major, minor, subminor) ((major & 0xffff) << 16) | ((minor & 0xff) << 8) | (subminor & 0xff)
 
+uint32_t current_platform_min(void) {
+    uint32_t current_plat = dyld_get_active_platform();
+    switch (current_plat) {
+        case PLATFORM_IOS:
+        case PLATFORM_BRIDGEOS:
+            return 2;
+        case PLATFORM_TVOS:
+            return 9;
+        default:
+            return 1;
+    }
+}
+
 // this hook is used to make __builtin_available work normally in platform mismatched binaries
 __API_AVAILABLE(macos(10.15), ios(13.0), tvos(13.0), bridgeos(4.0))
 __attribute__((visibility ("hidden")))
@@ -573,7 +586,7 @@ bool _availability_version_check_hook(uint32_t count, DyldBuildVersion versions[
                             minor = subminor;
                             subminor = 0;
                         } else if (major > 10) major += 3;
-                        else major = 2;
+                        else major = current_platform_min();
                         break;
                     case PLATFORM_BRIDGEOS:
                         major += 9;
@@ -598,7 +611,7 @@ bool _availability_version_check_hook(uint32_t count, DyldBuildVersion versions[
                             minor = subminor;
                             subminor = 0;
                         } else if (major > 10) major -= 6;
-                        else major = 2;
+                        else major = current_platform_min();
                         break;
                     case PLATFORM_IOS:
                     case PLATFORM_TVOS:
