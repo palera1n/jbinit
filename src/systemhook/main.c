@@ -582,7 +582,7 @@ bool _availability_version_check_hook(uint32_t count, DyldBuildVersion versions[
                 switch (version->platform) {
                     case PLATFORM_MACOS:
                         if (major == 10) {
-                            major = minor - 2;
+                            major = minor > (current_platform_min() + 2) ? minor - 2 : current_platform_min();
                             minor = subminor;
                             subminor = 0;
                         } else if (major > 10) major += 3;
@@ -607,10 +607,12 @@ bool _availability_version_check_hook(uint32_t count, DyldBuildVersion versions[
                 switch (version->platform) {
                     case PLATFORM_MACOS:
                         if (major == 10) {
-                            major = minor - 11;
+                            major = minor > (current_platform_min() + 11) ? minor - 11 : current_platform_min();
                             minor = subminor;
                             subminor = 0;
-                        } else if (major > 10) major -= 6;
+                        } else if (major > 10) {
+                            major = major > (current_platform_min() + 6) ? major - 6 : current_platform_min();
+                        }
                         else major = current_platform_min();
                         break;
                     case PLATFORM_IOS:
@@ -618,11 +620,11 @@ bool _availability_version_check_hook(uint32_t count, DyldBuildVersion versions[
                     case PLATFORM_IOSSIMULATOR:
                     case PLATFORM_TVOSSIMULATOR:
                     case PLATFORM_MACCATALYST:
-                        major -= 9;
+                        major = major > (current_platform_min() + 9) ? major - 9 : current_platform_min();
                         break;
                     case PLATFORM_WATCHOS:
                     case PLATFORM_WATCHOSSIMULATOR:
-                        major -= 2;
+                        major = major > (current_platform_min() + 2) ? major - 2 : current_platform_min();
                         break;
                     case PLATFORM_VISIONOS:
                     case PLATFORM_VISIONOSSIMULATOR:
