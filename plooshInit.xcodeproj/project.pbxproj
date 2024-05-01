@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0118738A2BE25F060043AF8F /* libroot_cmd.c in Sources */ = {isa = PBXBuildFile; fileRef = 011873892BE25F060043AF8F /* libroot_cmd.c */; };
 		0173A0A32BB6FBCA00E28C83 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 0173A0922BB6FB5600E28C83 /* main.c */; };
 		017796C82BAED73C00BCC2C3 /* lsd.m in Sources */ = {isa = PBXBuildFile; fileRef = 017796C72BAED73C00BCC2C3 /* lsd.m */; };
 		017796CA2BAED7ED00BCC2C3 /* springboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 017796C92BAED7ED00BCC2C3 /* springboard.m */; };
@@ -219,6 +220,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		011873892BE25F060043AF8F /* libroot_cmd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = libroot_cmd.c; sourceTree = "<group>"; };
 		012A1FC12B91814F0018CCA2 /* memmem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = memmem.c; sourceTree = "<group>"; };
 		0132ED772BC52144006A24F9 /* telnetd.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = telnetd.plist; sourceTree = "<group>"; };
 		015DD6BE2BA5992E003E3587 /* load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = load.c; path = launchctl/load.c; sourceTree = "<group>"; };
@@ -1077,6 +1079,7 @@
 				01D3D51C2B5C80DA007845B6 /* preboot_path.c */,
 				01D3D51D2B5C80DA007845B6 /* bootstrap.c */,
 				01B9F8AD2B68170D00428E81 /* overwrite.c */,
+				011873892BE25F060043AF8F /* libroot_cmd.c */,
 			);
 			path = p1ctl;
 			sourceTree = "<group>";
@@ -1948,6 +1951,7 @@
 				01E4277A2BA1EC3A008BC989 /* print_jailbreakd_reply.c in Sources */,
 				01E4276B2BA1EC09008BC989 /* main.c in Sources */,
 				01E427782BA1EC31008BC989 /* load_etc_rc_d.c in Sources */,
+				0118738A2BE25F060043AF8F /* libroot_cmd.c in Sources */,
 				01E427752BA1EC23008BC989 /* create_var_jb.c in Sources */,
 				01E427652BA1EB6E008BC989 /* pinfo.c in Sources */,
 				01E4276E2BA1EC11008BC989 /* prelaunchd.c in Sources */,

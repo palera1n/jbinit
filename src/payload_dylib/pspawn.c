@@ -117,6 +117,7 @@ static int posix_spawn_hook(pid_t *restrict pid, const char *restrict path,
 
 #ifdef ENABLE_CONSOLE_HOOK
 dev_t dev_console_d = 0;
+static int log_fd = -1;
 
 ssize_t (*write_orig)(int fildes, const void *buf, size_t nbyte);
 ssize_t write_hook(int fildes, const void *buf, size_t nbyte) {
@@ -127,10 +128,11 @@ ssize_t write_hook(int fildes, const void *buf, size_t nbyte) {
     int ret = fstat(fildes, &st);
     if (retval == -1) return retval;
     if (dev_console_d && (st.st_dev == dev_console_d)) {
-        int fd = open("/cores/log.txt", O_WRONLY | O_CREAT | O_APPEND, 0644);
-        if (fd != -1) {
-            write_orig(fd, buf, nbyte);
-            close(fd);
+        if (log_fd == -1) {
+            log_fd = open("/cores/log.txt", O_WRONLY | O_CREAT | O_APPEND, 0644);
+        }
+        if (log_fd != -1) {
+            write_orig(log_fd, buf, nbyte);
         }
     }
     return retval;

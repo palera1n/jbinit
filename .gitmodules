@@ -10,3 +10,6 @@
 [submodule "src/bridgehook/dobby"]
 	path = src/bridgehook/dobby
 	url = git@github.com:jmpews/Dobby.git
+[submodule "src/payload/libroot"]
+	path = src/payload/libroot
+	url = git@github.com:opa334/libroot.git

@@ -266,9 +266,9 @@ SHOOK_EXPORT const char * libroot_get_jbroot_prefix(void) {
     else return "";
 }
 SHOOK_EXPORT const char * libroot_get_root_prefix(void) { return ""; }
-SHOOK_EXPORT const char *libroot_get_boot_uuid(void) {
+SHOOK_EXPORT const char * libroot_get_boot_uuid(void) {
     static char uuid_string[37] = { '\0' };
-    if (uuid_string[0] != '\0') return uuid_string;
+    if (uuid_string[0] != '\0') return &uuid_string[0];
     xpc_object_t xdict = xpc_dictionary_create(NULL, NULL, 0);
     xpc_dictionary_set_uint64(xdict, "cmd", LAUNCHD_CMD_GET_BOOT_UUID);
     xpc_object_t xreply;
@@ -278,10 +278,10 @@ SHOOK_EXPORT const char *libroot_get_boot_uuid(void) {
         goto fail;
     }
     const uint8_t* uuid_buf = xpc_dictionary_get_uuid(xreply, "uuid");
-    xpc_release(xreply);
     if (!uuid_buf) goto fail;
     uuid_unparse_upper(uuid_buf, uuid_string);
-    return uuid_string;
+    xpc_release(xreply);
+    return &uuid_string[0];
 fail:
     return "00000000-0000-0000-0000-000000000000";
 }

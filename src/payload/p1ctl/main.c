@@ -13,7 +13,8 @@ reload_main,
 tweakloader_main,
 exitsafe_main,
 rsod_main,
-crash_main;
+crash_main,
+libroot_main;
 
 static int usage(void);
 
@@ -41,6 +42,7 @@ static struct subcommand commands[] = {
     {"rsod", "\t\tRSOD", NULL, "RSOD!!!!!", rsod_main},
     {"crash", "\t\tCrash", NULL, "crash initproc", crash_main},
 #endif
+    {"libroot", "\t\tlibroot commands", "[libroot command]", "Interact with libroot\n\nCommands:\n\tjbroot\t\tGet jbroot prefix\n\troot\t\tGet root filesystem\n\tjbrand\t\tGet boot UUID", libroot_main},
     {NULL, NULL, NULL, NULL, NULL}
 };
 
