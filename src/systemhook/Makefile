@@ -23,7 +23,7 @@ $(OBJDIR)/%.c.o: %.c $(OBJDIR)
 $(DYLIB_NAME).dylib: $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) $(OBJS) -shared -o $(DYLIB_NAME).dylib
 	$(DSYMUTIL) $@
-ifeq ($(DEV_BUILD),1)
+ifneq ($(DEV_BUILD),1)
 	$(STRIP) -x $@
 endif
 	$(LDID) -S $@

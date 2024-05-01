@@ -15,6 +15,8 @@
 
 #define ENOTDEVELOPMENT 142
 
+static uuid_t boot_uuid;
+
 static void (*xpc_handler_orig)(uint64_t a1, uint64_t a2, xpc_object_t xdict);
 static void xpc_handler_hook(uint64_t a1, uint64_t a2, xpc_object_t xdict) {
     if (!xdict || xpc_get_type(xdict) != XPC_TYPE_DICTIONARY || !xpc_dictionary_get_bool(xdict, "jailbreak")) {
@@ -23,7 +25,7 @@ static void xpc_handler_hook(uint64_t a1, uint64_t a2, xpc_object_t xdict) {
     
 #ifdef DEV_BUILD
     char* description = xpc_copy_description(xdict);
-    if (description) fprintf(stderr, "received jailbreak-related dictionary: %s\n", description);
+    if (description) fprintf(stderr, "received jailbreak related dictionary: %s\n", description);
     free(description);
 #endif
 
@@ -31,12 +33,15 @@ static void xpc_handler_hook(uint64_t a1, uint64_t a2, xpc_object_t xdict) {
     xpc_dictionary_get_audit_token(xdict, &token);
     xpc_object_t isJailbreakD = xpc_copy_entitlement_for_token(LAUNCHD_CMD_ENTITLEMENT, &token);
     xpc_object_t xreply = xpc_dictionary_create_reply(xdict);
-    if (xpc_get_type(isJailbreakD) != XPC_TYPE_BOOL || !xpc_bool_get_value(isJailbreakD)) {
-        xpc_dictionary_set_int64(xreply, "error", EPERM);
-        goto reply;
-    }
 
     uint64_t cmd = xpc_dictionary_get_uint64(xdict, "cmd");
+    if (cmd != LAUNCHD_CMD_GET_BOOT_UUID) {
+        if (xpc_get_type(isJailbreakD) != XPC_TYPE_BOOL || !xpc_bool_get_value(isJailbreakD)) {
+            xpc_dictionary_set_int64(xreply, "error", EPERM);
+            goto reply;
+        }
+    }
+    
     switch (cmd) {
         case LAUNCHD_CMD_RELOAD_JB_ENV: {
             if ((pflags & palerain_option_rootful) == 0) {
@@ -113,6 +118,9 @@ static void xpc_handler_hook(uint64_t a1, uint64_t a2, xpc_object_t xdict) {
         case LAUNCHD_CMD_RUN_BOOTSCREEND:
             bootscreend_main();
             break;
+        case LAUNCHD_CMD_GET_BOOT_UUID:
+            xpc_dictionary_set_uuid(xreply, "uuid", boot_uuid);
+            break;
         default: {
             xpc_dictionary_set_int64(xreply, "error", EINVAL);
             break;
@@ -172,6 +180,7 @@ static uint32_t* find_prev_insn(uint32_t* from, uint32_t num, uint32_t insn, uin
 }
 
 void InitXPCHooks(void) {
+    uuid_generate(boot_uuid);
     uint32_t bufsize = PATH_MAX;
     char launchd_path[PATH_MAX];
     int launchd_image_index = 0;
