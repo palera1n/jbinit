@@ -33,6 +33,7 @@ int revert_rootful(xpc_object_t xreply, struct paleinfo* pinfo) {
     xpc_object_t msg;
     unload_cmd_ret = load_cmd(&msg, 2, (char*[]){ "unload", "/Library/LaunchDaemons", NULL }, environ, (char*[]){ NULL });
     remove_ret = remove_jailbreak_files(pinfo->flags);
+    xpc_release(msg);
     
     /* if force revert is set then do not anything to the root fs */
     if ((pinfo->flags & palerain_option_force_revert) == 0) {
@@ -49,6 +50,7 @@ int revert_rootless(xpc_object_t xreply, struct paleinfo* pinfo) {
     int unload_cmd_ret, remove_ret;
     xpc_object_t msg;
     unload_cmd_ret = load_cmd(&msg, 2, (char*[]){ "unload", "/var/jb/Library/LaunchDaemons", NULL }, environ, (char*[]){ NULL });
+    xpc_release(msg);
     remove_ret = remove_jailbreak_files(pinfo->flags);
 
     xpc_dictionary_set_int64(xreply, "unload_cmd_ret", (int64_t)unload_cmd_ret);

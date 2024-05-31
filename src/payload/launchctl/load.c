@@ -95,6 +95,7 @@ load_cmd(xpc_object_t *msg, int argc, char **argv, char **envp, char **apple)
 	launchctl_setup_xpc_dict(dict);
 	xpc_object_t array = launchctl_parse_load_unload(domain, argc, argv);
 	xpc_dictionary_set_value(dict, "paths", array);
+    xpc_release(array);
 	if (load) {
 		xpc_dictionary_set_bool(dict, "enable", wflag);
 	} else {
@@ -116,7 +117,7 @@ load_cmd(xpc_object_t *msg, int argc, char **argv, char **envp, char **apple)
 						if (err == EEXIST || err == EALREADY)
 							fprintf(stderr, "%s: service already loaded\n", key);
 						else
-							fprintf(stderr, "%s: %s\n", key, xpc_strerror(err));
+							fprintf(stderr, "%s: %s\n", key, xpc_strerror((int)err));
 					}
 					return true;
 			});
@@ -124,5 +125,6 @@ load_cmd(xpc_object_t *msg, int argc, char **argv, char **envp, char **apple)
 		}
 	}
 
+    xpc_release(reply);
 	return ret;
 }

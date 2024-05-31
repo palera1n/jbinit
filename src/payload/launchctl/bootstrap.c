@@ -92,7 +92,7 @@ bootstrap_cmd(xpc_object_t *msg, int argc, char **argv, char **envp, char **appl
 						if (err == EEXIST || err == EALREADY)
 							fprintf(stderr, "%s: service already bootstrapped\n", key);
 						else
-							fprintf(stderr, "%s: %s\n", key, xpc_strerror(err));
+							fprintf(stderr, "%s: %s\n", key, xpc_strerror((int)err));
 					}
 					return true;
 			});
@@ -100,8 +100,8 @@ bootstrap_cmd(xpc_object_t *msg, int argc, char **argv, char **envp, char **appl
 			if ((err = xpc_dictionary_get_int64(reply, "bootstrap-error")) == 0)
 				return 0;
 			else {
-				fprintf(stderr, "Bootstrap failed: %lld: %s\n", err, strerror(err));
-				return err;
+				fprintf(stderr, "Bootstrap failed: %lld: %s\n", err, strerror((int)err));
+				return (int)err;
 			}
 		}
 		fprintf(stderr, "Bootstrap failed: %d: %s\n", ret, xpc_strerror(ret));
@@ -140,11 +140,13 @@ bootout_cmd(xpc_object_t *msg, int argc, char **argv, char **envp, char **apple)
 							}
 						}
 						xpc_dictionary_set_uint64(dict, "type", 2);
-						xpc_dictionary_set_uint64(dict, "handle", xpc_user_sessions_get_foreground_uid(0));
+						xpc_dictionary_set_uint64(dict, "handle",
+                                                  xpc_user_sessions_get_foreground_uid(0));
 						return false;
 				});
 			}
 		}
+        xpc_release(paths);
 	}
 
 	if (__builtin_available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, bridgeOS 6.0, *)) {
@@ -164,20 +166,23 @@ bootout_cmd(xpc_object_t *msg, int argc, char **argv, char **envp, char **apple)
 						if (err == EEXIST || err == EALREADY)
 							fprintf(stderr, "%s: service already booted out\n", key);
 						else
-							fprintf(stderr, "%s: %s\n", key, xpc_strerror(err));
+							fprintf(stderr, "%s: %s\n", key, xpc_strerror((int)err));
 					}
 					return true;
 			});
 			int64_t err;
-			if ((err = xpc_dictionary_get_int64(reply, "bootout-error")) == 0)
-				return 0;
-			else {
-				fprintf(stderr, "Bootout failed: %lld: %s\n", err, strerror(err));
-				return err;
+            if ((err = xpc_dictionary_get_int64(reply, "bootout-error")) == 0) {
+                xpc_release(reply);
+                return 0;
+            } else {
+				fprintf(stderr, "Bootout failed: %lld: %s\n", err, strerror((int)err));
+                xpc_release(reply);
+				return (int)err;
 			}
 		}
 		fprintf(stderr, "Boot-out failed: %d: %s\n", ret, xpc_strerror(ret));
 	}
 
+    xpc_release(reply);
 	return ret;
 }

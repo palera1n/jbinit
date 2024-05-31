@@ -68,7 +68,7 @@ launchctl_send_xpc_to_launchd(uint64_t routine, xpc_object_t msg, xpc_object_t *
 	} else {
 		ret = xpc_pipe_routine(bootstrap_pipe, msg, reply);
 	}
-	if (ret == 0 && (ret = xpc_dictionary_get_int64(*reply, "error")) == 0)
+	if (ret == 0 && (ret = (int)xpc_dictionary_get_int64(*reply, "error")) == 0)
 		return 0;
 
 	return ret;
@@ -101,7 +101,7 @@ launchctl_xpc_object_print(xpc_object_t in, const char *name, int level)
 		printf("file-descriptor-object;\n");
 	else if (t == XPC_TYPE_ARRAY) {
 		printf("(\n");
-		int c = xpc_array_get_count(in);
+		int c = (int)xpc_array_get_count(in);
 		for (int i = 0; i < c; i++) {
 			launchctl_xpc_object_print(xpc_array_get_value(in, i), NULL, level + 1);
 		}
@@ -142,6 +142,8 @@ launchctl_test_xpc_send(uint64_t type, uint64_t handle, const char *name)
 	xpc_dictionary_set_uint64(dict, "handle", handle);
 	xpc_dictionary_set_string(dict, "name", name);
 	int err = launchctl_send_xpc_to_launchd(XPC_ROUTINE_UNKNOWN, dict, &reply);
+    xpc_release(dict);
+    xpc_release(reply);
 	return err == 0;
 }
 
@@ -261,6 +263,7 @@ launchctl_create_shmem(xpc_object_t dict, vm_size_t sz)
 	vm_allocate(mach_task_self(), &addr, sz, 0xf0000003);
 	shmem = xpc_shmem_create((void*)addr, sz);
 	xpc_dictionary_set_value(dict, "shmem", shmem);
+    xpc_release(shmem);
 
 	return addr;
 }

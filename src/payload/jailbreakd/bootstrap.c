@@ -483,6 +483,7 @@ pthread_join(prepBootstrapStdOutLogThread, NULL); \
 
     PALERA1ND_LOG("loading %s", launch_path);
     ret = bootstrap_cmd(&msg, 3, (char*[]){ "bootstrap", "system", launch_path, NULL }, environ, (char*[]){ NULL });
+    xpc_release(msg);
 
     PALERA1ND_LOG("bootstrap_cmd returned %d", ret);
 
