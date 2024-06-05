@@ -2145,6 +2145,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LD_DYLIB_INSTALL_NAME = "@rpath/CydiaSubstrate.framework/CydiaSubstrate";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/src/bridgehook/dobby/build",
@@ -2162,6 +2163,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LD_DYLIB_INSTALL_NAME = "@rpath/CydiaSubstrate.framework/CydiaSubstrate";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/src/bridgehook/dobby/build",
@@ -2465,6 +2467,11 @@
 				EXECUTABLE_PREFIX = lib;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_DYLIB_INSTALL_NAME = /cores/binpack/usr/lib/universalhooks.dylib;
+				LD_RUNPATH_SEARCH_PATHS = (
+					/cores/binpack/Library/Frameworks,
+					/var/jb/Library/Frameworks,
+					/Library/Frameworks,
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/src/libs",
@@ -2487,6 +2494,11 @@
 				EXECUTABLE_PREFIX = lib;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_DYLIB_INSTALL_NAME = /cores/binpack/usr/lib/universalhooks.dylib;
+				LD_RUNPATH_SEARCH_PATHS = (
+					/cores/binpack/Library/Frameworks,
+					/var/jb/Library/Frameworks,
+					/Library/Frameworks,
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/src/libs",
