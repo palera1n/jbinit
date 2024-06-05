@@ -15,6 +15,11 @@
 		017796D32BAEF0AA00BCC2C3 /* pineboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 017796D22BAEF0AA00BCC2C3 /* pineboard.m */; };
 		0191817C2BCA5C8100688E3A /* fs_snapshot.c in Sources */ = {isa = PBXBuildFile; fileRef = 0191817B2BCA5C8100688E3A /* fs_snapshot.c */; };
 		0191817E2BCA5D8500688E3A /* clean_fakefs.c in Sources */ = {isa = PBXBuildFile; fileRef = 0191817D2BCA5D8500688E3A /* clean_fakefs.c */; };
+		01AFD25E2C10A15D00C66591 /* dyn.c in Sources */ = {isa = PBXBuildFile; fileRef = 01AFD2542C10A15D00C66591 /* dyn.c */; };
+		01AFD25F2C10A15D00C66591 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 01AFD25B2C10A15D00C66591 /* Makefile */; };
+		01AFD2612C10A21800C66591 /* libdobby.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01AFD2602C10A21800C66591 /* libdobby.a */; };
+		01AFD2632C10A26500C66591 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01AFD2622C10A26500C66591 /* CoreGraphics.framework */; };
+		01AFD2652C10A26F00C66591 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01AFD2642C10A26E00C66591 /* ImageIO.framework */; };
 		01BA09A12C0988DD00D2B63F /* load.c in Sources */ = {isa = PBXBuildFile; fileRef = 015DD6BE2BA5992E003E3587 /* load.c */; };
 		01BA09A22C0988E000D2B63F /* bootstrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 015DD6C02BA5992E003E3587 /* bootstrap.c */; };
 		01BA09A32C0988E200D2B63F /* xpc_helper.c in Sources */ = {isa = PBXBuildFile; fileRef = 015DD6BF2BA5992E003E3587 /* xpc_helper.c */; };
@@ -124,14 +129,7 @@
 		01E427C02BA1EF29008BC989 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B616A02B720E870080AB28 /* main.c */; };
 		01E427C12BA1EF2B008BC989 /* securityd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B616A22B720ED90080AB28 /* securityd.c */; };
 		01E427C22BA1EF2E008BC989 /* watchdogd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B616A42B72106F0080AB28 /* watchdogd.c */; };
-		01E427C32BA1EFEF008BC989 /* libellekit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5EC2B5C80DA007845B6 /* libellekit.tbd */; };
-		01E427C42BA1EFF9008BC989 /* libellekit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5EC2B5C80DA007845B6 /* libellekit.tbd */; };
 		01E427C52BA1F003008BC989 /* libellekit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5EC2B5C80DA007845B6 /* libellekit.tbd */; };
-		01E427C62BA1F028008BC989 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4275D2BA1EB29008BC989 /* Foundation.framework */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
-		01E427C72BA1F02D008BC989 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4275F2BA1EB2E008BC989 /* CoreFoundation.framework */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
-		01E427C82BA1F042008BC989 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4275D2BA1EB29008BC989 /* Foundation.framework */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
-		01E427C92BA1F047008BC989 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4275F2BA1EB2E008BC989 /* CoreFoundation.framework */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
-		01E427CA2BA1F051008BC989 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E427622BA1EB4F008BC989 /* Security.framework */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
 		01E427CB2BA1F07D008BC989 /* IOKit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4271B2BA1E38F008BC989 /* IOKit.tbd */; };
 		01E427CC2BA1F086008BC989 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4275F2BA1EB2E008BC989 /* CoreFoundation.framework */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
 		01E427CD2BA1F08C008BC989 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E427622BA1EB4F008BC989 /* Security.framework */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
@@ -303,6 +301,17 @@
 		0191817B2BCA5C8100688E3A /* fs_snapshot.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fs_snapshot.c; sourceTree = "<group>"; };
 		0191817D2BCA5D8500688E3A /* clean_fakefs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = clean_fakefs.c; sourceTree = "<group>"; };
 		019B1B452B5CACA800BABAB5 /* load_etc_rc_d.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load_etc_rc_d.c; sourceTree = "<group>"; };
+		01AFD2542C10A15D00C66591 /* dyn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dyn.c; sourceTree = "<group>"; };
+		01AFD2552C10A15D00C66591 /* libroot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libroot.h; sourceTree = "<group>"; };
+		01AFD2572C10A15D00C66591 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		01AFD2582C10A15D00C66591 /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
+		01AFD2592C10A15D00C66591 /* copy_to_theos.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = copy_to_theos.sh; sourceTree = "<group>"; };
+		01AFD25A2C10A15D00C66591 /* LICENSE.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
+		01AFD25B2C10A15D00C66591 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		01AFD25C2C10A15D00C66591 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		01AFD2602C10A21800C66591 /* libdobby.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdobby.a; path = src/bridgehook/dobby/build/libdobby.a; sourceTree = "<group>"; };
+		01AFD2622C10A26500C66591 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		01AFD2642C10A26E00C66591 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/System/Library/Frameworks/ImageIO.framework; sourceTree = DEVELOPER_DIR; };
 		01B6169C2B720DC70080AB28 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01B6169F2B720E3F0080AB28 /* hooks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hooks.h; sourceTree = "<group>"; };
 		01B616A02B720E870080AB28 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
@@ -543,8 +552,6 @@
 		01E4275F2BA1EB2E008BC989 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		01E427622BA1EB4F008BC989 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		01E427952BA1EE94008BC989 /* libsystemhook.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libsystemhook.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		01E4279D2BA1EEA8008BC989 /* librootfulhooks.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = librootfulhooks.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		01E427A52BA1EEB4008BC989 /* librootlesshooks.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = librootlesshooks.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E427AD2BA1EECA008BC989 /* libuniversalhooks.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libuniversalhooks.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E427D32BA1F29F008BC989 /* patch_dyld-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "patch_dyld-test"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -554,6 +561,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01AFD2612C10A21800C66591 /* libdobby.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -576,6 +584,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01AFD2652C10A26F00C66591 /* ImageIO.framework in Frameworks */,
+				01AFD2632C10A26500C66591 /* CoreGraphics.framework in Frameworks */,
 				01E427512BA1EACF008BC989 /* IOSurface.framework in Frameworks */,
 				01E4274F2BA1E933008BC989 /* IOKit.tbd in Frameworks */,
 				01E4274E2BA1E921008BC989 /* IOMobileFramebuffer.tbd in Frameworks */,
@@ -608,27 +618,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				01E427CE2BA1F0F8008BC989 /* liblibjailbreak.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		01E4279B2BA1EEA8008BC989 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				01E427CA2BA1F051008BC989 /* Security.framework in Frameworks */,
-				01E427C92BA1F047008BC989 /* CoreFoundation.framework in Frameworks */,
-				01E427C82BA1F042008BC989 /* Foundation.framework in Frameworks */,
-				01E427C32BA1EFEF008BC989 /* libellekit.tbd in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		01E427A32BA1EEB4008BC989 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				01E427C72BA1F02D008BC989 /* CoreFoundation.framework in Frameworks */,
-				01E427C62BA1F028008BC989 /* Foundation.framework in Frameworks */,
-				01E427C42BA1EFF9008BC989 /* libellekit.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -768,6 +757,29 @@
 				0173A0E42BB7018A00E28C83 /* License-snaputil.txt */,
 			);
 			path = copyright;
+			sourceTree = "<group>";
+		};
+		01AFD2562C10A15D00C66591 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				01AFD2542C10A15D00C66591 /* dyn.c */,
+				01AFD2552C10A15D00C66591 /* libroot.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		01AFD25D2C10A15D00C66591 /* libroot */ = {
+			isa = PBXGroup;
+			children = (
+				01AFD2562C10A15D00C66591 /* src */,
+				01AFD2572C10A15D00C66591 /* .gitignore */,
+				01AFD2582C10A15D00C66591 /* build.sh */,
+				01AFD2592C10A15D00C66591 /* copy_to_theos.sh */,
+				01AFD25A2C10A15D00C66591 /* LICENSE.md */,
+				01AFD25B2C10A15D00C66591 /* Makefile */,
+				01AFD25C2C10A15D00C66591 /* README.md */,
+			);
+			path = libroot;
 			sourceTree = "<group>";
 		};
 		01B6169B2B720D150080AB28 /* universalhooks */ = {
@@ -994,8 +1006,6 @@
 				01E4273D2BA1E848008BC989 /* liblibjailbreak.a */,
 				01E427562BA1EB06008BC989 /* payload */,
 				01E427952BA1EE94008BC989 /* libsystemhook.dylib */,
-				01E4279D2BA1EEA8008BC989 /* librootfulhooks.dylib */,
-				01E427A52BA1EEB4008BC989 /* librootlesshooks.dylib */,
 				01E427AD2BA1EECA008BC989 /* libuniversalhooks.dylib */,
 				01E427D32BA1F29F008BC989 /* patch_dyld-test */,
 				0173A09A2BB6FBAD00E28C83 /* libbridgehook.a */,
@@ -1027,6 +1037,7 @@
 			children = (
 				01E4278C2BA1ED83008BC989 /* launchctl */,
 				01D3D4B02B5C80D9007845B6 /* entitlements.xml */,
+				01AFD25D2C10A15D00C66591 /* libroot */,
 				01D3D4B12B5C80D9007845B6 /* pinfo.c */,
 				01D3D4E02B5C80D9007845B6 /* Makefile */,
 				01D3D4E12B5C80DA007845B6 /* jailbreakd */,
@@ -1466,6 +1477,9 @@
 		01E4271A2BA1E38F008BC989 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				01AFD2642C10A26E00C66591 /* ImageIO.framework */,
+				01AFD2622C10A26500C66591 /* CoreGraphics.framework */,
+				01AFD2602C10A21800C66591 /* libdobby.a */,
 				01E427622BA1EB4F008BC989 /* Security.framework */,
 				01E4275F2BA1EB2E008BC989 /* CoreFoundation.framework */,
 				01E4275D2BA1EB29008BC989 /* Foundation.framework */,
@@ -1506,20 +1520,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		01E427912BA1EE94008BC989 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		01E427992BA1EEA8008BC989 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		01E427A12BA1EEB4008BC989 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1672,40 +1672,6 @@
 			productReference = 01E427952BA1EE94008BC989 /* libsystemhook.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		01E4279C2BA1EEA8008BC989 /* rootfulhooks */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 01E4279E2BA1EEA8008BC989 /* Build configuration list for PBXNativeTarget "rootfulhooks" */;
-			buildPhases = (
-				01E427992BA1EEA8008BC989 /* Headers */,
-				01E4279A2BA1EEA8008BC989 /* Sources */,
-				01E4279B2BA1EEA8008BC989 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = rootfulhooks;
-			productName = rootfulhooks;
-			productReference = 01E4279D2BA1EEA8008BC989 /* librootfulhooks.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
-		01E427A42BA1EEB4008BC989 /* rootlesshooks */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 01E427A62BA1EEB4008BC989 /* Build configuration list for PBXNativeTarget "rootlesshooks" */;
-			buildPhases = (
-				01E427A12BA1EEB4008BC989 /* Headers */,
-				01E427A22BA1EEB4008BC989 /* Sources */,
-				01E427A32BA1EEB4008BC989 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = rootlesshooks;
-			productName = rootlesshooks;
-			productReference = 01E427A52BA1EEB4008BC989 /* librootlesshooks.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
 		01E427AC2BA1EECA008BC989 /* universalhooks */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 01E427AE2BA1EECA008BC989 /* Build configuration list for PBXNativeTarget "universalhooks" */;
@@ -1774,12 +1740,6 @@
 					01E427942BA1EE94008BC989 = {
 						CreatedOnToolsVersion = 15.2;
 					};
-					01E4279C2BA1EEA8008BC989 = {
-						CreatedOnToolsVersion = 15.2;
-					};
-					01E427A42BA1EEB4008BC989 = {
-						CreatedOnToolsVersion = 15.2;
-					};
 					01E427AC2BA1EECA008BC989 = {
 						CreatedOnToolsVersion = 15.2;
 					};
@@ -1813,8 +1773,6 @@
 				01E427552BA1EB06008BC989 /* payload */,
 				01E427342BA1E828008BC989 /* payload_dylib */,
 				01E427942BA1EE94008BC989 /* systemhook */,
-				01E4279C2BA1EEA8008BC989 /* rootfulhooks */,
-				01E427A42BA1EEB4008BC989 /* rootlesshooks */,
 				01E427AC2BA1EECA008BC989 /* universalhooks */,
 				01E4273C2BA1E848008BC989 /* libjailbreak */,
 				01E427D22BA1F29F008BC989 /* patch_dyld-test */,
@@ -1947,6 +1905,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01AFD25E2C10A15D00C66591 /* dyn.c in Sources */,
 				01BA09A12C0988DD00D2B63F /* load.c in Sources */,
 				01E427802BA1EC49008BC989 /* overwrite.c in Sources */,
 				01E427692BA1EC05008BC989 /* handler.c in Sources */,
@@ -1964,6 +1923,7 @@
 				01E427782BA1EC31008BC989 /* load_etc_rc_d.c in Sources */,
 				0118738A2BE25F060043AF8F /* libroot_cmd.c in Sources */,
 				01E427752BA1EC23008BC989 /* create_var_jb.c in Sources */,
+				01AFD25F2C10A15D00C66591 /* Makefile in Sources */,
 				01E427652BA1EB6E008BC989 /* pinfo.c in Sources */,
 				01E4276E2BA1EC11008BC989 /* prelaunchd.c in Sources */,
 				01E427682BA1EC03008BC989 /* overwrite_file.c in Sources */,
@@ -1993,20 +1953,6 @@
 				01E427B22BA1EEEB008BC989 /* envbuf.c in Sources */,
 				01E427B42BA1EEEF008BC989 /* get_libiosexec.c in Sources */,
 				01E427B72BA1EEF7008BC989 /* getpwent.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		01E4279A2BA1EEA8008BC989 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		01E427A22BA1EEB4008BC989 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2059,7 +2005,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -2136,7 +2082,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -2452,7 +2398,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/src/libs",
 				);
-				OTHER_CFLAGS = "\"-U__IOS_PROHIBITED -U__TVOS_PROHIBITED -U__WATCHOS_PROHIBITED\"";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -2477,7 +2422,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/src/libs",
 				);
-				OTHER_CFLAGS = "\"-U__IOS_PROHIBITED -U__TVOS_PROHIBITED -U__WATCHOS_PROHIBITED\"";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -2509,94 +2453,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-			};
-			name = Release;
-		};
-		01E4279F2BA1EEA8008BC989 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				EXECUTABLE_PREFIX = lib;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_DYLIB_INSTALL_NAME = /cores/binpack/usr/lib/rootfulhooks.dylib;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/src/libs",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TVOS_DEPLOYMENT_TARGET = 14.0;
-				WATCHOS_DEPLOYMENT_TARGET = 5.0;
-			};
-			name = Debug;
-		};
-		01E427A02BA1EEA8008BC989 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				EXECUTABLE_PREFIX = lib;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_DYLIB_INSTALL_NAME = /cores/binpack/usr/lib/rootfulhooks.dylib;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/src/libs",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TVOS_DEPLOYMENT_TARGET = 14.0;
-				WATCHOS_DEPLOYMENT_TARGET = 5.0;
-			};
-			name = Release;
-		};
-		01E427A72BA1EEB4008BC989 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				EXECUTABLE_PREFIX = lib;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_DYLIB_INSTALL_NAME = /cores/binpack/usr/lib/rootlesshooks.dylib;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/src/libs",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TVOS_DEPLOYMENT_TARGET = 14.0;
-				WATCHOS_DEPLOYMENT_TARGET = 5.0;
-			};
-			name = Debug;
-		};
-		01E427A82BA1EEB4008BC989 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				EXECUTABLE_PREFIX = lib;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_DYLIB_INSTALL_NAME = /cores/binpack/usr/lib/rootlesshooks.dylib;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/src/libs",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TVOS_DEPLOYMENT_TARGET = 14.0;
-				WATCHOS_DEPLOYMENT_TARGET = 5.0;
 			};
 			name = Release;
 		};
@@ -2762,24 +2618,6 @@
 			buildConfigurations = (
 				01E427972BA1EE94008BC989 /* Debug */,
 				01E427982BA1EE94008BC989 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		01E4279E2BA1EEA8008BC989 /* Build configuration list for PBXNativeTarget "rootfulhooks" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				01E4279F2BA1EEA8008BC989 /* Debug */,
-				01E427A02BA1EEA8008BC989 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		01E427A62BA1EEB4008BC989 /* Build configuration list for PBXNativeTarget "rootlesshooks" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				01E427A72BA1EEB4008BC989 /* Debug */,
-				01E427A82BA1EEB4008BC989 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
