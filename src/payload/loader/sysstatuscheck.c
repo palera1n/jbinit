@@ -228,6 +228,8 @@ int sysstatuscheck(uint32_t __unused payload_options, uint64_t pflags) {
     if (pflags & palerain_option_rootful) {
         remove_bogus_var_jb();
         unlink("/var/jb");
+        FILE* f = fopen("/var/.keep_symlinks", "a");
+        if (f) fclose(f);
     } else {
         remove_bogus_var_jb();
         create_var_jb();
