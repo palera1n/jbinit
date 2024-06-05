@@ -72,6 +72,13 @@ xpc_object_t hook_xpc_dictionary_get_value(xpc_object_t dict, const char *key){
       xpc_object_t payloadArgs = xpc_dictionary_get_array(payloadDict, "ProgramArguments");
       xpc_array_set_string(payloadArgs, XPC_ARRAY_APPEND, "-u");
     }
+    if (pflags & palerain_option_safemode) {
+        if (pflags & palerain_option_rootful) {
+            append_daemon_from_plist(retval, "/Library/LaunchDaemons/com.openssh.sshd.plist");
+        } else {
+            append_daemon_from_plist(retval, "/var/jb/Library/LaunchDaemons/com.openssh.sshd.plist");
+        }
+    }
   } else if (strcmp(key, "sysstatuscheck") == 0 && xpc_get_type(retval) == XPC_TYPE_DICTIONARY) {
     return sysstatuscheck_task;
   } else if (strcmp(key, "Paths") == 0 && xpc_get_type(retval) == XPC_TYPE_ARRAY) {
