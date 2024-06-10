@@ -238,6 +238,27 @@ void InitXPCHooks(void) {
 
     uint32_t* xpc_handler = NULL;
     uint32_t* xpc_handler_mid = find_insn_maskmatch_match((uint8_t*)text_start, text_size, matches, masks, sizeof(matches)/sizeof(uint32_t));
+
+    uint32_t matches_alt[] = {
+        0x52800028, // mov w8, #0x1
+        0x39000008, // strb
+        0x90000000, // adrp
+        0x3900001f, // strb
+        0x90000001, // adrp
+        0x91000021  // add
+    };
+
+    uint32_t masks_alt[] = {
+        0xffffffff,
+        0xffc0001f,
+        0x9f000000,
+        0xffc0001f,
+        0x9f00001f,
+        0xffc003ff
+    };
+
+    if (!xpc_handler_mid) xpc_handler_mid = find_insn_maskmatch_match((uint8_t*)text_start, text_size, matches_alt, masks_alt, sizeof(matches_alt)/sizeof(uint32_t));
+
     printf("xpc_handler_mid=%p\n", xpc_handler_mid);
 
     if (xpc_handler_mid) {
