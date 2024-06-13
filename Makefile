@@ -50,6 +50,10 @@ else
 SED = sed
 endif
 
+LTO_TMP != mktemp -d
+
+LDFLAGS += -Wl,-object_path_lto,$(LTO_TMP)/lto.o
+
 SUBDIRS = fakedyld payload_dylib payload systemhook universalhooks mount_cores ellekit bridgehook
 
 export ROOT CC CXX OBJC CFLAGS CC_FOR_BUILD HFSPLUS DMG NEWFS_HFS MAC UNAME SED SHELL LDFLAGS VTOOL STRIP DSYMUTIL LDID AR SUBDIRS TARGET_SYSROOT

@@ -147,6 +147,7 @@
 		01E427E42BA1F421008BC989 /* multi.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64E2B5C80DA007845B6 /* multi.c */; };
 		01E427E52BA1F423008BC989 /* macho.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64D2B5C80DA007845B6 /* macho.c */; };
 		01E427E62BA1F426008BC989 /* pe.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D64C2B5C80DA007845B6 /* pe.c */; };
+		01FE46A92C1AD335005E6E9D /* runcmd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01FE46A82C1AD335005E6E9D /* runcmd.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -554,6 +555,7 @@
 		01E427952BA1EE94008BC989 /* libsystemhook.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libsystemhook.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E427AD2BA1EECA008BC989 /* libuniversalhooks.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libuniversalhooks.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E427D32BA1F29F008BC989 /* patch_dyld-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "patch_dyld-test"; sourceTree = BUILT_PRODUCTS_DIR; };
+		01FE46A82C1AD335005E6E9D /* runcmd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = runcmd.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1060,6 +1062,7 @@
 				01D3D4ED2B5C80DA007845B6 /* main.c */,
 				01D3D4EE2B5C80DA007845B6 /* reboot3.c */,
 				01D3D4EF2B5C80DA007845B6 /* bootstrap.c */,
+				01FE46A82C1AD335005E6E9D /* runcmd.c */,
 			);
 			path = jailbreakd;
 			sourceTree = "<group>";
@@ -1914,6 +1917,7 @@
 				01E4276D2BA1EC0E008BC989 /* bootstrap.c in Sources */,
 				01BA09A72C09891F00D2B63F /* Makefile in Sources */,
 				01BA09A22C0988E000D2B63F /* bootstrap.c in Sources */,
+				01FE46A92C1AD335005E6E9D /* runcmd.c in Sources */,
 				01E427742BA1EC20008BC989 /* mount_dmg.c in Sources */,
 				01E4277E2BA1EC43008BC989 /* preboot_path.c in Sources */,
 				01E4277B2BA1EC3D008BC989 /* palera1n_flags.c in Sources */,
@@ -2389,6 +2393,12 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"HAVE_DEBUG_JBD_MSG=1",
+					"DEV_BUILD=1",
+				);
 				GCC_WARN_PEDANTIC = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/apple-include",

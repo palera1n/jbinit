@@ -60,6 +60,12 @@ CF_EXPORT void CFLog(int32_t level, CFStringRef format, ...);
 #define PALERA1ND_LOG_INFO(a, ...) CFLog(kCFLogLevelNotice, CFSTR(a), ##__VA_ARGS__)
 #define PALERA1ND_LOG(a, ...) CFLog(kCFLogLevelNotice, CFSTR(a), ##__VA_ARGS__)
 
+struct nslog_stderr_info {
+    const char* desc;
+    int fd;
+};
+void* write_log(void* arg);
+
 typedef int launchctl_cmd_main(xpc_object_t *msg, int argc, char **argv, char **envp, char **apple);
 launchctl_cmd_main bootstrap_cmd;
 launchctl_cmd_main load_cmd;
@@ -93,6 +99,7 @@ void overwrite_file(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo*
 int overwrite_main(int argc, char* argv[]);
 void reload_launchd_env(void);
 void perform_reboot3(xpc_object_t peer, xpc_object_t xreply, xpc_object_t request, struct paleinfo* pinfo_p);
+void runcmd(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* __unused pinfo);
 ssize_t write_fdout(int fd, void* buf, size_t len);
 _Noreturn void _panic(char* fmt, ...);
 extern bool panic_did_enter;

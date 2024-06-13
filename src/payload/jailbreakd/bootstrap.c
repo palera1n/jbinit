@@ -45,11 +45,6 @@
 
 extern char** environ;
 
-struct nslog_stderr_info {
-    const char* desc;
-    int fd;
-};
-
 void* write_log(void* arg) {
     int fd = ((struct nslog_stderr_info*)arg)->fd;
     ssize_t didRead;

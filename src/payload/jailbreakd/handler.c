@@ -27,7 +27,6 @@
 #define STR_FORMAT "%s"
 #endif
 
-
 uint32_t dyld_get_active_platform(void);
 extern char** environ;
 int reboot3(uint64_t howto, ...);
@@ -243,8 +242,26 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
             reboot3(RB2_USERREBOOT);
             break;
         }
+        case JBD_CMD_RUN_AS_ROOT: {
+            bool entitled = false;
+            xpc_object_t val = xpc_connection_copy_entitlement_value(peer, "com.apple.private.persona-mgmt");
+            if (val && xpc_get_type(val) == XPC_TYPE_BOOL) {
+                entitled = xpc_bool_get_value(val);
+            }
+            if (val) xpc_release(val);
+            if (!entitled) {
+                xpc_dictionary_set_int64(xreply, "error", ENOENTITLEMENT);
+                xpc_dictionary_set_string(xreply, "errorDescription", "This call requires the com.apple.private.persona-mgmt entitlement");
+                break;
+            }
+            runcmd(request, xreply, pinfo_p);
+            break;
+        }
         default:
             xpc_dictionary_set_int64(xreply, "error", EINVAL);
+#ifdef HAVE_DEBUG_JBD_MSG
+            PALERA1ND_LOG_INFO("client pid %d sent an invalid command %llu", pid, cmd);
+#endif
             break;
     }
 

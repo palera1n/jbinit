@@ -73,7 +73,6 @@ loader.dmg: palera1nLoader.ipa
 	rm -rf loader.dmg palera1nLoader
 	mkdir palera1nLoader
 	cd palera1nLoader && unzip ../palera1nLoader.ipa
-	chmod 6755 palera1nLoader/Payload/palera1nLoader.app/palera1nLoader
 	$(call CREATE_UDRW_IMAGE,loader.img,2,palera1nLoader,palera1nLoader/Payload)
 ifeq ($(MAC),1)
 	hdiutil convert -format ULFO loader.img -o loader.dmg
@@ -86,7 +85,6 @@ tvloader.dmg: palera1nLoaderTV.ipa
 	rm -rf loader.dmg palera1nLoaderTV
 	mkdir palera1nLoaderTV
 	cd palera1nLoaderTV && unzip ../palera1nLoaderTV.ipa
-	chmod 6755 palera1nLoaderTV/Payload/palera1nLoaderTV.app/palera1nLoaderTV
 	$(call CREATE_UDRW_IMAGE,tvloader.img,2,palera1nLoaderTV,palera1nLoaderTV/Payload)
 ifeq ($(MAC),1)
 	hdiutil convert -format ULFO tvloader.img -o tvloader.dmg
