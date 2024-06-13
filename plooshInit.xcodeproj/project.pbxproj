@@ -25,6 +25,7 @@
 		01BA09A32C0988E200D2B63F /* xpc_helper.c in Sources */ = {isa = PBXBuildFile; fileRef = 015DD6BF2BA5992E003E3587 /* xpc_helper.c */; };
 		01BA09A72C09891F00D2B63F /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 01BA09A62C09891F00D2B63F /* Makefile */; };
 		01D6C6122C1B3C3D00D02A79 /* headboard.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D6C6112C1B3C3D00D02A79 /* headboard.c */; };
+		01D6C61A2C1B453B00D02A79 /* liblibjailbreak.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4273D2BA1E848008BC989 /* liblibjailbreak.a */; };
 		01E426E42BA1DF91008BC989 /* start.S in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6252B5C80DA007845B6 /* start.S */; };
 		01E426E52BA1DF94008BC989 /* syscall.S in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6262B5C80DA007845B6 /* syscall.S */; };
 		01E426E62BA1DF9B008BC989 /* shellcode.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6302B5C80DA007845B6 /* shellcode.c */; };
@@ -629,6 +630,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01D6C61A2C1B453B00D02A79 /* liblibjailbreak.a in Frameworks */,
 				01E427CD2BA1F08C008BC989 /* Security.framework in Frameworks */,
 				01E427CC2BA1F086008BC989 /* CoreFoundation.framework in Frameworks */,
 				01E427CB2BA1F07D008BC989 /* IOKit.tbd in Frameworks */,
