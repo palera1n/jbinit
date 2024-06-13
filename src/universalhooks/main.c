@@ -21,6 +21,7 @@ struct hook_info info[] = {
     { "/usr/libexec/lsd", lsdRootlessInit, NULL, lsdUniversalInit },
     { "/usr/sbin/cfprefsd", cfprefsdInit, NULL, NULL },
     { "/Applications/PineBoard.app/PineBoard", NULL, NULL, pineboardInit },
+    { "/Applications/HeadBoard.app/HeadBoard", NULL, NULL, headboardInit },
 };
 
 __attribute__((constructor))void universalhooks_main(void) {

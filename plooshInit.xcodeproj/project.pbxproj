@@ -24,6 +24,7 @@
 		01BA09A22C0988E000D2B63F /* bootstrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 015DD6C02BA5992E003E3587 /* bootstrap.c */; };
 		01BA09A32C0988E200D2B63F /* xpc_helper.c in Sources */ = {isa = PBXBuildFile; fileRef = 015DD6BF2BA5992E003E3587 /* xpc_helper.c */; };
 		01BA09A72C09891F00D2B63F /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 01BA09A62C09891F00D2B63F /* Makefile */; };
+		01D6C6122C1B3C3D00D02A79 /* headboard.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D6C6112C1B3C3D00D02A79 /* headboard.c */; };
 		01E426E42BA1DF91008BC989 /* start.S in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6252B5C80DA007845B6 /* start.S */; };
 		01E426E52BA1DF94008BC989 /* syscall.S in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6262B5C80DA007845B6 /* syscall.S */; };
 		01E426E62BA1DF9B008BC989 /* shellcode.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6302B5C80DA007845B6 /* shellcode.c */; };
@@ -542,6 +543,7 @@
 		01D3DA542B5C83B7007845B6 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		01D3DA552B5C83B7007845B6 /* crashreporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crashreporter.h; sourceTree = "<group>"; };
 		01D3DA572B5C83B7007845B6 /* hooks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hooks.h; sourceTree = "<group>"; };
+		01D6C6112C1B3C3D00D02A79 /* headboard.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = headboard.c; sourceTree = "<group>"; };
 		01E426D92BA1DDDC008BC989 /* fakedyld */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fakedyld; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E427132BA1E364008BC989 /* mount_cores */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mount_cores; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E4271B2BA1E38F008BC989 /* IOKit.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = IOKit.tbd; path = src/libs/IOKit.tbd; sourceTree = "<group>"; };
@@ -795,6 +797,7 @@
 				017796C92BAED7ED00BCC2C3 /* springboard.m */,
 				017796CB2BAEDA1A00BCC2C3 /* cfprefsd.c */,
 				017796D22BAEF0AA00BCC2C3 /* pineboard.m */,
+				01D6C6112C1B3C3D00D02A79 /* headboard.c */,
 			);
 			path = universalhooks;
 			sourceTree = "<group>";
@@ -1970,6 +1973,7 @@
 				017796D32BAEF0AA00BCC2C3 /* pineboard.m in Sources */,
 				01E427C02BA1EF29008BC989 /* main.c in Sources */,
 				01E427C22BA1EF2E008BC989 /* watchdogd.c in Sources */,
+				01D6C6122C1B3C3D00D02A79 /* headboard.c in Sources */,
 				017796C82BAED73C00BCC2C3 /* lsd.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

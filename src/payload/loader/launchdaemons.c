@@ -38,22 +38,9 @@ int launchdaemons(uint32_t payload_options, uint64_t pflags) {
             fprintf(stderr, "failed to dlopen springboardservices\n");
         }
     } else if (platform == PLATFORM_TVOS) {
-#if 0
-        sleep(10);
-        if ((payload_options & payload_option_userspace_rebooted) == 0) {
-            xpc_object_t xdict, xreply;
-            xdict = xpc_dictionary_create(NULL, NULL, 0);
-            xpc_dictionary_set_uint64(xdict, "cmd", LAUNCHD_CMD_RUN_BOOTSCREEND);
-            int ret = jailbreak_send_launchd_message(xdict, &xreply);
-            if (ret) {
-                print_jailbreakd_reply(xreply);
-            }
-            xpc_release(xdict);
-            xpc_release(xreply);
-        }
-        sleep(5); // ???
-#endif
-        sleep(15);
+        xpc_object_t xreply = jailbreak_send_jailbreakd_command_with_reply_sync(JBD_CMD_REGISTER_PAYLOAD_PID);
+        xpc_release(xreply);
+        kill(getpid(), SIGSTOP);
     }
 
     if (pflags & palerain_option_safemode) {

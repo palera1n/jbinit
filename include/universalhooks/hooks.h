@@ -8,5 +8,6 @@ void springboardInit(void);
 void cfprefsdInit(void);
 void pineboardInit(void);
 void lsdUniversalInit(void);
+void headboardInit(void);
 
 #endif

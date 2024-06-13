@@ -30,6 +30,7 @@
 uint32_t dyld_get_active_platform(void);
 extern char** environ;
 int reboot3(uint64_t howto, ...);
+pid_t payload_pid = 0;
 
 void dumpUserspacePanicLog(const char *message)
 {
@@ -255,6 +256,38 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
                 break;
             }
             runcmd(request, xreply, pinfo_p);
+            break;
+        }
+        case JBD_CMD_REGISTER_PAYLOAD_PID: {
+            bool entitled = false;
+            xpc_object_t val = xpc_connection_copy_entitlement_value(peer, BOOTSTRAPPER_ENTITLEMENT);
+            if (val && xpc_get_type(val) == XPC_TYPE_BOOL) {
+                entitled = xpc_bool_get_value(val);
+            }
+            if (val) xpc_release(val);
+            if (!entitled) {
+                xpc_dictionary_set_int64(xreply, "error", ENOENTITLEMENT);
+                break;
+            }
+            payload_pid = xpc_connection_get_pid(peer);
+            break;
+        }
+        case JBD_CMD_RESUME_PAYLOAD: {
+            const char* identifier;
+            xpc_object_t val = xpc_connection_copy_entitlement_value(peer, "application-identifier");
+            if (val && xpc_get_type(val) == XPC_TYPE_STRING) {
+                identifier = xpc_string_get_string_ptr(val);
+            }
+            if (strcmp(identifier, "com.apple.HeadBoard") != 0) {
+                xpc_release(val);
+                xpc_dictionary_set_int64(xreply, "error", EPERM);
+                break;
+            }
+            xpc_release(val);
+            if (payload_pid) {
+                kill(payload_pid, SIGCONT);
+                payload_pid = 0;
+            }
             break;
         }
         default:
