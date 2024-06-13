@@ -340,6 +340,11 @@ xpc_pipe_try_receive(mach_port_t *port, xpc_object_t *request,
 	mach_msg_size_t mig_size, uint64_t flags);
 
 XPC_EXPORT
+int
+xpc_receive_mach_msg(void *a1, void *a2, void *a3,
+	void *a4, xpc_object_t *xOut);
+
+XPC_EXPORT
 void
 xpc_set_event(const char *stream, const char *token, xpc_object_t xdict);
 
