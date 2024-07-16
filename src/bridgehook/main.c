@@ -81,7 +81,7 @@ void MSHookClassPair(Class target, Class hook, Class base) {
         Method origImp = class_getInstanceMethod(base, selector);
         Method hookedImp = class_getInstanceMethod(target, selector);
         
-        if (origImp && hookedImp) {
+        if (hookedImp) {
             class_addMethod(base, selector, method_getImplementation(methods[i]), method_encoding);
             method_exchangeImplementations(hookedImp, origImp);
         } else {
@@ -106,3 +106,4 @@ BH_EXPORT
 void MSHookMemory(void *target, const void *data, size_t size) {
     DobbyCodePatch(target, (uint8_t*)data, (uint32_t)size);
 }
+
