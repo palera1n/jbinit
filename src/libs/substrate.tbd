@@ -12,5 +12,6 @@ flags:           [ not_app_extension_safe ]
 install-name:    '@rpath/CydiaSubstrate.framework/CydiaSubstrate'
 exports:
   - targets:         [ arm64-ios, arm64-tvos, arm64-bridgeos ]
-    symbols:         [ _MSHookFunction, _MSHookMessageEx, _MSGetImageByName, _MSCloseImage, _MSFindSymbol ]
+    symbols:         [ _MSHookFunction, _MSHookMessageEx, _MSGetImageByName, _MSCloseImage, _MSFindSymbol,
+                       _MSHookClassPair, _MSHookIvar, _MSHookMemory ]
 ...
