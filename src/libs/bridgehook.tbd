@@ -1,0 +1,16 @@
+--- !tapi-tbd
+tbd-version:     4
+targets:         [ arm64-ios, arm64-tvos, arm64-bridgeos ]
+uuids:
+  - target:          arm64-ios
+    value:           847B3DA6-A02C-309E-844B-EF89824075EC
+  - target:          arm64-tvos
+    value:           847B3DA6-A02C-309E-844B-EF89824075EF
+  - target:          arm64-tvos
+    value:           847B3DA6-A02C-309E-844B-EF89824075AA
+flags:           [ not_app_extension_safe ]
+install-name:    '@rpath/CydiaSubstrate.framework/CydiaSubstrate'
+exports:
+  - targets:         [ arm64-ios, arm64-tvos, arm64-bridgeos ]
+    symbols:         [ _MSHookFunction, _MSHookMessageEx, _MSGetImageByName, _MSCloseImage, _MSFindSymbol ]
+...

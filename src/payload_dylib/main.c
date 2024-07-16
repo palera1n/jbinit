@@ -20,7 +20,7 @@
 #include <mach-o/loader.h>
 
 #define HOOK_DYLIB_PATH "/cores/binpack/usr/lib/systemhook.dylib"
-#define ELLEKIT_PATH "/cores/binpack/Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate"
+#define HOOKING_FW_PATH "/cores/binpack/Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate"
 
 bool has_verbose_boot;
 uint64_t pflags;
@@ -183,14 +183,14 @@ __attribute__((constructor))void launchd_hook_main(void) {
     _panic("symbol spawn_hook_common not found in " HOOK_DYLIB_PATH ": %s\n", dlerror());
   }
 
-  void* ellekit_handle = dlopen(ELLEKIT_PATH, RTLD_NOW);
+  void* ellekit_handle = dlopen(HOOKING_FW_PATH, RTLD_NOW);
   if (!ellekit_handle) {
-    _panic("dlopen ellekit failed: %s\n", dlerror());
+    _panic("dlopen hooking framework failed: %s\n", dlerror());
   }
 
   MSHookFunction_p = dlsym(ellekit_handle, "MSHookFunction");
   if (!MSHookFunction_p) {
-    _panic("symbol MSHookFunction not found in " ELLEKIT_PATH ": %s\n", dlerror());
+    _panic("symbol MSHookFunction not found in " HOOKING_FW_PATH ": %s\n", dlerror());
   }
 
   initSpawnHooks();

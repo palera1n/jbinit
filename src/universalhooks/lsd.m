@@ -7,6 +7,7 @@
 #include <CoreFoundation/CFURLPriv.h>
 #include <mach-o/loader.h>
 #include <mach-o/dyld.h>
+#include <universalhooks/hooks.h>
 
 NSURL* (*orig_LSGetInboxURLForBundleIdentifier)(NSString* bundleIdentifier)=NULL;
 NSURL* new_LSGetInboxURLForBundleIdentifier(NSString* bundleIdentifier)
@@ -37,19 +38,28 @@ uint32_t platform;
 int (*_LSServer_RebuildApplicationDatabases_orig)(void);
 int _LSServer_RebuildApplicationDatabases_hook(void) {
     int retval = _LSServer_RebuildApplicationDatabases_orig();
-    
     pid_t pid;
     int ret;
+    
+    if (platform != PLATFORM_BRIDGEOS) {
+        if (rootful) {
+            posix_spawn(&pid, "/usr/bin/uicache", NULL, NULL, (char*[]){ "/usr/bin/uicache", "-a", NULL }, NULL);
+        } else {
+            posix_spawn(&pid, "/var/jb/usr/bin/uicache", NULL, NULL, (char*[]){ "/var/jb/usr/bin/uicache", "-a", NULL }, NULL);
+        }
+    }
+    
     if (platform == PLATFORM_IOS) {
         ret = posix_spawn(&pid, "/cores/binpack/usr/bin/uicache", NULL, NULL, (char*[]){ "/cores/binpack/usr/bin/uicache", "-p", "/cores/binpack/Applications/palera1nLoader.app", NULL }, NULL);
-        NSLog(@"lsd_hook: posix spawn retval: %d\n", ret);
     } else if (platform == PLATFORM_TVOS) {
         ret = posix_spawn(&pid, "/cores/binpack/usr/bin/uicache", NULL, NULL, (char*[]){ "/cores/binpack/usr/bin/uicache", "-p", "/cores/binpack/Applications/palera1nLoaderTV.app", NULL }, NULL);
-        NSLog(@"lsd_hook: posix spawn retval: %d\n", ret);
     }
     return retval;
 }
 
+#define COMPAT_BUGGY_ELLEKIT
+
+#ifdef COMPAT_BUGGY_ELLEKIT
 static uint32_t* find_insn_maskmatch_match(uint8_t* data, size_t size, uint32_t* matches, uint32_t* masks, int count) {
     int found = 0;
     if(sizeof(matches) != sizeof(masks))
@@ -90,10 +100,7 @@ static uint32_t* find_prev_insn(uint32_t* from, uint32_t num, uint32_t insn, uin
     return NULL;
 }
 
-extern uint32_t dyld_get_active_platform(void);
-void lsdUniversalInit(void) {
-    NSLog(@"lsdUniversalInit...");
-    platform = dyld_get_active_platform();
+static void* find__LSServer_RebuildApplicationDatabases(void) {
     char coreservices_path[PATH_MAX] = "/System/Library/Frameworks/CoreServices.framework/CoreServices";
     int coreservices_image_index = 0;
     for (uint32_t i = 0; i < _dyld_image_count(); i++) {
@@ -126,7 +133,7 @@ void lsdUniversalInit(void) {
 
     if (!text_size) {
         NSLog(@"failed to find CoreServices __TEXT segment");
-        return;
+        return NULL;
     }
 
     uint32_t matches[] = {
@@ -152,7 +159,7 @@ void lsdUniversalInit(void) {
     uint32_t* __LSServer_RebuildApplicationDatabases = NULL;
     uint32_t* __LSServer_RebuildApplicationDatabases_mid = find_insn_maskmatch_match((uint8_t*)text_start, text_size, matches, masks, sizeof(matches)/sizeof(uint32_t));
     NSLog(@"__LSServer_RebuildApplicationDatabases_mid=%p", __LSServer_RebuildApplicationDatabases_mid);
-
+    
     if (__LSServer_RebuildApplicationDatabases_mid) {
         __LSServer_RebuildApplicationDatabases = find_prev_insn(__LSServer_RebuildApplicationDatabases_mid, 25, 0xd10003ff, 0xffc003ff); // sub sp, sp, *
         if (__LSServer_RebuildApplicationDatabases[-1] == 0xd503237f) __LSServer_RebuildApplicationDatabases -= 1; // pacibsp
@@ -160,11 +167,30 @@ void lsdUniversalInit(void) {
         NSLog(@"__LSServer_RebuildApplicationDatabases=%p", __LSServer_RebuildApplicationDatabases);
     }
     
+    return __LSServer_RebuildApplicationDatabases;
+}
+#endif
+
+extern uint32_t dyld_get_active_platform(void);
+void lsdUniversalInit(void) {
+    NSLog(@"lsdUniversalInit...");
+    platform = dyld_get_active_platform();
+    MSImageRef coreServicesImage = MSGetImageByName("/System/Library/Frameworks/CoreServices.framework/CoreServices");
+    void* __LSServer_RebuildApplicationDatabases = MSFindSymbol(coreServicesImage, "__LSServer_RebuildApplicationDatabases");
+    
+#ifdef COMPAT_BUGGY_ELLEKIT
+    // Currently ellekit tvOS has a bug where private symbols can't be found
+    // TODO: Remove
+    if (!__LSServer_RebuildApplicationDatabases) {
+        NSLog(@"Buggy ellekit detected!");
+        __LSServer_RebuildApplicationDatabases = find__LSServer_RebuildApplicationDatabases();
+    }
+#endif
+    
     if (__LSServer_RebuildApplicationDatabases) {
         MSHookFunction(__LSServer_RebuildApplicationDatabases, (void*)&_LSServer_RebuildApplicationDatabases_hook, (void**)&_LSServer_RebuildApplicationDatabases_orig);
     } else {
-        NSLog(@"failed to find __LSServer_RebuildApplicationDatabases");
+        NSLog(@"Could not find __LSServer_RebuildApplicationDatabases");
     }
+    
 }
-
-

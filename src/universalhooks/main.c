@@ -24,9 +24,11 @@ struct hook_info info[] = {
     { "/Applications/HeadBoard.app/HeadBoard", NULL, NULL, headboardInit },
 };
 
+uint64_t pflags;
+bool rootful;
 __attribute__((constructor))void universalhooks_main(void) {
-    uint64_t pflags = strtoull(getenv("JB_PINFO_FLAGS"), NULL, 0);
-    bool rootful = pflags & palerain_option_rootful;
+    pflags = strtoull(getenv("JB_PINFO_FLAGS"), NULL, 0);
+    rootful = pflags & palerain_option_rootful;
     
     char path[PATH_MAX];
     uint32_t pathmax = PATH_MAX;

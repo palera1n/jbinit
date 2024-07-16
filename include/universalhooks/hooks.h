@@ -1,6 +1,12 @@
 #ifndef UNIVERSALHOOKS_HOOKS_H
 #define UNIVERSALHOOKS_HOOKS_H
 
+#include <stdint.h>
+#include <stdbool.h>
+
+extern uint64_t pflags;
+extern bool rootful;
+
 void lsdRootlessInit(void);
 void securitydInit(void);
 void watchdogdInit(void);
