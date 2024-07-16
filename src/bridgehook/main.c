@@ -17,6 +17,7 @@
 typedef void* MSImageRef;
 
 int DobbyHook(void *address, void *fake_func, void **out_origin_func);
+int DobbyCodePatch(void *address, uint8_t *buffer, uint32_t buffer_size);
 
 BH_EXPORT
 void MSHookFunction(void *address, void *fake_func, void **out_origin_func) {
@@ -64,7 +65,6 @@ void *MSFindSymbol(MSImageRef image, const char *name) {
     for (uint32_t i = 0; i < header->ncmds; i++) {
         if (after_header->cmd == LC_SYMTAB) {
             symtab_cmd = (struct symtab_command *) after_header;
-
             break;
         }
 
@@ -122,37 +122,5 @@ void* MSHookIvar(id self, const char* name) {
 
 BH_EXPORT
 void MSHookMemory(void *target, const void *data, size_t size) {
-    kern_return_t ret = KERN_SUCCESS;
-    vm_address_t vmTarget = (vm_address_t)target;
-    vm_size_t vmSize = size;
-    mach_msg_type_number_t infoCount = VM_REGION_SUBMAP_SHORT_INFO_COUNT_64;
-    natural_t depth = 99999;
-    struct vm_region_submap_short_info_64 vmInfo;
-    // obtain permission information
-    ret = vm_region_recurse_64(mach_task_self(), &vmTarget, &vmSize, &depth, (vm_region_recurse_info_t)&vmInfo, &infoCount);
-    
-    if (ret) return;
-    
-    vmTarget = (vm_address_t)target;
-    bool rdonly = !(vmInfo.protection & VM_PROT_WRITE);
-    
-    // make writable
-    if (rdonly) {
-        int flags = VM_PROT_READ | VM_PROT_WRITE;
-        if ((vmInfo.max_protection & VM_PROT_WRITE) == 0) flags |= VM_PROT_COPY;
-        
-        ret = mach_vm_protect(mach_task_self(), vmTarget, size, 0, flags);
-        if (ret) return;
-    }
-    
-    memcpy(target, data, size);
-    
-    // revert permission changes
-    if (rdonly) {
-        ret = mach_vm_protect(mach_task_self(), vmTarget, size, 0, vmInfo.protection);
-        if (ret) return;
-    }
-    
-    sys_icache_invalidate(target, size);
-    return;
+    DobbyCodePatch(target, (uint8_t*)data, (uint32_t)size);
 }
