@@ -51,23 +51,31 @@ MSImageRef MSGetImageByName(const char *file) {
 }
 
 BH_EXPORT
-void MSCloseImage(const char* file) {
+void MSCloseImage(__unused const char* file) {
     return;
 }
 
 BH_EXPORT
 void *MSFindSymbol(MSImageRef image, const char *name) {
-    uint32_t file_index = 0;
-    for (uint32_t i = 0; i < _dyld_image_count(); i++) {
-        if (image == _dyld_get_image_header(i)) {
-            file_index = i;
-            break;
+    if (image) {
+        uint32_t file_index = 0;
+        for (uint32_t i = 0; i < _dyld_image_count(); i++) {
+            if (image == _dyld_get_image_header(i)) {
+                file_index = i;
+                break;
+            }
         }
-    }
-    if (file_index)
-        return DobbySymbolResolver(_dyld_get_image_name(file_index), name);
-    else
+        if (file_index)
+            return DobbySymbolResolver(_dyld_get_image_name(file_index), name);
+        else
+            return NULL;
+    } else {
+        for (uint32_t i = 0; i < _dyld_image_count(); i++) {
+            void* sym = DobbySymbolResolver(_dyld_get_image_name(i), name);
+            if (sym) return sym;
+        }
         return NULL;
+    }
 }
 
 BH_EXPORT
