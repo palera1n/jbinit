@@ -179,7 +179,7 @@ void lsdUniversalInit(void) {
     void* __LSServer_RebuildApplicationDatabases = MSFindSymbol(coreServicesImage, "__LSServer_RebuildApplicationDatabases");
     
 #ifdef COMPAT_BUGGY_ELLEKIT
-    // Currently ellekit tvOS has a bug where private symbols can't be found
+    // Older ellekit tvOS has a bug where private symbols can't be found
     // TODO: Remove
     if (!__LSServer_RebuildApplicationDatabases) {
         NSLog(@"Buggy ellekit detected!");
