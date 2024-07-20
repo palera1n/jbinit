@@ -74,6 +74,7 @@ int prelaunchd(uint32_t payload_options, struct paleinfo* pinfo_p) {
     void* ellekit_handle = dlopen(ELLEKIT_ACTUAL_PATH, RTLD_NOW);
     
     if (ellekit_handle == NULL) {
+        printf("%s\n", dlerror());
         CHECK_ERROR(mount("bindfs", "/cores/binpack/Library/Frameworks/CydiaSubstrate.framework", MNT_RDONLY, "/cores/binpack/Library/Frameworks/CydiaSubstrateBridgeOS.framework"), 1, "failed to bindfs /cores/binpack/Library/Frameworks/CydiaSubstrateBridgeOS.framework -> /cores/binpack/Library/Frameworks/CydiaSubstrate.framework");
     } else {
         dlclose(ellekit_handle);

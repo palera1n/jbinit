@@ -44,7 +44,7 @@ static int bsd_printf(const char* fmt, ...) {
     return retval;
 }
 #else
-#define bsd_printf(__VA_ARGS__) printf(__VA_ARGS__);
+#define bsd_printf(...) printf(__VA_ARGS__);
 #endif
 
 static int init_display(void) {
