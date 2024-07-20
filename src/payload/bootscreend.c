@@ -17,10 +17,12 @@
 #include <sys/param.h>
 #include <CoreGraphics/CoreGraphics.h>
 #include <ImageIO/ImageIO.h>
+#include <sys/sysctl.h>
 
 #define WHITE 0xffffffff
 #define BLACK 0x00000000
 static void *base = NULL;
+IOSurfaceRef buffer;
 static int bytesPerRow = 0;
 static int height = 0;
 static int width = 0;
@@ -63,7 +65,6 @@ static int init_display(void) {
     }
     IOMobileFramebufferDisplaySize size;
     IOMobileFramebufferGetDisplaySize(display, &size);
-    IOSurfaceRef buffer;
     IOMobileFramebufferGetLayerDefaultSurface(display, 0, &buffer);
     bsd_printf("got display %p\n", display);
     width = size.width;
@@ -83,15 +84,8 @@ static int init_display(void) {
     bsd_printf("locked buffer\n");
     base = IOSurfaceGetBaseAddress(buffer);
     bsd_printf("got base address at: %p\n", base);
-    bytesPerRow = IOSurfaceGetBytesPerRow(buffer);
+    bytesPerRow = (int)IOSurfaceGetBytesPerRow(buffer);
     bsd_printf("got bytes per row: %d\n", bytesPerRow);
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
-            int offset = i * bytesPerRow + j * 4;
-            *(int *)(base + offset) = 0x00000000;
-        }
-    }
-    bsd_printf("wrote to buffer\n");
     IOSurfaceUnlock(buffer, 0, 0);
     bsd_printf("unlocked buffer\n");
 
@@ -101,6 +95,47 @@ static int init_display(void) {
     IOMobileFramebufferSwapEnd(display);
     return 0;
 }
+
+void check_for_exit(void)
+{
+    static int maxArgumentSize = 0;
+    if (maxArgumentSize == 0) {
+        size_t size = sizeof(maxArgumentSize);
+        if (sysctl((int[]){ CTL_KERN, KERN_ARGMAX }, 2, &maxArgumentSize, &size, NULL, 0) == -1) {
+            perror("sysctl argument size");
+            maxArgumentSize = 4096; // Default
+        }
+    }
+    int mib[3] = { CTL_KERN, KERN_PROC, KERN_PROC_ALL};
+    struct kinfo_proc *info;
+    size_t length;
+    unsigned long count;
+    
+    if (sysctl(mib, 3, NULL, &length, NULL, 0) < 0)
+        return;
+    if (!(info = malloc(length)))
+        return;
+    if (sysctl(mib, 3, info, &length, NULL, 0) < 0) {
+        free(info);
+        return;
+    }
+    count = length / sizeof(struct kinfo_proc);
+    for (unsigned long i = 0; i < count; i++) {
+        pid_t pid = info[i].kp_proc.p_pid;
+        if (pid == 0) {
+            continue;
+        }
+        size_t size = maxArgumentSize;
+        char* buffer = (char *)malloc(length);
+        if (sysctl((int[]){ CTL_KERN, KERN_PROCARGS2, pid }, 3, buffer, &size, NULL, 0) == 0) {
+            char *executablePath = buffer + sizeof(int);
+            if (strcmp(executablePath, "/usr/libexec/backboardd") == 0 || strcmp(executablePath, "/usr/libexec/dfrd") == 0) exit(0);
+        }
+        free(buffer);
+    }
+    free(info);
+}
+
 
 int bootscreend_draw_cgimage(const char* image_path) {
     int retval = -1;
@@ -274,10 +309,18 @@ int main(int argc, char* argv[]) {
 #else
 #define BOOT_IMAGE_PATH "/cores/binpack/usr/share/boot.jp2"
 int bootscreend_main(void) {
+    int retval = 0;
     if (dyld_get_active_platform() != PLATFORM_BRIDGEOS) {
-        return bootscreend_draw_image(BOOT_IMAGE_PATH);
+        retval = bootscreend_draw_image(BOOT_IMAGE_PATH);
     } else {
-        return bootscreend_draw_gradient();
+        retval = bootscreend_draw_gradient();
     }
+#if !defined(TESTMAIN)
+    if (retval) return retval;
+    while (true) {
+        check_for_exit();
+        sleep(5);
+    }
+#endif
 }
 #endif

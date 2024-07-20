@@ -6,7 +6,8 @@ LDFLAGS += -Wl,-sectcreate,__TEXT,__info_plist,Info.plist
 OBJDIR = obj
 C_SRC = $(wildcard *.c)
 LIBS = -framework CoreFoundation ../libs/IOKit.tbd -framework Foundation
-LIBS += -framework Security
+LIBS += -framework Security ../libs/IOMobileFramebuffer.tbd
+LIBS += -framework CoreGraphics -framework ImageIO -framework IOSurface
 LIBS += ../libs/APFS.tbd ../libjailbreak/libjailbreak.a
 OBJS = $(patsubst %,$(OBJDIR)/%,$(C_SRC:.c=.c.o))
 

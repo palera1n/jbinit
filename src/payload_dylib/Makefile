@@ -6,8 +6,7 @@ OBJDIR = obj
 C_SRC = $(wildcard *.c)
 OBJC_SRC = $(wildcard *.m)
 LIBS = -framework CoreFoundation ../libjailbreak/libjailbreak.a
-LIBS += ../libs/IOKit.tbd -framework Foundation ../libs/IOMobileFramebuffer.tbd
-LIBS += -framework CoreGraphics -framework ImageIO -framework IOSurface
+LIBS += ../libs/IOKit.tbd -framework Foundation
 OBJS = $(patsubst %,$(OBJDIR)/%,$(C_SRC:.c=.c.o)) $(patsubst %,$(OBJDIR)/%,$(OBJC_SRC:.m=.m.o))
 
 ifeq ($(ASAN),1)

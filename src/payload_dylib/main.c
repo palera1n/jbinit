@@ -172,7 +172,9 @@ __attribute__((constructor))void launchd_hook_main(void) {
   if (
       ((pflags & palerain_option_verbose_boot) == 0)
       && (dyld_get_active_platform() != PLATFORM_TVOS || getenv("XPC_USERSPACE_REBOOTED"))
-      ) bootscreend_main();
+      ) {
+          posix_spawn(&pid, "/cores/payload", NULL, NULL, (char*[]){"bootscreend" ,NULL}, (char*[]){ "XPC_NULL_BOOTSTRAP=1" });
+      }
 
   void* systemhook_handle = dlopen(HOOK_DYLIB_PATH, RTLD_NOW);
   if (!systemhook_handle) {

@@ -38,7 +38,6 @@ extern void (*MSHookFunction_p)(void *symbol, void *replace, void **result);
 void initSpawnHooks(void);
 void InitDaemonHooks(void);
 void InitXPCHooks(void);
-int bootscreend_main(void);
 void load_bootstrapped_jailbreak_env(void);
 int bootscreend_draw_image(const char* image_path);
 const char* set_tweakloader_path(const char* path);

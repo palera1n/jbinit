@@ -24,6 +24,8 @@ int main(int argc, char* argv[]) {
     } else if (!strcmp(name, "palera1nd")) {
         palera1nd_log = os_log_create("com.apple.payload", "palera1n Daemon");
         return palera1nd_main(argc, argv);
+    } else if (!strcmp(name, "bootscreend")) {
+        return bootscreend_main();
     } else {
         return -1;
     }

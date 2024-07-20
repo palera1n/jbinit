@@ -111,7 +111,6 @@ static void xpc_handler(xpc_object_t xdict) {
 #endif
             break;
         case LAUNCHD_CMD_RUN_BOOTSCREEND:
-            bootscreend_main();
             break;
         case LAUNCHD_CMD_GET_BOOT_UUID:
             xpc_dictionary_set_uuid(xreply, "uuid", boot_uuid);
