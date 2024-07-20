@@ -28,6 +28,8 @@ static int height = 0;
 static int width = 0;
 //#define BSD_LOG_TO_FILE
 
+static int bootscreend_draw_gradient(void);
+
 #if !defined(TESTMAIN)
 static int bsd_printf(const char* fmt, ...) {
     va_list va;
@@ -177,6 +179,7 @@ int bootscreend_draw_cgimage(const char* image_path) {
     cgImage = CGImageSourceCreateImageAtIndex(cgImageSource, 0, NULL);
     if (!cgImage) {
         bsd_printf("could not create image\n");
+        bootscreend_draw_gradient();
         goto finish;
     }
     rgbColorSpace = CGColorSpaceCreateDeviceRGB();
