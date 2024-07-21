@@ -5,6 +5,7 @@
 #include <universalhooks/hooks.h>
 #include <paleinfo.h>
 #include <inttypes.h>
+#include <unistd.h>
 
 struct hook_info {
     const char* executablePath;
@@ -24,6 +25,22 @@ struct hook_info info[] = {
     { "/Applications/HeadBoard.app/HeadBoard", NULL, NULL, headboardInit },
 };
 
+bool stringEndsWith(const char* str, const char* suffix)
+{
+    if (!str || !suffix) {
+        return false;
+    }
+
+    size_t str_len = strlen(str);
+    size_t suffix_len = strlen(suffix);
+
+    if (str_len < suffix_len) {
+        return false;
+    }
+
+    return !strcmp(str + str_len - suffix_len, suffix);
+}
+
 uint64_t pflags;
 bool rootful;
 __attribute__((constructor))void universalhooks_main(void) {
@@ -42,5 +59,9 @@ __attribute__((constructor))void universalhooks_main(void) {
         else if (info[i].rootlessInit && !rootful) info[i].rootlessInit();
         
         if (info[i].universalInit) info[i].universalInit();
+    }
+    
+    if (stringEndsWith(path, "/TrollStore.app/trollstorehelper")) {
+        trollstorehelperInit(path);
     }
 }

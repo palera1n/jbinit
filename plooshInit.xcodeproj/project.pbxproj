@@ -149,6 +149,7 @@
 		01F2C6172C4C4118007E932C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01F2C6162C4C4118007E932C /* CoreGraphics.framework */; };
 		01F2C6192C4C411B007E932C /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01F2C6182C4C411B007E932C /* ImageIO.framework */; };
 		01F2C61A2C4C4126007E932C /* IOMobileFramebuffer.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5EE2B5C80DA007845B6 /* IOMobileFramebuffer.tbd */; };
+		01F2C6262C4D6091007E932C /* trollstorehelper.c in Sources */ = {isa = PBXBuildFile; fileRef = 01F2C6252C4D6091007E932C /* trollstorehelper.c */; };
 		01FE46A92C1AD335005E6E9D /* runcmd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01FE46A82C1AD335005E6E9D /* runcmd.c */; };
 /* End PBXBuildFile section */
 
@@ -560,6 +561,7 @@
 		01E427D32BA1F29F008BC989 /* patch_dyld-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "patch_dyld-test"; sourceTree = BUILT_PRODUCTS_DIR; };
 		01F2C6162C4C4118007E932C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		01F2C6182C4C411B007E932C /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/System/Library/Frameworks/ImageIO.framework; sourceTree = DEVELOPER_DIR; };
+		01F2C6252C4D6091007E932C /* trollstorehelper.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = trollstorehelper.c; sourceTree = "<group>"; };
 		01FE46A82C1AD335005E6E9D /* runcmd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = runcmd.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -802,6 +804,7 @@
 				017796CB2BAEDA1A00BCC2C3 /* cfprefsd.c */,
 				017796D22BAEF0AA00BCC2C3 /* pineboard.m */,
 				01D6C6112C1B3C3D00D02A79 /* headboard.c */,
+				01F2C6252C4D6091007E932C /* trollstorehelper.c */,
 			);
 			path = universalhooks;
 			sourceTree = "<group>";
@@ -1973,6 +1976,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01F2C6262C4D6091007E932C /* trollstorehelper.c in Sources */,
 				017796CC2BAEDA1A00BCC2C3 /* cfprefsd.c in Sources */,
 				01E427C12BA1EF2B008BC989 /* securityd.c in Sources */,
 				017796CA2BAED7ED00BCC2C3 /* springboard.m in Sources */,

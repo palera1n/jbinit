@@ -15,5 +15,6 @@ void cfprefsdInit(void);
 void pineboardInit(void);
 void lsdUniversalInit(void);
 void headboardInit(void);
+void trollstorehelperInit(char* executablePath);
 
 #endif

@@ -467,6 +467,12 @@ __attribute__((constructor)) static void initializer(void)
                 dlopen_hook("/cores/binpack/usr/lib/universalhooks.dylib", RTLD_NOW);
             }
         }
+        if (release >= 24) {
+            if (stringEndsWith(gExecutablePath, "/TrollStore.app/trollstorehelper")) {
+                if (getuid() == 0)
+                    dlopen_hook("/cores/binpack/usr/lib/universalhooks.dylib", RTLD_NOW);
+            }
+        }
 	}
 
 	//fprintf(stderr, "shouldEnableTweaks(): %d\n", shouldEnableTweaks());
