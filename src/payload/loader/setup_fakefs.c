@@ -42,6 +42,16 @@ void notch_clear(char* machine) {
     }
 }
 
+kern_return_t enter_recovery(void) {
+    io_registry_entry_t nvram = IORegistryEntryFromPath(kIOMasterPortDefault, kIODeviceTreePlane ":/options");
+    kern_return_t ret = IORegistryEntrySetCFProperty(nvram, CFSTR("auto-boot"), CFSTR("false"));
+    printf("set nvram auto-boot=false ret: %d\n",ret);
+    ret = IORegistryEntrySetCFProperty(nvram, CFSTR(kIONVRAMForceSyncNowPropertyKey), CFSTR("auto-boot"));
+    printf("sync nvram ret: %d\n",ret);
+    IOObjectRelease(nvram);
+    return ret;
+}
+
 int copyfile_fakefs_cb(int what, int __unused stage, copyfile_state_t __unused state, const char * src, const char * __unused dst, void * ctx) {
     char basename_buf[PATH_MAX];
     struct paleinfo* pinfo_p = ((struct cb_context*)ctx)->pinfo_p;
@@ -227,13 +237,7 @@ int setup_fakefs(uint32_t __unused payload_options, struct paleinfo* pinfo_p) {
     if (access("/sbin/umount", F_OK) == 0)
         runCommand((char*[]){ "/sbin/umount", "-a", NULL });
 
-    io_registry_entry_t nvram = IORegistryEntryFromPath(kIOMasterPortDefault, kIODeviceTreePlane ":/options");
-    kern_return_t ret = IORegistryEntrySetCFProperty(nvram, CFSTR("auto-boot"), CFSTR("false"));
-    printf("set nvram auto-boot=false ret: %d\n",ret);
-    ret = IORegistryEntrySetCFProperty(nvram, CFSTR(kIONVRAMForceSyncNowPropertyKey), CFSTR("auto-boot"));
-    printf("sync nvram ret: %d\n",ret);
-    IOObjectRelease(nvram);
-
+    enter_recovery();
     sync();
     return 0;
 }

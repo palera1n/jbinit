@@ -9,6 +9,7 @@
 #include <xpc/xpc.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <os/log.h>
+#include <IOKit/IOKitLib.h>
 
 #ifndef __OBJC__
 void NSLog(CFStringRef, ...);
@@ -101,6 +102,7 @@ void reload_launchd_env(void);
 void perform_reboot3(xpc_object_t peer, xpc_object_t xreply, xpc_object_t request, struct paleinfo* pinfo_p);
 void runcmd(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* __unused pinfo);
 int bootscreend_main(void);
+kern_return_t enter_recovery();
 ssize_t write_fdout(int fd, void* buf, size_t len);
 _Noreturn void _panic(char* fmt, ...);
 extern bool panic_did_enter;

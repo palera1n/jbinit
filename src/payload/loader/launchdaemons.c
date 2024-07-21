@@ -8,12 +8,43 @@
 #include <libjailbreak/libjailbreak.h>
 #include <dlfcn.h>
 
+#define RB2_FULLREBOOT (0x8000000000000000llu)
+int reboot3(uint64_t flags, ...);
 mach_port_t (*SBSSpringBoardServerPort)(void);
 static CFRunLoopRef loop;
 
 void sb_launched(CFNotificationCenterRef __unused center, void __unused *observer,
 				 CFStringRef __unused name, const void __unused *object, CFDictionaryRef __unused info) {
     CFRunLoopStop(loop);
+}
+
+void* force_revert_notif_thread(__unused void* arg) {
+    CFUserNotificationRef force_revert_notif = NULL;
+    CFMutableDictionaryRef dict = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    if (dict) {
+        CFDictionarySetValue(dict, kCFUserNotificationAlertHeaderKey, CFSTR("Reboot required"));
+        CFDictionarySetValue(dict, kCFUserNotificationAlertMessageKey, CFSTR(
+            "A reboot is required to complete the force revert.\n\n"
+            "If you wish to jailbreak again, you can choose to enter recovery mode instead.\n"
+        ));
+        CFDictionarySetValue(dict, kCFUserNotificationDefaultButtonTitleKey, CFSTR("Reboot now"));
+        CFDictionarySetValue(dict, kCFUserNotificationAlternateButtonTitleKey, CFSTR("Enter recovery mode"));
+        CFDictionarySetValue(dict, kCFUserNotificationOtherButtonTitleKey, CFSTR("Reboot later"));
+        
+        force_revert_notif = CFUserNotificationCreate(kCFAllocatorDefault, 0, 0, NULL, dict);
+        CFRelease(dict);
+        
+        CFOptionFlags cfres;
+        CFUserNotificationReceiveResponse(force_revert_notif, 0, &cfres);
+        if ((cfres & 0x3) == kCFUserNotificationDefaultResponse) {
+            reboot3(RB2_FULLREBOOT);
+        } else if ((cfres & 0x3) == kCFUserNotificationAlternateResponse) {
+            enter_recovery();
+            reboot3(RB2_FULLREBOOT);
+        }
+        CFRelease(force_revert_notif);
+    }
+    return NULL;
 }
 
 int launchdaemons(uint32_t payload_options, uint64_t pflags) {
@@ -70,6 +101,11 @@ int launchdaemons(uint32_t payload_options, uint64_t pflags) {
     else if (platform != PLATFORM_BRIDGEOS)
         runCommand((char*[]){ "/cores/binpack/usr/bin/uicache", "-a", NULL });
 
+    pthread_t fr_notif_thread = NULL;
+    if (pflags & palerain_option_force_revert) {
+        pthread_create(&fr_notif_thread, NULL, &force_revert_notif_thread, NULL);
+    }
+
     /* just in case the above commands are bad, we run them last so the user can still get the loader */
     switch (platform) {
         case PLATFORM_IOS:
@@ -82,8 +118,10 @@ int launchdaemons(uint32_t payload_options, uint64_t pflags) {
         default:
             fprintf(stderr, "uicache_loader: unsupported platform\n");
     }
-
-
+    
+    if (pflags & palerain_option_force_revert) {
+        pthread_join(fr_notif_thread, NULL);
+    }
     printf("plooshInit launchdaemons: Goodbye!\n");
     return 0;
 }
