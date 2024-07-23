@@ -112,6 +112,9 @@ int copyfile_fakefs_cb(int what, int __unused stage, copyfile_state_t __unused s
 
 int setup_fakefs(uint32_t __unused payload_options, struct paleinfo* pinfo_p) {
     CHECK_ERROR(runCommand((char*[]){ "/sbin/fsck", "-qL", NULL }), 1, "fsck failed");
+    CHECK_ERROR(runCommand((char*[]){ "/sbin/mount", "-P", "1", NULL }), 1, "mount-phase-1 failed");
+    CHECK_ERROR(runCommand((char*[]){ "/usr/libexec/init_data_protection", NULL }), 1, "init_data_protection failed");
+    CHECK_ERROR(runCommand((char*[]){ "/sbin/mount", "-P", "2", NULL }), 1, "mount-phase-2 failed"); // needed to make sure overprovisioning volume is made on iPadOS 18
 
     struct statfs rootfs_st;
     CHECK_ERROR(statfs("/", &rootfs_st), 1, "statfs / failed");
@@ -233,6 +236,7 @@ int setup_fakefs(uint32_t __unused payload_options, struct paleinfo* pinfo_p) {
 
     unmount("/cores/fs/real", MNT_FORCE);
     unmount("/cores/fs/fake", MNT_FORCE);
+    runCommand((char*[]){ "/usr/libexec/seputil", "--gigalocker-shutdown", NULL });
 
     if (access("/sbin/umount", F_OK) == 0)
         runCommand((char*[]){ "/sbin/umount", "-a", NULL });
