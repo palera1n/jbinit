@@ -46,3 +46,14 @@ int jailbreak_get_prebootPath(char jbPath[150]) {
     }
     return KERN_SUCCESS;
 }
+
+int jailbreak_get_bmhash_path(char jbPath[150]) {
+    struct utsname name;
+    int ret = uname(&name);
+    if (ret) return errno;
+    if (atoi(name.release) < 20) return ENOTSUP;
+    char bmhash[97];
+    jailbreak_get_bmhash(bmhash);
+    snprintf(jbPath, 150, "/private/preboot/%s", bmhash);
+    return 0;
+}

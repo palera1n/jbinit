@@ -13,6 +13,7 @@
 #include <sys/kern_memorystatus.h>
 #include <sys/snapshot.h>
 #include <sys/mount.h>
+#include <sys/stat.h>
 
 uint32_t dyld_get_active_platform(void);
 
@@ -233,6 +234,22 @@ int sysstatuscheck(uint32_t __unused payload_options, uint64_t pflags) {
     } else {
         remove_bogus_var_jb();
         create_var_jb();
+        char fixupPath[150];
+        if (jailbreak_get_prebootPath(fixupPath) == 0) {
+            chown(fixupPath, 0, 0);
+            chmod(fixupPath, 0755);
+            char fixupPath2[160];
+            snprintf(fixupPath2, 160, "%s/..", fixupPath);
+            chown(fixupPath2, 0, 0);
+            chmod(fixupPath2, 0755);
+        }
+        if (jailbreak_get_bmhash_path(fixupPath) == 0) {
+            chown(fixupPath, 0, 0);
+            chmod(fixupPath, 0755);
+        }
+        chown("/private/preboot", 0, 0);
+        chmod("/private/preboot", 0755);
+        
 #ifdef HAVE_SYSTEMWIDE_IOSEXEC
         if (access("/var/jb", F_OK) == 0) {
             fixup_databases();

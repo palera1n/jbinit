@@ -53,5 +53,6 @@ const char* jailbreak_str_pinfo_flag(uint64_t flag);
 xpc_object_t jailbreak_send_jailbreakd_message_with_reply_sync(xpc_object_t xdict);
 xpc_object_t jailbreak_send_jailbreakd_command_with_reply_sync(uint64_t cmd);
 int jailbreak_send_launchd_message(xpc_object_t xdict, xpc_object_t *xreply);
+int jailbreak_get_bmhash_path(char jbPath[150]);
 
 #endif
