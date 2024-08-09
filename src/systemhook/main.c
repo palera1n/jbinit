@@ -286,28 +286,6 @@ fail:
     return "00000000-0000-0000-0000-000000000000";
 }
 
-
-void* dlopen_from_hook(const char* path, int mode, void* addressInCaller)
-{
-    return dlopen_from(path, mode, addressInCaller);
-}
-
-void* dlopen_hook(const char* path, int mode)
-{
-	void* callerAddress = __builtin_return_address(0);
-    return dlopen_from_hook(path, mode, callerAddress);
-}
-
-void* dlopen_audited_hook(const char* path, int mode)
-{
-	return dlopen_audited(path, mode);
-}
-
-bool dlopen_preflight_hook(const char* path)
-{
-	return dlopen_preflight(path);
-}
-
 int sandbox_init_hook(const char *profile, uint64_t flags, char **errorbuf)
 {
 	int retval = sandbox_init(profile, flags, errorbuf);
@@ -333,32 +311,6 @@ int sandbox_init_with_extensions_hook(const char *profile, uint64_t flags, const
 		unsandbox();
 	}
 	return retval;
-}
-
-int ptrace_hook(int request, pid_t pid, caddr_t addr, int data)
-{
-	int retval = ptrace(request, pid, addr, data);
-	return retval;
-}
-
-pid_t fork_hook(void)
-{
-	return fork();
-}
-
-pid_t vfork_hook(void)
-{
-	return vfork();
-}
-
-pid_t forkpty_hook(int *amaster, char *name, struct termios *termp, struct winsize *winp)
-{
-	return forkpty(amaster, name, termp, winp);
-}
-
-int daemon_hook(int __nochdir, int __noclose)
-{
-	return daemon(__nochdir, __noclose);
 }
 
 bool shouldEnableTweaks(void)
@@ -464,13 +416,13 @@ __attribute__((constructor)) static void initializer(void)
                 strcmp(gExecutablePath, "/usr/sbin/cfprefsd") == 0 ||
                 strcmp(gExecutablePath, "/Applications/PineBoard.app/PineBoard") == 0 ||
                 strcmp(gExecutablePath, "/Applications/HeadBoard.app/HeadBoard") == 0) {
-                dlopen_hook("/cores/binpack/usr/lib/universalhooks.dylib", RTLD_NOW);
+                dlopen("/cores/binpack/usr/lib/universalhooks.dylib", RTLD_NOW);
             }
         }
         if (release >= 24) {
             if (stringEndsWith(gExecutablePath, "/TrollStore.app/trollstorehelper")) {
                 if (getuid() == 0)
-                    dlopen_hook("/cores/binpack/usr/lib/universalhooks.dylib", RTLD_NOW);
+                    dlopen("/cores/binpack/usr/lib/universalhooks.dylib", RTLD_NOW);
             }
         }
 	}
@@ -503,7 +455,7 @@ __attribute__((constructor)) static void initializer(void)
 			} else tweakLoaderPath = JB_TweakLoaderPath;
 		if(access(tweakLoaderPath, F_OK) == 0)
 		{
-			void *tweakLoaderHandle = dlopen_hook(tweakLoaderPath, RTLD_NOW);
+			void *tweakLoaderHandle = dlopen(tweakLoaderPath, RTLD_NOW);
 			if (tweakLoaderHandle != NULL) {
 					dlclose(tweakLoaderHandle);
 			}
@@ -685,18 +637,9 @@ DYLD_INTERPOSE(execv_hook, execv)
 DYLD_INTERPOSE(execl_hook, execl)
 DYLD_INTERPOSE(execvp_hook, execvp)
 DYLD_INTERPOSE(execvP_hook, execvP)
-DYLD_INTERPOSE(dlopen_hook, dlopen)
-DYLD_INTERPOSE(dlopen_from_hook, dlopen_from)
-DYLD_INTERPOSE(dlopen_audited_hook, dlopen_audited)
-DYLD_INTERPOSE(dlopen_preflight_hook, dlopen_preflight)
 DYLD_INTERPOSE(sandbox_init_hook, sandbox_init)
 DYLD_INTERPOSE(sandbox_init_with_parameters_hook, sandbox_init_with_parameters)
 DYLD_INTERPOSE(sandbox_init_with_extensions_hook, sandbox_init_with_extensions)
-DYLD_INTERPOSE(ptrace_hook, ptrace)
-DYLD_INTERPOSE(fork_hook, fork)
-DYLD_INTERPOSE(vfork_hook, vfork)
-DYLD_INTERPOSE(forkpty_hook, forkpty)
-DYLD_INTERPOSE(daemon_hook, daemon)
 DYLD_INTERPOSE(reboot3_hook, reboot3)
 
 __API_AVAILABLE(macos(10.15), ios(13.0), tvos(13.0), bridgeos(4.0))
