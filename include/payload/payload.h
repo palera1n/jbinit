@@ -102,9 +102,12 @@ void reload_launchd_env(void);
 void perform_reboot3(xpc_object_t peer, xpc_object_t xreply, xpc_object_t request, struct paleinfo* pinfo_p);
 void runcmd(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* __unused pinfo);
 int bootscreend_main(void);
-kern_return_t enter_recovery();
+kern_return_t nvram(char* key, char* value);
+kern_return_t nvram_read(const char *key, CFTypeRef *valueRef);
 ssize_t write_fdout(int fd, void* buf, size_t len);
 _Noreturn void _panic(char* fmt, ...);
+const char* volume_prefix(void);
+const char* container_name(void);
 extern bool panic_did_enter;
 
 enum {

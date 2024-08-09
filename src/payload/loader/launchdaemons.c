@@ -39,7 +39,7 @@ void* force_revert_notif_thread(__unused void* arg) {
         if ((cfres & 0x3) == kCFUserNotificationDefaultResponse) {
             reboot3(RB2_FULLREBOOT);
         } else if ((cfres & 0x3) == kCFUserNotificationAlternateResponse) {
-            enter_recovery();
+            nvram("auto-boot", "false");
             reboot3(RB2_FULLREBOOT);
         }
         CFRelease(force_revert_notif);

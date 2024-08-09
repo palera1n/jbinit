@@ -50,9 +50,5 @@ void pinfo_check(struct paleinfo* pinfo_p) {
     )) != 0) {
         panic("ramdisk should never be booted with the options specified");
     }
-
-    if ((pinfo_p->flags & palerain_option_rootful) && pinfo_p->rootdev[0] == '\0') {
-        panic("rootful requires rootdev to be set");
-    }
     return;
 }

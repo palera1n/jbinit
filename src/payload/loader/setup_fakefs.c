@@ -42,14 +42,83 @@ void notch_clear(char* machine) {
     }
 }
 
-kern_return_t enter_recovery(void) {
+kern_return_t nvram(char* key, char* value) {
+    CFStringRef cfKey = CFStringCreateWithCString(kCFAllocatorDefault, key, kCFStringEncodingUTF8);
+    CFStringRef cfValue = CFStringCreateWithCString(kCFAllocatorDefault, value, kCFStringEncodingUTF8);
     io_registry_entry_t nvram = IORegistryEntryFromPath(kIOMasterPortDefault, kIODeviceTreePlane ":/options");
-    kern_return_t ret = IORegistryEntrySetCFProperty(nvram, CFSTR("auto-boot"), CFSTR("false"));
-    printf("set nvram auto-boot=false ret: %d\n",ret);
-    ret = IORegistryEntrySetCFProperty(nvram, CFSTR(kIONVRAMForceSyncNowPropertyKey), CFSTR("auto-boot"));
+    kern_return_t ret = IORegistryEntrySetCFProperty(nvram, cfKey, cfValue);
+    printf("Set nvram %s=%s ret: %d\n", key, value, ret);
+    ret = IORegistryEntrySetCFProperty(nvram, CFSTR(kIONVRAMForceSyncNowPropertyKey), cfKey);
     printf("sync nvram ret: %d\n",ret);
     IOObjectRelease(nvram);
+    if (cfValue) CFRelease(cfValue);
+    CFRelease(cfKey);
     return ret;
+}
+
+kern_return_t nvram_read(const char *key, CFTypeRef *valueRef) {
+    io_registry_entry_t nvram = IORegistryEntryFromPath(kIOMasterPortDefault, kIODeviceTreePlane ":/options");
+    CFStringRef cfKey = CFStringCreateWithCString(kCFAllocatorDefault, key, kCFStringEncodingUTF8);
+    
+    *valueRef = IORegistryEntryCreateCFProperty(nvram, cfKey, 0, 0);
+    IOObjectRelease(nvram);
+    if (*valueRef == 0) return kIOReturnNotFound;
+
+    return KERN_SUCCESS;
+}
+
+const char* volume_prefix(void) {
+    static char prefix[32] = {'\0'};
+    if (prefix[0] != '\0') return prefix;
+    struct statfs rootfs_st;
+    CHECK_ERROR(statfs("/", &rootfs_st), 1, "statfs / failed");
+    if (strcmp(rootfs_st.f_fstypename, "apfs")) {
+        _panic("unexpected filesystem type of /");
+    }
+    
+    char* pBSDName;
+    if ((pBSDName = strstr(rootfs_st.f_mntfromname, "@/dev/"))) {
+        pBSDName = &pBSDName[6];
+    } else {
+        pBSDName = rootfs_st.f_mntfromname;
+    }
+    
+    char* suffix = pBSDName;
+    for (size_t i = 0; pBSDName[i] != '\0'; i++) {
+        if (pBSDName[i] == 's') {
+            suffix = &pBSDName[i+1];
+        }
+    }
+    suffix[0] = '\0';
+    snprintf(prefix, 32, "%s", pBSDName);
+    return prefix;
+}
+
+const char* container_name(void) {
+    static char prefix[32] = {'\0'};
+    if (prefix[0] != '\0') return prefix;
+    struct statfs rootfs_st;
+    CHECK_ERROR(statfs("/", &rootfs_st), 1, "statfs / failed");
+    if (strcmp(rootfs_st.f_fstypename, "apfs")) {
+        _panic("unexpected filesystem type of /");
+    }
+    
+    char* pBSDName;
+    if ((pBSDName = strstr(rootfs_st.f_mntfromname, "@/dev/"))) {
+        pBSDName = &pBSDName[6];
+    } else {
+        pBSDName = rootfs_st.f_mntfromname;
+    }
+    
+    char* suffix = pBSDName;
+    for (size_t i = 4; pBSDName[i] != '\0'; i++) {
+        if (pBSDName[i] == 's') {
+            pBSDName[i] = '\0';
+            break;
+        }
+    }
+    snprintf(prefix, 32, "%s", pBSDName);
+    return prefix;
 }
 
 int copyfile_fakefs_cb(int what, int __unused stage, copyfile_state_t __unused state, const char * src, const char * __unused dst, void * ctx) {
@@ -95,7 +164,7 @@ int copyfile_fakefs_cb(int what, int __unused stage, copyfile_state_t __unused s
                       strcmp(src, "/cores/fs/real/./System/Library/PrivateFrameworks") == 0 ||
                       strcmp(src, "/cores/fs/real/./System/Library/Caches") == 0
                     )
-                    && strncmp(pinfo_p->rootdev, "disk0s1s", 8) == 0)
+                    && strcmp(volume_prefix(), "disk0s1s") == 0)
                  {
                     if (access(src, F_OK) != 0) CHECK_ERROR(mkdir(src, 0755), 1, "bindfs mkdir failed");
                     printf("skip %s\n", src);
@@ -119,16 +188,32 @@ int setup_fakefs(uint32_t __unused payload_options, struct paleinfo* pinfo_p) {
     struct statfs rootfs_st;
     CHECK_ERROR(statfs("/", &rootfs_st), 1, "statfs / failed");
     if (strcmp(rootfs_st.f_fstypename, "apfs")) {
-        panic("unexpected filesystem type of /");
+        _panic("unexpected filesystem type of /");
     }
+    
+    const char* container = container_name();
 
-    char fakefs_mntfromname[50];
-    snprintf(fakefs_mntfromname, 50, "/dev/%s", pinfo_p->rootdev);
+    printf("container=%s\n", container);
+    printf("volume prefix=%s\n", volume_prefix());
 
-    if (access(fakefs_mntfromname, F_OK) == 0) {
-        panic("fakefs already exists");
+    printf("checking for fakefs\n");
+    CFMutableArrayRef fsArray = NULL;
+    int retval = APFSVolumeRoleFind(container, APFS_VOL_ROLE_RECOVERY, &fsArray);
+    if (retval && retval != 49245) {
+        _panic("APFSVolumeRoleFind failed: %d: %s\n", retval, mach_error_string(retval));
+    } else if (retval == 0) {
+        CFIndex recoveryVolumesCount = CFArrayGetCount(fsArray);
+        for (CFIndex i = 0; i < recoveryVolumesCount; i++) {
+            CFStringRef cfVolumePath = CFArrayGetValueAtIndex(fsArray, i);
+            char volume_path[PATH_MAX];
+            CFStringGetCString(cfVolumePath, volume_path, PATH_MAX, kCFStringEncodingUTF8);
+            printf("fakefs %s found!\n", volume_path);
+        }
+        CFRelease(fsArray);
+        _panic("fakefs already exists");
     }
-
+    printf("fakefs does not exist\n");
+    
     struct cb_context context = { .pinfo_p = pinfo_p, .bytesToCopy = 0 };
 
     if ((pinfo_p->flags & palerain_option_setup_partial_root) == 0) {
@@ -142,7 +227,7 @@ int setup_fakefs(uint32_t __unused payload_options, struct paleinfo* pinfo_p) {
 
         context.bytesToCopy = attrbuf.spaceused;
         if ((attrbuf.spaceused + MINIMUM_EXTRA_SPACE) > (rootfs_st.f_bavail * rootfs_st.f_bsize)) {
-            panic("Not enough space! need %lld bytes (%d bytes buffer), have %lld bytes.`", (attrbuf.spaceused + MINIMUM_EXTRA_SPACE), MINIMUM_EXTRA_SPACE, (rootfs_st.f_bavail * rootfs_st.f_bsize));
+            _panic("Not enough space! need %lld bytes (%d bytes buffer), have %lld bytes.`", (attrbuf.spaceused + MINIMUM_EXTRA_SPACE), MINIMUM_EXTRA_SPACE, (rootfs_st.f_bavail * rootfs_st.f_bsize));
         }
     }
 
@@ -155,19 +240,9 @@ int setup_fakefs(uint32_t __unused payload_options, struct paleinfo* pinfo_p) {
     CFDictionaryAddValue(dict, kAPFSVolumeNameKey, CFSTR("Xystem"));
     CFDictionaryAddValue(dict, kAPFSVolumeCaseSensitiveKey, kCFBooleanTrue);
 
-    const char* container = "disk0s1";
-    char container_impl[16];
-    if (strncmp(pinfo_p->rootdev, "disk0", 5) != 0) {
-        strncpy(container_impl, pinfo_p->rootdev, 5);
-        container_impl[5] = '\0';
-        container = container_impl;
-    }
-
-    printf("container=%s\n", container);
-
-    int retval = APFSVolumeCreate(container, dict);
+    retval = APFSVolumeCreate(container, dict);
     if (retval) {
-        panic("APFSVolumeCreate failed: %d: %s\n", retval, mach_error_string(retval));
+        _panic("APFSVolumeCreate failed: %d: %s\n", retval, mach_error_string(retval));
     }
 
     char actual_fakefs_mntfromname[50];
@@ -176,19 +251,13 @@ int setup_fakefs(uint32_t __unused payload_options, struct paleinfo* pinfo_p) {
     CFRelease(volumeRole);
     CFRelease(dict);
 
-    if (strstr(rootfs_st.f_mntfromname, "/dev/disk0s1s") != NULL) {
-        snprintf(actual_fakefs_mntfromname, 50, "/dev/disk0s1s%d", fsindex+1);
-    } else if (strstr(rootfs_st.f_mntfromname, "/dev/disk1s") != NULL) {
-        snprintf(actual_fakefs_mntfromname, 50, "/dev/disk1s%d", fsindex+1);
-    } else {
-        panic("unexpected rootfs f_mntfromname %s", rootfs_st.f_mntfromname);
-    }
-    if (strcmp(actual_fakefs_mntfromname, fakefs_mntfromname)) {
-        panic("unexpected fakefs name %s (expected %s)", actual_fakefs_mntfromname, fakefs_mntfromname);
-    }
+    snprintf(actual_fakefs_mntfromname, 50, "/dev/%s%d", volume_prefix(), fsindex+1);
+    
+    nvram("p1-fakefs-rootdev", &actual_fakefs_mntfromname[5]);
+    
     sleep(2);
     struct apfs_mount_args args = {
-        fakefs_mntfromname, 0, APFS_MOUNT_FILESYSTEM, 0, 0, { "" }, NULL, 0, 0, NULL, 0, 0, 0, 0, 0, 0 };
+        actual_fakefs_mntfromname, 0, APFS_MOUNT_FILESYSTEM, 0, 0, { "" }, NULL, 0, 0, NULL, 0, 0, 0, 0, 0, 0 };
     CHECK_ERROR(mount("apfs", "/cores/fs/fake", 0, &args), 1, "mount fakefs failed");
 
     struct utsname name;
@@ -215,7 +284,7 @@ int setup_fakefs(uint32_t __unused payload_options, struct paleinfo* pinfo_p) {
 
     int fd_fakefs = open("/cores/fs/fake", O_RDONLY | O_DIRECTORY);
     if (fd_fakefs == -1) {
-        panic("cannot open fakefs fd");
+        _panic("cannot open fakefs fd");
     }
 
     CHECK_ERROR(fs_snapshot_create(fd_fakefs, "orig-fs", 0), 1, "cannot create orig-fs snapshot on fakefs");
@@ -241,7 +310,7 @@ int setup_fakefs(uint32_t __unused payload_options, struct paleinfo* pinfo_p) {
     if (access("/sbin/umount", F_OK) == 0)
         runCommand((char*[]){ "/sbin/umount", "-a", NULL });
 
-    enter_recovery();
+    nvram("auto-boot", "false");
     sync();
     return 0;
 }

@@ -52,24 +52,48 @@ int prelaunchd(uint32_t payload_options, struct paleinfo* pinfo_p) {
         }
     }
 
-    char dev_rootdev[32];
-    snprintf(dev_rootdev, 32, "/dev/%s", pinfo_p->rootdev);
     if ((pinfo_p->flags & (palerain_option_rootful | palerain_option_force_revert)) == (palerain_option_rootful | palerain_option_force_revert)) {
         if (pinfo_p->flags & palerain_option_ssv) {
-            printf("will delete %s\n", dev_rootdev);
-            if (access(dev_rootdev, F_OK) == 0) {
+            char dev_rootdev[32];
+            CFMutableArrayRef fsArray;
+            int retval = APFSVolumeRoleFind(container_name(), APFS_VOL_ROLE_RECOVERY, &fsArray);
+            if (retval && retval != 49245) {
+                _panic("APFSVolumeRoleFind failed: %d: %s\n", retval, mach_error_string(retval));
+            }
+            
+            if (!retval) {
+                CFStringGetCString(CFArrayGetValueAtIndex(fsArray, 0), dev_rootdev, 32, kCFStringEncodingUTF8);
+                CFRelease(fsArray);
+            }
+            
+            if (!retval && access(dev_rootdev, F_OK) == 0) {
+                printf("will delete %s\n", dev_rootdev);
                 int16_t role = 0;
+                // 49154 = container not found, 49254 = volume with role not found
                 CHECK_ERROR(APFSVolumeRole(dev_rootdev, &role, NULL), 0, "APFSVolumeRole(%s) Failed", dev_rootdev);
                 printf("found apfs volume role: 0x%04x\n", role);
                 if (role != APFS_VOL_ROLE_RECOVERY) {
                     _panic("BUG: SAFETY: deleting non-recovery volume is not allowed\n");
                 } else {
-                    CHECK_ERROR(errno = APFSVolumeDelete(pinfo_p->rootdev), 1, "failed to delete fakefs");
+                    CHECK_ERROR(errno = APFSVolumeDelete(&dev_rootdev[5]), 1, "failed to delete fakefs");
+                    nvram(kIONVRAMDeletePropertyKey, "p1-fakefs-rootdev");
                 }
             }
         }
     }
     
+    if ((pinfo_p->flags & (palerain_option_rootful | palerain_option_ssv)) == (palerain_option_rootful | palerain_option_ssv)) {
+        if ((pinfo_p->flags & (palerain_option_force_revert | palerain_option_setup_rootful)) == 0) {
+            CFTypeRef fakefs_var;
+            int retval = nvram_read("p1-fakefs-rootdev", &fakefs_var);
+            if (retval == kIOReturnNotFound) {
+                nvram("p1-fakefs-rootdev", pinfo_p->rootdev);
+            } else if (retval == 0) {
+                CFRelease(fakefs_var);
+            }
+        }
+    }
+
     #define ELLEKIT_ACTUAL_PATH "/cores/binpack/usr/lib/libellekit.dylib"
     void* ellekit_handle = dlopen(ELLEKIT_ACTUAL_PATH, RTLD_NOW);
     
