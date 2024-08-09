@@ -95,29 +95,11 @@ const char* volume_prefix(void) {
 }
 
 const char* container_name(void) {
-    static char prefix[32] = {'\0'};
+    static char prefix[32] = { '\0' };
     if (prefix[0] != '\0') return prefix;
-    struct statfs rootfs_st;
-    CHECK_ERROR(statfs("/", &rootfs_st), 1, "statfs / failed");
-    if (strcmp(rootfs_st.f_fstypename, "apfs")) {
-        _panic("unexpected filesystem type of /");
-    }
-    
-    char* pBSDName;
-    if ((pBSDName = strstr(rootfs_st.f_mntfromname, "@/dev/"))) {
-        pBSDName = &pBSDName[6];
-    } else {
-        pBSDName = rootfs_st.f_mntfromname;
-    }
-    
-    char* suffix = pBSDName;
-    for (size_t i = 4; pBSDName[i] != '\0'; i++) {
-        if (pBSDName[i] == 's') {
-            pBSDName[i] = '\0';
-            break;
-        }
-    }
-    snprintf(prefix, 32, "%s", pBSDName);
+    const char* volume_pre = volume_prefix();
+    snprintf(prefix, 32, "%s", volume_pre);
+    prefix[strlen(prefix)-1] = '\0';
     return prefix;
 }
 
