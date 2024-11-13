@@ -115,45 +115,44 @@ int copyfile_fakefs_cb(int what, int __unused stage, copyfile_state_t __unused s
         case COPYFILE_RECURSE_DIR:
             if (!strcmp(basename_r(src, basename_buf), ".fseventsd")) return COPYFILE_SKIP;
             if (pinfo_p->flags & palerain_option_setup_partial_root) {
-#ifdef BOOTLOOP_ME
-                if (
-                    strcmp(src, "/cores/fs/real/./System") == 0
-                ) {
-                    if (access(src, F_OK) != 0) CHECK_ERROR(mkdir(src, 0755), 1, "bindfs mkdir failed");
-                    printf("skip %s\n", src);
-                    return COPYFILE_SKIP;
-                }
-#else
-                if (
-                    strcmp(src, "/cores/fs/real/./System/Library/Frameworks") == 0 ||
-                    strcmp(src, "/cores/fs/real/./System/Library/AccessibilityBundles") == 0 ||
-                    strcmp(src, "/cores/fs/real/./System/Library/Assistant") == 0 ||
-                    strcmp(src, "/cores/fs/real/./System/Library/Audio") == 0 ||
-                    strcmp(src, "/cores/fs/real/./System/Library/Fonts") == 0 ||
-                    strcmp(src, "/cores/fs/real/./System/Library/Health") == 0 ||
-                    strcmp(src, "/cores/fs/real/./System/Library/LinguisticData") == 0 ||
-                    strcmp(src, "/cores/fs/real/./System/Library/OnBoardingBundles") == 0 ||
-                    strcmp(src, "/cores/fs/real/./System/Library/Photos") == 0 ||
-                    strcmp(src, "/cores/fs/real/./System/Library/PreferenceBundles") == 0 ||
-                    strcmp(src, "/cores/fs/real/./System/Library/PreinstalledAssetsV2") == 0
-                ) {
-                    if (access(src, F_OK) != 0) CHECK_ERROR(mkdir(src, 0755), 1, "bindfs mkdir failed");
-                    printf("skip %s\n", src);
-                    return COPYFILE_SKIP;
-                }
+                if (get_platform() == PLATFORM_IOS) {
+                    if (
+                        strcmp(src, "/cores/fs/real/./System/Library/Frameworks") == 0 ||
+                        strcmp(src, "/cores/fs/real/./System/Library/AccessibilityBundles") == 0 ||
+                        strcmp(src, "/cores/fs/real/./System/Library/Assistant") == 0 ||
+                        strcmp(src, "/cores/fs/real/./System/Library/Audio") == 0 ||
+                        strcmp(src, "/cores/fs/real/./System/Library/Fonts") == 0 ||
+                        strcmp(src, "/cores/fs/real/./System/Library/Health") == 0 ||
+                        strcmp(src, "/cores/fs/real/./System/Library/LinguisticData") == 0 ||
+                        strcmp(src, "/cores/fs/real/./System/Library/OnBoardingBundles") == 0 ||
+                        strcmp(src, "/cores/fs/real/./System/Library/Photos") == 0 ||
+                        strcmp(src, "/cores/fs/real/./System/Library/PreferenceBundles") == 0 ||
+                        strcmp(src, "/cores/fs/real/./System/Library/PreinstalledAssetsV2") == 0 ||
+                        strcmp(src, "/cores/fs/real/./usr/standalone/update") == 0
+                        ) {
+                            if (access(src, F_OK) != 0) CHECK_ERROR(mkdir(src, 0755), 1, "bindfs mkdir failed");
+                            printf("skip %s\n", src);
+                            return COPYFILE_SKIP;
+                        }
 
-                if ((
-                      strcmp(src, "/cores/fs/real/./System/Library/PrivateFrameworks") == 0 ||
-                      strcmp(src, "/cores/fs/real/./System/Library/Caches") == 0
-                    )
-                    && strcmp(volume_prefix(), "disk0s1s") == 0)
-                 {
-                    if (access(src, F_OK) != 0) CHECK_ERROR(mkdir(src, 0755), 1, "bindfs mkdir failed");
-                    printf("skip %s\n", src);
-                    return COPYFILE_SKIP;
-
+                    if ((
+                         strcmp(src, "/cores/fs/real/./System/Library/PrivateFrameworks") == 0 ||
+                         strcmp(src, "/cores/fs/real/./System/Library/Caches") == 0
+                         )
+                        && strcmp(volume_prefix(), "disk0s1s") == 0)
+                    {
+                        if (access(src, F_OK) != 0) CHECK_ERROR(mkdir(src, 0755), 1, "bindfs mkdir failed");
+                        printf("skip %s\n", src);
+                        return COPYFILE_SKIP;
+                    }
+                } else {
+                    if (strcmp(src, "/cores/fs/real/./System") == 0 ||
+                        strcmp(src, "/cores/fs/real/./usr/standalone/update") == 0) {
+                        if (access(src, F_OK) != 0) CHECK_ERROR(mkdir(src, 0755), 1, "bindfs mkdir failed");
+                        printf("skip %s\n", src);
+                        return COPYFILE_SKIP;
+                    }
                 }
-#endif
             }
             break;
     }
@@ -260,7 +259,7 @@ int setup_fakefs(uint32_t __unused payload_options, struct paleinfo* pinfo_p) {
     copyfile_state_set(state, COPYFILE_STATE_STATUS_CTX, &context);
     copyfile_state_set(state, COPYFILE_STATE_STATUS_CB, &copyfile_fakefs_cb);
 
-    CHECK_ERROR(copyfile("/cores/fs/real/.", "/cores/fs/fake", state, COPYFILE_ALL | COPYFILE_RECURSIVE | COPYFILE_NOFOLLOW_SRC | COPYFILE_NOFOLLOW_DST | COPYFILE_DATA_SPARSE | COPYFILE_DATA), 1, "copyfile() failed");
+    CHECK_ERROR(copyfile("/cores/fs/real/.", "/cores/fs/fake", state, COPYFILE_ALL | COPYFILE_RECURSIVE | COPYFILE_NOFOLLOW_SRC | COPYFILE_NOFOLLOW_DST | COPYFILE_DATA_SPARSE | COPYFILE_DATA), 1, "copyfile(): create fakefs failed!: %d", errno);
     printf("done copying files to fakefs\n");
     copyfile_state_free(state);
 

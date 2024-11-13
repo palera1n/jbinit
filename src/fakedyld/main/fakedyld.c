@@ -60,12 +60,12 @@ int main(int argc, char* argv[], char* envp[], char* apple[]) {
         read_file("/payload.dylib", &payload_dylib);
         mountroot(&pinfo, &sysinfo);
     }
-    prepare_rootfs(&sysinfo, &pinfo);
     memory_file_handle_t dyld_handle;
     read_file("/usr/lib/dyld", &dyld_handle);
     check_dyld(&dyld_handle);
     int platform = get_platform(&dyld_handle);
     init_cores(&sysinfo, platform, ramdisk_boot);
+    prepare_rootfs(&sysinfo, &pinfo, platform);
     if (ramdisk_boot) {
         write_file("/cores/payload", &payload);
         write_file("/cores/payload.dylib", &payload_dylib);

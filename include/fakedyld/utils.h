@@ -21,7 +21,7 @@ uint64_t lz4dec(const void *src, void *dst, uint64_t srcsz, uint64_t dstsz);
 #define DARWIN21_ROOTDEV "disk0s1s1"
 #define DARWIN22_ROOTDEV "disk1s1"
 
-#define MAX_BOOTARGS_LEN  0x270
+#define MAX_BOOTARGS_LEN  0x400
 #define MAX_KVERSION_LEN  256
 #define MAX_OSRELEASE_LEN 16
 
@@ -63,6 +63,10 @@ static inline int p1_log(const char* format, ...) {
 #define fbi(mnt, dir)                                    \
   do                                                     \
   {                                                      \
+struct stat64 fbi_st; \
+    if (stat64(mnt, &fbi_st)) { \
+        LOG("Skipping bind mount %s because it does not exist", mnt); \
+    }\
     int fbi_ret = mount("bindfs", mnt, MNT_RDONLY, dir); \
     if (fbi_ret != 0)                                    \
     {                                                    \
