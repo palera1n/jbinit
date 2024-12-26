@@ -23,6 +23,7 @@ struct hook_info info[] = {
     { "/usr/sbin/cfprefsd", cfprefsdInit, NULL, NULL },
     { "/Applications/PineBoard.app/PineBoard", NULL, NULL, pineboardInit },
     { "/Applications/HeadBoard.app/HeadBoard", NULL, NULL, headboardInit },
+    { "/usr/sbin/BlueTool", NULL, NULL, bluetoolInit },
 };
 
 bool stringEndsWith(const char* str, const char* suffix)

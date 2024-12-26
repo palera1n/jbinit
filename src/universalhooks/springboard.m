@@ -7,6 +7,7 @@
 - (NSString*) snapshotContainerPath;
 @end
 
+
 @class XBSnapshotContainerIdentity;
 static NSString * (*orig_XBSnapshotContainerIdentity_snapshotContainerPath)(XBSnapshotContainerIdentity*, SEL);
 
@@ -24,10 +25,12 @@ static NSString * XBSnapshotContainer_Identity_snapshotContainerPath(XBSnapshotC
 void springboardInit(void)
 {
     Class class_XBSnapshotContainerIdentity = objc_getClass("XBSnapshotContainerIdentity");
-    MSHookMessageEx(
-        class_XBSnapshotContainerIdentity,
-        @selector(snapshotContainerPath),
-        (IMP)&XBSnapshotContainer_Identity_snapshotContainerPath,
-        (IMP*)&orig_XBSnapshotContainerIdentity_snapshotContainerPath
-    );
+    if (class_XBSnapshotContainerIdentity)
+        MSHookMessageEx(
+                        class_XBSnapshotContainerIdentity,
+                        @selector(snapshotContainerPath),
+                        (IMP)&XBSnapshotContainer_Identity_snapshotContainerPath,
+                        (IMP*)&orig_XBSnapshotContainerIdentity_snapshotContainerPath
+                        );
 }
+

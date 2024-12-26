@@ -6,6 +6,7 @@ OBJC_SRC = $(wildcard *.m)
 OBJCFLAGS = -fobjc-arc
 LIBS = -lobjc ../libs/IOKit.tbd -framework CoreFoundation ../libs/substrate.tbd
 LIBS += -framework Security -framework Foundation ../libjailbreak/libjailbreak.a
+LIBS += ../libs/libMobileGestalt.tbd
 OBJS = $(patsubst %,$(OBJDIR)/%,$(OBJC_SRC:.m=.m.o) $(C_SRC:.c=.c.o))
 
 ifeq ($(ASAN),1)

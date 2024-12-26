@@ -13,6 +13,8 @@
 		017796CA2BAED7ED00BCC2C3 /* springboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 017796C92BAED7ED00BCC2C3 /* springboard.m */; };
 		017796CC2BAEDA1A00BCC2C3 /* cfprefsd.c in Sources */ = {isa = PBXBuildFile; fileRef = 017796CB2BAEDA1A00BCC2C3 /* cfprefsd.c */; };
 		017796D32BAEF0AA00BCC2C3 /* pineboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 017796D22BAEF0AA00BCC2C3 /* pineboard.m */; };
+		017B51A22D1A7E8B00E6D6D5 /* BlueTool.c in Sources */ = {isa = PBXBuildFile; fileRef = 017B51A12D1A7E8500E6D6D5 /* BlueTool.c */; };
+		017B51A42D1A80EF00E6D6D5 /* libMobileGestalt.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 017B51A32D1A80EF00E6D6D5 /* libMobileGestalt.tbd */; };
 		0191817C2BCA5C8100688E3A /* fs_snapshot.c in Sources */ = {isa = PBXBuildFile; fileRef = 0191817B2BCA5C8100688E3A /* fs_snapshot.c */; };
 		0191817E2BCA5D8500688E3A /* clean_fakefs.c in Sources */ = {isa = PBXBuildFile; fileRef = 0191817D2BCA5D8500688E3A /* clean_fakefs.c */; };
 		01AFD25E2C10A15D00C66591 /* dyn.c in Sources */ = {isa = PBXBuildFile; fileRef = 01AFD2542C10A15D00C66591 /* dyn.c */; };
@@ -302,6 +304,8 @@
 		017796C92BAED7ED00BCC2C3 /* springboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = springboard.m; sourceTree = "<group>"; };
 		017796CB2BAEDA1A00BCC2C3 /* cfprefsd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cfprefsd.c; sourceTree = "<group>"; };
 		017796D22BAEF0AA00BCC2C3 /* pineboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = pineboard.m; sourceTree = "<group>"; };
+		017B51A12D1A7E8500E6D6D5 /* BlueTool.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BlueTool.c; sourceTree = "<group>"; };
+		017B51A32D1A80EF00E6D6D5 /* libMobileGestalt.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libMobileGestalt.tbd; path = src/libs/libMobileGestalt.tbd; sourceTree = "<group>"; };
 		0191817B2BCA5C8100688E3A /* fs_snapshot.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fs_snapshot.c; sourceTree = "<group>"; };
 		0191817D2BCA5D8500688E3A /* clean_fakefs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = clean_fakefs.c; sourceTree = "<group>"; };
 		019B1B452B5CACA800BABAB5 /* load_etc_rc_d.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load_etc_rc_d.c; sourceTree = "<group>"; };
@@ -634,6 +638,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				017B51A42D1A80EF00E6D6D5 /* libMobileGestalt.tbd in Frameworks */,
 				01D6C61A2C1B453B00D02A79 /* liblibjailbreak.a in Frameworks */,
 				01E427CD2BA1F08C008BC989 /* Security.framework in Frameworks */,
 				01E427CC2BA1F086008BC989 /* CoreFoundation.framework in Frameworks */,
@@ -795,6 +800,7 @@
 		01B6169B2B720D150080AB28 /* universalhooks */ = {
 			isa = PBXGroup;
 			children = (
+				017B51A12D1A7E8500E6D6D5 /* BlueTool.c */,
 				01B6169C2B720DC70080AB28 /* Makefile */,
 				01B616A02B720E870080AB28 /* main.c */,
 				01B616A22B720ED90080AB28 /* securityd.c */,
@@ -1490,6 +1496,7 @@
 		01E4271A2BA1E38F008BC989 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				017B51A32D1A80EF00E6D6D5 /* libMobileGestalt.tbd */,
 				01F2C6182C4C411B007E932C /* ImageIO.framework */,
 				01F2C6162C4C4118007E932C /* CoreGraphics.framework */,
 				01AFD2642C10A26E00C66591 /* ImageIO.framework */,
@@ -1983,6 +1990,7 @@
 				017796D32BAEF0AA00BCC2C3 /* pineboard.m in Sources */,
 				01E427C02BA1EF29008BC989 /* main.c in Sources */,
 				01E427C22BA1EF2E008BC989 /* watchdogd.c in Sources */,
+				017B51A22D1A7E8B00E6D6D5 /* BlueTool.c in Sources */,
 				01D6C6122C1B3C3D00D02A79 /* headboard.c in Sources */,
 				017796C82BAED73C00BCC2C3 /* lsd.m in Sources */,
 			);

@@ -428,6 +428,9 @@ __attribute__((constructor)) static void initializer(void)
                 if (getuid() == 0)
                     dlopen("/cores/binpack/usr/lib/universalhooks.dylib", RTLD_NOW);
             }
+
+            if (strcmp(gExecutablePath, "/usr/sbin/BlueTool") == 0)
+                dlopen("/cores/binpack/usr/lib/universalhooks.dylib", RTLD_NOW);
         }
 	}
 
