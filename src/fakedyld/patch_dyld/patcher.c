@@ -8,6 +8,7 @@
 #define amfi_check_dyld_policy_self_symbol "_amfi_check_dyld_policy_self"
 #define platform_check_symbol "____ZNK5dyld39MachOFile24forEachSupportedPlatformEU13block_pointerFvNS_8PlatformEjjE_block_invoke"
 #define platform_check_symbol_new "__ZNK6mach_o6Header19loadableIntoProcessENS_8PlatformE7CStringb"
+#define appleinternal_symbol "__ZNK5dyld415SyscallDelegate15internalInstallEv"
 #define start_symbol "start"
 
 #ifdef DEV_BUILD
@@ -61,28 +62,49 @@ bool patch_dyld_in_cache(struct pf_patch_t __attribute__((unused)) *patch, uint3
 }
 
 bool patch_dyld_in_cache_new(struct pf_patch_t __attribute__((unused)) *patch, uint32_t *stream) {
+    struct nlist_64 *appleinternal_sym = macho_find_symbol(arm64_dyld_buf, appleinternal_symbol);
+
+    if (!appleinternal_sym) {
+        LOG("%s: failed to find %s\n", __func__, appleinternal_symbol);
+        return false;
+    }
+
+    void* appleinternal = arm64_dyld_buf + appleinternal_sym->offset;
+
     uint32_t* cbz = pf_find_next(stream + 3, 5, 0x34000008, 0xff00001f); // cbz w8, ...
-    
+
     if (!cbz) {
         LOG("%s: failed to find cbz\n", __func__);
         return false;
     }
-    
+
     uint32_t* no_cache = cbz +((*cbz >> 5) & 0xfff);
-    
+
     uint32_t* adrp = pf_find_prev(stream, 10, 0x90000001, 0x9f00001f); // adrp x1, ...
     char* env = pf_follow_xref(arm64_dyld_buf, adrp);
 
     if (!env)
         return false;
-    
+
     if (strcmp(env, "DYLD_IN_CACHE")) {
         LOG("%s: environment variable is not DYLD_IN_CACHE\n", __func__);
         return false;
     }
-    
-    adrp[0] = arm64_branch(adrp, no_cache, false); // branch to no cache code path
-    
+
+    uint32_t* appleinternal_callsite = pf_find_prev(adrp - 2, 5, 0x94000000, 0xfc000000); // bl
+
+    if (!appleinternal_callsite) {
+        LOG("%s: could not find %s callsite\n", __func__, appleinternal_symbol);
+        return false;
+    }
+
+    if (pf_follow_branch(arm64_dyld_buf, appleinternal_callsite) != appleinternal) {
+        LOG("%s: candidate callsite is not %s callsite\n", __func__, appleinternal_symbol);
+        return false;
+    }
+
+    appleinternal_callsite[0] = arm64_branch(appleinternal_callsite, no_cache, false);
+
     has_found_dyld_in_cache = true;
     return true;
 }
