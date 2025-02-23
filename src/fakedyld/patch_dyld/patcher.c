@@ -3,9 +3,11 @@
 #include <fakedyld/fakedyld.h>
 #include "plooshfinder/plooshfinder32.h"
 #include "plooshfinder/plooshfinder.h"
+#include "plooshfinder/asm/arm64.h"
 
 #define amfi_check_dyld_policy_self_symbol "_amfi_check_dyld_policy_self"
 #define platform_check_symbol "____ZNK5dyld39MachOFile24forEachSupportedPlatformEU13block_pointerFvNS_8PlatformEjjE_block_invoke"
+#define platform_check_symbol_new "__ZNK6mach_o6Header19loadableIntoProcessENS_8PlatformE7CStringb"
 #define start_symbol "start"
 
 #ifdef DEV_BUILD
@@ -18,16 +20,26 @@ static void* arm64_dyld_buf = NULL;
 
 extern bool has_found_platform_patch;
 void platform_check_patch(void* arm64_dyld_buf, int platform) {
-    // this patch tricks dyld into thinking everything is for the current platform
-    struct nlist_64 *forEachSupportedPlatform = macho_find_symbol(arm64_dyld_buf, platform_check_symbol);
-    if (!forEachSupportedPlatform) {
-        panic("failed to find symbol %s", platform_check_symbol);
+    struct nlist_64 *platform_symbol = macho_find_symbol(arm64_dyld_buf, platform_check_symbol);
+    int generation = 1;
+    
+    if (!platform_symbol) {
+        platform_symbol = macho_find_symbol(arm64_dyld_buf, platform_check_symbol_new);
+        generation = 2;
     }
+    
+    if (!platform_symbol)
+        panic("failed to find symbol %s or %s", platform_check_symbol, platform_check_symbol_new);
 
-    void *func_addr = arm64_dyld_buf + forEachSupportedPlatform->offset;
-    uint64_t func_len = macho_get_symbol_size(forEachSupportedPlatform);
+    void *func_addr = arm64_dyld_buf + platform_symbol->offset;
+    uint64_t func_len = macho_get_symbol_size(platform_symbol);
 
-    patch_platform_check(arm64_dyld_buf, func_addr, func_len, platform);
+    // this patch tricks dyld into thinking everything is for the current platform
+    if (generation == 1)
+        patch_platform_check(arm64_dyld_buf, func_addr, func_len, platform);
+    // and this patch just skips the platform check
+    else if (generation == 2)
+        patch_platform_check_new(arm64_dyld_buf, func_addr, func_len, platform);
     if (!has_found_platform_patch) {
         panic("failed to find dyld platform check");
     }
@@ -44,6 +56,33 @@ bool patch_dyld_in_cache(struct pf_patch_t __attribute__((unused)) *patch, uint3
 
     stream[5] = 0xd503201f; /* nop */
     stream[8] = 0x52800000; /* mov w0, #0 */
+    has_found_dyld_in_cache = true;
+    return true;
+}
+
+bool patch_dyld_in_cache_new(struct pf_patch_t __attribute__((unused)) *patch, uint32_t *stream) {
+    uint32_t* cbz = pf_find_next(stream + 3, 5, 0x34000008, 0xff00001f); // cbz w8, ...
+    
+    if (!cbz) {
+        LOG("%s: failed to find cbz\n", __func__);
+        return false;
+    }
+    
+    uint32_t* no_cache = cbz +((*cbz >> 5) & 0xfff);
+    
+    uint32_t* adrp = pf_find_prev(stream, 10, 0x90000001, 0x9f00001f); // adrp x1, ...
+    char* env = pf_follow_xref(arm64_dyld_buf, adrp);
+
+    if (!env)
+        return false;
+    
+    if (strcmp(env, "DYLD_IN_CACHE")) {
+        LOG("%s: environment variable is not DYLD_IN_CACHE\n", __func__);
+        return false;
+    }
+    
+    adrp[0] = arm64_branch(adrp, no_cache, false); // branch to no cache code path
+    
     has_found_dyld_in_cache = true;
     return true;
 }
@@ -73,9 +112,28 @@ void dyld_in_cache_patch(void* buf) {
         0xfc000000,
         0xff00001f
     };
+    
+    uint32_t matches_new[] = {
+        0x7100c51f, // cmp w8, #0x31 ; w8 == '1'
+        0x54000000, // b.eq
+        0x7100c11f, // cmp w8, #0x30 ; w8 != '0'
+        0x54000001  // b.ne
+    };
+    
+    uint32_t masks_new[] = {
+        0xffffffff,
+        0xff00001f,
+        0xffffffff,
+        0xff00001f
+    };
+
     struct pf_patch_t dyld_in_cache = pf_construct_patch(matches, masks, sizeof(matches) / sizeof(uint32_t), (void *) patch_dyld_in_cache);
+    
+    struct pf_patch_t dyld_in_cache_new = pf_construct_patch(matches_new, masks_new, sizeof(matches_new) / sizeof(uint32_t), (void *) patch_dyld_in_cache_new);
+
     struct pf_patch_t patches[] = {
-        dyld_in_cache
+        dyld_in_cache,
+        dyld_in_cache_new
     };
     struct pf_patchset_t patchset = pf_construct_patchset(patches, sizeof(patches) / sizeof(struct pf_patch32_t), (void *) pf_find_maskmatch32);
     struct nlist_64 *start = macho_find_symbol(buf, start_symbol);

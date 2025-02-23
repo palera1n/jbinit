@@ -49,3 +49,13 @@ void patch_platform_check(void *real_buf, void *dyld_buf, size_t dyld_len, uint3
 
     pf_patchset_emit(dyld_buf, dyld_len, patchset);
 }
+
+void patch_platform_check_new(void *real_buf, void *dyld_buf, size_t dyld_len, uint32_t platform) {
+    uint32_t* stream = dyld_buf;
+    
+    stream[0] = 0x52800020; // mov w0, #0x1
+    stream[1] = ret;
+    
+    has_found_platform_patch = true;
+    printf("%s: Patched platform check (New)\n", __FUNCTION__);
+}
