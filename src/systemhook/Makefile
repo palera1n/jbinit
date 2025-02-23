@@ -1,5 +1,6 @@
 CFLAGS += -mappletvos-version-min=12.0 -std=gnu17 -fvisibility=hidden
 LDFLAGS += -Wl,-dead_strip -Wno-unused-command-line-argument
+LDFLAGS += -Wl,-U,_sandbox_init_with_extensions
 LDFLAGS += -install_name /cores/binpack/usr/lib/systemhook.dylib
 OBJDIR = obj
 C_SRC = $(wildcard *.c)

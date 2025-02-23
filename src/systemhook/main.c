@@ -304,9 +304,13 @@ int sandbox_init_with_parameters_hook(const char *profile, uint64_t flags, const
 	return retval;
 }
 
+__attribute__((weak,weak_import))
+int my_sandbox_init_with_extensions(const char *profile, uint64_t flags, const char *const extensions[], char **errorbuf)
+asm ("_sandbox_init_with_extensions");
+
 int sandbox_init_with_extensions_hook(const char *profile, uint64_t flags, const char *const extensions[], char **errorbuf)
 {
-	int retval = sandbox_init_with_extensions(profile, flags, extensions, errorbuf);
+	int retval = my_sandbox_init_with_extensions(profile, flags, extensions, errorbuf);
 	if (retval == 0) {
 		unsandbox();
 	}
@@ -639,7 +643,8 @@ DYLD_INTERPOSE(execvp_hook, execvp)
 DYLD_INTERPOSE(execvP_hook, execvP)
 DYLD_INTERPOSE(sandbox_init_hook, sandbox_init)
 DYLD_INTERPOSE(sandbox_init_with_parameters_hook, sandbox_init_with_parameters)
-DYLD_INTERPOSE(sandbox_init_with_extensions_hook, sandbox_init_with_extensions)
+
+DYLD_INTERPOSE(sandbox_init_with_extensions_hook, my_sandbox_init_with_extensions)
 DYLD_INTERPOSE(reboot3_hook, reboot3)
 
 __API_AVAILABLE(macos(10.15), ios(13.0), tvos(13.0), bridgeos(4.0))
