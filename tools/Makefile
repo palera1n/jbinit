@@ -18,7 +18,7 @@ all: libdmg-hfsplus
 patch_dyld-test:
 	$(MAKE) -C patch_dyld-test
 
-libdmg-hfsplus/build/Makefile: ../.git/modules/tools/libdmg-hfsplus/HEAD
+libdmg-hfsplus/build/Makefile:
 	mkdir -p "libdmg-hfsplus/build"
 	cd "libdmg-hfsplus/build" && cmake \
 		-DCMAKE_BUILD_TYPE=Release \

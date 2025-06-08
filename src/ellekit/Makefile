@@ -3,7 +3,7 @@ ELLEKIT_PLATFORM = iphoneos
 
 all: $(ELLEKIT)
 
-$(ELLEKIT): ../../.git/modules/src/rootlesshooks/ellekit/refs/heads/main
+$(ELLEKIT):
 ifeq ($(MAC),1)
 	cd ellekit; \
 		CC="" CXX="" LD="" xcodebuild build -arch arm64 -sdk $(ELLEKIT_PLATFORM) -scheme ellekit -configuration Release -derivedDataPath ../ellekit_build \
