@@ -78,7 +78,6 @@
 		01E427442BA1E8A9008BC989 /* prebootpath.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D52A2B5C80DA007845B6 /* prebootpath.c */; };
 		01E427452BA1E8AB008BC989 /* strflags.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D52B2B5C80DA007845B6 /* strflags.c */; };
 		01E427462BA1E8DB008BC989 /* liblibjailbreak.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4273D2BA1E848008BC989 /* liblibjailbreak.a */; };
-		01E427482BA1E8F6008BC989 /* platform.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6A12B5C80DA007845B6 /* platform.c */; };
 		01E427492BA1E8F9008BC989 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6A32B5C80DA007845B6 /* main.c */; };
 		01E4274A2BA1E8FD008BC989 /* crashreporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 01683B582B8C679500A7A2EA /* crashreporter.m */; };
 		01E4274B2BA1E901008BC989 /* daemon.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6A52B5C80DA007845B6 /* daemon.c */; };
@@ -104,7 +103,6 @@
 		01E427702BA1EC15008BC989 /* fixup_user_groups.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5042B5C80DA007845B6 /* fixup_user_groups.c */; };
 		01E427712BA1EC18008BC989 /* sysstatuscheck.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5052B5C80DA007845B6 /* sysstatuscheck.c */; };
 		01E427722BA1EC1B008BC989 /* runcmd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5082B5C80DA007845B6 /* runcmd.c */; };
-		01E427732BA1EC1D008BC989 /* platform.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D5092B5C80DA007845B6 /* platform.c */; };
 		01E427742BA1EC20008BC989 /* mount_dmg.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D50A2B5C80DA007845B6 /* mount_dmg.c */; };
 		01E427752BA1EC23008BC989 /* create_var_jb.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D50B2B5C80DA007845B6 /* create_var_jb.c */; };
 		01E427762BA1EC2C008BC989 /* setup_fakefs.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D50C2B5C80DA007845B6 /* setup_fakefs.c */; };
@@ -152,6 +150,15 @@
 		01F2C6192C4C411B007E932C /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01F2C6182C4C411B007E932C /* ImageIO.framework */; };
 		01F2C61A2C4C4126007E932C /* IOMobileFramebuffer.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5EE2B5C80DA007845B6 /* IOMobileFramebuffer.tbd */; };
 		01F2C6262C4D6091007E932C /* trollstorehelper.c in Sources */ = {isa = PBXBuildFile; fileRef = 01F2C6252C4D6091007E932C /* trollstorehelper.c */; };
+		01F6AAD62E06882C0030F03F /* IOMobileFramebuffer.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D3D5EE2B5C80DA007845B6 /* IOMobileFramebuffer.tbd */; };
+		01F6AAD72E06882C0030F03F /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01F2C6182C4C411B007E932C /* ImageIO.framework */; };
+		01F6AAD82E06882C0030F03F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01F2C6162C4C4118007E932C /* CoreGraphics.framework */; };
+		01F6AAD92E06882C0030F03F /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E427502BA1EACF008BC989 /* IOSurface.framework */; };
+		01F6AADA2E06882C0030F03F /* liblibjailbreak.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4273D2BA1E848008BC989 /* liblibjailbreak.a */; };
+		01F6AADD2E06882C0030F03F /* IOKit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4271B2BA1E38F008BC989 /* IOKit.tbd */; };
+		01F6AADE2E06882C0030F03F /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E4275F2BA1EB2E008BC989 /* CoreFoundation.framework */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
+		01F6AAE62E0688A50030F03F /* bootscreend.c in Sources */ = {isa = PBXBuildFile; fileRef = 01D3D6952B5C80DA007845B6 /* bootscreend.c */; };
+		01F6AAED2E068BC20030F03F /* platform.c in Sources */ = {isa = PBXBuildFile; fileRef = 01F6AAEC2E068BC20030F03F /* platform.c */; };
 		01FE46A92C1AD335005E6E9D /* runcmd.c in Sources */ = {isa = PBXBuildFile; fileRef = 01FE46A82C1AD335005E6E9D /* runcmd.c */; };
 /* End PBXBuildFile section */
 
@@ -217,6 +224,15 @@
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 		01E427D12BA1F29F008BC989 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		01F6AAE02E06882C0030F03F /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -407,7 +423,6 @@
 		01D3D5052B5C80DA007845B6 /* sysstatuscheck.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sysstatuscheck.c; sourceTree = "<group>"; };
 		01D3D5062B5C80DA007845B6 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01D3D5082B5C80DA007845B6 /* runcmd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = runcmd.c; sourceTree = "<group>"; };
-		01D3D5092B5C80DA007845B6 /* platform.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = platform.c; sourceTree = "<group>"; };
 		01D3D50A2B5C80DA007845B6 /* mount_dmg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mount_dmg.c; sourceTree = "<group>"; };
 		01D3D50B2B5C80DA007845B6 /* create_var_jb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = create_var_jb.c; sourceTree = "<group>"; };
 		01D3D50C2B5C80DA007845B6 /* setup_fakefs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = setup_fakefs.c; sourceTree = "<group>"; };
@@ -502,7 +517,6 @@
 		01D3D6912B5C80DA007845B6 /* cores_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cores_init.c; sourceTree = "<group>"; };
 		01D3D6952B5C80DA007845B6 /* bootscreend.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bootscreend.c; sourceTree = "<group>"; };
 		01D3D6A02B5C80DA007845B6 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		01D3D6A12B5C80DA007845B6 /* platform.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = platform.c; sourceTree = "<group>"; };
 		01D3D6A32B5C80DA007845B6 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		01D3D6A42B5C80DA007845B6 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		01D3D6A52B5C80DA007845B6 /* daemon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = daemon.c; sourceTree = "<group>"; };
@@ -566,6 +580,9 @@
 		01F2C6162C4C4118007E932C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		01F2C6182C4C411B007E932C /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/System/Library/Frameworks/ImageIO.framework; sourceTree = DEVELOPER_DIR; };
 		01F2C6252C4D6091007E932C /* trollstorehelper.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = trollstorehelper.c; sourceTree = "<group>"; };
+		01F6AAAD2E0687E80030F03F /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		01F6AAE42E06882C0030F03F /* bootscreend */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bootscreend; sourceTree = BUILT_PRODUCTS_DIR; };
+		01F6AAEC2E068BC20030F03F /* platform.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = platform.c; sourceTree = "<group>"; };
 		01FE46A82C1AD335005E6E9D /* runcmd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = runcmd.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -651,6 +668,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01F6AAD52E06882C0030F03F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01F6AAD62E06882C0030F03F /* IOMobileFramebuffer.tbd in Frameworks */,
+				01F6AAD72E06882C0030F03F /* ImageIO.framework in Frameworks */,
+				01F6AAD82E06882C0030F03F /* CoreGraphics.framework in Frameworks */,
+				01F6AAD92E06882C0030F03F /* IOSurface.framework in Frameworks */,
+				01F6AADA2E06882C0030F03F /* liblibjailbreak.a in Frameworks */,
+				01F6AADD2E06882C0030F03F /* IOKit.tbd in Frameworks */,
+				01F6AADE2E06882C0030F03F /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1027,6 +1058,7 @@
 				01E427AD2BA1EECA008BC989 /* libuniversalhooks.dylib */,
 				01E427D32BA1F29F008BC989 /* patch_dyld-test */,
 				0173A09A2BB6FBAD00E28C83 /* libbridgehook.a */,
+				01F6AAE42E06882C0030F03F /* bootscreend */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1093,7 +1125,6 @@
 				01D3D5052B5C80DA007845B6 /* sysstatuscheck.c */,
 				01D3D5062B5C80DA007845B6 /* Makefile */,
 				01D3D5082B5C80DA007845B6 /* runcmd.c */,
-				01D3D5092B5C80DA007845B6 /* platform.c */,
 				01D3D50A2B5C80DA007845B6 /* mount_dmg.c */,
 				01D3D50B2B5C80DA007845B6 /* create_var_jb.c */,
 				01D3D50C2B5C80DA007845B6 /* setup_fakefs.c */,
@@ -1123,6 +1154,7 @@
 		01D3D51E2B5C80DA007845B6 /* libjailbreak */ = {
 			isa = PBXGroup;
 			children = (
+				01F6AAEC2E068BC20030F03F /* platform.c */,
 				01D3D5252B5C80DA007845B6 /* Makefile */,
 				01D3D5262B5C80DA007845B6 /* bmhash.c */,
 				01D3D5272B5C80DA007845B6 /* .gitignore */,
@@ -1328,7 +1360,6 @@
 			isa = PBXGroup;
 			children = (
 				01D3D6A02B5C80DA007845B6 /* Makefile */,
-				01D3D6A12B5C80DA007845B6 /* platform.c */,
 				01683B582B8C679500A7A2EA /* crashreporter.m */,
 				01D3D6A32B5C80DA007845B6 /* main.c */,
 				01D3D6A42B5C80DA007845B6 /* .gitignore */,
@@ -1496,6 +1527,7 @@
 		01E4271A2BA1E38F008BC989 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				01F6AAAD2E0687E80030F03F /* CoreFoundation.framework */,
 				017B51A32D1A80EF00E6D6D5 /* libMobileGestalt.tbd */,
 				01F2C6182C4C411B007E932C /* ImageIO.framework */,
 				01F2C6162C4C4118007E932C /* CoreGraphics.framework */,
@@ -1728,6 +1760,23 @@
 			productReference = 01E427D32BA1F29F008BC989 /* patch_dyld-test */;
 			productType = "com.apple.product-type.tool";
 		};
+		01F6AAAF2E06882C0030F03F /* bootscreend */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 01F6AAE12E06882C0030F03F /* Build configuration list for PBXNativeTarget "bootscreend" */;
+			buildPhases = (
+				01F6AAB02E06882C0030F03F /* Sources */,
+				01F6AAD52E06882C0030F03F /* Frameworks */,
+				01F6AAE02E06882C0030F03F /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = bootscreend;
+			productName = payload;
+			productReference = 01F6AAE42E06882C0030F03F /* bootscreend */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1793,11 +1842,12 @@
 				01E426D82BA1DDDC008BC989 /* fakedyld */,
 				01E427122BA1E364008BC989 /* mount_cores */,
 				01E427552BA1EB06008BC989 /* payload */,
+				01E427D22BA1F29F008BC989 /* patch_dyld-test */,
+				01F6AAAF2E06882C0030F03F /* bootscreend */,
 				01E427342BA1E828008BC989 /* payload_dylib */,
 				01E427942BA1EE94008BC989 /* systemhook */,
 				01E427AC2BA1EECA008BC989 /* universalhooks */,
 				01E4273C2BA1E848008BC989 /* libjailbreak */,
-				01E427D22BA1F29F008BC989 /* patch_dyld-test */,
 				0173A0992BB6FBAD00E28C83 /* bridgehook */,
 			);
 		};
@@ -1901,7 +1951,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01E427482BA1E8F6008BC989 /* platform.c in Sources */,
 				01E4274B2BA1E901008BC989 /* daemon.c in Sources */,
 				01E4274C2BA1E903008BC989 /* pspawn.c in Sources */,
 				01E4274D2BA1E906008BC989 /* xpc.c in Sources */,
@@ -1916,6 +1965,7 @@
 			files = (
 				01E427432BA1E8A7008BC989 /* jbdcall.c in Sources */,
 				01E427412BA1E8A2008BC989 /* bmhash.c in Sources */,
+				01F6AAED2E068BC20030F03F /* platform.c in Sources */,
 				01E427442BA1E8A9008BC989 /* prebootpath.c in Sources */,
 				01E427452BA1E8AB008BC989 /* strflags.c in Sources */,
 				01E427422BA1E8A5008BC989 /* launchd.c in Sources */,
@@ -1958,7 +2008,6 @@
 				01E427772BA1EC2F008BC989 /* main.c in Sources */,
 				01E4277D2BA1EC41008BC989 /* main.c in Sources */,
 				01E427722BA1EC1B008BC989 /* runcmd.c in Sources */,
-				01E427732BA1EC1D008BC989 /* platform.c in Sources */,
 				01E4277F2BA1EC45008BC989 /* bootstrap.c in Sources */,
 				01F2C6142C4C40D1007E932C /* bootscreend.c in Sources */,
 				01E4276A2BA1EC07008BC989 /* obliterate.c in Sources */,
@@ -2013,6 +2062,14 @@
 				01E427E02BA1F419008BC989 /* plooshfinder64.c in Sources */,
 				01E427E62BA1F426008BC989 /* pe.c in Sources */,
 				01E427E42BA1F421008BC989 /* multi.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01F6AAB02E06882C0030F03F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01F6AAE62E0688A50030F03F /* bootscreend.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2584,6 +2641,63 @@
 			};
 			name = Release;
 		};
+		01F6AAE22E06882C0030F03F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/src/payload/entitlements.xml";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"HAVE_DEBUG_JBD_MSG=1",
+					"DEV_BUILD=1",
+					TESTMAIN,
+				);
+				GCC_WARN_PEDANTIC = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/apple-include",
+					"$(PROJECT_DIR)/include",
+					"$(PROJECT_DIR)/src/payload/launchctl",
+				);
+				INFOPLIST_FILE = "payload copy-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/libs",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.apple.bootscreend;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		01F6AAE32E06882C0030F03F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/src/payload/entitlements.xml";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				GCC_WARN_PEDANTIC = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/apple-include",
+					"$(PROJECT_DIR)/include",
+					"$(PROJECT_DIR)/src/payload/launchctl",
+				);
+				INFOPLIST_FILE = "payload copy-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/libs",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.apple.bootscreend;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2682,6 +2796,15 @@
 			buildConfigurations = (
 				01E427D82BA1F29F008BC989 /* Debug */,
 				01E427D92BA1F29F008BC989 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		01F6AAE12E06882C0030F03F /* Build configuration list for PBXNativeTarget "bootscreend" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				01F6AAE22E06882C0030F03F /* Debug */,
+				01F6AAE32E06882C0030F03F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

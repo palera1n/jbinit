@@ -30,7 +30,7 @@ int prelaunchd(uint32_t payload_options, struct paleinfo* pinfo_p) {
     setvbuf(stderr, NULL, _IONBF, 0);
     setvbuf(stdout, NULL, _IONBF, 0);
     printf("plooshInit prelaunchd...\n");
-    int platform = get_platform();
+    int platform = jailbreak_get_platform();
     if (platform == -1) {
         _panic("failed to determine current platform\n");
     }

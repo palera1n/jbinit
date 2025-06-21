@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 
 /* copied from plooshfinder */
-bool macho_check(const void *buf) {
+static bool macho_check(const void *buf) {
     uint32_t *buf_ptr = (uint32_t *) buf;
     uint32_t magic = buf_ptr[0];
 
@@ -21,7 +21,7 @@ bool macho_check(const void *buf) {
 }
 
 /* this function retuns 0 on failure */
-uint32_t macho_get_platform(const void *buf) {
+static uint32_t macho_get_platform(const void *buf) {
     if (!macho_check(buf)) {
         errno = EINVAL;
         return 0;
@@ -49,7 +49,7 @@ uint32_t macho_get_platform(const void *buf) {
     return 0;
 }
 
-int get_platform(void) {
+int jailbreak_get_platform(void) {
     static int cached_platform = -1;
     if (cached_platform != -1) return cached_platform;
     struct stat st;

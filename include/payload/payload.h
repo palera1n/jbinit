@@ -89,7 +89,6 @@ int create_var_jb(void);
 int remount(void);
 int remount_rootfs(struct utsname* name_p);
 int remount_preboot(struct utsname* name_p);
-int get_platform(void);
 void bootstrap(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinfo);
 int remove_jailbreak_files(uint64_t pflags);
 void obliterate(xpc_object_t xrequest, xpc_object_t xreply, struct paleinfo* pinfo);

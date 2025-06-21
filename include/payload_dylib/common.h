@@ -25,7 +25,6 @@ extern char** environ;
 
 extern bool bound_libiosexec;
 void _spin(void);
-int get_platform(void);
 
 extern int (*spawn_hook_common_p)(pid_t *restrict pid, const char *restrict path,
 					   const posix_spawn_file_actions_t *restrict file_actions,

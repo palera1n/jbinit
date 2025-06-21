@@ -49,9 +49,9 @@ void* force_revert_notif_thread(__unused void* arg) {
 
 int launchdaemons(uint32_t payload_options, uint64_t pflags) {
     printf("plooshInit launchdaemons...\n");
-    int platform = get_platform();
+    int platform = jailbreak_get_platform();
     if (platform == -1) {
-        fprintf(stderr, "get_platform(): %d (%s)\n", errno, strerror(errno));
+        fprintf(stderr, "jailbreak_get_platform(): %d (%s)\n", errno, strerror(errno));
         return -1;
     }
 

@@ -15,6 +15,7 @@
 #include <sys/stat.h>
 #include <Security/SecTask.h>
 #include <errno.h>
+#include <libjailbreak/libjailbreak.h>
 
 #define ENOTDEVELOPMENT 142
 #define ENOENTITLEMENT 144
@@ -27,7 +28,6 @@
 #define STR_FORMAT "%s"
 #endif
 
-uint32_t dyld_get_active_platform(void);
 extern char** environ;
 int reboot3(uint64_t howto, ...);
 pid_t payload_pid = 0;
@@ -191,7 +191,7 @@ void palera1nd_handler(xpc_object_t peer, xpc_object_t request, struct paleinfo*
             xpc_release(lreply);
             const char* message = xpc_dictionary_get_string(request, "message");
 #if 0
-            uint32_t platform = dyld_get_active_platform();
+            uint32_t platform = jailbreak_get_platform();
             if (platform == PLATFORM_IOS) {
                 xpc_object_t msg;
                 load_cmd(&msg, 2, (char*[]){ "unload", "/System/Library/LaunchDaemons/com.apple.SpringBoard.plist", NULL }, environ, (char*[]){ NULL });

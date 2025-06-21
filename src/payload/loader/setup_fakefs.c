@@ -26,6 +26,7 @@
 #include <sys/utsname.h>
 #include <dirent.h>
 #include <fcntl.h>
+#include <libjailbreak/libjailbreak.h>
 
 #define MINIMUM_EXTRA_SPACE 256 * 1024 * 1024
 #define kIONVRAMForceSyncNowPropertyKey "IONVRAM-FORCESYNCNOW-PROPERTY"
@@ -115,7 +116,7 @@ int copyfile_fakefs_cb(int what, int __unused stage, copyfile_state_t __unused s
         case COPYFILE_RECURSE_DIR:
             if (!strcmp(basename_r(src, basename_buf), ".fseventsd")) return COPYFILE_SKIP;
             if (pinfo_p->flags & palerain_option_setup_partial_root) {
-                if (get_platform() == PLATFORM_IOS) {
+                if (jailbreak_get_platform() == PLATFORM_IOS) {
                     if (
                         strcmp(src, "/cores/fs/real/./System/Library/Frameworks") == 0 ||
                         strcmp(src, "/cores/fs/real/./System/Library/AccessibilityBundles") == 0 ||

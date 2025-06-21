@@ -11,6 +11,11 @@ LIBS += -framework CoreGraphics -framework ImageIO -framework IOSurface
 LIBS += ../libs/APFS.tbd ../libjailbreak/libjailbreak.a
 OBJS = $(patsubst %,$(OBJDIR)/%,$(C_SRC:.c=.c.o))
 
+BOOTSCREEND_SRC = bootscreend.c
+BOOTSCREEND_CFLAGS = -DTESTMAIN
+BOOTSCREEND_LIBS = ../libs/IOKit.tbd ../libs/IOMobileFramebuffer.tbd
+BOOTSCREEND_LIBS = -framework CoreFoundation ../libjailbreak/libjailbreak.a
+
 LAUNCHCTL_OBJ = bootstrap.o xpc_helper.o load.o
 
 ifeq ($(ASAN),1)
@@ -20,7 +25,7 @@ endif
 
 export CFLAGS LDFLAGS
 
-all: $(patsubst %, %-all, $(SUBDIRS)) payload
+all: $(patsubst %, %-all, $(SUBDIRS)) payload bootscreend
 
 $(OBJDIR):
 	@mkdir -p $(OBJDIR) launchctl/$(OBJDIR)
@@ -28,7 +33,7 @@ $(OBJDIR):
 $(OBJDIR)/%.c.o: %.c $(OBJDIR)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(patsubst %.o, launchctl/%.o, $(LAUNCHCTL_OBJ)): $(patsubst %.o, launchctl/%.c, $(LAUNCHCTL_OBJ)) 
+$(patsubst %.o, launchctl/%.o, $(LAUNCHCTL_OBJ)): $(patsubst %.o, launchctl/%.c, $(LAUNCHCTL_OBJ))
 	CFLAGS="$(CFLAGS) -Wno-unused-parameter" $(MAKE) -C launchctl $(shell echo $@ | cut -d/ -f2)
 
 payload: $(patsubst %, %-all, $(SUBDIRS)) $(OBJS) $(patsubst %.o, launchctl/%.o, $(LAUNCHCTL_OBJ))
@@ -38,6 +43,10 @@ ifneq ($(DEV_BUILD),1)
 	$(STRIP) payload
 endif
 	$(LDID) -Sentitlements.xml -Icom.apple.payload payload
+
+bootscreend: $(BOOTSCREEND_SRC)
+	$(CC) $(CFLAGS) $(BOOTSCREEND_CFLAGS) $(LDFLAGS) $(LIBS) $^ -o $@
+	$(LDID) -Sentitlements.xml -Icom.apple.bootscreend bootscreend
 
 $(patsubst %, %-all, $(SUBDIRS)):
 	$(MAKE) -C $$(echo $@ | cut -d- -f1)

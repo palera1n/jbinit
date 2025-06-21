@@ -539,7 +539,7 @@ SHOOK_EXPORT int64_t jbdswInterceptUserspacePanic(const char *messageString) {
 #define CONSTRUCT_V(major, minor, subminor) ((major & 0xffff) << 16) | ((minor & 0xff) << 8) | (subminor & 0xff)
 
 uint32_t current_platform_min(void) {
-    uint32_t current_plat = dyld_get_active_platform();
+    uint32_t current_plat = jailbreak_get_platform();
     switch (current_plat) {
         case PLATFORM_IOS:
         case PLATFORM_BRIDGEOS:
@@ -555,7 +555,7 @@ uint32_t current_platform_min(void) {
 __API_AVAILABLE(macos(10.15), ios(13.0), tvos(13.0), bridgeos(4.0))
 __attribute__((visibility ("hidden")))
 bool _availability_version_check_hook(uint32_t count, DyldBuildVersion versions[]) {
-    uint32_t current_plat = dyld_get_active_platform();
+    uint32_t current_plat = jailbreak_get_platform();
     for (uint32_t i = 0; i < count; i++) {
         DyldBuildVersion* version = &versions[i];
         if (current_plat == version->platform) continue;

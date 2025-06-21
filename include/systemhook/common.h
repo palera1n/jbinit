@@ -44,9 +44,6 @@ typedef struct {
     uint32_t version;
 } DyldBuildVersion;
 
-__API_AVAILABLE(macos(10.14), ios(12.0), tvos(12.0), bridgeos(3.0))
-uint32_t dyld_get_active_platform(void);
-
 __API_AVAILABLE(macos(10.15), ios(13.0), tvos(13.0), bridgeos(4.0))
 __attribute__((visibility ("hidden")))
 bool _availability_version_check_hook(uint32_t count, DyldBuildVersion versions[]);

@@ -8,6 +8,7 @@
 #include <pthread.h>
 #include <libgen.h>
 #include <sys/types.h>
+#include <libjailbreak/libjailbreak.h>
 #include <dlfcn.h>
 
 static xpc_object_t sysstatuscheck_task;
@@ -132,7 +133,7 @@ void InitDaemonHooks(void) {
   xpc_dictionary_set_value(sysstatuscheck_task, "ProgramArguments", programArguments);
   xpc_release(programArguments);
 
-  platform = get_platform();
+  platform = jailbreak_get_platform();
 #define fd_console STDOUT_FILENO
   if (platform == -1) spin();
 #undef fd_console

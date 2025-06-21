@@ -8,6 +8,7 @@
 #include <mach-o/loader.h>
 #include <mach-o/dyld.h>
 #include <universalhooks/hooks.h>
+#include <libjailbreak/libjailbreak.h>
 
 NSURL* (*orig_LSGetInboxURLForBundleIdentifier)(NSString* bundleIdentifier)=NULL;
 NSURL* new_LSGetInboxURLForBundleIdentifier(NSString* bundleIdentifier)
@@ -34,12 +35,11 @@ void lsdRootlessInit(void) {
         MSHookFunction(_LSGetInboxURLForBundleIdentifier, (void *)&new_LSGetInboxURLForBundleIdentifier, (void **)&orig_LSGetInboxURLForBundleIdentifier);
 }
 
-uint32_t platform;
+int platform;
 int (*_LSServer_RebuildApplicationDatabases_orig)(void);
 int _LSServer_RebuildApplicationDatabases_hook(void) {
     int retval = _LSServer_RebuildApplicationDatabases_orig();
     pid_t pid;
-    int ret;
     
     if (platform != PLATFORM_BRIDGEOS) {
         if (rootful) {
@@ -50,9 +50,9 @@ int _LSServer_RebuildApplicationDatabases_hook(void) {
     }
     
     if (platform == PLATFORM_IOS) {
-        ret = posix_spawn(&pid, "/cores/binpack/usr/bin/uicache", NULL, NULL, (char*[]){ "/cores/binpack/usr/bin/uicache", "-p", "/cores/binpack/Applications/palera1nLoader.app", NULL }, NULL);
+        posix_spawn(&pid, "/cores/binpack/usr/bin/uicache", NULL, NULL, (char*[]){ "/cores/binpack/usr/bin/uicache", "-p", "/cores/binpack/Applications/palera1nLoader.app", NULL }, NULL);
     } else if (platform == PLATFORM_TVOS) {
-        ret = posix_spawn(&pid, "/cores/binpack/usr/bin/uicache", NULL, NULL, (char*[]){ "/cores/binpack/usr/bin/uicache", "-p", "/cores/binpack/Applications/palera1nLoaderTV.app", NULL }, NULL);
+        posix_spawn(&pid, "/cores/binpack/usr/bin/uicache", NULL, NULL, (char*[]){ "/cores/binpack/usr/bin/uicache", "-p", "/cores/binpack/Applications/palera1nLoaderTV.app", NULL }, NULL);
     }
     return retval;
 }
@@ -171,10 +171,9 @@ static void* find__LSServer_RebuildApplicationDatabases(void) {
 }
 #endif
 
-extern uint32_t dyld_get_active_platform(void);
 void lsdUniversalInit(void) {
     NSLog(@"lsdUniversalInit...");
-    platform = dyld_get_active_platform();
+    platform = jailbreak_get_platform();
     MSImageRef coreServicesImage = MSGetImageByName("/System/Library/Frameworks/CoreServices.framework/CoreServices");
     void* __LSServer_RebuildApplicationDatabases = MSFindSymbol(coreServicesImage, "__LSServer_RebuildApplicationDatabases");
     

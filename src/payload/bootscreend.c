@@ -18,6 +18,7 @@
 #include <CoreGraphics/CoreGraphics.h>
 #include <ImageIO/ImageIO.h>
 #include <sys/sysctl.h>
+#include <libjailbreak/libjailbreak.h>
 
 #define WHITE 0xffffffff
 #define BLACK 0x00000000
@@ -291,7 +292,6 @@ static int bootscreend_draw_gradient(void) {
 finish_:
     return retval;
 }
-uint32_t dyld_get_active_platform(void);
 
 static int bootscreend_draw_image(const char* image_path) {
     return bootscreend_draw_cgimage(image_path);
@@ -300,6 +300,7 @@ static int bootscreend_draw_image(const char* image_path) {
 #if defined(TESTMAIN)
 int main(int argc, char* argv[]) {
     int retval = -1;
+    printf("current platform: %d\n", jailbreak_get_platform());
     if (argc < 2) {
         retval = bootscreend_draw_gradient();
     } else {
@@ -308,12 +309,11 @@ int main(int argc, char* argv[]) {
     sleep(2);
     return retval;
 }
-#elif defined(TESTBRIDGE_MAIN)
 #else
 #define BOOT_IMAGE_PATH "/cores/binpack/usr/share/boot.jp2"
 int bootscreend_main(void) {
     int retval = 0;
-    if (dyld_get_active_platform() != PLATFORM_BRIDGEOS) {
+    if (jailbreak_get_platform() != PLATFORM_BRIDGEOS) {
         retval = bootscreend_draw_image(BOOT_IMAGE_PATH);
     } else {
         retval = bootscreend_draw_gradient();
