@@ -76,14 +76,14 @@ const char* volume_prefix(void) {
     if (strcmp(rootfs_st.f_fstypename, "apfs")) {
         _panic("unexpected filesystem type of /");
     }
-    
+
     char* pBSDName;
     if ((pBSDName = strstr(rootfs_st.f_mntfromname, "@/dev/"))) {
         pBSDName = &pBSDName[6];
     } else {
-        pBSDName = rootfs_st.f_mntfromname;
+        pBSDName = &rootfs_st.f_mntfromname[5];
     }
-    
+
     char* suffix = pBSDName;
     for (size_t i = 0; pBSDName[i] != '\0'; i++) {
         if (pBSDName[i] == 's') {

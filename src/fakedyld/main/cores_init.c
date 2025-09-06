@@ -98,6 +98,9 @@ void init_cores(struct systeminfo* sysinfo_p, int __attribute__((unused)) platfo
       CHECK_ERROR(mkdir("/cores/usr", 0755), "mkdir /cores/usr failed");
       CHECK_ERROR(mkdir("/cores/usr/lib", 0755), "mkdir /cores/usr/lib failed");
       CHECK_ERROR(mkdir("/cores/binpack", 0755), "mkdir /cores/binpack failed");
+      CHECK_ERROR(mkdir("/cores/fs", 0755), "mkdir /cores/fs failed");
+      CHECK_ERROR(mkdir("/cores/fs/real", 0755), "mkdir /cores/fs/real failed");
+      CHECK_ERROR(mkdir("/cores/fs/fake", 0755), "mkdir /cores/fs/fake failed");
 
   } else {
       panic("Don't know how to init cores on this OS");
