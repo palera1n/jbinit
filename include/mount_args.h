@@ -15,12 +15,12 @@ enum {
     APFS_MOUNT_AS_ROOT = 0, /* mount the default snapshot */
     APFS_MOUNT_FILESYSTEM, /* mount live fs */
     APFS_MOUNT_SNAPSHOT, /* mount custom snapshot in apfs_mountarg.snapshot */
-    APFS_MOUNT_FOR_CONVERSION, /* mount snapshot while suppling some representation of im4p and im4m */
+    APFS_MOUNT_SNAPSHOT_AUTH, /* mount snapshot while suppling some representation of im4p and im4m */
     APFS_MOUNT_FOR_VERIFICATION, /* Fusion mount with tier 1 & 2, set by mount_apfs when -C is used (Conversion mount) */
     APFS_MOUNT_FOR_INVERSION, /* Fusion mount with tier 1 only, set by mount_apfs when -c is used */
-    APFS_MOUNT_MODE_SIX,  /* ??????? */
-    APFS_MOUNT_FOR_INVERT, /* ??? mount for invert */
-    APFS_MOUNT_IMG4 /* mount live fs while suppling some representation of im4p and im4m */
+    APFS_MOUNT_MODE_REPAIR,  /* repair fs */
+    APFS_MOUNT_FOR_INVERT, /* mount for invert */
+    APFS_MOUNT_FILESYSTEM_AUTH /* mount live fs while suppling some representation of im4p and im4m */
 };
 
 #define APFS_MOUNT_IMG4_MAXSZ               0x100000
@@ -65,7 +65,7 @@ struct apfs_mount_args {
     uint32_t pad2; /* padding */
     void* im4m_ptr;
     uint32_t im4m_size;
-    uint32_t pad3; /* padding */
+    uint32_t im_4cc;
     uint32_t cryptex_type; /* APFS_CRYPTEX_TYPE_* */
     int32_t auth_mode; /* APFS_AUTH_ENV_* */
     uid_t uid;
