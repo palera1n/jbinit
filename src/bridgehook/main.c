@@ -27,13 +27,34 @@ void MSHookFunction(void *address, void *fake_func, void **out_origin_func) {
 
 BH_EXPORT
 void MSHookMessageEx(Class class_, SEL selector_, IMP replacement, IMP* replacee) {
-	Method method = class_getInstanceMethod(class_, selector_);
-	if (!method) {
-		method = class_getClassMethod(class_, selector_);
-		if (!method) return;
-    	}
-	IMP orig = method_setImplementation(method, replacement);
-	if (orig) *replacee = orig;
+    Method method = class_getInstanceMethod(class_, selector_);
+
+    if (!method) {
+        method = class_getClassMethod(class_, selector_);
+
+        if (!method)
+            return;
+    }
+
+    IMP orig = class_replaceMethod(class_, selector_, replacement, method_getTypeEncoding(method));
+
+    if (!replacee)
+        return;
+
+    if (orig) {
+        *replacee = orig;
+        return;
+    }
+
+    Class superclass = class_getSuperclass(class_);
+
+    if (!superclass)
+        return;
+
+    IMP superclass_method = class_getMethodImplementation(superclass, selector_);
+
+    if (superclass_method)
+        *replacee = superclass_method;
 }
 
 BH_EXPORT
