@@ -1,5 +1,5 @@
 CFLAGS += -mappletvos-version-min=12.0 -std=gnu17 -fvisibility=hidden
-LDFLAGS += -Wl,-dead_strip -Wno-unused-command-line-argument
+LDFLAGS += -Wl,-dead_strip -Wl,-exported_symbols_list,symbol_list.txt -Wno-unused-command-line-argument
 CXXFLAGS = -mappletvos-version-min=12.0 -fvisibility=hidden
 CXXFLAGS += -Wl,-dead_strip -Wno-unused-command-line-argument
 OBJDIR = obj

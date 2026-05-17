@@ -1,0 +1,8 @@
+_MSCloseImage
+_MSFindSymbol
+_MSGetImageByName
+_MSHookClassPair
+_MSHookFunction
+_MSHookIvar
+_MSHookMemory
+_MSHookMessageEx
