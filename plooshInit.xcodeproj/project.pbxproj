@@ -472,7 +472,6 @@
 		01D3D6342B5C80DA007845B6 /* patch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = patch.c; sourceTree = "<group>"; };
 		01D3D6352B5C80DA007845B6 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01D3D6362B5C80DA007845B6 /* patcher.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = patcher.c; sourceTree = "<group>"; };
-		01D3D6442B5C80DA007845B6 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		01D3D6452B5C80DA007845B6 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		01D3D6462B5C80DA007845B6 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		01D3D6482B5C80DA007845B6 /* plooshfinder32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plooshfinder32.c; sourceTree = "<group>"; };
@@ -1269,7 +1268,6 @@
 		01D3D6372B5C80DA007845B6 /* plooshfinder */ = {
 			isa = PBXGroup;
 			children = (
-				01D3D6442B5C80DA007845B6 /* LICENSE */,
 				01D3D6452B5C80DA007845B6 /* Makefile */,
 				01D3D6462B5C80DA007845B6 /* .gitignore */,
 				01D3D6472B5C80DA007845B6 /* src */,

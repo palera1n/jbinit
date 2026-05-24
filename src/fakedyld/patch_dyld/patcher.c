@@ -7,7 +7,8 @@
 
 #define amfi_check_dyld_policy_self_symbol "_amfi_check_dyld_policy_self"
 #define platform_check_symbol "____ZNK5dyld39MachOFile24forEachSupportedPlatformEU13block_pointerFvNS_8PlatformEjjE_block_invoke"
-#define platform_check_symbol_new "__ZNK6mach_o6Header19loadableIntoProcessENS_8PlatformE7CStringb"
+#define platform_check_symbol_new_prefix "__ZNK6mach_o"
+#define platform_check_symbol_new_suffix "19loadableIntoProcessENS_8PlatformE7CStringb"
 #define appleinternal_symbol "__ZNK5dyld415SyscallDelegate15internalInstallEv"
 #define start_symbol "start"
 
@@ -20,17 +21,34 @@
 static void* arm64_dyld_buf = NULL;
 
 extern bool has_found_platform_patch;
+
+bool platform_symbol_new_classifier(const char* sym_name, void *arg)
+{
+    (void)arg;
+    
+    if (strncmp(sym_name, platform_check_symbol_new_prefix, sizeof(platform_check_symbol_new_prefix)-1) != 0)
+        return false;
+    
+    size_t sym_len = strlen(sym_name);
+    size_t suffix_len = sizeof(platform_check_symbol_new_suffix)-1;
+    
+    if (sym_len < suffix_len)
+        return false;
+    
+    return !strcmp(sym_name + sym_len - suffix_len, platform_check_symbol_new_suffix);
+}
+
 void platform_check_patch(void* arm64_dyld_buf, int platform) {
     struct nlist_64 *platform_symbol = macho_find_symbol(arm64_dyld_buf, platform_check_symbol);
     int generation = 1;
     
     if (!platform_symbol) {
-        platform_symbol = macho_find_symbol(arm64_dyld_buf, platform_check_symbol_new);
+        platform_symbol = macho_find_symbol_f(arm64_dyld_buf, platform_symbol_new_classifier, NULL);
         generation = 2;
     }
     
     if (!platform_symbol)
-        panic("failed to find symbol %s or %s", platform_check_symbol, platform_check_symbol_new);
+        panic("failed to find symbol %s or *%s", platform_check_symbol, platform_check_symbol_new_suffix);
 
     void *func_addr = arm64_dyld_buf + platform_symbol->offset;
     uint64_t func_len = macho_get_symbol_size(platform_symbol);
