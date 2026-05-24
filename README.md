@@ -1,5 +1,7 @@
 # plooshInit
 
+## Installation Information
+
 how to compile on macos:
 
 1. make sure xcode is installed
@@ -45,4 +47,12 @@ useful links:
 
 after compiling:
 - check the output files, src/ramdisk.dmg and src/binpack.dmg
-- you can use the files in palera1n like this: `palera1n -r /path/to/ramdisk.dmg -o /path/to/binpack.dmg`
+- you can use the files in [palera1n](https://github.com/palera1n/palera1n) like this: `palera1n -r /path/to/ramdisk.dmg -o /path/to/binpack.dmg`
+
+## License
+
+MIT AND LGPL-3.0-only. See LICENSE file for the license text.
+
+plooshInit contains plooshfinder, and for the purpose of LGPL,
+All files in "src/fakedyld/patch_dyld/plooshfinder" is considered
+plooshfinder's "Minimal Corresponding Source".
