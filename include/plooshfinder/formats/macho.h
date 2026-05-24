@@ -22,6 +22,7 @@ struct section_64 *macho_get_section_for_ptr(struct segment_command_64 *segment,
 struct section_64 *macho_find_section_for_ptr(void *buf, void *ptr);
 uint64_t macho_ptr_to_va(void *buf, void *ptr);
 struct nlist_64 *macho_find_symbol(void *buf, char *name);
+struct nlist_64 *macho_find_symbol_f(void *buf, bool (*classifier)(const char *sym_name, void *arg), void *arg);
 uint64_t macho_get_symbol_size(struct nlist_64 *symbol);
 uint64_t macho_parse_plist_integer(void *key);
 struct mach_header_64 *macho_parse_prelink_info(void *buf, struct section_64 *kmod_info, char *bundle_name);

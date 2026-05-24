@@ -329,7 +329,7 @@ uint64_t macho_ptr_to_va(void *buf, void *ptr) {
     return section->addr + offset;
 }
 
-struct nlist_64 *macho_find_symbol(void *buf, char *name) {
+struct nlist_64 *macho_find_symbol_f(void *buf, bool (*classifier)(const char *sym_name, void *arg), void *arg) {
     if (!macho_check(buf)) {
         return NULL;
     }
@@ -360,13 +360,24 @@ struct nlist_64 *macho_find_symbol(void *buf, char *name) {
         struct nlist_64 *symbol_nlist = symtab + i;
         char *sym_name = strtab + symbol_nlist->un.str_index;
 
-        if (strcmp(sym_name, name) == 0) {
+        if (classifier(sym_name, arg))
             return symbol_nlist;
-        }
     }
 
     //printf("%s: Unable to find symbol %s!\n", __FUNCTION__, name);
     return NULL;
+
+}
+
+static bool macho_find_symbol_eq(const char *sym_name, void *arg)
+{
+    const char *name = (const char *)arg;
+    
+    return strcmp(sym_name, name) == 0;
+}
+
+struct nlist_64 *macho_find_symbol(void *buf, char *name) {
+    return macho_find_symbol_f(buf, macho_find_symbol_eq, name);
 }
 
 uint64_t macho_get_symbol_size(struct nlist_64 *symbol) {
