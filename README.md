@@ -53,6 +53,4 @@ after compiling:
 
 MIT AND LGPL-3.0-only. See LICENSE file for the license text.
 
-plooshInit contains plooshfinder, and for the purpose of LGPL,
-All files in "src/fakedyld/patch_dyld/plooshfinder" is considered
-plooshfinder's "Minimal Corresponding Source".
+plooshInit contains plooshfinder, and for the purpose of LGPL, Only files in `src/fakedyld/patch_dyld/plooshfinder` and `include/plooshfinder` is considered plooshfinder's "Minimal Corresponding Source".
