@@ -456,7 +456,7 @@ pthread_join(prepBootstrapStdOutLogThread, NULL); \
     else
         installed_file = "/.installed_palera1n";
 
-    installed_fd = open(installed_file, O_RDWR | O_CREAT);
+    installed_fd = open(installed_file, O_RDWR | O_CREAT, 0644);
     BOOTSTRAP_ASSURE_F_CLEANUP(installed_fd == -1, RM_STRAP, errno, "failed to open %s file", installed_file);
     lseek(installed_fd, 0, SEEK_END);
 
