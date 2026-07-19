@@ -10,7 +10,7 @@ jobs:
     runs-on: macos-15
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           submodules: true
 
@@ -52,7 +52,7 @@ jobs:
           cp src/binpack.dmg dist/binpack.development.dmg
 
       - name: Upload artifact
-        uses: wangyucode/sftp-upload-action@v1.4.8
+        uses: wangyucode/sftp-upload-action@v3
         with:
           host: ${{ secrets.NICKCHAN_FTP_HOST }}
           port: ${{ secrets.NICKCHAN_FTP_PORT }}
