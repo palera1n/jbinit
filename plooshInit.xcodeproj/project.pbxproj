@@ -325,6 +325,7 @@
 		0191817B2BCA5C8100688E3A /* fs_snapshot.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fs_snapshot.c; sourceTree = "<group>"; };
 		0191817D2BCA5D8500688E3A /* clean_fakefs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = clean_fakefs.c; sourceTree = "<group>"; };
 		019B1B452B5CACA800BABAB5 /* load_etc_rc_d.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load_etc_rc_d.c; sourceTree = "<group>"; };
+		01A43CA6300D4DB4004E0DA5 /* try_uicache.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = try_uicache.sh; sourceTree = "<group>"; };
 		01AFD2542C10A15D00C66591 /* dyn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dyn.c; sourceTree = "<group>"; };
 		01AFD2552C10A15D00C66591 /* libroot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libroot.h; sourceTree = "<group>"; };
 		01AFD2572C10A15D00C66591 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
@@ -1118,6 +1119,7 @@
 		01D3D4F42B5C80DA007845B6 /* loader */ = {
 			isa = PBXGroup;
 			children = (
+				01A43CA6300D4DB4004E0DA5 /* try_uicache.sh */,
 				01D3D4F52B5C80DA007845B6 /* prelaunchd.c */,
 				01D3D4F62B5C80DA007845B6 /* launchdaemons.c */,
 				01D3D5042B5C80DA007845B6 /* fixup_user_groups.c */,

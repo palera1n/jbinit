@@ -109,10 +109,10 @@ int launchdaemons(uint32_t payload_options, uint64_t pflags) {
     /* just in case the above commands are bad, we run them last so the user can still get the loader */
     switch (platform) {
         case PLATFORM_IOS:
-            runCommand((char*[]){ "/cores/binpack/usr/bin/uicache", "-p", "/cores/binpack/Applications/palera1nLoader.app", NULL });
+            runCommand((char*[]){ "/cores/binpack/bin/sh", "/cores/binpack/usr/libexec/try_uicache.sh", "/cores/binpack/Applications/palera1nLoader.app", NULL });
             break;
         case PLATFORM_TVOS:
-            runCommand((char*[]){ "/cores/binpack/usr/bin/uicache", "-p", "/cores/binpack/Applications/palera1nLoaderTV.app", NULL });
+            runCommand((char*[]){ "/cores/binpack/bin/sh", "/cores/binpack/usr/libexec/try_uicache.sh", "/cores/binpack/Applications/palera1nLoaderTV.app", NULL });
         case PLATFORM_BRIDGEOS:
             break;
         default:

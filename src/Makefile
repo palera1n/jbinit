@@ -100,7 +100,7 @@ binpack.dmg: binpack.tar loader.dmg tvloader.dmg $(patsubst %, %-all, $(SUBDIRS)
 	tar -C binpack --preserve-permissions -xf binpack.tar
 	rm -rf binpack/usr/share binpack/private cores
 	mkdir -p binpack/Applications
-	mkdir -p binpack/usr/lib binpack/usr/share binpack/usr/lib/libroot
+	mkdir -p binpack/usr/lib binpack/usr/share binpack/usr/lib/libroot binpack/usr/libexec
 	mkdir -p binpack/Library/Frameworks/CydiaSubstrate.framework
 	mkdir -p binpack/Library/Frameworks/CydiaSubstrateBridgeOS.framework
 	mkdir -p binpack/Library/LaunchDaemons
@@ -109,7 +109,7 @@ binpack.dmg: binpack.tar loader.dmg tvloader.dmg $(patsubst %, %-all, $(SUBDIRS)
 	ln -sf ../systemhook.dylib binpack/usr/lib/libroot/libroot.dylib
 	cp -a $(ROOT)/shared/*.plist binpack/Library/LaunchDaemons
 	cp -a $(ROOT)/shared/boot.jp2 binpack/usr/share
-	#cp -a $(ROOT)/shared/RSOD.heic binpack/usr/share
+	cp -a $(ROOT)/src/payload/loader/try_uicache.sh binpack/usr/libexec
 	cp -a $(ROOT)/shared/copyright binpack/usr/share
 	cp -a $(ROOT)/LICENSE binpack/usr/share/copyright/Licnese-plinit.txt
 	chmod 644 binpack/Library/LaunchDaemons/*.plist
