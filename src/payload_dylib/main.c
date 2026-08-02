@@ -129,13 +129,12 @@ __attribute__((constructor))void launchd_hook_main(void) {
   if (getpid() != 1) return;
     signal(SIGUSR1, _panic_on_signal);
     has_verbose_boot = (strcmp(getenv("JB_HAS_VERBOSE_BOOT"), "1") == 0);
-  
+
   int fd_console = open("/dev/console",O_RDWR|O_SYNC|O_CLOEXEC,0);
   if (fd_console == -1) {
     _panic("payload.dylib cannot open /dev/console: %d (%s)", errno, strerror(errno));
   }
-    
-  
+
   dup2(fd_console, STDIN_FILENO);
   dup2(fd_console, STDOUT_FILENO);
   dup2(fd_console, STDERR_FILENO);
@@ -144,8 +143,15 @@ __attribute__((constructor))void launchd_hook_main(void) {
   crashreporter_start();
   setenv("JB_SANDBOX_EXTENSIONS", generate_sandbox_extensions(), 1);
   load_pflags();
+
   pid_t pid;
   int ret, status;
+  /* need to make sure ASAN in payload runs */
+#if ASAN
+  const char version[] = "2.0";
+  CHECK_ERROR(sysctlbyname("kern.osproductversion", NULL, NULL, version, sizeof(version)-1), "sysctl kern.osproductversion");
+#endif
+
   CHECK_ERROR(posix_spawn(&pid, "/cores/payload", NULL, NULL, (char*[]){"/cores/payload","-f",NULL},environ), "could not spawn payload");
   waitpid(pid, &status, 0);
   if (WIFEXITED(status)) {
