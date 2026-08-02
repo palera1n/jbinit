@@ -58,7 +58,7 @@ ramdisk.dmg: $(patsubst %, %-all, $(SUBDIRS))
 	install -m755 payload_dylib/payload.dylib ramdisk/
 	install -m755 payload/payload ramdisk/
 ifeq ($(INCLUDE_ASAN),1)
-	install -m755 $(shell xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/*/lib/darwin/libclang_rt.asan_ios_dynamic.dylib ramdisk/
+	install -m755 $(shell xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/*/lib/darwin/libclang_rt.asan_tvos_dynamic.dylib ramdisk/
 endif
 	ln -sf /sbin/launchd ramdisk/cores/ploosh
 	ln -sf ../payload ramdisk/sbin/launchd
