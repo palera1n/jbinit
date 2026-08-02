@@ -31,7 +31,7 @@ bool dlopen_preflight(const char* path);
 static bool in_jailbreakd;
 
 void unsandbox(void) {
-	char extensionsCopy[strlen(JB_SandboxExtensions)];
+	char extensionsCopy[strlen(JB_SandboxExtensions)+1];
 	strcpy(extensionsCopy, JB_SandboxExtensions);
 	char *extensionToken = strtok(extensionsCopy, "|");
 	while (extensionToken != NULL) {
