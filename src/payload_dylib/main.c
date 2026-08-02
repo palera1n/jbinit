@@ -178,7 +178,7 @@ __attribute__((constructor))void launchd_hook_main(void) {
       ((pflags & palerain_option_verbose_boot) == 0)
       && (jailbreak_get_platform() != PLATFORM_TVOS || getenv("XPC_USERSPACE_REBOOTED"))
       ) {
-          posix_spawn(&pid, "/cores/payload", NULL, NULL, (char*[]){"bootscreend" ,NULL}, (char*[]){ "XPC_NULL_BOOTSTRAP=1" });
+          posix_spawn(&pid, "/cores/payload", NULL, NULL, (char*[]){"bootscreend" ,NULL}, (char*[]){ "XPC_NULL_BOOTSTRAP=1", NULL });
       }
 
   void* systemhook_handle = dlopen(HOOK_DYLIB_PATH, RTLD_NOW);
