@@ -551,7 +551,10 @@ uint32_t current_platform_min(void) {
     }
 }
 
-// this hook is used to make __builtin_available work normally in platform mismatched binaries
+/*
+ * this hook is used to make __builtin_available work normally in platform mismatched binaries
+ * The main purpose of this hook is to make libellekit.dylib and launchctl in binpack work
+ */
 __API_AVAILABLE(macos(10.15), ios(13.0), tvos(13.0), bridgeos(4.0))
 __attribute__((visibility ("hidden")))
 bool _availability_version_check_hook(uint32_t count, DyldBuildVersion versions[]) {
@@ -567,23 +570,44 @@ bool _availability_version_check_hook(uint32_t count, DyldBuildVersion versions[
             case PLATFORM_TVOS:
                 switch (version->platform) {
                     case PLATFORM_MACOS:
+                        /* Mac OS X / OS X / macOS 10.x handling (up to 10.16 beta) */
                         if (major == 10) {
                             major = minor > (current_platform_min() + 2) ? minor - 2 : current_platform_min();
                             minor = subminor;
                             subminor = 0;
-                        } else if (major > 10) major += 3;
-                        else major = current_platform_min();
+                        }
+                        /* macOS 11.0 - 16.0 and lower conversion (b1 compat) */
+                        else if (major > 10 && (major < 16 || (major == 16 && minor == 0))) major += 3;
+                        /* NEXTStep, this really should not happen but ehhhh */
+                        else if (major < 10) major = current_platform_min();
+                        /* Otherwise, it's the same 26+ version */
                         break;
                     case PLATFORM_BRIDGEOS:
-                        major += 9;
+                        /* 10.0 -> 19.0 and lower conversion (b1 compat) */
+                        if (major < 10 || (major == 10 && minor == 0))
+                            major += 9;
+                        /*
+                         * 10.x -> 26.x
+                         * on 11+ it's a sticky situation with mixed userspace
+                         * be safe and assume that we do need the newer userspace APIs
+                         * so report as 27+
+                         */
+                        else
+                            major += 16;
                         break;
                     case PLATFORM_WATCHOS:
                     case PLATFORM_WATCHOSSIMULATOR:
-                        major += 7;
+                        /* 12.0 -> 19.0 and lower conversion (b1 compat) */
+                        if (major < 12 || (major == 12 && minor == 0))
+                            major += 7;
+                        /* otherwise, it's the same 26+ version */
                         break;
                     case PLATFORM_VISIONOS:
                     case PLATFORM_VISIONOSSIMULATOR:
-                        major += 16;
+                        /* 3.0 -> 19.0 and lower conversion (b1 compat) */
+                        if (major < 3 || (major == 3 && minor == 0))
+                            major += 16;
+                        /* otherwise, it's the same 26+ version */
                         break;
                     default:
                         break;
@@ -592,29 +616,73 @@ bool _availability_version_check_hook(uint32_t count, DyldBuildVersion versions[
             case PLATFORM_BRIDGEOS:
                 switch (version->platform) {
                     case PLATFORM_MACOS:
+                        /* Mac OS X / OS X / macOS 10.x handling (up to 10.16 beta) */
                         if (major == 10) {
                             major = minor > (current_platform_min() + 11) ? minor - 11 : current_platform_min();
                             minor = subminor;
                             subminor = 0;
-                        } else if (major > 10) {
+                        /* macOS 11.0 - 16.0 and lower conversion (b1 compat) */
+                        } else if (major > 10 && (major < 16 || (major == 16 && minor == 0))) {
                             major = major > (current_platform_min() + 6) ? major - 6 : current_platform_min();
-                        }
-                        else major = current_platform_min();
+                        /* NEXTStep, this really should not happen but ehhhh */
+                        } else if (major < 10) major = current_platform_min();
+                        /* macOS 26 -> bridgeOS 10 */
+                        else if (major == 26)
+                            major -= 10;
+                        /*
+                         * on bridgeOS 11+ we have old kernel and mixed userspace so
+                         * try activate old code paths in binary
+                         */
+                        else if (major > 26)
+                            major = 99;
                         break;
                     case PLATFORM_IOS:
                     case PLATFORM_TVOS:
                     case PLATFORM_IOSSIMULATOR:
                     case PLATFORM_TVOSSIMULATOR:
                     case PLATFORM_MACCATALYST:
-                        major = major > (current_platform_min() + 9) ? major - 9 : current_platform_min();
+                        /* up to iOS 19.0 beta */
+                        if (major < 26)
+                            major = major > (current_platform_min() + 9) ? major - 9 : current_platform_min();
+                        /* iOS 26 -> bridgeOS 10 */
+                        else if (major == 26)
+                            major = 10;
+                        /*
+                         * on bridgeOS 11+ we have old kernel and mixed userspace so
+                         * try activate old code paths in binary
+                         */
+                        else
+                            major = 99;
                         break;
                     case PLATFORM_WATCHOS:
                     case PLATFORM_WATCHOSSIMULATOR:
-                        major = major > (current_platform_min() + 2) ? major - 2 : current_platform_min();
+                        /* Up to watchOS 12.0 beta */
+                        if (major < 26)
+                            major = major > (current_platform_min() + 2) ? major - 2 : current_platform_min();
+                        /* watchOS 26 -> bridgeOS 10 */
+                        else if (major == 26)
+                            major = 10;
+                        /*
+                         * on bridgeOS 11+ we have old kernel and mixed userspace so
+                         * try activate old code paths in binary
+                         */
+                        else
+                            major = 99;
                         break;
                     case PLATFORM_VISIONOS:
                     case PLATFORM_VISIONOSSIMULATOR:
-                        major += 7;
+                        /* Up to visionOS 3.0 beta */
+                        if (major < 26)
+                            major += 7;
+                        /* visionOS 26 -> bridgeOS 10 */
+                        else if (major == 26)
+                            major = 10;
+                        /*
+                         * on bridgeOS 11+ we have old kernel and mixed userspace so
+                         * try activate old code paths in binary
+                         */
+                        else
+                            major = 99;
                         break;
                     default:
                         break;
